@@ -1,0 +1,217 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:yogivida_mobile/components/CardActivite.dart';
+import 'package:yogivida_mobile/components/CardPratique.dart';
+import 'package:yogivida_mobile/components/CustomBottomNavigationBar.dart';
+import 'package:yogivida_mobile/constant.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    List<Activite> listActivite = [
+      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffFFCDA0),
+      Activite("Yoga Iyengar", '1h20', "Marzena", 0xff5EAB43),
+      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffA6C3FF),
+      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffFFCDA0),
+      Activite("Yoga Iyengar", '1h20', "Marzena", 0xff5EAB43),
+      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffA6C3FF),
+    ];
+
+    List<Pratique> listPratique = [
+      Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
+      Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xffffffff),
+        elevation: 0,
+        automaticallyImplyLeading: false, // Empêche l'affichage du bouton back
+        toolbarHeight: 60,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Accueil',
+              style: GoogleFonts.arimo(
+                color: Color(0xff15274d),
+                fontSize: MediaQuery.of(context).size.width * 0.055,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            GestureDetector(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => NotificationsPage())),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: <Widget>[
+                  Container(
+                    height: 50,
+                    width: 45,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Color(0xff15274d),
+                    ),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'assets/icons/bell.svg',
+                        width: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: -5,
+                    top: -5,
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                          color: primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(width: 1.5, color: Colors.white)),
+                      constraints: BoxConstraints(
+                        minWidth: 20,
+                        minHeight: 20,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            '8', // Remplacez '3' par le nombre de notifications dynamiquement
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: ListView(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Container(
+                child: Text(
+                  "Votre activité du jour",
+                  style: GoogleFonts.montserrat(
+                      fontSize: MediaQuery.of(context).size.width * 0.045,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    Row(
+                      children: listActivite
+                          .map((toElement) => Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Cardactivite(
+                                      data: toElement,
+                                      color: toElement.color,
+                                      handlePress: () {
+                                        ShowBottomSheet(context);
+                                      })
+                                ],
+                              ))
+                          .toList(),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Container(
+                child: Text(
+                  "Nos pratiques",
+                  style: GoogleFonts.montserrat(
+                      fontSize: MediaQuery.of(context).size.width * 0.045,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    Row(
+                      children: listPratique
+                          .map((toElement) => Row(
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  CardPratique(
+                                    data: toElement,
+                                    handlePress: () => ShowBottomSheet(context),
+                                  )
+                                ],
+                              ))
+                          .toList(),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<dynamic> ShowBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [Text("hello")],
+            ),
+          );
+        });
+  }
+}

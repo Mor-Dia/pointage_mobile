@@ -1,0 +1,294 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:yogivida_mobile/components/CardRowPlanning.dart';
+import 'package:yogivida_mobile/components/InputFiled.dart';
+import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
+import 'package:yogivida_mobile/utils/Capitalized.dart';
+
+class Planning extends StatefulWidget {
+  const Planning({super.key});
+
+  @override
+  State<Planning> createState() => _PlanningState();
+}
+
+class _PlanningState extends State<Planning> {
+  String? selectedValue;
+  final List<String> options = ['Option 1', 'Option 2', 'Option 3'];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xffffffff),
+          elevation: 0,
+          automaticallyImplyLeading:
+              false, // Empêche l'affichage du bouton back
+          toolbarHeight: 60,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Planning',
+                style: GoogleFonts.arimo(
+                  color: Color(0xff15274d),
+                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NotificationsPage())),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    Container(
+                      height: 50,
+                      width: 45,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Color(0xff15274d),
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/icons/bell.svg',
+                          width: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: -5,
+                      top: -5,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                            color: primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border:
+                                Border.all(width: 1.5, color: Colors.white)),
+                        constraints: BoxConstraints(
+                          minWidth: 20,
+                          minHeight: 20,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '8', // Remplacez '3' par le nombre de notifications dynamiquement
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: Container(
+          color: Colors.white,
+          child: ListView(
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              HorizontalCalendar(),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Inputfiled(
+                        type: "text",
+                        text: 'Désignation',
+                        icon: 'loupe',
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text('|'),
+                    SizedBox(width: 10),
+                    Container(
+                      height: 45,
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        color: primaryColor, // Couleur de fond bleu
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset("assets/icons/home2.svg",
+                              height: 15, color: Colors.white),
+                          SizedBox(
+                              width:
+                                  10.0), // Espace entre l'icône et le DropdownButton
+                          DropdownButton(
+                            dropdownColor: primaryColor, // Couleur du dropdown
+                            value: selectedValue,
+                            hint: Text(
+                              'Studio',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            style: TextStyle(
+                                color: Colors.white), // Couleur du texte
+                            icon: Padding(
+                              padding: const EdgeInsets.only(left: 10.0),
+                              child: SvgPicture.asset(
+                                'assets/icons/arrow_b.svg',
+                                color: Colors.white,
+                              ),
+                            ),
+                            underline:
+                                SizedBox(), // Supprime la ligne par défaut
+                            items: options.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: TextStyle(color: Colors.white)),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedValue = newValue;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Column(
+                children: [CardRowPlanning()],
+              )
+            ],
+          ),
+        ));
+  }
+}
+
+class HorizontalCalendar extends StatefulWidget {
+  @override
+  _HorizontalCalendarState createState() => _HorizontalCalendarState();
+}
+
+class _HorizontalCalendarState extends State<HorizontalCalendar> {
+  DateTime selectedDate = DateTime.now();
+  late List<DateTime> weekDays; // Liste des jours de la semaine courante
+
+  @override
+  void initState() {
+    super.initState();
+    // Générer la liste des jours de la semaine courante
+    weekDays = _generateWeekDays();
+  }
+
+  // Fonction pour générer les jours restants de la semaine courante
+  List<DateTime> _generateWeekDays() {
+    DateTime now = DateTime.now();
+    int currentWeekday = now.weekday; // Jour actuel (1 = Lundi, 7 = Dimanche)
+
+    // Créer une liste des jours à partir du jour actuel jusqu'à Dimanche
+    return List.generate(7 - currentWeekday + 1, (index) {
+      return now.add(Duration(days: index));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Affichage du mois et de l'année (fixe, pas de navigation)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: Text(
+            DateFormat.yMMM('fr_FR').format(DateTime.now()).toCapitalized,
+            style: TextStyle(
+              fontSize: 18,
+              color: primaryColor,
+            ),
+          ),
+        ),
+
+        // Liste horizontale des jours de la semaine courante
+        Container(
+          height: 75,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: weekDays.length,
+            itemBuilder: (context, index) {
+              DateTime date = weekDays[index];
+              bool isSelected = date.day == selectedDate.day &&
+                  date.month == selectedDate.month &&
+                  date.year == selectedDate.year;
+
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedDate = date;
+                  });
+                },
+                child: Container(
+                  width: 60,
+                  margin: index == 0
+                      ? EdgeInsets.only(right: 20.0, left: 20)
+                      : EdgeInsets.only(right: 20.0),
+                  decoration: BoxDecoration(
+                    color: isSelected ? Color(0xffA8923B) : Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isSelected ? Colors.transparent : greyColor,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        DateFormat.E('fr_FR')
+                            .format(date)
+                            .toCapitalized, // Jour abrégé
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isSelected ? primaryColor : greyColor,
+                        ),
+                      ),
+                      Text(
+                        date.day.toString(), // Numéro du jour
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: isSelected ? primaryColor : greyColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}

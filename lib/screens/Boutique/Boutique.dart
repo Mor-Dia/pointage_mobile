@@ -1,0 +1,373 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:yogivida_mobile/components/CardProduit.dart';
+import 'package:yogivida_mobile/components/CardProduitPanier.dart';
+import 'package:yogivida_mobile/components/InputFiled.dart';
+import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/screens/Boutique/Panier.dart';
+import 'package:yogivida_mobile/utils/Capitalized.dart';
+import 'dart:ui' as ui;
+
+class Boutique extends StatefulWidget {
+  const Boutique({super.key});
+
+  @override
+  State<Boutique> createState() => _BoutiqueState();
+}
+
+class _BoutiqueState extends State<Boutique> {
+  String? selectedValue;
+  final List<String> options = ['Option 1', 'Option 2', 'Option 3'];
+
+  List<Pratique> listPratique = [
+    Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
+    Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
+    Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+    Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+    Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+  ];
+
+  int selectedFamilyIndex = 0; // Indice de la famille sélectionnée
+  final List<String> families = [
+    'Fruits',
+    'Légumes',
+    'Céréales',
+    'Produits laitiers'
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
+    /*24 is for notification bar on Android*/
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
+    final double itemWidth = size.width / 2;
+
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xffffffff),
+          elevation: 0,
+          automaticallyImplyLeading:
+              false, // Empêche l'affichage du bouton back
+          toolbarHeight: 60,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Boutique',
+                style: GoogleFonts.arimo(
+                  color: Color(0xff15274d),
+                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Panier())),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    Container(
+                      height: 50,
+                      width: 45,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: secondColor,
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/icons/cadit.svg',
+                          width: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: -5,
+                      top: -5,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                            color: secondColor,
+                            borderRadius: BorderRadius.circular(10),
+                            border:
+                                Border.all(width: 1.5, color: Colors.white)),
+                        constraints: BoxConstraints(
+                          minWidth: 20,
+                          minHeight: 20,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '8', // Remplacez '3' par le nombre de notifications dynamiquement
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        body: Container(
+          color: Colors.white,
+          child: ListView(
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              SingleChildScrollView(
+                scrollDirection:
+                    Axis.horizontal, // Permet le défilement horizontal
+                child: Row(
+                  children: families.map((family) {
+                    int index = families.indexOf(family);
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedFamilyIndex =
+                              index; // Met à jour la famille sélectionnée
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal:
+                                16.0), // Ajoute de l'espace entre les éléments
+                        child: Column(
+                          mainAxisSize: MainAxisSize
+                              .min, // Prend juste l'espace nécessaire
+                          children: [
+                            Text(
+                              family,
+                              style: TextStyle(
+                                color: selectedFamilyIndex == index
+                                    ? primaryColor
+                                    : greyColor, // Texte bleu pour la famille active
+                                fontWeight: selectedFamilyIndex == index
+                                    ? FontWeight.bold
+                                    : FontWeight
+                                        .normal, // Texte en gras pour la famille active
+                              ),
+                            ),
+                            SizedBox(
+                                height:
+                                    4.0), // Espace entre le texte et la ligne soulignée
+                            if (selectedFamilyIndex == index)
+                              LayoutBuilder(
+                                builder: (context, constraints) {
+                                  // Utilise un LayoutBuilder pour obtenir la taille du texte
+                                  final textPainter = TextPainter(
+                                    text: TextSpan(
+                                      text: family,
+                                      style: TextStyle(
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    textDirection:
+                                        ui.TextDirection.ltr, // Correction ici
+                                  );
+                                  textPainter.layout();
+                                  return Container(
+                                    height:
+                                        1.0, // Hauteur de la ligne de soulignement
+                                    width: textPainter
+                                        .width, // Largeur égale à celle du texte
+                                    color:
+                                        primaryColor, // Ligne bleue sous la famille active
+                                  );
+                                },
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Inputfiled(
+                        type: "text",
+                        text: 'Désignation',
+                        icon: 'loupe',
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text('|'),
+                    SizedBox(width: 10),
+                    Container(
+                      height: 45,
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      decoration: BoxDecoration(
+                        color: primaryColor, // Couleur de fond bleu
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset("assets/icons/stat.svg",
+                              height: 15, color: Colors.white),
+                          SizedBox(
+                              width:
+                                  10.0), // Espace entre l'icône et le DropdownButton
+                          Text(
+                            'Par prix',
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: listPratique
+                      .map((toElement) => Container(
+                            width: size.width / 2 - 25,
+                            child: CardProduit(
+                              data: toElement,
+                              handlePress: () => {},
+                            ),
+                          ))
+                      .toList(),
+                ),
+              )
+            ],
+          ),
+        ));
+  }
+}
+
+class HorizontalCalendar extends StatefulWidget {
+  @override
+  _HorizontalCalendarState createState() => _HorizontalCalendarState();
+}
+
+class _HorizontalCalendarState extends State<HorizontalCalendar> {
+  DateTime selectedDate = DateTime.now();
+  late List<DateTime> weekDays; // Liste des jours de la semaine courante
+
+  @override
+  void initState() {
+    super.initState();
+    // Générer la liste des jours de la semaine courante
+    weekDays = _generateWeekDays();
+  }
+
+  // Fonction pour générer les jours restants de la semaine courante
+  List<DateTime> _generateWeekDays() {
+    DateTime now = DateTime.now();
+    int currentWeekday = now.weekday; // Jour actuel (1 = Lundi, 7 = Dimanche)
+
+    // Créer une liste des jours à partir du jour actuel jusqu'à Dimanche
+    return List.generate(7 - currentWeekday + 1, (index) {
+      return now.add(Duration(days: index));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // Affichage du mois et de l'année (fixe, pas de navigation)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: Text(
+            DateFormat.yMMM('fr_FR').format(DateTime.now()).toCapitalized,
+            style: TextStyle(
+              fontSize: 18,
+              color: primaryColor,
+            ),
+          ),
+        ),
+
+        // Liste horizontale des jours de la semaine courante
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Container(
+            height: 75,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: weekDays.length,
+              itemBuilder: (context, index) {
+                DateTime date = weekDays[index];
+                bool isSelected = date.day == selectedDate.day &&
+                    date.month == selectedDate.month &&
+                    date.year == selectedDate.year;
+
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedDate = date;
+                    });
+                  },
+                  child: Container(
+                    width: 60,
+                    margin: EdgeInsets.only(right: 20.0),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Color(0xffA8923B) : Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected ? Colors.transparent : greyColor,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          DateFormat.E('fr_FR')
+                              .format(date)
+                              .toCapitalized, // Jour abrégé
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: isSelected ? primaryColor : greyColor,
+                          ),
+                        ),
+                        Text(
+                          date.day.toString(), // Numéro du jour
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: isSelected ? primaryColor : greyColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
