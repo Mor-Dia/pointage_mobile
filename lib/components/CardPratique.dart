@@ -19,11 +19,13 @@ class CardPratique extends StatefulWidget {
 class _CardPratiqueState extends State<CardPratique> {
   @override
   bool? liked;
+  @override
   void initState() {
     super.initState();
     liked = widget.data.liked;
   }
 
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.60,
@@ -45,18 +47,17 @@ class _CardPratiqueState extends State<CardPratique> {
                 ),
                 GestureDetector(
                   child: liked == false
-                      ? Icon(Icons.favorite_outline)
-                      : Icon(Icons.favorite, color: Color(0xffFF0000)),
+                      ? const Icon(Icons.favorite_outline)
+                      : const Icon(Icons.favorite, color: Color(0xffFF0000)),
                   onTap: () {
                     setState(() {
-                      print(liked);
                       liked = !liked!;
                     });
                   },
                 )
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
@@ -67,21 +68,21 @@ class _CardPratiqueState extends State<CardPratique> {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: widget.handlePress,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 40),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                backgroundColor: const Color(0xff15274d),
+              ),
               child: Text(
                 'Reserver',
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: MediaQuery.of(context).size.width * 0.030),
-              ),
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 40),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                backgroundColor: Color(0xff15274d),
               ),
             )
           ],

@@ -14,7 +14,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 20),
+      margin: const EdgeInsets.only(top: 20),
       decoration: BoxDecoration(border: Border.all(color: greyColor, width: 1)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20.0),
@@ -30,7 +30,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                     fontWeight: FontWeight.bold,
                     color: primaryColor),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               Row(
@@ -46,31 +46,31 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                 children: [
                                   SvgPicture.asset(
                                     "assets/icons/heure.svg",
-                                    color: Color(0xFF838282),
+                                    color: const Color(0xFF838282),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  Text(
+                                  const Text(
                                     '14h20',
                                     style: TextStyle(
                                         color: Color(0xff838282), fontSize: 10),
                                   )
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Row(
                                 children: [
                                   SvgPicture.asset(
                                     "assets/icons/person.svg",
-                                    color: Color(0xFF838282),
+                                    color: const Color(0xFF838282),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  Text(
+                                  const Text(
                                     'Marzena',
                                     style: TextStyle(
                                         color: Color(0xff838282), fontSize: 10),
@@ -86,31 +86,31 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                 children: [
                                   SvgPicture.asset(
                                     "assets/icons/heure.svg",
-                                    color: Color(0xFF838282),
+                                    color: const Color(0xFF838282),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  Text(
+                                  const Text(
                                     '16h20',
                                     style: TextStyle(
                                         color: Color(0xff838282), fontSize: 10),
                                   )
                                 ],
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
                               Row(
                                 children: [
                                   SvgPicture.asset(
                                     "assets/icons/loc.svg",
-                                    color: Color(0xFF838282),
+                                    color: const Color(0xFF838282),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 5,
                                   ),
-                                  Text(
+                                  const Text(
                                     'Dakar plateau',
                                     style: TextStyle(
                                         color: Color(0xff838282), fontSize: 10),
@@ -121,7 +121,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                           ),
                         ]),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
                   Expanded(

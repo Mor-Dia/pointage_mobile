@@ -21,12 +21,13 @@ class _FavorisState extends State<Favoris> {
     Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
     Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
   ];
+  @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xffffffff),
+          backgroundColor: const Color(0xffffffff),
           elevation: 0,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
@@ -39,7 +40,7 @@ class _FavorisState extends State<Favoris> {
               ),
             ),
           ),
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
           toolbarHeight: 60,
@@ -72,7 +73,7 @@ class _FavorisState extends State<Favoris> {
                 TabBarIndicatorSize.label, // Le trait prend la largeur du texte
             labelColor: primaryColor, // Couleur du texte actif
             unselectedLabelColor: greyColor, // Couleur du texte inactif
-            tabs: [
+            tabs: const [
               Tab(text: 'Pratiques'),
               Tab(text: 'Boutique'),
             ],
@@ -108,7 +109,7 @@ class ScrollableTabPage extends StatelessWidget {
           spacing: 10,
           runSpacing: 10,
           children: data
-              .map((toElement) => Container(
+              .map((toElement) => SizedBox(
                   width: size.width / 2 - 25,
                   child: CardPratique(
                     data: toElement,
@@ -136,7 +137,7 @@ class ScrollableTabPage2 extends StatelessWidget {
           spacing: 10,
           runSpacing: 10,
           children: data
-              .map((toElement) => Container(
+              .map((toElement) => SizedBox(
                     width: size.width / 2 - 25,
                     child: CardProduit(
                       data: toElement,

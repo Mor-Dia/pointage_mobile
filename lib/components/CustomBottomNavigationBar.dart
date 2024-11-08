@@ -47,13 +47,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 color: primaryColor,
                 height: 25,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 height: 7,
                 width: 7,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Color(0xffA8923B),
+                  color: const Color(0xffA8923B),
                 ),
               ),
             ],
@@ -73,13 +73,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 color: primaryColor,
                 height: 25,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 height: 7,
                 width: 7,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Color(0xffA8923B),
+                  color: const Color(0xffA8923B),
                 ),
               ),
             ],
@@ -99,13 +99,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 color: primaryColor,
                 height: 25,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 height: 7,
                 width: 7,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Color(0xffA8923B),
+                  color: const Color(0xffA8923B),
                 ),
               ),
             ],
@@ -125,13 +125,13 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 color: primaryColor,
                 height: 25,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 height: 7,
                 width: 7,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Color(0xffA8923B),
+                  color: const Color(0xffA8923B),
                 ),
               ),
             ],

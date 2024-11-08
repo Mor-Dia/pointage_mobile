@@ -14,10 +14,11 @@ class LigneCredit extends StatefulWidget {
 class _LigneCreditState extends State<LigneCredit> {
   @override
   bool hide = false;
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffffffff),
+        backgroundColor: const Color(0xffffffff),
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
@@ -30,7 +31,7 @@ class _LigneCreditState extends State<LigneCredit> {
             ),
           ),
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black, //change your color here
         ),
         toolbarHeight: 60,
@@ -40,7 +41,7 @@ class _LigneCreditState extends State<LigneCredit> {
             Text(
               'Mes lignes crédits',
               style: GoogleFonts.arimo(
-                color: Color(0xff15274d),
+                color: const Color(0xff15274d),
                 fontSize: MediaQuery.of(context).size.width * 0.055,
                 fontWeight: FontWeight.bold,
               ),
@@ -52,7 +53,7 @@ class _LigneCreditState extends State<LigneCredit> {
         color: Colors.white,
         child: Column(
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Container(
@@ -72,7 +73,7 @@ class _LigneCreditState extends State<LigneCredit> {
                           Text('Solde',
                               style:
                                   TextStyle(fontSize: 13, color: primaryColor)),
-                          Text('20 000' + ' xof'.toUpperCase(),
+                          Text('20 000${' xof'.toUpperCase()}',
                               style: TextStyle(
                                   fontSize: 16,
                                   color: primaryColor,
@@ -82,14 +83,14 @@ class _LigneCreditState extends State<LigneCredit> {
                       Icon(
                         hide ? Icons.visibility_off : Icons.remove_red_eye,
                         size: 20,
-                        color: Color(0xff15274d),
+                        color: const Color(0xff15274d),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Padding(
@@ -99,7 +100,7 @@ class _LigneCreditState extends State<LigneCredit> {
                 handlerPress: () => {},
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Expanded(
@@ -116,8 +117,8 @@ class _LigneCreditState extends State<LigneCredit> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('20 000' + ' xof'.toUpperCase()),
-                            SizedBox(height: 5),
+                            Text('20 000${' xof'.toUpperCase()}'),
+                            const SizedBox(height: 5),
                             Text(
                               'Payé par wave | 23/04/24',
                               style: TextStyle(

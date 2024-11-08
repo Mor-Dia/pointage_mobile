@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "574310982609",
+    "project_id": "yogividamobile",
+    "storage_bucket": "yogividamobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:574310982609:android:cf8f59ba78c53db0de76f0",
+        "android_client_info": {
+          "package_name": "com.guindyprojects.yogivida"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl2N3RLnZaLMgCrjS-9CIY7BSt9vizQqI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

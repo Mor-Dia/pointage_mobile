@@ -11,7 +11,7 @@ class NotificationsPage extends StatelessWidget {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          backgroundColor: Color(0xffffffff),
+          backgroundColor: const Color(0xffffffff),
           elevation: 0,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
@@ -24,7 +24,7 @@ class NotificationsPage extends StatelessWidget {
               ),
             ),
           ),
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
           toolbarHeight: 60,
@@ -61,7 +61,7 @@ class NotificationsPage extends StatelessWidget {
                                   color: primaryColor,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Text(
+                            const Text(
                               "Lorem ipsum dolor sit amet, consectetur ",
                               style:
                                   TextStyle(color: Colors.grey, fontSize: 11),

@@ -47,7 +47,7 @@ class _BoutiqueState extends State<Boutique> {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xffffffff),
+          backgroundColor: const Color(0xffffffff),
           elevation: 0,
           automaticallyImplyLeading:
               false, // Empêche l'affichage du bouton back
@@ -58,14 +58,14 @@ class _BoutiqueState extends State<Boutique> {
               Text(
                 'Boutique',
                 style: GoogleFonts.arimo(
-                  color: Color(0xff15274d),
+                  color: const Color(0xff15274d),
                   fontSize: MediaQuery.of(context).size.width * 0.055,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               GestureDetector(
-                onTap: () => Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Panier())),
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Panier())),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: <Widget>[
@@ -90,17 +90,17 @@ class _BoutiqueState extends State<Boutique> {
                       child: Container(
                         width: 20,
                         height: 20,
-                        padding: EdgeInsets.all(2),
+                        padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
                             color: secondColor,
                             borderRadius: BorderRadius.circular(10),
                             border:
                                 Border.all(width: 1.5, color: Colors.white)),
-                        constraints: BoxConstraints(
+                        constraints: const BoxConstraints(
                           minWidth: 20,
                           minHeight: 20,
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -127,7 +127,7 @@ class _BoutiqueState extends State<Boutique> {
           color: Colors.white,
           child: ListView(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               SingleChildScrollView(
@@ -163,7 +163,7 @@ class _BoutiqueState extends State<Boutique> {
                                         .normal, // Texte en gras pour la famille active
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                                 height:
                                     4.0), // Espace entre le texte et la ligne soulignée
                             if (selectedFamilyIndex == index)
@@ -173,7 +173,7 @@ class _BoutiqueState extends State<Boutique> {
                                   final textPainter = TextPainter(
                                     text: TextSpan(
                                       text: family,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 14.0,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -199,27 +199,28 @@ class _BoutiqueState extends State<Boutique> {
                   }).toList(),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       flex: 1,
                       child: Inputfiled(
                         type: "text",
                         text: 'Désignation',
                         icon: 'loupe',
+                        error: '',
                       ),
                     ),
-                    SizedBox(width: 10),
-                    Text('|'),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
+                    const Text('|'),
+                    const SizedBox(width: 10),
                     Container(
                       height: 45,
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       decoration: BoxDecoration(
                         color: primaryColor, // Couleur de fond bleu
                         borderRadius: BorderRadius.circular(15.0),
@@ -228,10 +229,10 @@ class _BoutiqueState extends State<Boutique> {
                         children: [
                           SvgPicture.asset("assets/icons/stat.svg",
                               height: 15, color: Colors.white),
-                          SizedBox(
+                          const SizedBox(
                               width:
                                   10.0), // Espace entre l'icône et le DropdownButton
-                          Text(
+                          const Text(
                             'Par prix',
                             style: TextStyle(color: Colors.white),
                           )
@@ -241,7 +242,7 @@ class _BoutiqueState extends State<Boutique> {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
@@ -250,7 +251,7 @@ class _BoutiqueState extends State<Boutique> {
                   spacing: 10,
                   runSpacing: 10,
                   children: listPratique
-                      .map((toElement) => Container(
+                      .map((toElement) => SizedBox(
                             width: size.width / 2 - 25,
                             child: CardProduit(
                               data: toElement,
@@ -267,6 +268,8 @@ class _BoutiqueState extends State<Boutique> {
 }
 
 class HorizontalCalendar extends StatefulWidget {
+  const HorizontalCalendar({super.key});
+
   @override
   _HorizontalCalendarState createState() => _HorizontalCalendarState();
 }
@@ -312,7 +315,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
         // Liste horizontale des jours de la semaine courante
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Container(
+          child: SizedBox(
             height: 75,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -331,9 +334,10 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                   },
                   child: Container(
                     width: 60,
-                    margin: EdgeInsets.only(right: 20.0),
+                    margin: const EdgeInsets.only(right: 20.0),
                     decoration: BoxDecoration(
-                      color: isSelected ? Color(0xffA8923B) : Colors.white,
+                      color:
+                          isSelected ? const Color(0xffA8923B) : Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected ? Colors.transparent : greyColor,

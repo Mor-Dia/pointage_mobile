@@ -19,7 +19,7 @@ class _ReservationState extends State<Reservation> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xffffffff),
+          backgroundColor: const Color(0xffffffff),
           elevation: 0,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
@@ -32,7 +32,7 @@ class _ReservationState extends State<Reservation> {
               ),
             ),
           ),
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
           toolbarHeight: 60,
@@ -65,7 +65,7 @@ class _ReservationState extends State<Reservation> {
                 TabBarIndicatorSize.label, // Le trait prend la largeur du texte
             labelColor: primaryColor, // Couleur du texte actif
             unselectedLabelColor: greyColor, // Couleur du texte inactif
-            tabs: [
+            tabs: const [
               Tab(text: 'En cours'),
               Tab(text: 'Passées'),
             ],
@@ -73,7 +73,7 @@ class _ReservationState extends State<Reservation> {
         ),
         body: Container(
           color: Colors.white,
-          child: TabBarView(
+          child: const TabBarView(
             children: [
               ScrollableTabPage(
                 data: [1, 2],
@@ -96,7 +96,7 @@ class ScrollableTabPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        children: data.map((toElement) => CardRowPlanning2()).toList(),
+        children: data.map((toElement) => const CardRowPlanning2()).toList(),
       ),
     );
   }

@@ -32,7 +32,7 @@ class Cardactivite extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontSize: MediaQuery.of(context).size.width * 0.040),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Row(
               children: [
                 Row(
@@ -41,7 +41,8 @@ class Cardactivite extends StatelessWidget {
                     SizedBox(width: MediaQuery.of(context).size.width * 0.010),
                     Text(
                       data.heure,
-                      style: TextStyle(color: Color(0xff838282), fontSize: 11),
+                      style: const TextStyle(
+                          color: Color(0xff838282), fontSize: 11),
                     )
                   ],
                 ),
@@ -52,7 +53,8 @@ class Cardactivite extends StatelessWidget {
                     SizedBox(width: MediaQuery.of(context).size.width * 0.010),
                     Text(
                       data.nomProf,
-                      style: TextStyle(color: Color(0xff838282), fontSize: 11),
+                      style: const TextStyle(
+                          color: Color(0xff838282), fontSize: 11),
                     )
                   ],
                 )

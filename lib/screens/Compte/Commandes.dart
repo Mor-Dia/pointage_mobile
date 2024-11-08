@@ -15,7 +15,7 @@ class _CommandesState extends State<Commandes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffffffff),
+        backgroundColor: const Color(0xffffffff),
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
@@ -28,7 +28,7 @@ class _CommandesState extends State<Commandes> {
             ),
           ),
         ),
-        iconTheme: IconThemeData(
+        iconTheme: const IconThemeData(
           color: Colors.black, //change your color here
         ),
         toolbarHeight: 60,
@@ -38,7 +38,7 @@ class _CommandesState extends State<Commandes> {
             Text(
               'Mes commandes',
               style: GoogleFonts.arimo(
-                color: Color(0xff15274d),
+                color: const Color(0xff15274d),
                 fontSize: MediaQuery.of(context).size.width * 0.055,
                 fontWeight: FontWeight.bold,
               ),
@@ -49,7 +49,7 @@ class _CommandesState extends State<Commandes> {
       body: Container(
         color: Colors.white,
         child: ListView(
-          children: [RowCommande()],
+          children: const [RowCommande()],
         ),
       ),
     );
@@ -74,15 +74,15 @@ class RowCommande extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("N°454576"),
+                const Text("N°454576"),
                 Text(
-                  "80 000" + " xof".toUpperCase(),
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  "80 000${" xof".toUpperCase()}",
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 )
               ],
             ),
-            SizedBox(height: 5),
-            Row(
+            const SizedBox(height: 5),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
@@ -101,7 +101,7 @@ class RowCommande extends StatelessWidget {
                 )
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Container(
@@ -116,7 +116,7 @@ class RowCommande extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SvgPicture.asset('assets/icons/cadit.svg'),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
@@ -131,7 +131,7 @@ class RowCommande extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Container(

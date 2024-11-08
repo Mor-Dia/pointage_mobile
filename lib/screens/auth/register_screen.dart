@@ -1,20 +1,89 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/screens/Home/MainHome.dart';
-import 'package:yogivida_mobile/screens/auth/login_screen.dart';
-import 'package:yogivida_mobile/screens/auth/register_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:yogivida_mobile/screens/Home/home_page.dart';
+import 'package:yogivida_mobile/screens/auth/login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  String selectedGender = 'Homme'; // Valeur par défaut pour le genre
+class RegisterScreen extends StatefulWidget {
+  RegisterScreen({super.key});
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  List<TextEditingController>? _controllers;
+
+  String selectedGender = 'Homme';
+
+  // Liste de champs avec leurs attributs
+  List<Map<String, dynamic>>? inputFields;
+
+  @override
+  void initState() {
+    super.initState();
+
+    inputFields = [
+      {
+        'type': 'text',
+        'text': 'Nom',
+        'icon': 'user',
+        'controller': _controllers?[0],
+        'error': ''
+      },
+      {
+        'type': 'text',
+        'text': 'Prénom',
+        'icon': 'user',
+        'controller': _controllers?[1],
+        'error': ''
+      },
+      {
+        'type': 'text',
+        'text': 'Email',
+        'icon': 'mail',
+        'controller': _controllers?[2],
+        'error': ''
+      },
+      {
+        'type': 'text',
+        'text': 'Numéro de téléphone',
+        'icon': 'phone',
+        'controller': _controllers?[3],
+        'error': ''
+      },
+      {
+        'type': 'select',
+        'text': 'Genre',
+        'icon': '',
+        'controller': null,
+        'error': ''
+      },
+      {
+        'type': 'password',
+        'text': 'Mot de passe',
+        'icon': '',
+        'controller': _controllers?[4],
+        'error': ''
+      },
+      {
+        'type': 'password',
+        'text': 'Confirmer le mot de passe',
+        'icon': '',
+        'controller': _controllers?[5],
+        'error': ''
+      }
+    ];
+
+    for (int i = 0; i < inputFields!.length; i++) {
+      _controllers?.add(TextEditingController());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    Future signUp() async {}
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -43,42 +112,23 @@ class RegisterScreen extends StatelessWidget {
                         SizedBox(
                             height: MediaQuery.of(context).size.height *
                                 0.1), // Espacement pour centrer verticalement
-                        Inputfiled(
-                          type: 'text',
-                          text: "Nom d'utilisateur",
-                          icon: 'user',
-                        ),
-                        SizedBox(height: 30),
-                        Inputfiled(
-                          type: 'text',
-                          text: 'Email',
-                          icon: 'mail',
-                        ),
-                        SizedBox(height: 30),
-                        Inputfiled(
-                          type: 'text',
-                          text: 'Numéro de téléphone',
-                          icon: 'phone',
-                        ),
-                        SizedBox(height: 30),
-                        Inputfiled(
-                          type: 'select',
-                          text: 'Genre',
-                          icon: '',
-                        ),
-                        SizedBox(height: 30),
-                        Inputfiled(
-                          type: 'password',
-                          text: 'Mot de passe',
-                          icon: '',
-                        ),
-                        SizedBox(height: 30),
-                        Inputfiled(
-                          type: 'password',
-                          text: 'Confirmer le mote de passe',
-                          icon: '',
-                        ),
 
+                        Column(
+                            children: inputFields!.map((field) {
+                          return Column(
+                            children: [
+                              Inputfiled(
+                                type: field['type'],
+                                text: field['text'],
+                                icon: field['icon'],
+                                controller: field['controller'],
+                                error: field[
+                                    'error'], // L'erreur est vide au départ
+                              ),
+                              const SizedBox(height: 30),
+                            ],
+                          );
+                        }).toList()),
                         SizedBox(
                             height: MediaQuery.of(context).size.height *
                                 0.1), // Espacement en bas pour mieux centrer
@@ -92,17 +142,19 @@ class RegisterScreen extends StatelessWidget {
                   ButtonFiled(
                     text: "S'inscrire",
                     handlerPress: () => {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Mainhome()),
-                      )
+                      signUp()
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => const Mainhome()
+                      // ),
                     },
                   ),
                   const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Vous avez déjà un compte ? ',
                         style: TextStyle(
                           fontSize: 13,
@@ -116,7 +168,7 @@ class RegisterScreen extends StatelessWidget {
                                 builder: (context) => LoginScreen()),
                           )
                         },
-                        child: Text(
+                        child: const Text(
                           'Connectez-vous !',
                           textAlign: TextAlign.right,
                           style: TextStyle(

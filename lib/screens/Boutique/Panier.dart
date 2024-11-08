@@ -24,7 +24,7 @@ class _PanierState extends State<Panier> {
     ];
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xffffffff),
+          backgroundColor: const Color(0xffffffff),
           elevation: 0,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
@@ -37,7 +37,7 @@ class _PanierState extends State<Panier> {
               ),
             ),
           ),
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.black, //change your color here
           ),
           toolbarHeight: 60,
@@ -47,7 +47,7 @@ class _PanierState extends State<Panier> {
               Text(
                 'Mon panier',
                 style: GoogleFonts.arimo(
-                  color: Color(0xff15274d),
+                  color: const Color(0xff15274d),
                   fontSize: MediaQuery.of(context).size.width * 0.055,
                   fontWeight: FontWeight.bold,
                 ),

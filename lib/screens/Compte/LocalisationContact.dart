@@ -5,6 +5,8 @@ import 'package:yogivida_mobile/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LocalisationContact extends StatefulWidget {
+  const LocalisationContact({super.key});
+
   @override
   _LocalisationContactState createState() => _LocalisationContactState();
 }
@@ -47,9 +49,9 @@ class _LocalisationContactState extends State<LocalisationContact> {
             ),
             markers: {
               Marker(
-                markerId: MarkerId('yogi_vida'),
+                markerId: const MarkerId('yogi_vida'),
                 position: _center,
-                infoWindow: InfoWindow(
+                infoWindow: const InfoWindow(
                   title: 'YOGI VIDA',
                   snippet: '137 rue Moussè Diop x rue Jules Ferry',
                 ),
@@ -91,7 +93,7 @@ class _LocalisationContactState extends State<LocalisationContact> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('YOGI VIDA',
+                          const Text('YOGI VIDA',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -102,11 +104,11 @@ class _LocalisationContactState extends State<LocalisationContact> {
                             handlerPress: () => {_launchCaller(phoneNumber)},
                           ))
                         ]),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     Row(
                       children: [
                         Icon(Icons.location_on, color: primaryColor),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Expanded(
                           child: Text(
                             '137 rue Moussè Diop x rue Jules Ferry',
@@ -115,29 +117,29 @@ class _LocalisationContactState extends State<LocalisationContact> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     Row(
                       children: [
                         Icon(Icons.phone, color: primaryColor),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Text(
                           '+221 33 822 60 35',
                           style: TextStyle(color: primaryColor),
                         ),
                       ],
                     ),
-                    SizedBox(height: 8.0),
+                    const SizedBox(height: 8.0),
                     Row(
                       children: [
                         Icon(Icons.email, color: primaryColor),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Text(
                           'yogivida18@gmail.com',
                           style: TextStyle(color: primaryColor),
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.0),
+                    const SizedBox(height: 16.0),
                   ],
                 ),
               ),

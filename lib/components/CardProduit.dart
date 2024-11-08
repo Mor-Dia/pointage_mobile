@@ -21,11 +21,13 @@ class _CardProduitState extends State<CardProduit> {
   @override
   bool? liked;
   int qte = 0;
+  @override
   void initState() {
     super.initState();
     liked = widget.data.liked;
   }
 
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.60,
@@ -44,7 +46,7 @@ class _CardProduitState extends State<CardProduit> {
               height: 100,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -52,8 +54,7 @@ class _CardProduitState extends State<CardProduit> {
             children: [
               Flexible(
                 child: Text(
-                  widget.data.nomPratique.toUpperCase() +
-                      'dcisldjc,zpodckzeopc',
+                  '${widget.data.nomPratique.toUpperCase()}dcisldjc,zpodckzeopc',
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.arimo(
                     fontSize: MediaQuery.of(context).size.width * 0.040,
@@ -62,33 +63,32 @@ class _CardProduitState extends State<CardProduit> {
               ),
               GestureDetector(
                 child: liked == false
-                    ? Icon(
+                    ? const Icon(
                         Icons.favorite_outline,
                         size: 25,
                       )
-                    : Icon(
+                    : const Icon(
                         Icons.favorite,
                         color: Color(0xffFF0000),
                         size: 25,
                       ),
                 onTap: () {
                   setState(() {
-                    print(liked);
                     liked = !liked!;
                   });
                 },
               )
             ],
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             textAlign: TextAlign.start,
-            ("80.000" + ' xof').toUpperCase(),
+            ("80.000" ' xof').toUpperCase(),
             style: GoogleFonts.arimo(
                 fontSize: MediaQuery.of(context).size.width * 0.040,
                 fontWeight: FontWeight.bold),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Row(
@@ -107,7 +107,7 @@ class _CardProduitState extends State<CardProduit> {
                   decoration: BoxDecoration(
                       color: greyColor,
                       borderRadius: BorderRadius.circular(20)),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       '-',
                       textAlign: TextAlign.center,
@@ -115,12 +115,12 @@ class _CardProduitState extends State<CardProduit> {
                   ),
                 ),
               ),
-              Container(
+              SizedBox(
+                width: 40,
                 child: Text(
                   qte.toString(),
                   textAlign: TextAlign.center,
                 ),
-                width: 40,
               ),
               GestureDetector(
                 onTap: () => {
@@ -134,7 +134,7 @@ class _CardProduitState extends State<CardProduit> {
                   decoration: BoxDecoration(
                       color: greyColor,
                       borderRadius: BorderRadius.circular(20)),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       '+',
                       textAlign: TextAlign.center,
@@ -144,7 +144,7 @@ class _CardProduitState extends State<CardProduit> {
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
               GestureDetector(
@@ -160,7 +160,7 @@ class _CardProduitState extends State<CardProduit> {
                       color: Colors.transparent,
                       border: Border.all(color: primaryColor, width: 1),
                       borderRadius: BorderRadius.circular(20)),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'UM',
                       style: TextStyle(fontSize: 8),
@@ -171,7 +171,7 @@ class _CardProduitState extends State<CardProduit> {
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Container(
             height: 30,
             decoration: BoxDecoration(
@@ -184,7 +184,7 @@ class _CardProduitState extends State<CardProduit> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset('assets/icons/cadit.svg'),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Flexible(

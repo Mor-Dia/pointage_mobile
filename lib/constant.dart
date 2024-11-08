@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-final Color primaryColor = Color(0xff15274D);
-final Color greyColor = Color(0xffD9D9D9);
-final Color greyColorL = Color(0xffF1F1F1);
-final Color secondColor = Color(0xffA8923B);
-final padding_constant = 20.0;
+final Color primaryColor = const Color(0xff15274D);
+final Color greyColor = const Color(0xffD9D9D9);
+final Color greyColorL = const Color(0xffF1F1F1);
+final Color secondColor = const Color(0xffA8923B);
+const padding_constant = 20.0;
+const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
+const BASE_URL_QGL = 'https://yogi-vida.com/yogivida_back_test/graphql?query=';
 
 class Activite {
   final String nomActivite;
@@ -22,3 +25,21 @@ class Pratique {
 
   Pratique(this.nomPratique, this.image, this.liked);
 }
+
+class UserClass {
+  final dynamic data;
+  final dynamic errors;
+  final dynamic success;
+
+  factory UserClass.fromJson(Map<String, dynamic> json) {
+    return UserClass(
+      data: json['data'] ?? '',
+      success: json['success'] ?? '',
+      errors: json['errors'] ?? '',
+    );
+  }
+
+  UserClass({required this.data, required this.errors, required this.success});
+}
+
+FirebaseAuth auth = FirebaseAuth.instance;

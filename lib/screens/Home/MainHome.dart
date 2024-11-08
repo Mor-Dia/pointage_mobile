@@ -21,9 +21,9 @@ class _MainhomeState extends State<Mainhome> {
   // Liste des pages à afficher dans l'IndexedStack
   final List<Widget> _pages = [
     HomePage(),
-    Planning(),
-    Boutique(),
-    MonCompte(),
+    const Planning(),
+    const Boutique(),
+    const MonCompte(),
   ];
 
   void _onItemTapped(int index) {
@@ -32,6 +32,7 @@ class _MainhomeState extends State<Mainhome> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: IndexedStack(
@@ -39,7 +40,7 @@ class _MainhomeState extends State<Mainhome> {
           children: _pages,
         ),
         bottomNavigationBar: NavigationBar(
-          animationDuration: Duration(milliseconds: 500),
+          animationDuration: const Duration(milliseconds: 500),
           selectedIndex: _selectedIndex,
           onDestinationSelected: _onItemTapped,
           backgroundColor: Colors.white,
@@ -68,7 +69,7 @@ class _MainhomeState extends State<Mainhome> {
                       width: 7,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Color(0xffA8923B),
+                        color: const Color(0xffA8923B),
                       ),
                     ),
                   ),
@@ -98,7 +99,7 @@ class _MainhomeState extends State<Mainhome> {
                       width: 7,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Color(0xffA8923B),
+                        color: const Color(0xffA8923B),
                       ),
                     ),
                   ),
@@ -128,7 +129,7 @@ class _MainhomeState extends State<Mainhome> {
                       width: 7,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Color(0xffA8923B),
+                        color: const Color(0xffA8923B),
                       ),
                     ),
                   ),
@@ -158,7 +159,7 @@ class _MainhomeState extends State<Mainhome> {
                       width: 7,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Color(0xffA8923B),
+                        color: const Color(0xffA8923B),
                       ),
                     ),
                   ),
@@ -167,6 +168,5 @@ class _MainhomeState extends State<Mainhome> {
             ),
           ],
         ));
-    ;
   }
 }

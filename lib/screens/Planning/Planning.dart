@@ -22,7 +22,7 @@ class _PlanningState extends State<Planning> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xffffffff),
+          backgroundColor: const Color(0xffffffff),
           elevation: 0,
           automaticallyImplyLeading:
               false, // Empêche l'affichage du bouton back
@@ -33,7 +33,7 @@ class _PlanningState extends State<Planning> {
               Text(
                 'Planning',
                 style: GoogleFonts.arimo(
-                  color: Color(0xff15274d),
+                  color: const Color(0xff15274d),
                   fontSize: MediaQuery.of(context).size.width * 0.055,
                   fontWeight: FontWeight.bold,
                 ),
@@ -42,7 +42,7 @@ class _PlanningState extends State<Planning> {
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NotificationsPage())),
+                        builder: (context) => const NotificationsPage())),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: <Widget>[
@@ -51,7 +51,7 @@ class _PlanningState extends State<Planning> {
                       width: 45,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Color(0xff15274d),
+                        color: const Color(0xff15274d),
                       ),
                       child: Center(
                         child: SvgPicture.asset(
@@ -67,17 +67,17 @@ class _PlanningState extends State<Planning> {
                       child: Container(
                         width: 20,
                         height: 20,
-                        padding: EdgeInsets.all(2),
+                        padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
                             color: primaryColor,
                             borderRadius: BorderRadius.circular(10),
                             border:
                                 Border.all(width: 1.5, color: Colors.white)),
-                        constraints: BoxConstraints(
+                        constraints: const BoxConstraints(
                           minWidth: 20,
                           minHeight: 20,
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -104,31 +104,32 @@ class _PlanningState extends State<Planning> {
           color: Colors.white,
           child: ListView(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               HorizontalCalendar(),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       flex: 1,
                       child: Inputfiled(
                         type: "text",
                         text: 'Désignation',
                         icon: 'loupe',
+                        error: '',
                       ),
                     ),
-                    SizedBox(width: 10),
-                    Text('|'),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
+                    const Text('|'),
+                    const SizedBox(width: 10),
                     Container(
                       height: 45,
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       decoration: BoxDecoration(
                         color: primaryColor, // Couleur de fond bleu
                         borderRadius: BorderRadius.circular(15.0),
@@ -137,19 +138,19 @@ class _PlanningState extends State<Planning> {
                         children: [
                           SvgPicture.asset("assets/icons/home2.svg",
                               height: 15, color: Colors.white),
-                          SizedBox(
+                          const SizedBox(
                               width:
                                   10.0), // Espace entre l'icône et le DropdownButton
                           DropdownButton(
                             dropdownColor: primaryColor, // Couleur du dropdown
                             value: selectedValue,
-                            hint: Text(
+                            hint: const Text(
                               'Studio',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.white), // Couleur du texte
                             icon: Padding(
                               padding: const EdgeInsets.only(left: 10.0),
@@ -159,12 +160,13 @@ class _PlanningState extends State<Planning> {
                               ),
                             ),
                             underline:
-                                SizedBox(), // Supprime la ligne par défaut
+                                const SizedBox(), // Supprime la ligne par défaut
                             items: options.map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value,
-                                    style: TextStyle(color: Colors.white)),
+                                    style:
+                                        const TextStyle(color: Colors.white)),
                               );
                             }).toList(),
                             onChanged: (String? newValue) {
@@ -179,7 +181,7 @@ class _PlanningState extends State<Planning> {
                   ],
                 ),
               ),
-              Column(
+              const Column(
                 children: [CardRowPlanning()],
               )
             ],
@@ -189,6 +191,8 @@ class _PlanningState extends State<Planning> {
 }
 
 class HorizontalCalendar extends StatefulWidget {
+  const HorizontalCalendar({super.key});
+
   @override
   _HorizontalCalendarState createState() => _HorizontalCalendarState();
 }
@@ -232,7 +236,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
         ),
 
         // Liste horizontale des jours de la semaine courante
-        Container(
+        SizedBox(
           height: 75,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -252,10 +256,10 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                 child: Container(
                   width: 60,
                   margin: index == 0
-                      ? EdgeInsets.only(right: 20.0, left: 20)
-                      : EdgeInsets.only(right: 20.0),
+                      ? const EdgeInsets.only(right: 20.0, left: 20)
+                      : const EdgeInsets.only(right: 20.0),
                   decoration: BoxDecoration(
-                    color: isSelected ? Color(0xffA8923B) : Colors.white,
+                    color: isSelected ? const Color(0xffA8923B) : Colors.white,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isSelected ? Colors.transparent : greyColor,

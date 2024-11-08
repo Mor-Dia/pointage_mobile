@@ -21,11 +21,13 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
   @override
   bool? liked;
   int qte = 0;
+  @override
   void initState() {
     super.initState();
     liked = widget.data.liked;
   }
 
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.60,
@@ -50,7 +52,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                 ),
               ),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             Expanded(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +62,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                       children: [
                         Flexible(
                           child: Text(
-                            widget.data.nomPratique.toUpperCase() + '',
+                            '${widget.data.nomPratique.toUpperCase()}',
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.arimo(
                               fontSize:
@@ -68,12 +70,12 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Text(
                           textAlign: TextAlign.start,
-                          ("80.000" + ' xof').toUpperCase(),
+                          ("80.000" ' xof').toUpperCase(),
                           style: GoogleFonts.arimo(
                               fontSize:
                                   MediaQuery.of(context).size.width * 0.040,
@@ -81,7 +83,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
@@ -100,7 +102,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                             decoration: BoxDecoration(
                                 color: greyColor,
                                 borderRadius: BorderRadius.circular(20)),
-                            child: Center(
+                            child: const Center(
                               child: Text(
                                 '-',
                                 textAlign: TextAlign.center,
@@ -108,12 +110,12 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                             ),
                           ),
                         ),
-                        Container(
+                        SizedBox(
+                          width: 40,
                           child: Text(
                             qte.toString(),
                             textAlign: TextAlign.center,
                           ),
-                          width: 40,
                         ),
                         GestureDetector(
                           onTap: () => {
@@ -127,7 +129,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                             decoration: BoxDecoration(
                                 color: greyColor,
                                 borderRadius: BorderRadius.circular(20)),
-                            child: Center(
+                            child: const Center(
                               child: Text(
                                 '+',
                                 textAlign: TextAlign.center,
@@ -137,7 +139,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -157,7 +159,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                                     border: Border.all(
                                         color: primaryColor, width: 1),
                                     borderRadius: BorderRadius.circular(20)),
-                                child: Center(
+                                child: const Center(
                                   child: Text(
                                     'UM',
                                     style: TextStyle(fontSize: 8),
@@ -168,7 +170,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         IntrinsicWidth(

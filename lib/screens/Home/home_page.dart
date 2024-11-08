@@ -10,6 +10,8 @@ import 'package:intl/intl.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     List<Activite> listActivite = [
@@ -28,7 +30,7 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xffffffff),
+        backgroundColor: const Color(0xffffffff),
         elevation: 0,
         automaticallyImplyLeading: false, // Empêche l'affichage du bouton back
         toolbarHeight: 60,
@@ -38,14 +40,16 @@ class HomePage extends StatelessWidget {
             Text(
               'Accueil',
               style: GoogleFonts.arimo(
-                color: Color(0xff15274d),
+                color: const Color(0xff15274d),
                 fontSize: MediaQuery.of(context).size.width * 0.055,
                 fontWeight: FontWeight.bold,
               ),
             ),
             GestureDetector(
-              onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => NotificationsPage())),
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const NotificationsPage())),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: <Widget>[
@@ -54,7 +58,7 @@ class HomePage extends StatelessWidget {
                     width: 45,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      color: Color(0xff15274d),
+                      color: const Color(0xff15274d),
                     ),
                     child: Center(
                       child: SvgPicture.asset(
@@ -70,16 +74,16 @@ class HomePage extends StatelessWidget {
                     child: Container(
                       width: 20,
                       height: 20,
-                      padding: EdgeInsets.all(2),
+                      padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                           color: primaryColor,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(width: 1.5, color: Colors.white)),
-                      constraints: BoxConstraints(
+                      constraints: const BoxConstraints(
                         minWidth: 20,
                         minHeight: 20,
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -106,7 +110,7 @@ class HomePage extends StatelessWidget {
         color: Colors.white,
         child: ListView(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Padding(
@@ -120,7 +124,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -152,7 +156,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Padding(
@@ -166,7 +170,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -206,8 +210,8 @@ class HomePage extends StatelessWidget {
     return showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          return Padding(
-            padding: const EdgeInsets.all(20),
+          return const Padding(
+            padding: EdgeInsets.all(20),
             child: Row(
               children: [Text("hello")],
             ),
