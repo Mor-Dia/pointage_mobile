@@ -16,3 +16,7 @@ final class AuthBlocError extends AuthBlocState {
 
   AuthBlocError({required this.error});
 }
+
+final class UpdateUserSucces extends AuthBlocInitial {
+  UpdateUserSucces({required super.user});
+}

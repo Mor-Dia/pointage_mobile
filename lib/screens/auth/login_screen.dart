@@ -19,7 +19,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool verified = false;
+  bool isLoading = false;
 
   List<TextEditingController> _controllers = [];
 
@@ -55,11 +55,19 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void dispose() {
+    // Ne pas oublier de nettoyer le contrôleur lorsque le widget est supprimé
+    for (var i = 0; i < _controllers.length; i++) {
+      _controllers[i].dispose();
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Future login() async {
       setState(() {
-        verified = false;
+        isLoading = false;
       });
 
       String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
@@ -104,22 +112,26 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (!_areFieldsEmpty()) {
-        context.read<AuthBlocBloc>().add(loginEvent(data: data));
+        context.read<AuthBlocBloc>().add(LoginEvent(data: data));
       }
     }
 
     return BlocConsumer<AuthBlocBloc, AuthBlocState>(
       listener: (context, state) {
-        if (state is AuthBlocInitial && state.user!.data != '') {
+        if (state is AuthBlocInitial && state.user?.data != '') {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Mainhome()),
+            (Route<dynamic> route) => false,
+          );
+        }
+        if (state is AuthBlocLoading) {
           setState(() {
-            verified = true;
+            isLoading = true;
           });
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => Mainhome()),
-              (Route<dynamic> route) => false,
-            );
+        } else {
+          setState(() {
+            isLoading = false;
           });
         }
       },
@@ -194,34 +206,41 @@ class _LoginScreenState extends State<LoginScreen> {
                               }).toList()),
                               (state is AuthBlocInitial &&
                                       state.user != null &&
-                                      state.user!.errors.isNotEmpty)
+                                      state.user?.errors.isNotEmpty)
                                   ? Center(
                                       child: IntrinsicWidth(
-                                        child: Row(
+                                        child: Column(
                                           children: [
-                                            Icon(
-                                              Icons.info,
-                                              color: Colors.red,
-                                              size: 12,
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.info,
+                                                  color: Colors.red,
+                                                  size: 12,
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text(
+                                                  (state as AuthBlocInitial)
+                                                      .user!
+                                                      .errors,
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ],
                                             ),
                                             SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              (state as AuthBlocInitial)
-                                                  .user!
-                                                  .errors,
-                                              style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
+                                              height: 30,
+                                            )
                                           ],
                                         ),
                                       ),
                                     )
                                   : SizedBox.shrink(),
-                              const SizedBox(height: 30),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -253,7 +272,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Column(
                       children: [
                         ButtonFiled(
-                          isLoading: verified,
+                          isLoading: isLoading,
                           text: 'Se connecter',
                           handlerPress: () => {
                             login(),

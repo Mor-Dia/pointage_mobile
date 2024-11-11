@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
+import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Home/MainHome.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
@@ -12,12 +13,20 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  List<TextEditingController>? _controllers;
-
-  String selectedGender = 'Homme';
-
-  // Liste de champs avec leurs attributs
+  List<TextEditingController> _controllers = [];
   List<Map<String, dynamic>>? inputFields;
+  Item? selectedGender;
+
+  final List<Item> items = [
+    Item(id: 1, nom: 'Homme'),
+    Item(id: 2, nom: 'Femme')
+  ];
+
+  void selectGenre(Item value) {
+    setState(() {
+      selectedGender = value;
+    });
+  }
 
   @override
   void initState() {
@@ -26,30 +35,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
     inputFields = [
       {
         'type': 'text',
-        'text': 'Nom',
+        'text': 'Nom ',
         'icon': 'user',
-        'controller': _controllers?[0],
+        'controller': null,
         'error': ''
       },
       {
         'type': 'text',
         'text': 'Prénom',
         'icon': 'user',
-        'controller': _controllers?[1],
+        'controller': null,
         'error': ''
       },
       {
         'type': 'text',
         'text': 'Email',
         'icon': 'mail',
-        'controller': _controllers?[2],
+        'controller': null,
         'error': ''
       },
       {
         'type': 'text',
         'text': 'Numéro de téléphone',
         'icon': 'phone',
-        'controller': _controllers?[3],
+        'controller': null,
         'error': ''
       },
       {
@@ -57,27 +66,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'text': 'Genre',
         'icon': '',
         'controller': null,
+        'selectedValue': selectedGender,
+        'items': items,
         'error': ''
       },
       {
         'type': 'password',
         'text': 'Mot de passe',
         'icon': '',
-        'controller': _controllers?[4],
+        'controller': null,
         'error': ''
       },
       {
         'type': 'password',
         'text': 'Confirmer le mot de passe',
         'icon': '',
-        'controller': _controllers?[5],
+        'controller': null,
         'error': ''
       }
     ];
 
     for (int i = 0; i < inputFields!.length; i++) {
-      _controllers?.add(TextEditingController());
+      _controllers.add(TextEditingController());
+      if (inputFields?[i]['type'] == "text" ||
+          inputFields?[i]['type'] == "password") {
+        setState(() {
+          inputFields![i]['controller'] = _controllers[i];
+        });
+      }
     }
+  }
+
+  void dispose() {
+    // Ne pas oublier de nettoyer le contrôleur lorsque le widget est supprimé
+    for (var i = 0; i < _controllers.length; i++) {
+      _controllers[i].dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -122,6 +147,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 text: field['text'],
                                 icon: field['icon'],
                                 controller: field['controller'],
+                                selectedValue: selectedGender,
+                                items: field['items'],
+                                handleAction: (value) => selectGenre(value!),
                                 error: field[
                                     'error'], // L'erreur est vide au départ
                               ),

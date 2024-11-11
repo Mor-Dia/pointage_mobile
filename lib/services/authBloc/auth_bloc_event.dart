@@ -9,10 +9,16 @@ class AppStartedEvent extends AuthBlocEvent {
   AppStartedEvent({required this.data});
 }
 
-class loginEvent extends AuthBlocEvent {
+class LoginEvent extends AuthBlocEvent {
   final Map<String, dynamic> data;
 
-  loginEvent({required this.data});
+  LoginEvent({required this.data});
+}
+
+class UpdateUserEvent extends AuthBlocEvent {
+  final Map<String, dynamic> data;
+
+  UpdateUserEvent({required this.data});
 }
 
 class SignUpEvent extends AuthBlocEvent {

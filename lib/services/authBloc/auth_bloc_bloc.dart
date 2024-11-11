@@ -40,7 +40,6 @@ Future<dynamic> refreshConnexion(Emitter<AuthBlocState> emit) async {
         UserClass user = UserClass.fromJson({
           'data': responseData['data']['clientspaginated']['data'][0]
         }); // Conversion du Map en User
-        print(user.data);
         emit(AuthBlocInitial(user: user));
       } else {
         print('Erreur lors de la connexion: ${response.statusCode}');
@@ -65,14 +64,38 @@ Future<dynamic> loginUser(
     // Vérification si la requête a réussi (statut 200-299)
     if (response.statusCode >= 200 && response.statusCode < 300) {
       // Parsing des données JSON reçues
-      final responseData = jsonDecode(response.body);
+      final responseData = await jsonDecode(response.body);
       UserClass user =
           UserClass.fromJson(responseData); // Conversion du Map en User
       emit(AuthBlocInitial(user: user));
 
       if (user.data != '') {
-        storeUserData(user.data);
+        await storeUserData(user.data);
+        await refreshConnexion(emit);
       }
+    } else {
+      print('Erreur lors de la connexion: ${response.statusCode}');
+    }
+  } catch (error) {
+    print('Erreur réseau ou autre: $error');
+  }
+}
+
+Future<dynamic> updateUser(
+    Map<String, dynamic>? data, Emitter<AuthBlocState> emit) async {
+  print(data);
+  try {
+    final url = Uri.parse(BASE_URL + 'update-user');
+    // Requête POST avec le corps de la requête encodé en JSON
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(data),
+    );
+
+    // Vérification si la requête a réussi (statut 200-299)
+    if (response.statusCode >= 200 && response.statusCode <= 302) {
+      await refreshConnexion(emit);
     } else {
       print('Erreur lors de la connexion: ${response.statusCode}');
     }
@@ -119,9 +142,15 @@ class AuthBlocBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
       await refreshConnexion(emit);
     });
 
-    on<loginEvent>((event, emit) async {
+    on<LoginEvent>((event, emit) async {
       emit(AuthBlocLoading());
       await loginUser(event.data, emit);
+    });
+
+    on<UpdateUserEvent>((event, emit) async {
+      emit(AuthBlocLoading());
+      await updateUser(event.data, emit);
+      await refreshConnexion(emit);
     });
 
     on<SignUpEvent>((event, emit) async {

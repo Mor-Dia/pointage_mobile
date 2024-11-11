@@ -42,4 +42,13 @@ class UserClass {
   UserClass({required this.data, required this.errors, required this.success});
 }
 
+final List<Item> items = [Item(id: 1, nom: 'Homme'), Item(id: 2, nom: 'Femme')];
+
+class Item {
+  final int id;
+  final String nom;
+
+  Item({required this.id, required this.nom});
+}
+
 FirebaseAuth auth = FirebaseAuth.instance;
