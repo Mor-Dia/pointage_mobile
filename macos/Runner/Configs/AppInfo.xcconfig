@@ -8,7 +8,7 @@
 PRODUCT_NAME = yogivida
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.yogivida
+PRODUCT_BUNDLE_IDENTIFIER = com.guindyprojects.yogivida
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.example. All rights reserved.

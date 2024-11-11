@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '574310982609',
     projectId: 'yogividamobile',
     storageBucket: 'yogividamobile.firebasestorage.app',
-    iosBundleId: 'com.example.yogivida',
+    iosBundleId: 'com.guindyprojects.yogivida',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '574310982609',
     projectId: 'yogividamobile',
     storageBucket: 'yogividamobile.firebasestorage.app',
-    iosBundleId: 'com.example.yogivida',
+    iosBundleId: 'com.guindyprojects.yogivida',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

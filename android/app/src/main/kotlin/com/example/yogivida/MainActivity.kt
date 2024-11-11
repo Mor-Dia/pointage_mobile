@@ -1,4 +1,4 @@
-package com.example.yogivida
+package com.guindyprojects.yogivida
 
 import io.flutter.embedding.android.FlutterActivity
 
