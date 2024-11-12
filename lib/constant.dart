@@ -6,6 +6,7 @@ final Color greyColor = const Color(0xffD9D9D9);
 final Color greyColorL = const Color(0xffF1F1F1);
 final Color secondColor = const Color(0xffA8923B);
 const padding_constant = 20.0;
+const REGISTRATION_ENDPOINT = "inscription";
 const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
 const BASE_URL_QGL = 'https://yogi-vida.com/yogivida_back_test/graphql?query=';
 

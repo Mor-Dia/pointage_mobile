@@ -1,8 +1,13 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
+import 'package:yogivida_mobile/components/notifier_dialog.dart';
 import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/screens/Home/MainHome.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
 
@@ -14,7 +19,9 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   List<TextEditingController> _controllers = [];
-  List<Map<String, dynamic>>? inputFields;
+  String? currentError;
+  List<Map<String, dynamic>> inputFields = [];
+
   Item? selectedGender;
 
   final List<Item> items = [
@@ -37,6 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'type': 'text',
         'text': 'Nom ',
         'icon': 'user',
+        'tag': 'nom',
         'controller': null,
         'error': ''
       },
@@ -44,6 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'type': 'text',
         'text': 'Prénom',
         'icon': 'user',
+        'tag': 'prenom',
         'controller': null,
         'error': ''
       },
@@ -51,6 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'type': 'text',
         'text': 'Email',
         'icon': 'mail',
+        'tag': 'email',
         'controller': null,
         'error': ''
       },
@@ -58,6 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'type': 'text',
         'text': 'Numéro de téléphone',
         'icon': 'phone',
+        'tag': 'phone',
         'controller': null,
         'error': ''
       },
@@ -65,6 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'type': 'select',
         'text': 'Genre',
         'icon': '',
+        'tag': 'genre',
         'controller': null,
         'selectedValue': selectedGender,
         'items': items,
@@ -74,6 +86,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'type': 'password',
         'text': 'Mot de passe',
         'icon': '',
+        'tag': 'password',
         'controller': null,
         'error': ''
       },
@@ -81,6 +94,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'type': 'password',
         'text': 'Confirmer le mot de passe',
         'icon': '',
+        'tag': 'confirmpassword',
         'controller': null,
         'error': ''
       }
@@ -105,9 +119,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  void signUp() async {
+    Map<String, dynamic> postData = {
+      "nom": null,
+      "prenom": null,
+      "email": null,
+      "phone": null,
+      "password": null,
+      "confirmpassword": null,
+      "genre": null,
+    };
+
+    if(inputFields.isNotEmpty){
+      for(String key in postData.keys){
+        dynamic currentField = inputFields.firstWhere((element) {
+          if(element['tag'] != null){
+            return element['tag'] == key;
+          }
+          return false;
+        });
+        TextEditingController? currentController = currentField['controller'];
+        if(currentController != null){
+          postData[key] = currentController.text;
+        } else {
+          postData['genre'] = selectedGender?.id.toString();
+        }
+      }
+    }
+    if (kDebugMode) {
+      print("input field $postData");
+    }
+
+    var registrationLink = Uri.parse("$BASE_URL$REGISTRATION_ENDPOINT");
+    await http.post(registrationLink, body: postData).then((Response response) {
+      var responseBody = jsonDecode(response.body) as Map<String, dynamic>;
+      var isError = false;
+      var message = "";
+      if(responseBody.containsKey("errors") && responseBody['errors'] != null){
+        message = responseBody['errors'];
+        isError = true;
+      } else if (responseBody.containsKey("success") && responseBody['success'] != null){
+        message = responseBody['success'];
+        isError = false;
+      }
+      showNotifyingDialog(context: context, message: message, isError: isError);
+      if (kDebugMode) {
+        print("REGISTRATION RESPONSE ${responseBody}");
+      }
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    Future signUp() async {}
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -117,51 +181,50 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             children: [
               Expanded(
-                child: Container(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center, // Centrer verticalement
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start, // Aligner à gauche
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/logos/logo.svg',
-                              height: 80,
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height *
-                                0.1), // Espacement pour centrer verticalement
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment:
+                        MainAxisAlignment.center, // Centrer verticalement
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start, // Aligner à gauche
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/images/logos/logo.svg',
+                            height: 80,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height *
+                              0.1), // Espacement pour centrer verticalement
 
-                        Column(
-                            children: inputFields!.map((field) {
-                          return Column(
-                            children: [
-                              Inputfiled(
-                                type: field['type'],
-                                text: field['text'],
-                                icon: field['icon'],
-                                controller: field['controller'],
-                                selectedValue: selectedGender,
-                                items: field['items'],
-                                handleAction: (value) => selectGenre(value!),
-                                error: field[
-                                    'error'], // L'erreur est vide au départ
-                              ),
-                              const SizedBox(height: 30),
-                            ],
-                          );
-                        }).toList()),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height *
-                                0.1), // Espacement en bas pour mieux centrer
-                      ],
-                    ),
+                      Column(
+                          children: inputFields!.map((field) {
+                        return Column(
+                          children: [
+
+                            Inputfiled(
+                              type: field['type'],
+                              text: field['text'],
+                              icon: field['icon'],
+                              controller: field['controller'],
+                              selectedValue: selectedGender,
+                              items: field['items'],
+                              handleAction: (value) => selectGenre(value!),
+                              error: field[
+                                  'error'], // L'erreur est vide au départ
+                            ),
+                            const SizedBox(height: 30),
+                          ],
+                        );
+                      }).toList()),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height *
+                              0.1), // Espacement en bas pour mieux centrer
+                    ],
                   ),
                 ),
               ),
@@ -171,11 +234,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     text: "S'inscrire",
                     handlerPress: () => {
                       signUp()
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) => const Mainhome()
-                      // ),
                     },
                   ),
                   const SizedBox(height: 30),
@@ -193,7 +251,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => LoginScreen()),
+                                builder: (context) => const LoginScreen()),
                           )
                         },
                         child: const Text(
