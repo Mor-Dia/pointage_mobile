@@ -58,11 +58,11 @@ class _SplashScreenState extends State<SplashScreen> {
           case AuthenticationStatus.unknown:
           case AuthenticationStatus.unauthenticated:
           case AuthenticationStatus.failure:
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
-                    (route) => false
-            );
+            // Navigator.pushAndRemoveUntil(
+            //     context,
+            //     MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
+            //         (route) => false
+            // );
         }
         return Scaffold(
           body: Container(
