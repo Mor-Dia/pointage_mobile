@@ -205,7 +205,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           children: inputFields!.map((field) {
                         return Column(
                           children: [
-
                             Inputfiled(
                               type: field['type'],
                               text: field['text'],

@@ -1,3 +1,5 @@
+import 'package:authentication_repository/authentication_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
@@ -10,6 +12,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
+
+import 'package:yogivida_mobile/core/models/user_model.dart';
+import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -63,76 +68,81 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // Future login() async {
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  //
+  //   String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+  //   RegExp regex = RegExp(emailPattern);
+  //
+  //   bool _areFieldsEmpty() {
+  //     var isValid = false;
+  //     for (int i = 0; i < inputFields!.length; i++) {
+  //       setState(() {
+  //         inputFields![i]['error'] = '';
+  //       });
+  //
+  //       if (inputFields![i]['text'].toString().toLowerCase() == 'email') {
+  //         if (!regex.hasMatch(_controllers[i].text.trim())) {
+  //           setState(() {
+  //             inputFields![i]['error'] = 'Entrez un email valide!';
+  //           });
+  //         }
+  //       }
+  //
+  //       if (_controllers[i].text.isEmpty) {
+  //         setState(() {
+  //           inputFields![i]['error'] = 'Ce champ est requis !';
+  //         });
+  //         isValid = true;
+  //       }
+  //     }
+  //     return isValid;
+  //   }
+  //
+  //   List keys = ['login', 'password'];
+  //
+  //   Map<String, dynamic> data = {}; // Crée un Map vide
+  //
+  //   for (int i = 0; i < inputFields!.length; i++) {
+  //     String key = keys[i].toString().toLowerCase();
+  //     var controller = inputFields![i]['controller'];
+  //
+  //     String value = controller != null ? controller.text : '';
+  //
+  //     data[key] = value; // Ajoute la paire clé-valeur à la Map
+  //   }
+  //
+  //   if (!_areFieldsEmpty()) {
+  //     context.read<AuthenticationBloc<Utilisateur>>().add(LoginEvent(data: data));
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
-    Future login() async {
-      setState(() {
-        isLoading = false;
-      });
 
-      String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-      RegExp regex = RegExp(emailPattern);
-
-      bool _areFieldsEmpty() {
-        var isValid = false;
-        for (int i = 0; i < inputFields!.length; i++) {
-          setState(() {
-            inputFields![i]['error'] = '';
-          });
-
-          if (inputFields![i]['text'].toString().toLowerCase() == 'email') {
-            if (!regex.hasMatch(_controllers[i].text.trim())) {
-              setState(() {
-                inputFields![i]['error'] = 'Entrez un email valide!';
-              });
-            }
-          }
-
-          if (_controllers[i].text.isEmpty) {
-            setState(() {
-              inputFields![i]['error'] = 'Ce champ est requis !';
-            });
-            isValid = true;
-          }
-        }
-        return isValid;
-      }
-
-      List keys = ['login', 'password'];
-
-      Map<String, dynamic> data = {}; // Crée un Map vide
-
-      for (int i = 0; i < inputFields!.length; i++) {
-        String key = keys[i].toString().toLowerCase();
-        var controller = inputFields![i]['controller'];
-
-        String value = controller != null ? controller.text : '';
-
-        data[key] = value; // Ajoute la paire clé-valeur à la Map
-      }
-
-      if (!_areFieldsEmpty()) {
-        context.read<AuthBlocBloc>().add(LoginEvent(data: data));
-      }
-    }
-
-    return BlocConsumer<AuthBlocBloc, AuthBlocState>(
+    return BlocConsumer<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
       listener: (context, state) {
-        if (state is AuthBlocInitial && state.user?.data != '') {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => Mainhome()),
-            (Route<dynamic> route) => false,
-          );
-        }
-        if (state is AuthBlocLoading) {
-          setState(() {
-            isLoading = true;
-          });
-        } else {
-          setState(() {
-            isLoading = false;
-          });
+        AuthenticationStatus currentStatus = state.status;
+        switch(currentStatus){
+          case AuthenticationStatus.authenticated:
+            if (kDebugMode) {
+              print("AUTH STATE AUTHENTICATED ${state.status}");
+            }
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => const Mainhome(), ),
+                    (route) => false
+            );
+          case AuthenticationStatus.unknown:
+          case AuthenticationStatus.unauthenticated:
+          case AuthenticationStatus.failure:
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
+                    (route) => false
+            );
         }
       },
       builder: (context, state) {
@@ -204,43 +214,37 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ],
                                 );
                               }).toList()),
-                              (state is AuthBlocInitial &&
-                                      state.user != null &&
-                                      state.user?.errors.isNotEmpty)
-                                  ? Center(
-                                      child: IntrinsicWidth(
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.info,
-                                                  color: Colors.red,
-                                                  size: 12,
-                                                ),
-                                                SizedBox(
-                                                  width: 5,
-                                                ),
-                                                Text(
-                                                  (state as AuthBlocInitial)
-                                                      .user!
-                                                      .errors,
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 30,
-                                            )
-                                          ],
-                                        ),
+                              Center(
+                                child: IntrinsicWidth(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.info,
+                                            color: Colors.red,
+                                            size: 12,
+                                          ),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            "ERROR GOES HERE",
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12,
+                                                fontWeight:
+                                                FontWeight.bold),
+                                          ),
+                                        ],
                                       ),
-                                    )
-                                  : SizedBox.shrink(),
+                                      SizedBox(
+                                        height: 30,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -275,7 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           isLoading: isLoading,
                           text: 'Se connecter',
                           handlerPress: () => {
-                            login(),
+                            // login(),
                           },
                         ),
                         const SizedBox(height: 30),
