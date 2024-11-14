@@ -5,6 +5,8 @@ import 'package:yogivida_mobile/components/CardPratique.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
 import 'package:yogivida_mobile/constant.dart';
 
+import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+
 class Panier extends StatefulWidget {
   const Panier({super.key});
 
@@ -16,11 +18,11 @@ class _PanierState extends State<Panier> {
   @override
   Widget build(BuildContext context) {
     List<Pratique> listPratique = [
-      Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
-      Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
-      Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
-      Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
-      Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+      // Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
+      // Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
+      // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+      // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+      // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
     ];
     return Scaffold(
         appBar: AppBar(

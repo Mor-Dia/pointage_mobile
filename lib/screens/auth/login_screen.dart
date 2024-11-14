@@ -25,7 +25,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
-
+  String? currentErrorMessage;
   List<TextEditingController> _controllers = [];
 
   // Liste de champs avec leurs attributs
@@ -68,56 +68,101 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  // Future login() async {
-  //   setState(() {
-  //     isLoading = false;
-  //   });
-  //
-  //   String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
-  //   RegExp regex = RegExp(emailPattern);
-  //
-  //   bool _areFieldsEmpty() {
-  //     var isValid = false;
-  //     for (int i = 0; i < inputFields!.length; i++) {
-  //       setState(() {
-  //         inputFields![i]['error'] = '';
-  //       });
-  //
-  //       if (inputFields![i]['text'].toString().toLowerCase() == 'email') {
-  //         if (!regex.hasMatch(_controllers[i].text.trim())) {
-  //           setState(() {
-  //             inputFields![i]['error'] = 'Entrez un email valide!';
-  //           });
-  //         }
-  //       }
-  //
-  //       if (_controllers[i].text.isEmpty) {
-  //         setState(() {
-  //           inputFields![i]['error'] = 'Ce champ est requis !';
-  //         });
-  //         isValid = true;
-  //       }
-  //     }
-  //     return isValid;
-  //   }
-  //
-  //   List keys = ['login', 'password'];
-  //
-  //   Map<String, dynamic> data = {}; // Crée un Map vide
-  //
-  //   for (int i = 0; i < inputFields!.length; i++) {
-  //     String key = keys[i].toString().toLowerCase();
-  //     var controller = inputFields![i]['controller'];
-  //
-  //     String value = controller != null ? controller.text : '';
-  //
-  //     data[key] = value; // Ajoute la paire clé-valeur à la Map
-  //   }
-  //
-  //   if (!_areFieldsEmpty()) {
-  //     context.read<AuthenticationBloc<Utilisateur>>().add(LoginEvent(data: data));
-  //   }
-  // }
+  Future login() async {
+    setState(() {
+      isLoading = false;
+    });
+
+    String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+    RegExp regex = RegExp(emailPattern);
+
+    bool _areFieldsEmpty() {
+      var isValid = false;
+      for (int i = 0; i < inputFields!.length; i++) {
+        setState(() {
+          inputFields![i]['error'] = '';
+        });
+
+        if (inputFields![i]['text'].toString().toLowerCase() == 'email') {
+          if (!regex.hasMatch(_controllers[i].text.trim())) {
+            setState(() {
+              inputFields![i]['error'] = 'Entrez un email valide!';
+            });
+          }
+        }
+
+        if (_controllers[i].text.isEmpty) {
+          setState(() {
+            inputFields![i]['error'] = 'Ce champ est requis !';
+          });
+          isValid = true;
+        }
+      }
+      return isValid;
+    }
+
+    bool isFormValid = _areFieldsEmpty();
+    isFormValid = true;
+    if (kDebugMode) {
+      print("DATA TO SUBMIT $isFormValid ");
+    }
+
+    if(isFormValid){
+      List keys = ['login', 'password'];
+
+      Map<String, dynamic> data = {}; // Crée un Map vide
+
+      for (int i = 0; i < inputFields!.length; i++) {
+        String key = keys[i].toString().toLowerCase();
+        var controller = inputFields![i]['controller'];
+
+        String value = controller != null ? controller.text : '';
+
+        data[key] = value; // Ajoute la paire clé-valeur à la Map
+      }
+
+      if (kDebugMode) {
+        print("DATA TO SUBMIT $data ");
+      }
+
+      AuthenticationRepository authenticationRepository = RepositoryProvider.of<AuthenticationRepository>(context);
+      await authenticationRepository.logIn(data).then((value) {
+        setState(() {
+          isLoading = false;
+        });
+        if(value['status'] == 0) {
+          if (kDebugMode) {
+            print("ERRORSSS ${value['errors']}");
+          }
+          setState(() {
+            currentErrorMessage = value['errors']??"";
+          });
+        } else if(value['status'] == 1) {
+          setState(() {
+            currentErrorMessage = "";
+          });
+          Future.delayed(
+              const Duration(seconds: 3),
+                  () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const Mainhome(),), (route) => false)
+          );
+        } else {
+          setState(() {
+            currentErrorMessage = "Veuillez réessayer plus tard";
+          });
+        }
+      }).catchError((e, stacktrace) {
+        if (kDebugMode) {
+          print("ERROOR  RRR $e $stacktrace");
+        }
+        setState(() {
+          isLoading = false;
+          currentErrorMessage = "Une erreur est survenue";
+        });
+      });
+
+      
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,122 +199,120 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     Expanded(
-                      child: Container(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment
-                                .center, // Centrer verticalement
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start, // Aligner à gauche
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment
+                              .center, // Centrer verticalement
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start, // Aligner à gauche
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/images/logos/logo.svg',
+                                  height: 80,
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    0.1), // Espacement pour centrer verticalement
+
+                            const SizedBox(
+                                height:
+                                    30), // Espacement entre le logo et le texte
+                            Text(
+                              'Bienvenue !',
+                              style: GoogleFonts.alata(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.085,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0,
+                              ),
+                            ),
+                            Text(
+                              'Yoga pour le corps, l\'esprit et l\'âme.',
+                              style: GoogleFonts.montserrat(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.035,
+                                color: const Color(0xff15274d),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+
+                            Column(
+                                children: inputFields!.map((field) {
+                              return Column(
                                 children: [
-                                  SvgPicture.asset(
-                                    'assets/images/logos/logo.svg',
-                                    height: 80,
+                                  Inputfiled(
+                                    type: field['type'],
+                                    text: field['text'],
+                                    icon: field['icon'],
+                                    controller: field['controller'],
+                                    error: field[
+                                        'error'], // L'erreur est vide au départ
                                   ),
+                                  const SizedBox(height: 30),
                                 ],
-                              ),
-                              SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.1), // Espacement pour centrer verticalement
-
-                              const SizedBox(
-                                  height:
-                                      30), // Espacement entre le logo et le texte
-                              Text(
-                                'Bienvenue !',
-                                style: GoogleFonts.alata(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.085,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0,
-                                ),
-                              ),
-                              Text(
-                                'Yoga pour le corps, l\'esprit et l\'âme.',
-                                style: GoogleFonts.montserrat(
-                                  fontSize:
-                                      MediaQuery.of(context).size.width * 0.035,
-                                  color: const Color(0xff15274d),
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              const SizedBox(height: 30),
-
-                              Column(
-                                  children: inputFields!.map((field) {
-                                return Column(
+                              );
+                            }).toList()),
+                            Center(
+                              child: IntrinsicWidth(
+                                child: Column(
                                   children: [
-                                    Inputfiled(
-                                      type: field['type'],
-                                      text: field['text'],
-                                      icon: field['icon'],
-                                      controller: field['controller'],
-                                      error: field[
-                                          'error'], // L'erreur est vide au départ
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.info,
+                                          color: Colors.red,
+                                          size: 12,
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
+                                        ),
+                                        Text(
+                                          currentErrorMessage ?? "",
+                                          style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              fontWeight:
+                                              FontWeight.bold),
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(height: 30),
+                                    const SizedBox(
+                                      height: 30,
+                                    )
                                   ],
-                                );
-                              }).toList()),
-                              Center(
-                                child: IntrinsicWidth(
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.info,
-                                            color: Colors.red,
-                                            size: 12,
-                                          ),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            "ERROR GOES HERE",
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                                fontWeight:
-                                                FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height: 30,
-                                      )
-                                    ],
-                                  ),
                                 ),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () =>
-                                        {print("Mot de passe oublier")},
-                                    child: Text(
-                                      'Mot de passe oublier ?',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.030,
-                                        color: const Color(0xff15274d),
-                                      ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                GestureDetector(
+                                  onTap: () =>
+                                      {print("Mot de passe oublier")},
+                                  child: Text(
+                                    'Mot de passe oublier ?',
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.030,
+                                      color: const Color(0xff15274d),
                                     ),
                                   ),
-                                ],
-                              ),
-                              SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.1), // Espacement en bas pour mieux centrer
-                            ],
-                          ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    0.1), // Espacement en bas pour mieux centrer
+                          ],
                         ),
                       ),
                     ),
@@ -279,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           isLoading: isLoading,
                           text: 'Se connecter',
                           handlerPress: () => {
-                            // login(),
+                            login(),
                           },
                         ),
                         const SizedBox(height: 30),

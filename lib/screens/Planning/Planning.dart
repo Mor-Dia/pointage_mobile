@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:yogivida_mobile/components/CardRowPlanning.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
-import 'package:yogivida_mobile/utils/Capitalized.dart';
 
 class Planning extends StatefulWidget {
   const Planning({super.key});

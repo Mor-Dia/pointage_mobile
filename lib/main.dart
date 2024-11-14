@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _userRepository = UserRepository<Utilisateur>(factoryFunction: (json) => Utilisateur.fromJson(json));
-    _authenticationRepository = AuthenticationRepository(loginUrl: "$BASE_URL$LOGIN_ENDPOINT", registrationUrl: "$BASE_URL$LOGIN_ENDPOINT", logoutUrl: "$BASE_URL$LOGIN_ENDPOINT", userRepository: _userRepository);
+    _authenticationRepository = AuthenticationRepository(loginUrl: "$BASE_URL$LOGIN_ENDPOINT", registrationUrl: "$BASE_URL$LOGIN_ENDPOINT", logoutUrl: "$BASE_URL$LOGOUT_ENDPOINT", userRepository: _userRepository);
   }
 
 
@@ -90,8 +90,8 @@ class _MyAppState extends State<MyApp> {
             ),
             initialRoute: '/',
             routes: {
-              // '/': (context) => RegisterScreen(),
-              '/': (context) => const Mainhome(),
+              '/': (context) => LoginScreen(),
+              // '/': (context) => const Mainhome(),
               '/login': (context) => const LoginScreen(),
               '/home': (context) => const HomePage(),
             },

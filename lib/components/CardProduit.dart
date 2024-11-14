@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
 
+import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+
 class CardProduit extends StatefulWidget {
   final Pratique data;
   final Function()? handlePress;
@@ -24,7 +26,8 @@ class _CardProduitState extends State<CardProduit> {
   @override
   void initState() {
     super.initState();
-    liked = widget.data.liked;
+    liked = false;
+    // liked = widget.data.liked;
   }
 
   @override
@@ -41,7 +44,7 @@ class _CardProduitState extends State<CardProduit> {
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
             child: Image.asset(
-              widget.data.image,
+              widget.data.image??"",
               fit: BoxFit.cover,
               height: 100,
             ),
@@ -54,7 +57,7 @@ class _CardProduitState extends State<CardProduit> {
             children: [
               Flexible(
                 child: Text(
-                  '${widget.data.nomPratique.toUpperCase()}dcisldjc,zpodckzeopc',
+                  '${(widget.data.designation??"").toUpperCase()}dcisldjc,zpodckzeopc',
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.arimo(
                     fontSize: MediaQuery.of(context).size.width * 0.040,

@@ -20,30 +20,12 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-Future<void> checkUserData(BuildContext context) async {
-  final prefs = await SharedPreferences.getInstance();
-  String? currentToken = prefs.getString('user_id'); // Récupère le token,
-
-  if (currentToken != null) {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => Mainhome()),
-      (Route<dynamic> route) =>
-          false, // Cette fonction indique de retirer toutes les routes
-    );
-  } else {
-    print('Pas d\'utilisateur connecté');
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushReplacementNamed(context, '/login');
-    });
-  }
-}
-
 class _SplashScreenState extends State<SplashScreen> {
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
-      builder: (context, state) {
+    return BlocListener<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+      listener: (context, state){
         AuthenticationStatus currentStatus = state.status;
         switch(currentStatus){
           case AuthenticationStatus.authenticated:
@@ -58,21 +40,21 @@ class _SplashScreenState extends State<SplashScreen> {
           case AuthenticationStatus.unknown:
           case AuthenticationStatus.unauthenticated:
           case AuthenticationStatus.failure:
-            // Navigator.pushAndRemoveUntil(
-            //     context,
-            //     MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
-            //         (route) => false
-            // );
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
+                    (route) => false
+            );
         }
-        return Scaffold(
-          body: Container(
-            color: primaryColor,
-            child: Center(
-              child: SvgPicture.asset('assets/images/logos/logo.svg'),
-            ),
-          ),
-        );
       },
+      child: Scaffold(
+        body: Container(
+          color: primaryColor,
+          child: Center(
+            child: SvgPicture.asset('assets/images/logos/logo.svg'),
+          ),
+        ),
+      ),
     );
   }
 }

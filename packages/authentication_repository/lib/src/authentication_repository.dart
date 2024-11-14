@@ -26,10 +26,7 @@ class AuthenticationRepository {
     yield* _controller.stream;
   }
 
-  Future logIn({
-    required String email,
-    required String password,
-  }) async {
+  Future logIn(data) async {
     currentErrorMessage = "";
     _controller.add(AuthenticationStatus.authenticated);
     _controller.add(AuthenticationStatus.unauthenticated);
@@ -40,31 +37,26 @@ class AuthenticationRepository {
     // headers: {"Content-Type": "application/json"},
 
     var loginResponse = await http.post(loginUri, headers: { "Accept": "application/json", "Content-Type": "application/json"}, body: jsonEncode(
-        {
-          "email": email,
-          "password": password,
-        }));
+        data));
     if (kDebugMode) {
-      print('Response status: ${email} and ${password}');
       print('Response status: ${loginResponse.statusCode}');
       print('Response body: ${loginResponse.body}');
     }
-    if(loginResponse.body.isNotEmpty && loginResponse.statusCode == 200 ){
+    var responseBody = jsonDecode(loginResponse.body) as Map<String, dynamic>;
+    if(responseBody.containsKey("data") && responseBody['data'] != null){
       Map<String, dynamic> responseJsonDecoded = jsonDecode(loginResponse.body);
       Map<String, dynamic> userData = responseJsonDecoded["data"];
-      print("DATA REGUST $userData");
-      String? token = userData["token"];
-      String? userName = userData["user"]['name'];
-      await userRepository.saveUser(userName, token);
+      print("DATA REGIST $userData");
+      await userRepository.saveUser(userData);
       _controller.add(AuthenticationStatus.authenticated);
       return {
         "status": 1,
         "data": userData,
       };
-    } else {
+    }  else if(responseBody.containsKey("errors") && responseBody['errors'] != null) {
       _controller.add(AuthenticationStatus.failure);
       Map<String, dynamic> responseJsonDecoded = jsonDecode(loginResponse.body);
-      String? message = responseJsonDecoded["message"];
+      String? message = responseJsonDecoded["errors"];
       print('Response ERRORS: ${message}');
       return {
         "status": 0,
@@ -120,9 +112,24 @@ class AuthenticationRepository {
       print("LOG USER OUT ");
     }
     try{
+      var logoutUri = Uri.parse(logoutUrl);
+      if (kDebugMode) {
+        print(' logoutUrl: ${logoutUrl}');
+      }
+      Map<String, String> headers = {};
+      headers.addAll({"Accept": "application/json", "Content-Type": "application/json"});
       final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      if(token != null){
+        headers.addAll({"Authorization": "Bearer $token"});
+      }
+      // var logoutResponse = await http.post(logoutUri, headers: headers);
+      // if (kDebugMode) {
+      //   print('Response status: ${logoutResponse.statusCode}');
+      //   print('Response body: ${logoutResponse.body}');
+      // }
       await prefs.remove("token");
-      await prefs.remove("username");
+      await prefs.remove("nom_complet");
       _controller.add(AuthenticationStatus.unauthenticated);
       return ;
     } catch(e) {
@@ -130,7 +137,8 @@ class AuthenticationRepository {
         print("AUTHENTICATION REPOSITORY ERROR $e");
       }
       currentErrorMessage = "Une erreur s'est produite";
-      _controller.add(AuthenticationStatus.failure);
+      // _controller.add(AuthenticationStatus.failure);
+      return ;
     }
   }
 
@@ -141,7 +149,7 @@ class AuthenticationRepository {
     try{
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString("token");
-      String? username = prefs.getString("username");
+      String? username = prefs.getString("nom_complet");
       if(token != null && username != null){
         _controller.add(AuthenticationStatus.authenticated);
       } else {
