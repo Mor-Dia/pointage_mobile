@@ -141,10 +141,6 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             currentErrorMessage = "";
           });
-          Future.delayed(
-              const Duration(seconds: 3),
-                  () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => const Mainhome(),), (route) => false)
-          );
         } else {
           setState(() {
             currentErrorMessage = "Veuillez réessayer plus tard";
