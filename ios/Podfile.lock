@@ -1,4 +1,7 @@
 PODS:
+  - connectivity_plus (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - Firebase/Auth (11.2.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 11.2.0)
@@ -33,6 +36,9 @@ PODS:
   - Flutter (1.0.0)
   - flutter_native_splash (0.0.1):
     - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
   - Google-Maps-iOS-Utils (5.0.0):
     - GoogleMaps (~> 8.0)
   - google_maps_flutter_ios (0.0.1):
@@ -73,14 +79,17 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - Toast (4.1.1)
   - url_launcher_ios (0.0.1):
     - Flutter
 
 DEPENDENCIES:
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/darwin`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
@@ -100,8 +109,11 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMSessionFetcher
     - RecaptchaInterop
+    - Toast
 
 EXTERNAL SOURCES:
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/darwin"
   firebase_auth:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
@@ -110,6 +122,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
   google_maps_flutter_ios:
     :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
   path_provider_foundation:
@@ -120,6 +134,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  connectivity_plus: 4c41c08fc6d7c91f63bc7aec70ffe3730b04f563
   Firebase: 98e6bf5278170668a7983e12971a66b2cd57fc8c
   firebase_auth: 0c77e299a8f2d1c74d1b1f6b78b3d4d802c19f47
   firebase_core: 2bedc3136ec7c7b8561c6123ed0239387b53f2af
@@ -131,6 +146,7 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: 35731192cab10797b88411be84940d2beb33a238
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778
+  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
   Google-Maps-iOS-Utils: 66d6de12be1ce6d3742a54661e7a79cb317a9321
   google_maps_flutter_ios: e31555a04d1986ab130f2b9f24b6cdc861acc6d3
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
@@ -139,6 +155,7 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
 
 PODFILE CHECKSUM: 1959d098c91d8a792531a723c4a9d7e9f6a01e38
