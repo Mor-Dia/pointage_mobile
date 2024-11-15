@@ -8,7 +8,7 @@ final Color secondColor = const Color(0xffA8923B);
 const padding_constant = 20.0;
 const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
-const LOGOUT_ENDPOINT = "logout";
+const LOGOUT_ENDPOINT = "deconnexion";
 const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
 const BASE_URL_QGL = 'https://yogi-vida.com/yogivida_back_test/graphql?query=';
 
@@ -21,13 +21,6 @@ class Activite {
   Activite(this.nomActivite, this.nomProf, this.heure, this.color);
 }
 
-class Pratique {
-  final String nomPratique;
-  final String image;
-  final bool liked;
-
-  Pratique(this.nomPratique, this.image, this.liked);
-}
 
 class UserClass {
   final dynamic data;

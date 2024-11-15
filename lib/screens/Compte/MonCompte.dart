@@ -1,10 +1,12 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Compte/Commandes.dart';
 import 'package:yogivida_mobile/screens/Compte/Favoris.dart';
@@ -13,10 +15,11 @@ import 'package:yogivida_mobile/screens/Compte/LocalisationContact.dart';
 import 'package:yogivida_mobile/screens/Compte/Reservation.dart';
 import 'package:yogivida_mobile/screens/Compte/Update.dart';
 import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
-import 'package:yogivida_mobile/utils/Capitalized.dart';
 import 'package:yogivida_mobile/core/models/user_model.dart';
 
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
+
+import 'package:yogivida_mobile/screens/auth/login_screen.dart';
 
 class MonCompte extends StatefulWidget {
   const MonCompte({super.key});
@@ -26,17 +29,39 @@ class MonCompte extends StatefulWidget {
 }
 
 class _MonCompteState extends State<MonCompte> {
+
+  Future logout() async {
+    AuthenticationRepository authenticationRepository = RepositoryProvider.of<AuthenticationRepository>(context);
+    await authenticationRepository.logOut().then((value) {
+      if (kDebugMode) {
+        print("USER LOGGED OUT");
+      }
+    }).catchError((e, stacktrace) {
+      if (kDebugMode) {
+        print("ERROOR WHILE DISCONNECTING USER $e $stacktrace");
+      }
+    }); // Récupère le token,
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future logout() async {
-      final prefs = await SharedPreferences.getInstance();
-      prefs.remove('user_token');
-      prefs.remove('user_id').then((value) => {
-            Navigator.pushReplacementNamed(context, '/login')
-          }); // Récupère le token,
-    }
 
-    return BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+    return BlocConsumer<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+      listener: (context, state) {
+        AuthenticationStatus currentStatus = state.status;
+        switch(currentStatus){
+          case AuthenticationStatus.authenticated:
+            break;
+          case AuthenticationStatus.unknown:
+          case AuthenticationStatus.unauthenticated:
+          case AuthenticationStatus.failure:
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
+                    (route) => false
+            );
+        }
+      },
       builder: (context, state) {
         AuthenticationStatus currentStatus = state.status;
         switch(currentStatus){
@@ -326,7 +351,7 @@ class _MonCompteState extends State<MonCompte> {
           case AuthenticationStatus.unknown:
           case AuthenticationStatus.unauthenticated:
           case AuthenticationStatus.failure:
-            return const Placeholder();
+            return const Center(child: PleaseLoginWidget());
         }
       },
     );

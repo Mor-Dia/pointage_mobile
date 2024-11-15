@@ -8,9 +8,34 @@ import 'package:yogivida_mobile/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
+import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
+import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
+import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
 
-class HomePage extends StatelessWidget {
+import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late DataBloc<List<Pratique>> practiceBloc;
+
+
+  @override
+  void initState() {
+    String practiceGraphQLLink = DataBlocHelpers.generateGraphQLQuery(Pratique.getEndpoint(),Pratique.shrinkedAttributs(),filter: {'showatwebsite': true});
+    practiceBloc = DataBloc<List<Pratique>>(
+            (response) => Pratique.fromJsonList(response),
+        Pratique.getEndpoint(isPagination: false), isGraphQl: true,
+        attributeToGet: Pratique.shrinkedAttributs()
+    );
+    practiceBloc.add(FetchDataEvent());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +46,6 @@ class HomePage extends StatelessWidget {
       Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffFFCDA0),
       Activite("Yoga Iyengar", '1h20', "Marzena", 0xff5EAB43),
       Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffA6C3FF),
-    ];
-
-    List<Pratique> listPratique = [
-      Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
-      Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
     ];
 
     return Scaffold(
@@ -132,23 +152,23 @@ class HomePage extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    Row(
-                      children: listActivite
-                          .map((toElement) => Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Cardactivite(
-                                      data: toElement,
-                                      color: toElement.color,
-                                      handlePress: () {
-                                        ShowBottomSheet(context);
-                                      })
-                                ],
-                              ))
-                          .toList(),
-                    ),
+                    // Row(
+                    //   children: listActivite
+                    //       .map((toElement) => Row(
+                    //             children: [
+                    //               const SizedBox(
+                    //                 width: 20,
+                    //               ),
+                    //               Cardactivite(
+                    //                   data: toElement,
+                    //                   color: toElement.color,
+                    //                   handlePress: () {
+                    //                     ShowBottomSheet(context);
+                    //                   })
+                    //             ],
+                    //           ))
+                    //       .toList(),
+                    // ),
                     const SizedBox(
                       width: 20,
                     ),
@@ -173,33 +193,36 @@ class HomePage extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            Container(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    Row(
-                      children: listPratique
+            BlocBasedWidget<List<Pratique>>(
+              customDataBloc: practiceBloc,
+              customWidget: (data) {
+                print("DATA BLOC BASED DATA $data");
+                List<Pratique> pratiques = data;
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ...pratiques
                           .map((toElement) => Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  CardPratique(
-                                    data: toElement,
-                                    handlePress: () => ShowBottomSheet(context),
-                                  )
-                                ],
-                              ))
+                        children: [
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          CardPratique(
+                            data: toElement,
+                            handlePress: () => ShowBottomSheet(context),
+                          )
+                        ],
+                      ))
                           .toList(),
-                    ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
           ],
         ),
       ),

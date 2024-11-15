@@ -31,15 +31,15 @@ class UserRepository<T> {
     }
     try{
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? username = prefs.getString('username');
+      String? username = prefs.getString('nom_complet');
       String? token = prefs.getString('token');
       if (kDebugMode) {
         print('PREFERENCES TOKEN FROM GET USER: ${prefs.getString("token")}');
-        print('PREFERENCES USERNAME FROM GET USER: ${prefs.getString("username")}');
+        print('PREFERENCES USERNAME FROM GET USER: ${prefs.getString("nom_complet")}');
       }
       if(username != null && token != null){
         Map<String, dynamic> tempMap = {
-          "username": username,
+          "nom_complet": username,
           "token": token,
         };
         _user = factoryFunction(tempMap);
@@ -53,13 +53,30 @@ class UserRepository<T> {
     return _user;
   }
 
-  Future<bool> saveUser(String? userName, String? token) async {
+  Future<bool> saveUser(Map<String, dynamic> data) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', userName??"");
-    await prefs.setString('token', token??"");
+    for (dynamic key in data.keys){
+      dynamic value = data[key];
+      dynamic keyType = value.runtimeType;
+      print("KEY RUNTIMETYPE $keyType");
+      switch(keyType){
+        case String:
+          await prefs.setString(key, value);
+          break;
+        case int:
+          await prefs.setInt(key, value);
+          break;
+        case bool:
+          await prefs.setBool(key, value);
+          break;
+        case double:
+          await prefs.setDouble(key, value);
+          break;
+      }
+    }
     if (kDebugMode) {
       print('PREFERENCES TOKEN: ${prefs.getString("token")}');
-      print('PREFERENCES USERNAME: ${prefs.getString("username")}');
+      print('PREFERENCES USERNAME: ${prefs.getString("nom_complet")}');
     }
     return true;
   }

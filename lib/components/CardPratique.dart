@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 
 class CardPratique extends StatefulWidget {
   final Pratique data;
@@ -22,7 +24,8 @@ class _CardPratiqueState extends State<CardPratique> {
   @override
   void initState() {
     super.initState();
-    liked = widget.data.liked;
+    liked = false;
+    // liked = widget.data.liked;
   }
 
   @override
@@ -39,11 +42,16 @@ class _CardPratiqueState extends State<CardPratique> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.data.nomPratique,
-                  style: GoogleFonts.arimo(
-                      fontSize: MediaQuery.of(context).size.width * 0.040,
-                      fontWeight: FontWeight.bold),
+                Expanded(
+                  child: Text(
+                    widget.data.designation??'',
+                    softWrap: true,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.arimo(
+                        fontSize: MediaQuery.of(context).size.width * 0.040,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
                 GestureDetector(
                   child: liked == false
@@ -58,14 +66,36 @@ class _CardPratiqueState extends State<CardPratique> {
               ],
             ),
             const SizedBox(height: 10),
-            Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-              child: Image.asset(
-                widget.data.image,
-                height: 80,
-                width: double.infinity,
-                fit: BoxFit.cover,
+            SizedBox(
+              height: 100,
+              child: Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                child: CachedNetworkImage(
+                  progressIndicatorBuilder: (context, url, progress) => Center(
+                    child: CircularProgressIndicator(
+                      value: progress.progress,
+                    ),
+                  ),
+                  imageUrl: widget.data.image??'',
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.red,
+                          BlendMode.colorBurn,
+                        ),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  // placeholder: (context, url) => const CircleAvatar(
+                  //   backgroundColor: Colors.amber,
+                  //   radius: 150,
+                  // )
+                ),
               ),
             ),
             const SizedBox(height: 10),

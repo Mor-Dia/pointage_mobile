@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
 
+import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+
 class CardProduitPanier extends StatefulWidget {
   final Pratique data;
   final Function()? handlePress;
@@ -24,7 +26,8 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
   @override
   void initState() {
     super.initState();
-    liked = widget.data.liked;
+    // liked = widget.data.liked;
+    liked = false;
   }
 
   @override
@@ -45,7 +48,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(8)),
                 child: Image.asset(
-                  widget.data.image,
+                  widget.data.image??"",
                   fit: BoxFit.cover,
                   height: 105,
                   width: 70,
@@ -62,7 +65,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                       children: [
                         Flexible(
                           child: Text(
-                            '${widget.data.nomPratique.toUpperCase()}',
+                            (widget.data.designation??"").toUpperCase(),
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.arimo(
                               fontSize:

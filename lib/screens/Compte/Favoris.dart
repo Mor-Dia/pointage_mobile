@@ -8,6 +8,8 @@ import 'package:yogivida_mobile/components/CardRowPlanning.dart';
 import 'package:yogivida_mobile/components/CardRowPlanning2.dart';
 import 'package:yogivida_mobile/constant.dart';
 
+import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+
 class Favoris extends StatefulWidget {
   const Favoris({super.key});
 
@@ -18,8 +20,8 @@ class Favoris extends StatefulWidget {
 class _FavorisState extends State<Favoris> {
   @override
   List<Pratique> listPratique = [
-    Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
-    Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+    // Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
+    // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
   ];
   @override
   Widget build(BuildContext context) {

@@ -6,9 +6,11 @@ import 'package:yogivida_mobile/components/CardProduit.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Boutique/Panier.dart';
-import 'package:yogivida_mobile/utils/Capitalized.dart';
 import 'dart:ui' as ui;
+
+import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 
 class Boutique extends StatefulWidget {
   const Boutique({super.key});
@@ -22,11 +24,11 @@ class _BoutiqueState extends State<Boutique> {
   final List<String> options = ['Option 1', 'Option 2', 'Option 3'];
 
   List<Pratique> listPratique = [
-    Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
-    Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
-    Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
-    Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
-    Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+    // Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
+    // Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
+    // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+    // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
+    // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
   ];
 
   int selectedFamilyIndex = 0; // Indice de la famille sélectionnée
