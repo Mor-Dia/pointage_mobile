@@ -82,6 +82,7 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
         ],
+
         child: MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(
