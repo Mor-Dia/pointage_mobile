@@ -3,11 +3,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
-import 'package:yogivida_mobile/components/CustomBottomNavigationBar.dart';
 import 'package:yogivida_mobile/constant.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
+import 'package:yogivida_mobile/screens/Home/Pratiques.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
@@ -27,20 +25,21 @@ class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
   late DataBloc<List<Programme>> programmeBloc;
 
-
   @override
   void initState() {
-    String practiceGraphQLLink = DataBlocHelpers.generateGraphQLQuery(Pratique.getEndpoint(),Pratique.shrinkedAttributs(),filter: {'showatwebsite': true});
+    String practiceGraphQLLink = DataBlocHelpers.generateGraphQLQuery(
+        Pratique.getEndpoint(), Pratique.shrinkedAttributs(),
+        filter: {'showatwebsite': true});
     practiceBloc = DataBloc<List<Pratique>>(
-            (response) => Pratique.fromJsonList(response),
-        Pratique.getEndpoint(isPagination: false), isGraphQl: true,
-        attributeToGet: Pratique.shrinkedAttributs()
-    );
+        (response) => Pratique.fromJsonList(response),
+        Pratique.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        attributeToGet: Pratique.shrinkedAttributs());
     programmeBloc = DataBloc<List<Programme>>(
-            (response) => Programme.fromJsonList(response),
-        Programme.getEndpoint(isPagination: false), isGraphQl: true,
-        attributeToGet: Programme.shrinkedAttributs()
-    );
+        (response) => Programme.fromJsonList(response),
+        Programme.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        attributeToGet: Programme.shrinkedAttributs());
     practiceBloc.add(FetchDataEvent());
     super.initState();
   }
@@ -166,18 +165,18 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       ...programmes
                           .map((toElement) => Row(
-                        children: [
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          Cardactivite(
-                              data: toElement,
-                              color: toElement.displaycoloretat ?? "",
-                              handlePress: () {
-                                ShowBottomSheet(context);
-                              })
-                        ],
-                      ))
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Cardactivite(
+                                      data: toElement,
+                                      color: toElement.displaycoloretat ?? "",
+                                      handlePress: () {
+                                        ShowBottomSheet(context);
+                                      })
+                                ],
+                              ))
                           .toList(),
                       const SizedBox(
                         width: 20,
@@ -187,7 +186,6 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-
             const SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -221,11 +219,28 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),
               child: Container(
-                child: Text(
-                  "Nos pratiques",
-                  style: GoogleFonts.montserrat(
-                      fontSize: MediaQuery.of(context).size.width * 0.045,
-                      fontWeight: FontWeight.bold),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Nos pratiques",
+                      style: GoogleFonts.montserrat(
+                          fontSize: MediaQuery.of(context).size.width * 0.045,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Pratiques()));
+                      },
+                      child: Icon(
+                        Icons.arrow_outward_rounded,
+                        color: primaryColor,
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
@@ -243,16 +258,16 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       ...pratiques
                           .map((toElement) => Row(
-                        children: [
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          CardPratique(
-                            data: toElement,
-                            handlePress: () => ShowBottomSheet(context),
-                          )
-                        ],
-                      ))
+                                children: [
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  CardPratique(
+                                    data: toElement,
+                                    handlePress: () => ShowBottomSheet(context),
+                                  )
+                                ],
+                              ))
                           .toList(),
                       const SizedBox(
                         width: 20,

@@ -46,13 +46,6 @@ class _MyAppState extends State<MyApp> {
         registrationUrl: "$BASE_URL$LOGIN_ENDPOINT",
         logoutUrl: "$BASE_URL$LOGIN_ENDPOINT",
         userRepository: _userRepository);
-    _userRepository = UserRepository<Utilisateur>(
-        factoryFunction: (json) => Utilisateur.fromJson(json));
-    _authenticationRepository = AuthenticationRepository(
-        loginUrl: "$BASE_URL$LOGIN_ENDPOINT",
-        registrationUrl: "$BASE_URL$LOGIN_ENDPOINT",
-        logoutUrl: "$BASE_URL$LOGOUT_ENDPOINT",
-        userRepository: _userRepository);
   }
 
   @override
@@ -82,7 +75,6 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
         ],
-
         child: MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(

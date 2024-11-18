@@ -21,7 +21,6 @@ class Activite {
   Activite(this.nomActivite, this.nomProf, this.heure, this.color);
 }
 
-
 class UserClass {
   final dynamic data;
   final dynamic errors;
