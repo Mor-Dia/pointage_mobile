@@ -22,15 +22,10 @@ class _PratiquesState extends State<Pratiques> {
 
   @override
   void initState() {
-    String practiceGraphQLLink = DataBlocHelpers.generateGraphQLQuery(
-        Pratique.getEndpoint(), Pratique.shrinkedAttributs(),
-        filter: {
-          'showatwebsite': true,
-        });
     practiceBloc = DataBloc<List<Pratique>>(
         (response) => Pratique.fromJsonList(response),
         Pratique.getEndpoint(isPagination: true),
-        isGraphQl: true,
+        isGraphQl: true, isPagination: true,
         attributeToGet: Pratique.shrinkedAttributs());
 
     practiceBloc.add(FetchDataEvent());
