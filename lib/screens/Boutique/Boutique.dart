@@ -8,9 +8,13 @@ import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Boutique/Panier.dart';
+import 'package:yogivida_mobile/services/api/models/famille_model.dart';
 import 'dart:ui' as ui;
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+import 'package:yogivida_mobile/services/api/models/produit_model.dart';
+import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
+import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
 class Boutique extends StatefulWidget {
   const Boutique({super.key});
@@ -38,6 +42,30 @@ class _BoutiqueState extends State<Boutique> {
     'Céréales',
     'Produits laitiers'
   ];
+
+  late DataBloc<List<Famille>> familleBloc;
+  late DataBloc<List<Produit>> produitBloc;
+
+  @override
+  void initState() {
+    familleBloc = DataBloc<List<Famille>>(
+        (response) => Famille.fromJsonList(response),
+        Famille.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        isPagination: false,
+        attributeToGet: Famille.shrinkedAttributs());
+    produitBloc = DataBloc<List<Produit>>(
+        (response) => Produit.fromJsonList(response),
+        Produit.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: Produit.shrinkedAttributs());
+
+    familleBloc.add(FetchDataEvent());
+    produitBloc.add(FetchDataEvent());
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,255 +153,158 @@ class _BoutiqueState extends State<Boutique> {
             ],
           ),
         ),
-        body: Container(
-          color: Colors.white,
-          child: ListView(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              SingleChildScrollView(
-                scrollDirection:
-                    Axis.horizontal, // Permet le défilement horizontal
-                child: Row(
-                  children: families.map((family) {
-                    int index = families.indexOf(family);
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedFamilyIndex =
-                              index; // Met à jour la famille sélectionnée
-                        });
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal:
-                                16.0), // Ajoute de l'espace entre les éléments
-                        child: Column(
-                          mainAxisSize: MainAxisSize
-                              .min, // Prend juste l'espace nécessaire
-                          children: [
-                            Text(
-                              family,
-                              style: TextStyle(
-                                color: selectedFamilyIndex == index
-                                    ? primaryColor
-                                    : greyColor, // Texte bleu pour la famille active
-                                fontWeight: selectedFamilyIndex == index
-                                    ? FontWeight.bold
-                                    : FontWeight
-                                        .normal, // Texte en gras pour la famille active
+        body: BlocBasedWidget<List<Famille>>(
+            customDataBloc: familleBloc,
+            customWidget: (data) {
+              List<Famille> marques = data;
+              return Container(
+                color: Colors.white,
+                child: ListView(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    SingleChildScrollView(
+                      scrollDirection:
+                          Axis.horizontal, // Permet le défilement horizontal
+                      child: Row(
+                        children: marques.map((marque) {
+                          int index = marques.indexOf(marque);
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedFamilyIndex =
+                                    index; // Met à jour la famille sélectionnée
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal:
+                                      16.0), // Ajoute de l'espace entre les éléments
+                              child: Column(
+                                mainAxisSize: MainAxisSize
+                                    .min, // Prend juste l'espace nécessaire
+                                children: [
+                                  Text(
+                                    marque.designation.toString().toCapitalized,
+                                    style: TextStyle(
+                                      color: selectedFamilyIndex == index
+                                          ? primaryColor
+                                          : greyColor, // Texte bleu pour la famille active
+                                      fontWeight: selectedFamilyIndex == index
+                                          ? FontWeight.bold
+                                          : FontWeight
+                                              .normal, // Texte en gras pour la famille active
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                      height:
+                                          4.0), // Espace entre le texte et la ligne soulignée
+                                  if (selectedFamilyIndex == index)
+                                    LayoutBuilder(
+                                      builder: (context, constraints) {
+                                        // Utilise un LayoutBuilder pour obtenir la taille du texte
+                                        final textPainter = TextPainter(
+                                          text: TextSpan(
+                                            text: marque.designation
+                                                .toString()
+                                                .toCapitalized,
+                                            style: const TextStyle(
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          textDirection: ui.TextDirection
+                                              .ltr, // Correction ici
+                                        );
+                                        textPainter.layout();
+                                        return Container(
+                                          height:
+                                              1.0, // Hauteur de la ligne de soulignement
+                                          width: textPainter
+                                              .width, // Largeur égale à celle du texte
+                                          color:
+                                              primaryColor, // Ligne bleue sous la famille active
+                                        );
+                                      },
+                                    ),
+                                ],
                               ),
                             ),
-                            const SizedBox(
-                                height:
-                                    4.0), // Espace entre le texte et la ligne soulignée
-                            if (selectedFamilyIndex == index)
-                              LayoutBuilder(
-                                builder: (context, constraints) {
-                                  // Utilise un LayoutBuilder pour obtenir la taille du texte
-                                  final textPainter = TextPainter(
-                                    text: TextSpan(
-                                      text: family,
-                                      style: const TextStyle(
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    textDirection:
-                                        ui.TextDirection.ltr, // Correction ici
-                                  );
-                                  textPainter.layout();
-                                  return Container(
-                                    height:
-                                        1.0, // Hauteur de la ligne de soulignement
-                                    width: textPainter
-                                        .width, // Largeur égale à celle du texte
-                                    color:
-                                        primaryColor, // Ligne bleue sous la famille active
-                                  );
-                                },
-                              ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    const Expanded(
-                      flex: 1,
-                      child: Inputfiled(
-                        type: "text",
-                        text: 'Désignation',
-                        icon: 'loupe',
-                        error: '',
+                          );
+                        }).toList(),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    const Text('|'),
-                    const SizedBox(width: 10),
-                    Container(
-                      height: 45,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      decoration: BoxDecoration(
-                        color: primaryColor, // Couleur de fond bleu
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         children: [
-                          SvgPicture.asset("assets/icons/stat.svg",
-                              height: 15, color: Colors.white),
-                          const SizedBox(
-                              width:
-                                  10.0), // Espace entre l'icône et le DropdownButton
-                          const Text(
-                            'Par prix',
-                            style: TextStyle(color: Colors.white),
+                          const Expanded(
+                            flex: 1,
+                            child: Inputfiled(
+                              type: "text",
+                              text: 'Désignation',
+                              icon: 'loupe',
+                              error: '',
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          const Text('|'),
+                          const SizedBox(width: 10),
+                          Container(
+                            height: 45,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            decoration: BoxDecoration(
+                              color: primaryColor, // Couleur de fond bleu
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset("assets/icons/stat.svg",
+                                    height: 15, color: Colors.white),
+                                const SizedBox(
+                                    width:
+                                        10.0), // Espace entre l'icône et le DropdownButton
+                                const Text(
+                                  'Par prix',
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              ],
+                            ),
                           )
                         ],
                       ),
-                    )
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: BlocBasedWidget<List<Produit>>(
+                            customDataBloc: produitBloc,
+                            customWidget: (data) {
+                              List<Produit> produits = data;
+                              return Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: produits
+                                    .map((toElement) => SizedBox(
+                                          width: size.width / 2 - 25,
+                                          child: CardProduit(
+                                            data: toElement,
+                                            handlePress: () => {},
+                                          ),
+                                        ))
+                                    .toList(),
+                              );
+                            }))
                   ],
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: listPratique
-                      .map((toElement) => SizedBox(
-                            width: size.width / 2 - 25,
-                            child: CardProduit(
-                              data: toElement,
-                              handlePress: () => {},
-                            ),
-                          ))
-                      .toList(),
-                ),
-              )
-            ],
-          ),
-        ));
-  }
-}
-
-class HorizontalCalendar extends StatefulWidget {
-  const HorizontalCalendar({super.key});
-
-  @override
-  _HorizontalCalendarState createState() => _HorizontalCalendarState();
-}
-
-class _HorizontalCalendarState extends State<HorizontalCalendar> {
-  DateTime selectedDate = DateTime.now();
-  late List<DateTime> weekDays; // Liste des jours de la semaine courante
-
-  @override
-  void initState() {
-    super.initState();
-    // Générer la liste des jours de la semaine courante
-    weekDays = _generateWeekDays();
-  }
-
-  // Fonction pour générer les jours restants de la semaine courante
-  List<DateTime> _generateWeekDays() {
-    DateTime now = DateTime.now();
-    int currentWeekday = now.weekday; // Jour actuel (1 = Lundi, 7 = Dimanche)
-
-    // Créer une liste des jours à partir du jour actuel jusqu'à Dimanche
-    return List.generate(7 - currentWeekday + 1, (index) {
-      return now.add(Duration(days: index));
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Affichage du mois et de l'année (fixe, pas de navigation)
-        Padding(
-          padding: const EdgeInsets.only(bottom: 20.0),
-          child: Text(
-            DateFormat.yMMM('fr_FR').format(DateTime.now()).toCapitalized,
-            style: TextStyle(
-              fontSize: 18,
-              color: primaryColor,
-            ),
-          ),
-        ),
-
-        // Liste horizontale des jours de la semaine courante
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SizedBox(
-            height: 75,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: weekDays.length,
-              itemBuilder: (context, index) {
-                DateTime date = weekDays[index];
-                bool isSelected = date.day == selectedDate.day &&
-                    date.month == selectedDate.month &&
-                    date.year == selectedDate.year;
-
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedDate = date;
-                    });
-                  },
-                  child: Container(
-                    width: 60,
-                    margin: const EdgeInsets.only(right: 20.0),
-                    decoration: BoxDecoration(
-                      color:
-                          isSelected ? const Color(0xffA8923B) : Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected ? Colors.transparent : greyColor,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          DateFormat.E('fr_FR')
-                              .format(date)
-                              .toCapitalized, // Jour abrégé
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: isSelected ? primaryColor : greyColor,
-                          ),
-                        ),
-                        Text(
-                          date.day.toString(), // Numéro du jour
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? primaryColor : greyColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ],
-    );
+              );
+            }));
   }
 }
