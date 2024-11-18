@@ -82,20 +82,17 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
         ],
-        child: ConnectionNotifier(
-          // Intégrer le notifier ici
-          child: MaterialApp(
-            title: 'Flutter Demo',
-            theme: ThemeData(
-              primarySwatch: Colors.blueGrey,
-            ),
-            initialRoute: '/',
-            routes: {
-              '/': (context) => const Mainhome(),
-              '/login': (context) => const LoginScreen(),
-              '/home': (context) => const HomePage(),
-            },
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            primarySwatch: Colors.blueGrey,
           ),
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const Mainhome(),
+            '/login': (context) => const LoginScreen(),
+            '/home': (context) => const HomePage(),
+          },
         ),
       ),
     );
