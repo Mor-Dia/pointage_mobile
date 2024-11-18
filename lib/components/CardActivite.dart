@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 
 class Cardactivite extends StatelessWidget {
-  final int color;
-  final Activite data;
+  final String? color;
+  final Programme data;
   final Function() handlePress;
   const Cardactivite(
       {super.key,
@@ -15,19 +16,25 @@ class Cardactivite extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int displayColor = 0xFF0000;
+    if(color == "danger")
+    {
+      displayColor = 0x28A745;
+    }
+
     return Container(
       width: MediaQuery.of(context).size.width * 0.60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: Color(color).withOpacity(.3),
+        color: Color(displayColor).withOpacity(.3),
       ),
       child: Padding(
-        padding: EdgeInsets.all(padding_constant),
+        padding: const EdgeInsets.all(padding_constant),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              data.nomActivite,
+              data.professeurPratique?.pratique?.designation ?? "",
               style: GoogleFonts.arimo(
                   fontWeight: FontWeight.bold,
                   fontSize: MediaQuery.of(context).size.width * 0.040),
@@ -40,7 +47,7 @@ class Cardactivite extends StatelessWidget {
                     SvgPicture.asset('assets/icons/heure.svg'),
                     SizedBox(width: MediaQuery.of(context).size.width * 0.010),
                     Text(
-                      data.heure,
+                      data.heureDebut ?? "",
                       style: const TextStyle(
                           color: Color(0xff838282), fontSize: 11),
                     )
@@ -52,7 +59,7 @@ class Cardactivite extends StatelessWidget {
                     SvgPicture.asset('assets/icons/person.svg'),
                     SizedBox(width: MediaQuery.of(context).size.width * 0.010),
                     Text(
-                      data.nomProf,
+                      data.professeurPratique?.professeur?.user?.name ?? "",
                       style: const TextStyle(
                           color: Color(0xff838282), fontSize: 11),
                     )
@@ -70,10 +77,10 @@ class Cardactivite extends StatelessWidget {
                     child: Container(
                       height: 30,
                       decoration: BoxDecoration(
-                          color: Color(color),
+                          color: Color(displayColor),
                           borderRadius: BorderRadius.circular(15)),
                       child: Padding(
-                        padding: EdgeInsets.only(
+                        padding: const EdgeInsets.only(
                             left: padding_constant, right: padding_constant),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -93,7 +100,7 @@ class Cardactivite extends StatelessWidget {
                 ),
                 Image.asset(
                   'assets/icons/woman.png',
-                  color: Color(color),
+                  color: Color(displayColor),
                   height: 60,
                 )
               ],

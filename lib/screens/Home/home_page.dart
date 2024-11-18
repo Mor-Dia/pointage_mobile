@@ -14,6 +14,8 @@ import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 
+import '../../services/api/models/programme_model.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -23,6 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
+  late DataBloc<List<Programme>> programmeBloc;
 
 
   @override
@@ -32,6 +35,11 @@ class _HomePageState extends State<HomePage> {
             (response) => Pratique.fromJsonList(response),
         Pratique.getEndpoint(isPagination: false), isGraphQl: true,
         attributeToGet: Pratique.shrinkedAttributs()
+    );
+    programmeBloc = DataBloc<List<Programme>>(
+            (response) => Programme.fromJsonList(response),
+        Programme.getEndpoint(isPagination: false), isGraphQl: true,
+        attributeToGet: Programme.shrinkedAttributs()
     );
     practiceBloc.add(FetchDataEvent());
     super.initState();
@@ -147,33 +155,64 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 20,
             ),
-            Container(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    // Row(
-                    //   children: listActivite
-                    //       .map((toElement) => Row(
-                    //             children: [
-                    //               const SizedBox(
-                    //                 width: 20,
-                    //               ),
-                    //               Cardactivite(
-                    //                   data: toElement,
-                    //                   color: toElement.color,
-                    //                   handlePress: () {
-                    //                     ShowBottomSheet(context);
-                    //                   })
-                    //             ],
-                    //           ))
-                    //       .toList(),
-                    // ),
-                    const SizedBox(
-                      width: 20,
-                    ),
-                  ],
-                ),
+            BlocBasedWidget<List<Programme>>(
+              customDataBloc: programmeBloc,
+              customWidget: (data) {
+                print("DATA BLOC BASED DATA $data");
+                List<Programme> programmes = data;
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ...programmes
+                          .map((toElement) => Row(
+                        children: [
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Cardactivite(
+                              data: toElement,
+                              color: toElement.displaycoloretat ?? "",
+                              handlePress: () {
+                                ShowBottomSheet(context);
+                              })
+                        ],
+                      ))
+                          .toList(),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            const SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  // Row(
+                  //   children: listActivite
+                  //       .map((toElement) => Row(
+                  //             children: [
+                  //               const SizedBox(
+                  //                 width: 20,
+                  //               ),
+                  //               Cardactivite(
+                  //                   data: toElement,
+                  //                   color: toElement.color,
+                  //                   handlePress: () {
+                  //                     ShowBottomSheet(context);
+                  //                   })
+                  //             ],
+                  //           ))
+                  //       .toList(),
+                  // ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                ],
               ),
             ),
             const SizedBox(
