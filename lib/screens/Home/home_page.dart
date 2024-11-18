@@ -24,49 +24,29 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
   late DataBloc<List<Programme>> programmeBloc;
-  Map<String, dynamic> globalFilter = {"count" : 4};
+  Map<String, dynamic> globalFilter = {"count": 4};
 
   @override
   void initState() {
-<<<<<<< HEAD
-    String practiceGraphQLLink = DataBlocHelpers.generateGraphQLQuery(
-        Pratique.getEndpoint(), Pratique.shrinkedAttributs(),
-        filter: {'showatwebsite': true});
-=======
->>>>>>> eac7a7be3a7fe59b3df95e0b18464159ebf58095
     practiceBloc = DataBloc<List<Pratique>>(
-<<<<<<< HEAD
         (response) => Pratique.fromJsonList(response),
-        Pratique.getEndpoint(isPagination: false),
+        Pratique.getEndpoint(isPagination: true),
         isGraphQl: true,
+        isPagination: true,
         attributeToGet: Pratique.shrinkedAttributs());
     programmeBloc = DataBloc<List<Programme>>(
         (response) => Programme.fromJsonList(response),
-        Programme.getEndpoint(isPagination: false),
-        isGraphQl: true,
-        attributeToGet: Programme.shrinkedAttributs());
-    practiceBloc.add(FetchDataEvent());
-=======
-            (response) => Pratique.fromJsonList(response),
-        Pratique.getEndpoint(isPagination: true),
-        isGraphQl: true, isPagination: true,
-        attributeToGet: Pratique.shrinkedAttributs()
-    );
-    programmeBloc = DataBloc<List<Programme>>(
-            (response) => Programme.fromJsonList(response),
         Programme.getEndpoint(isPagination: true),
-        isGraphQl: true, isPagination: true,
-        attributeToGet: Programme.shrinkedAttributs()
-    );
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: Programme.shrinkedAttributs());
     practiceBloc.add(FetchDataEvent(filter: globalFilter));
     programmeBloc.add(FetchDataEvent(filter: globalFilter));
->>>>>>> 91d4013f035ce91e4d6360761a410480517720be
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xffffffff),
@@ -198,36 +178,6 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
-<<<<<<< HEAD
-            const SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  // Row(
-                  //   children: listActivite
-                  //       .map((toElement) => Row(
-                  //             children: [
-                  //               const SizedBox(
-                  //                 width: 20,
-                  //               ),
-                  //               Cardactivite(
-                  //                   data: toElement,
-                  //                   color: toElement.color,
-                  //                   handlePress: () {
-                  //                     ShowBottomSheet(context);
-                  //                   })
-                  //             ],
-                  //           ))
-                  //       .toList(),
-                  // ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
-              ),
-            ),
-=======
->>>>>>> 91d4013f035ce91e4d6360761a410480517720be
             const SizedBox(
               height: 20,
             ),
