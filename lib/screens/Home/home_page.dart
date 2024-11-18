@@ -31,7 +31,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    String practiceGraphQLLink = DataBlocHelpers.generateGraphQLQuery(Pratique.getEndpoint(),Pratique.shrinkedAttributs(),filter: {'showatwebsite': true});
     practiceBloc = DataBloc<List<Pratique>>(
             (response) => Pratique.fromJsonList(response),
         Pratique.getEndpoint(isPagination: true),
