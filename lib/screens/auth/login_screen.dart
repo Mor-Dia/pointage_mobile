@@ -176,14 +176,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 MaterialPageRoute(builder: (BuildContext context) => const Mainhome(), ),
                     (route) => false
             );
+            break;
           case AuthenticationStatus.unknown:
           case AuthenticationStatus.unauthenticated:
           case AuthenticationStatus.failure:
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
-                    (route) => false
-            );
+            if (kDebugMode) {
+              print("AUTH STATE NOT AUTHENTICATED ${state.status}");
+            }
+            break;
         }
       },
       builder: (context, state) {

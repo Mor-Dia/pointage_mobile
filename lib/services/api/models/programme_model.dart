@@ -36,10 +36,10 @@ class Programme with _$Programme {
   }
 
   static shrinkedAttributs () {
-    return "id,favoris,designation,image,description,description_en,type_pratique_id,type_pratique{id,designation}";
+    return "id,date_fr,heure_debut,heure_fin,etat,salle_pratique{id,salle{id,designation}},professeur_pratique{id,professeur{id,user{name}},pratique{id,designation}},displayetat,displaycoloretat";
   }
 
   static String getEndpoint({bool isPagination = true}) {
-    return isPagination ? "pratiquespaginated" : "pratiques";
+    return isPagination ? "programmespaginated" : "programmes";
   }
 }

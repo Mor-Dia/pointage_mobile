@@ -1,9 +1,5 @@
-import io.flutter.embedding.android.FlutterActivity
-import io.flutter.plugins.connectivityplus.ConnectivityPlusPlugin
+package com.guindyprojects.yogivida
 
-class MainActivity: FlutterActivity() {
-    override fun configureFlutterEngine() {
-        super.configureFlutterEngine()
-        ConnectivityPlusPlugin.registerWith(flutterEngine?.dartExecutor)
-    }
-}
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity()

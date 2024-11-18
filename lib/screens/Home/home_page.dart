@@ -24,6 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
   late DataBloc<List<Programme>> programmeBloc;
+  Map<String, dynamic> globalFilter = {"count" : 4};
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _HomePageState extends State<HomePage> {
         Pratique.getEndpoint(), Pratique.shrinkedAttributs(),
         filter: {'showatwebsite': true});
     practiceBloc = DataBloc<List<Pratique>>(
+<<<<<<< HEAD
         (response) => Pratique.fromJsonList(response),
         Pratique.getEndpoint(isPagination: false),
         isGraphQl: true,
@@ -41,19 +43,26 @@ class _HomePageState extends State<HomePage> {
         isGraphQl: true,
         attributeToGet: Programme.shrinkedAttributs());
     practiceBloc.add(FetchDataEvent());
+=======
+            (response) => Pratique.fromJsonList(response),
+        Pratique.getEndpoint(isPagination: true),
+        isGraphQl: true, isPagination: true,
+        attributeToGet: Pratique.shrinkedAttributs()
+    );
+    programmeBloc = DataBloc<List<Programme>>(
+            (response) => Programme.fromJsonList(response),
+        Programme.getEndpoint(isPagination: true),
+        isGraphQl: true, isPagination: true,
+        attributeToGet: Programme.shrinkedAttributs()
+    );
+    practiceBloc.add(FetchDataEvent(filter: globalFilter));
+    programmeBloc.add(FetchDataEvent(filter: globalFilter));
+>>>>>>> 91d4013f035ce91e4d6360761a410480517720be
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Activite> listActivite = [
-      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffFFCDA0),
-      Activite("Yoga Iyengar", '1h20', "Marzena", 0xff5EAB43),
-      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffA6C3FF),
-      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffFFCDA0),
-      Activite("Yoga Iyengar", '1h20', "Marzena", 0xff5EAB43),
-      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffA6C3FF),
-    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -186,6 +195,7 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             ),
+<<<<<<< HEAD
             const SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -213,6 +223,8 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
+=======
+>>>>>>> 91d4013f035ce91e4d6360761a410480517720be
             const SizedBox(
               height: 20,
             ),

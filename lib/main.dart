@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:yogivida_mobile/components/ConnectionNotifier.dart';
+import 'package:yogivida_mobile/screens/splash/splash_screen.dart';
 import 'package:yogivida_mobile/services/connection/Connectivity_service.dart'; // Le service de connectivité
 import 'package:yogivida_mobile/components/ConnectionNotifier.dart'; // Le ConnectionNotifier
 import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
@@ -82,7 +83,7 @@ class _MyAppState extends State<MyApp> {
           ),
           initialRoute: '/',
           routes: {
-            '/': (context) => const Mainhome(),
+            '/': (context) => const SplashScreen(),
             '/login': (context) => const LoginScreen(),
             '/home': (context) => const HomePage(),
           },
