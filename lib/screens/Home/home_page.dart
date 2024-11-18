@@ -26,6 +26,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
   late DataBloc<List<Programme>> programmeBloc;
+  Map<String, dynamic> globalFilter = {"count" : 4};
 
 
   @override
@@ -33,28 +34,23 @@ class _HomePageState extends State<HomePage> {
     String practiceGraphQLLink = DataBlocHelpers.generateGraphQLQuery(Pratique.getEndpoint(),Pratique.shrinkedAttributs(),filter: {'showatwebsite': true});
     practiceBloc = DataBloc<List<Pratique>>(
             (response) => Pratique.fromJsonList(response),
-        Pratique.getEndpoint(isPagination: false), isGraphQl: true,
+        Pratique.getEndpoint(isPagination: true),
+        isGraphQl: true, isPagination: true,
         attributeToGet: Pratique.shrinkedAttributs()
     );
     programmeBloc = DataBloc<List<Programme>>(
             (response) => Programme.fromJsonList(response),
-        Programme.getEndpoint(isPagination: false), isGraphQl: true,
+        Programme.getEndpoint(isPagination: true),
+        isGraphQl: true, isPagination: true,
         attributeToGet: Programme.shrinkedAttributs()
     );
-    practiceBloc.add(FetchDataEvent());
+    practiceBloc.add(FetchDataEvent(filter: globalFilter));
+    programmeBloc.add(FetchDataEvent(filter: globalFilter));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Activite> listActivite = [
-      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffFFCDA0),
-      Activite("Yoga Iyengar", '1h20', "Marzena", 0xff5EAB43),
-      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffA6C3FF),
-      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffFFCDA0),
-      Activite("Yoga Iyengar", '1h20', "Marzena", 0xff5EAB43),
-      Activite("Pilate reformer groupe", '1h20', "Marzena", 0xffA6C3FF),
-    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -186,34 +182,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               },
-            ),
-
-            const SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  // Row(
-                  //   children: listActivite
-                  //       .map((toElement) => Row(
-                  //             children: [
-                  //               const SizedBox(
-                  //                 width: 20,
-                  //               ),
-                  //               Cardactivite(
-                  //                   data: toElement,
-                  //                   color: toElement.color,
-                  //                   handlePress: () {
-                  //                     ShowBottomSheet(context);
-                  //                   })
-                  //             ],
-                  //           ))
-                  //       .toList(),
-                  // ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
-              ),
             ),
             const SizedBox(
               height: 20,
