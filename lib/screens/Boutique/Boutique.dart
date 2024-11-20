@@ -75,6 +75,14 @@ class _BoutiqueState extends State<Boutique> {
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
 
+    void filtre(index, famille_produit_id) {
+      setState(() {
+        selectedFamilyIndex = index; // Met à jour la famille sélectionnée
+        produitBloc.add(
+            FetchDataEvent(filter: {'famille_produit_id': famille_produit_id}));
+      });
+    }
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
@@ -170,12 +178,10 @@ class _BoutiqueState extends State<Boutique> {
                       child: Row(
                         children: marques.map((marque) {
                           int index = marques.indexOf(marque);
+
                           return GestureDetector(
                             onTap: () {
-                              setState(() {
-                                selectedFamilyIndex =
-                                    index; // Met à jour la famille sélectionnée
-                              });
+                              filtre(index, marque.id);
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(

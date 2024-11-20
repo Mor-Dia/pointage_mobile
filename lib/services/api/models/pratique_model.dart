@@ -14,16 +14,17 @@ class Pratique with _$Pratique {
     String? designation,
     String? image,
     String? description,
-    @JsonKey(name: "description_en")String? descriptionEn,
-    @JsonKey(name: "type_pratique")TypePratique? typePratique,
+    @JsonKey(name: "description_en") String? descriptionEn,
+    @JsonKey(name: "type_pratique") TypePratique? typePratique,
     dynamic ca_souscription,
   }) = _Pratique;
 
-  factory Pratique.fromJson(Map<String, dynamic> json)  => _$PratiqueFromJson(json);
+  factory Pratique.fromJson(Map<String, dynamic> json) =>
+      _$PratiqueFromJson(json);
 
-  static fromJsonList(List <dynamic>json){
+  static fromJsonList(List<dynamic> json) {
     List<Pratique> data = [];
-    try{
+    try {
       if (kDebugMode) {
         print("DOC DATA RESPONSE $json");
       }
@@ -34,7 +35,7 @@ class Pratique with _$Pratique {
       if (kDebugMode) {
         print("DOC DATA RESPONSE TRANSFORMED $data");
       }
-    } catch(error, stacktrace){
+    } catch (error, stacktrace) {
       if (kDebugMode) {
         print("ERROR WHILE TRANSFORMING $error $stacktrace");
       }
@@ -42,7 +43,7 @@ class Pratique with _$Pratique {
     return data;
   }
 
-  static shrinkedAttributs () {
+  static shrinkedAttributs() {
     return "id,favoris,designation,image,description,description_en,type_pratique_id,type_pratique{id,designation}";
   }
 

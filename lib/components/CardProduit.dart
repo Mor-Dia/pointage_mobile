@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,6 +25,7 @@ class _CardProduitState extends State<CardProduit> {
   @override
   bool? liked;
   int qte = 0;
+  int selectedTaille = 0;
   @override
   void initState() {
     super.initState();
@@ -44,10 +46,29 @@ class _CardProduitState extends State<CardProduit> {
           Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-            child: Image.asset(
-              widget.data.image ?? "",
-              fit: BoxFit.cover,
+            child: Container(
               height: 100,
+              child: CachedNetworkImage(
+                progressIndicatorBuilder: (context, url, progress) => Center(
+                  child: CircularProgressIndicator(
+                    value: progress.progress,
+                  ),
+                ),
+                imageUrl: widget.data.image ?? '',
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+                // placeholder: (context, url) => const CircleAvatar(
+                //   backgroundColor: Colors.amber,
+                //   radius: 150,
+                // )
+              ),
             ),
           ),
           const SizedBox(
@@ -58,7 +79,7 @@ class _CardProduitState extends State<CardProduit> {
             children: [
               Flexible(
                 child: Text(
-                  '${(widget.data.designation ?? "").toUpperCase()}dcisldjc,zpodckzeopc',
+                  '${(widget.data.designation ?? "").toUpperCase()}',
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.arimo(
                     fontSize: MediaQuery.of(context).size.width * 0.040,
@@ -149,31 +170,46 @@ class _CardProduitState extends State<CardProduit> {
             ],
           ),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => {
-                  setState(() {
-                    qte += 1;
-                  })
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(color: primaryColor, width: 1),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: const Center(
-                    child: Text(
-                      'UM',
-                      style: TextStyle(fontSize: 8),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: widget.data.produitTailles?.map((toElement) {
+                    int index = widget.data.produitTailles!.indexOf(toElement);
+                    return Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedTaille = index;
+                            });
+                          },
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: index == selectedTaille
+                                    ? Border.all(color: primaryColor, width: 1)
+                                    : Border.all(
+                                        color: Colors.transparent, width: 1),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Center(
+                              child: Text(
+                                toElement.taille.abreviation.toUpperCase(),
+                                style: const TextStyle(fontSize: 10),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        )
+                      ],
+                    );
+                  }).toList() ??
+                  [],
+            ),
           ),
           const SizedBox(height: 10),
           Container(
