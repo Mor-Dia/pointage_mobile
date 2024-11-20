@@ -47,7 +47,16 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
 
   getDataFromApi(event) async {
     try {
-      emit(DataLoading());
+      bool forAddingDataPurpose = false;
+      T? initialData;
+      if(state is DataSuccess<T> && (state as DataSuccess<T>).data != null){
+        initialData = (state as DataSuccess<T>).data;
+        Map<String, dynamic>? initialMetadata = (state as DataSuccess<T>).metadata;
+        forAddingDataPurpose = true;
+        // emit(DataSuccess(data: initialData, metadata: initialMetadata, canLoadNewData: true));
+      }
+      if (!forAddingDataPurpose)emit(DataLoading()); //Dans le cas où il ne s'agit pas d'infinite scroll, réinitialiser le BLOC
+
       Map<String, dynamic>? parameters;
       if (isGraphQl == true) {
         parameters = {
@@ -61,12 +70,12 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseJsonDecoded = jsonDecode(response.body);
         dynamic jsonData;
-        dynamic metaData;
+        dynamic metadata;
         String? path = customDataPath ?? endPoint;
         if (isGraphQl == true) {
           if (isPagination) {
             jsonData = responseJsonDecoded["data"][path]['data'];
-            metaData = responseJsonDecoded["data"][path]['metadata'];
+            metadata = responseJsonDecoded["data"][path]['metadata'];
           } else {
             jsonData = responseJsonDecoded["data"][path];
           }
@@ -75,12 +84,19 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
         }
         if (kDebugMode) {
           print("JSON DATA $jsonData");
-          print("JSON DATA METADATA $metaData");
+          print("JSON DATA METADATA $metadata");
+          print("JSON DATA INITDATA $initialData");
         }
         T data = this.transformerFunction(jsonData);
-        emit(DataSuccess(data: data, metaData: metaData));
+        bool canLoadNewData = false;
+        if( metadata != null && metadata.containsKey("last_page")
+            && metadata.containsKey("current_page")
+            && metadata['last_page'] >= metadata['current_page']){
+          canLoadNewData = true;
+        }
+        emit(DataSuccess(data: data, metadata: metadata, canLoadNewData: canLoadNewData));
       } else {
-        emit(DataSuccess(data: null, metaData: null));
+        emit(DataSuccess(data: null, metadata: null));
       }
     } catch (err, stacktrace) {
       if (kDebugMode) {

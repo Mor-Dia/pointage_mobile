@@ -9,7 +9,7 @@ const padding_constant = 20.0;
 const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
 const LOGOUT_ENDPOINT = "deconnexion";
-const BASE_URL = 'https://yogi-vida.com/yogivida_back/';
+const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
 const BASE_URL_QGL = '${BASE_URL}graphql?query=';
 
 class Activite {
@@ -35,14 +35,6 @@ class UserClass {
   }
 
   UserClass({required this.data, required this.errors, required this.success});
-}
-
-class TaillProperties {
-  int id;
-  String designation;
-  String abreviation;
-
-  TaillProperties(this.id, this.designation, this.abreviation);
 }
 
 final List<Item> items = [Item(id: 1, nom: 'Homme'), Item(id: 2, nom: 'Femme')];

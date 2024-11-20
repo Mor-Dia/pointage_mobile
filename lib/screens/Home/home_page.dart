@@ -6,7 +6,7 @@ import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
-import 'package:yogivida_mobile/screens/Home/Pratiques.dart';
+import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               'Accueil',
               style: GoogleFonts.arimo(
-                color: const Color(0xff15274d),
+                color: Color(0xff15274d),
                 fontSize: MediaQuery.of(context).size.width * 0.055,
                 fontWeight: FontWeight.bold,
               ),
@@ -153,18 +153,10 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Programme>>(
               customDataBloc: programmeBloc,
-              customWidget: (data) {
-                print("DATA BLOC BASED DATA $data");
-                List<Programme> programmes = data;
-                if (programmes.isEmpty) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Text(
-                      "Aucune activité programmé pour aujoud'hui ! ",
-                      style: TextStyle(color: greyColor),
-                    ),
-                  );
-                }
+              customWidget: (state) {
+                List<Programme> programmes = state.data;
+                Map<String, dynamic>? metadata = state.metadata;
+                bool canLoadNewData = state.canLoadNewData;
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -212,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Pratiques()));
+                                builder: (context) => const PratiquesPage()));
                       },
                       child: Icon(
                         Icons.arrow_outward_rounded,
@@ -228,9 +220,10 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Pratique>>(
               customDataBloc: practiceBloc,
-              customWidget: (data) {
-                print("DATA BLOC BASED DATA $data");
-                List<Pratique> pratiques = data;
+              customWidget: (state) {
+                List<Pratique> pratiques = state.data;
+                Map<String, dynamic>? metadata = state.metadata;
+                bool canLoadNewData = state.canLoadNewData;
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(

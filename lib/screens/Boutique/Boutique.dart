@@ -163,8 +163,10 @@ class _BoutiqueState extends State<Boutique> {
         ),
         body: BlocBasedWidget<List<Famille>>(
             customDataBloc: familleBloc,
-            customWidget: (data) {
-              List<Famille> marques = data;
+            customWidget: (state) {
+              List<Famille> marques = state.data;
+              Map<String, dynamic>? metadata = state.metadata;
+              bool canLoadNewData = state.canLoadNewData;
               return Container(
                 color: Colors.white,
                 child: ListView(
@@ -293,7 +295,9 @@ class _BoutiqueState extends State<Boutique> {
                         child: BlocBasedWidget<List<Produit>>(
                             customDataBloc: produitBloc,
                             customWidget: (data) {
-                              List<Produit> produits = data;
+                              List<Produit> produits = state.data;
+                              Map<String, dynamic>? metadata = state.metadata;
+                              bool canLoadNewData = state.canLoadNewData;
                               return Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
