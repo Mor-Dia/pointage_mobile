@@ -288,7 +288,7 @@ class _BoutiqueState extends State<Boutique> {
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: BlocBasedWidget<List<Produit>>(
                             customDataBloc: produitBloc,
-                            customWidget: (data) {
+                            customWidget: (state) {
                               List<Produit> produits = state.data;
                               Map<String, dynamic>? metadata = state.metadata;
                               bool canLoadNewData = state.canLoadNewData;
