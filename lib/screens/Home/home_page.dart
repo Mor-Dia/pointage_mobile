@@ -5,7 +5,7 @@ import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
-import 'package:yogivida_mobile/screens/Home/Pratiques.dart';
+import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               'Accueil',
               style: GoogleFonts.arimo(
-                color: const Color(0xff15274d),
+                color: Color(0xff15274d),
                 fontSize: MediaQuery.of(context).size.width * 0.055,
                 fontWeight: FontWeight.bold,
               ),
@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Programme>>(
               customDataBloc: programmeBloc,
-              customWidget: (data) {
+              customWidget: (data, metadata) {
                 print("DATA BLOC BASED DATA $data");
                 List<Programme> programmes = data;
                 return SingleChildScrollView(
@@ -214,7 +214,7 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Pratique>>(
               customDataBloc: practiceBloc,
-              customWidget: (data) {
+              customWidget: (data, metadata) {
                 print("DATA BLOC BASED DATA $data");
                 List<Pratique> pratiques = data;
                 return SingleChildScrollView(

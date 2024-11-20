@@ -18,7 +18,8 @@ class BlocBasedWidget<T> extends StatelessWidget {
           print("DATA BLOC BASED DATA $state");
           if(state.data != null || (state.data != null && (state.data as List).isNotEmpty)){
             T data = state.data;
-            return customWidget(data);
+            Map<String, dynamic>? metadata = state.metadata;
+            return customWidget(data, metadata);
           }
           return const Center(
             child: NoDataWidget(),

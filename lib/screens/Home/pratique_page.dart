@@ -19,6 +19,8 @@ class Pratiques extends StatefulWidget {
 
 class _PratiquesState extends State<Pratiques> {
   late DataBloc<List<Pratique>> practiceBloc;
+  Map<String, dynamic> initialFilter = {"count": 10};
+  Map<String, dynamic> currentFilter = {};
 
   @override
   void initState() {
@@ -29,6 +31,7 @@ class _PratiquesState extends State<Pratiques> {
         attributeToGet: Pratique.shrinkedAttributs());
 
     practiceBloc.add(FetchDataEvent());
+    currentFilter.addAll({...initialFilter});
     super.initState();
   }
 
@@ -75,47 +78,40 @@ class _PratiquesState extends State<Pratiques> {
             color: Colors.white,
             child: BlocBasedWidget<List<Pratique>>(
               customDataBloc: practiceBloc,
-              customWidget: (data) {
-                print("DATA BLOC BASED DATA $data");
+              customWidget: (data, metadata) {
                 List<Pratique> pratiques = data;
-                return ListView(scrollDirection: Axis.vertical, children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: pratiques
-                        .map((toElement) => SizedBox(
+                return ListView(
+                  scrollDirection: Axis.vertical,
+                  children:  [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: [
+                        ...pratiques
+                            .map((toElement) => SizedBox(
                             width: size.width / 2 - 25,
                             child: CardPratique(
                               data: toElement,
                               handlePress: () => ShowBottomSheet(context),
                             )))
-                        .toList(),
-                  ),
-                ]
-                    // child: Row(
-                    //   children: [
-                    //     ...pratiques
-                    //         .map((toElement) => Row(
-                    //               children: [
-                    //                 const SizedBox(
-                    //                   width: 20,
-                    //                 ),
-                    //                 CardPratique(
-                    //                   data: toElement,
-                    //                   handlePress: () => ShowBottomSheet(context),
-                    //                 )
-                    //               ],
-                    //             ))
-                    //         .toList(),
-                    //     const SizedBox(
-                    //       width: 20,
-                    //     ),
-                    //   ],
-                    // ),
-                    );
+                            .toList(),
+                        ElevatedButton(
+                          onPressed: (){
+                            int currentPage = 1;
+                            if(metadata != null && metadata.containsKey("page")){
+                              currentPage = metadata['page'];
+                            }
+                            practiceBloc.add(FetchDataEvent(filter: {...currentFilter, ...{"page": currentPage+1} },));
+                          },
+                          child: const Text("Charger plus")
+                        )
+                      ]
+                    ),
+                  ]
+                );
               },
             ),
           ),
