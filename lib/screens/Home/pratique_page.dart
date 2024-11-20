@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,17 +11,20 @@ import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
-class Pratiques extends StatefulWidget {
-  const Pratiques({super.key});
+class PratiquesPage extends StatefulWidget {
+  const PratiquesPage({super.key});
 
   @override
-  State<Pratiques> createState() => _PratiquesState();
+  State<PratiquesPage> createState() => _PratiquesPageState();
 }
 
-class _PratiquesState extends State<Pratiques> {
+class _PratiquesPageState extends State<PratiquesPage> {
   late DataBloc<List<Pratique>> practiceBloc;
   Map<String, dynamic> initialFilter = {"count": 10};
   Map<String, dynamic> currentFilter = {};
+  bool loadingNewData = false;
+
+  ScrollController practiceListController = ScrollController();
 
   @override
   void initState() {
@@ -33,9 +37,42 @@ class _PratiquesState extends State<Pratiques> {
 
     practiceBloc.add(FetchDataEvent());
     currentFilter.addAll({...initialFilter});
+    practiceListController.addListener(getAdditionalData);
     super.initState();
   }
 
+
+  getAdditionalData(){
+    if (kDebugMode) {
+      print("SCROLLING OFFSET: ${practiceListController.offset}, POSITION MAXCSROLL ${practiceListController.position.maxScrollExtent}, MAXSCROLL MINUS: ${practiceListController.position.maxScrollExtent-50}");
+    }
+    if (practiceListController.offset >= practiceListController.position.maxScrollExtent-50 &&
+        !practiceListController.position.outOfRange) {
+      print("SCROLLING ${practiceBloc.state is DataSuccess<List<Pratique>>}");
+      if(practiceBloc.state is DataSuccess<List<Pratique>>){
+        int currentPage = 1;
+        Map<String, dynamic>? metadata = (practiceBloc.state as DataSuccess<List<Pratique>>).metadata;
+        bool canLoadNewData = (practiceBloc.state as DataSuccess<List<Pratique>>).canLoadNewData;
+        if(canLoadNewData){
+          if(metadata != null && metadata.containsKey("page")){
+            currentPage = metadata['page'];
+          }
+          setState((){
+            loadingNewData = true;
+          });
+          practiceBloc.add(FetchDataEvent(filter: {...currentFilter, ...{"page": currentPage+1} },));
+        }
+      }
+    }
+    // practiceBloc.stream.listen(onData)
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    // practiceListController.removeListener(listener);
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -63,7 +100,7 @@ class _PratiquesState extends State<Pratiques> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Pratiques',
+                'PratiquesPage',
                 style: GoogleFonts.arimo(
                   color: primaryColor,
                   fontSize: MediaQuery.of(context).size.width * 0.055,
@@ -79,39 +116,50 @@ class _PratiquesState extends State<Pratiques> {
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: BlocBasedWidget<List<Pratique>>(
               customDataBloc: practiceBloc,
-              customWidget: (data, metadata) {
-                List<Pratique> pratiques = data;
-                return ListView(
+              customWidget: (state) {
+                List<Pratique> pratiques = state.data;
+                Map<String, dynamic>? metadata = state.metadata;
+                bool canLoadNewData = state.canLoadNewData;
+                return SingleChildScrollView(
+                  controller: practiceListController,
                   scrollDirection: Axis.vertical,
-                  children:  [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      children: [
-                        ...pratiques
-                            .map((toElement) => SizedBox(
-                            width: size.width / 2 - 25,
-                            child: CardPratique(
-                              data: toElement,
-                              handlePress: () => ShowBottomSheet(context),
-                            )))
-                            .toList(),
-                        ElevatedButton(
-                          onPressed: (){
-                            int currentPage = 1;
-                            if(metadata != null && metadata.containsKey("page")){
-                              currentPage = metadata['page'];
-                            }
-                            practiceBloc.add(FetchDataEvent(filter: {...currentFilter, ...{"page": currentPage+1} },));
-                          },
-                          child: const Text("Charger plus")
-                        )
-                      ]
-                    ),
-                  ]
+                  child: Column(
+                    children:  [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          ...pratiques
+                              .map((toElement) => SizedBox(
+                              width: size.width / 2 - 25,
+                              child: CardPratique(
+                                data: toElement,
+                                handlePress: () => ShowBottomSheet(context),
+                              )))
+                              .toList(),
+                          Visibility(
+                            visible: loadingNewData,
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          ),
+                          // ElevatedButton(
+                          //   onPressed: (){
+                          //     int currentPage = 1;
+                          //     if(metadata != null && metadata.containsKey("page")){
+                          //       currentPage = metadata['page'];
+                          //     }
+                          //     practiceBloc.add(FetchDataEvent(filter: {...currentFilter, ...{"page": currentPage+1} },));
+                          //   },
+                          //   child: const Text("Charger plus")
+                          // )
+                        ]
+                      ),
+                    ]
+                  ),
                 );
               },
             ),

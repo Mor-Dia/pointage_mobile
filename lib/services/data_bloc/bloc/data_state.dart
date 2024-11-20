@@ -16,7 +16,9 @@ class DataLoading extends DataFetchState {
 class DataSuccess<T> extends DataFetchState {
   final T data;
   final Map<String, dynamic>? metadata;
-  DataSuccess({required this.data, this.metadata});
+  final bool canLoadNewData;
+
+  DataSuccess({required this.data, this.metadata, this.canLoadNewData = false});
 
   @override
   List<Object?> get props => [data, metadata];

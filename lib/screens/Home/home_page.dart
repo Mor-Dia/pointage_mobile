@@ -152,9 +152,10 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Programme>>(
               customDataBloc: programmeBloc,
-              customWidget: (data, metadata) {
-                print("DATA BLOC BASED DATA $data");
-                List<Programme> programmes = data;
+              customWidget: (state) {
+                List<Programme> programmes = state.data;
+                Map<String, dynamic>? metadata = state.metadata;
+                bool canLoadNewData = state.canLoadNewData;
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -202,7 +203,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Pratiques()));
+                                builder: (context) => const PratiquesPage()));
                       },
                       child: Icon(
                         Icons.arrow_outward_rounded,
@@ -218,9 +219,10 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Pratique>>(
               customDataBloc: practiceBloc,
-              customWidget: (data, metadata) {
-                print("DATA BLOC BASED DATA $data");
-                List<Pratique> pratiques = data;
+              customWidget: (state) {
+                List<Pratique> pratiques = state.data;
+                Map<String, dynamic>? metadata = state.metadata;
+                bool canLoadNewData = state.canLoadNewData;
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(

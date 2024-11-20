@@ -51,7 +51,9 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
       T? initialData;
       if(state is DataSuccess<T> && (state as DataSuccess<T>).data != null){
         initialData = (state as DataSuccess<T>).data;
+        Map<String, dynamic>? initialMetadata = (state as DataSuccess<T>).metadata;
         forAddingDataPurpose = true;
+        // emit(DataSuccess(data: initialData, metadata: initialMetadata, canLoadNewData: true));
       }
       if (!forAddingDataPurpose)emit(DataLoading()); //Dans le cas où il ne s'agit pas d'infinite scroll, réinitialiser le BLOC
 
@@ -86,12 +88,13 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
           print("JSON DATA INITDATA $initialData");
         }
         T data = this.transformerFunction(jsonData);
-        if(data is List && initialData != null) {
-          print("JSON DATA OLD LENGTH ${data.length}");
-          data.addAll(initialData as Iterable);
-          print("JSON DATA NEW LENGTH ${data.length}");
+        bool canLoadNewData = false;
+        if( metadata != null && metadata.containsKey("last_page")
+            && metadata.containsKey("current_page")
+            && metadata['last_page'] >= metadata['current_page']){
+          canLoadNewData = true;
         }
-        emit(DataSuccess(data: data, metadata: metadata));
+        emit(DataSuccess(data: data, metadata: metadata, canLoadNewData: canLoadNewData));
       } else {
         emit(DataSuccess(data: null, metadata: null));
       }

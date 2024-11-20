@@ -228,9 +228,10 @@ class _PlanningState extends State<Planning> {
               ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
-                customWidget: (data) {
-                  print("DATA BLOC BASED DATA $data");
-                  List<Programme> programmes = data;
+                customWidget: (state) {
+                  List<Programme> programmes = state.data;
+                  Map<String, dynamic>? metadata = state.metadata;
+                  bool canLoadNewData = state.canLoadNewData;
 
                   if (programmes.isEmpty) {
                     return Center(child: Text('Aucune activitées programmées'));
