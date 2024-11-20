@@ -14,6 +14,7 @@ class Inputfiled extends StatefulWidget {
   final bool? enable;
   final TextEditingController? controller;
   final ValueChanged<Item?>? handleAction;
+  final ValueChanged<String>? handleChangeValue;
 
   const Inputfiled(
       {super.key,
@@ -26,6 +27,7 @@ class Inputfiled extends StatefulWidget {
       this.controller,
       this.error,
       this.handleAction,
+      this.handleChangeValue,
       this.selectedValue,
       this.items});
 
@@ -61,6 +63,7 @@ class _InputfiledState extends State<Inputfiled> {
                       enabled: widget.enable,
                       obscureText: widget.type == "password" ? hide : false,
                       controller: widget.controller,
+                      onChanged: widget.handleChangeValue,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.only(top: 6.5),

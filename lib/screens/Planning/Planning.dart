@@ -7,6 +7,9 @@ import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
+import 'package:yogivida_mobile/services/api/models/programme_model.dart';
+import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
+import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
 class Planning extends StatefulWidget {
   const Planning({super.key});
@@ -17,9 +20,44 @@ class Planning extends StatefulWidget {
 
 class _PlanningState extends State<Planning> {
   String? selectedValue;
-  final List<String> options = ['Option 1', 'Option 2', 'Option 3'];
+  late DataBloc<List<Programme>> programmeBloc;
+  final List<String> options = [];
+  TextEditingController designationFilter = TextEditingController();
+
+  final DateTime date = new DateTime.now();
+
+  @override
+  void initState() {
+    programmeBloc = DataBloc<List<Programme>>(
+        (response) => Programme.fromJsonList(response),
+        Programme.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: Programme.shrinkedAttributs());
+
+    programmeBloc.add(FetchDataEvent(
+        filter: {'date': '${date.year}-${date.month}-${date.day}'}));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    void ChangeDate(DateTime date) {
+      var currentDate = '${date.year}-${date.month}-${date.day}';
+      programmeBloc.add(FetchDataEvent(filter: {'date': currentDate}));
+    }
+
+    void Filter() {
+      setState(() {});
+    }
+
+    void dispose() {
+      // Clean up the controller when the widget is removed from the
+      // widget tree.
+      designationFilter.dispose();
+      super.dispose();
+    }
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
@@ -107,7 +145,9 @@ class _PlanningState extends State<Planning> {
               const SizedBox(
                 height: 20,
               ),
-              HorizontalCalendar(),
+              HorizontalCalendar(
+                handleDate: (date) => ChangeDate(date),
+              ),
               const SizedBox(
                 height: 20,
               ),
@@ -115,13 +155,15 @@ class _PlanningState extends State<Planning> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       flex: 1,
                       child: Inputfiled(
+                        controller: designationFilter,
                         type: "text",
                         text: 'Désignation',
                         icon: 'loupe',
                         error: '',
+                        handleChangeValue: (value) => Filter(),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -181,9 +223,39 @@ class _PlanningState extends State<Planning> {
                   ],
                 ),
               ),
-              const Column(
-                children: [CardRowPlanning()],
-              )
+              SizedBox(
+                height: 20,
+              ),
+              BlocBasedWidget<List<Programme>>(
+                customDataBloc: programmeBloc,
+                customWidget: (data) {
+                  print("DATA BLOC BASED DATA $data");
+                  List<Programme> programmes = data;
+
+                  if (programmes.isEmpty) {
+                    return Center(child: Text('Aucune activitées programmées'));
+                  }
+                  List<dynamic> dataFiltered = programmes
+                      .where((element) => element
+                          .professeurPratique!.pratique!.designation
+                          .toString()
+                          .toLowerCase()
+                          .startsWith(designationFilter.text.toLowerCase()))
+                      .toList();
+                  if (dataFiltered.isEmpty) {
+                    return Center(child: Text('Aucune activitées trouvées'));
+                  }
+                  return Column(
+                    children: [
+                      ...dataFiltered
+                          .map((toElement) => CardRowPlanning(
+                                data: toElement,
+                              ))
+                          .toList(),
+                    ],
+                  );
+                },
+              ),
             ],
           ),
         ));
@@ -191,7 +263,8 @@ class _PlanningState extends State<Planning> {
 }
 
 class HorizontalCalendar extends StatefulWidget {
-  const HorizontalCalendar({super.key});
+  final Function(DateTime date)? handleDate;
+  const HorizontalCalendar({super.key, this.handleDate});
 
   @override
   _HorizontalCalendarState createState() => _HorizontalCalendarState();
@@ -249,6 +322,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
 
               return GestureDetector(
                 onTap: () {
+                  widget.handleDate!(date);
                   setState(() {
                     selectedDate = date;
                   });

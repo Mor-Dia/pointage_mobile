@@ -24,7 +24,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
   late DataBloc<List<Programme>> programmeBloc;
-  Map<String, dynamic> globalFilter = {"count": 4};
+  Map<String, dynamic> globalFilter = {"count": 5};
+  final DateTime date = new DateTime.now();
 
   @override
   void initState() {
@@ -41,7 +42,10 @@ class _HomePageState extends State<HomePage> {
         isPagination: true,
         attributeToGet: Programme.shrinkedAttributs());
     practiceBloc.add(FetchDataEvent(filter: globalFilter));
-    programmeBloc.add(FetchDataEvent(filter: globalFilter));
+    programmeBloc.add(FetchDataEvent(filter: {
+      ...globalFilter,
+      'date': '${date.year}-${date.month}-${date.day}'
+    }));
     super.initState();
   }
 

@@ -16,10 +16,9 @@ class Cardactivite extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int displayColor = 0xFF0000;
-    if(color == "danger")
-    {
-      displayColor = 0x28A745;
+    int displayColor = 0xffFF0000;
+    if (color == "success") {
+      displayColor = 0xff28A745;
     }
 
     return Container(
@@ -35,6 +34,9 @@ class Cardactivite extends StatelessWidget {
           children: [
             Text(
               data.professeurPratique?.pratique?.designation ?? "",
+              softWrap: true,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.arimo(
                   fontWeight: FontWeight.bold,
                   fontSize: MediaQuery.of(context).size.width * 0.040),

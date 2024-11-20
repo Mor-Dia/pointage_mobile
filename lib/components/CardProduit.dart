@@ -5,9 +5,10 @@ import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+import 'package:yogivida_mobile/services/api/models/produit_model.dart';
 
 class CardProduit extends StatefulWidget {
-  final Pratique data;
+  final Produit data;
   final Function()? handlePress;
   const CardProduit({
     super.key,
@@ -44,7 +45,7 @@ class _CardProduitState extends State<CardProduit> {
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
             child: Image.asset(
-              widget.data.image??"",
+              widget.data.image ?? "",
               fit: BoxFit.cover,
               height: 100,
             ),
@@ -57,7 +58,7 @@ class _CardProduitState extends State<CardProduit> {
             children: [
               Flexible(
                 child: Text(
-                  '${(widget.data.designation??"").toUpperCase()}dcisldjc,zpodckzeopc',
+                  '${(widget.data.designation ?? "").toUpperCase()}dcisldjc,zpodckzeopc',
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.arimo(
                     fontSize: MediaQuery.of(context).size.width * 0.040,

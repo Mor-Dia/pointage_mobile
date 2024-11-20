@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 
 class CardRowPlanning extends StatefulWidget {
-  const CardRowPlanning({super.key});
+  final Programme data;
+  const CardRowPlanning({super.key, required this.data});
 
   @override
   State<CardRowPlanning> createState() => _CardRowPlanningState();
@@ -14,8 +16,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 20),
-      decoration: BoxDecoration(border: Border.all(color: greyColor, width: 1)),
+      decoration: BoxDecoration(
+          border: Border(top: BorderSide(width: 1, color: greyColor))),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20.0),
         child: Padding(
@@ -24,7 +26,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Pilate reformer groupe - S1",
+                widget.data.professeurPratique!.pratique!.designation
+                    .toString(),
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -51,8 +54,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                   const SizedBox(
                                     width: 5,
                                   ),
-                                  const Text(
-                                    '14h20',
+                                  Text(
+                                    widget.data.heureDebut.toString(),
                                     style: TextStyle(
                                         color: Color(0xff838282), fontSize: 10),
                                   )
@@ -70,8 +73,10 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                   const SizedBox(
                                     width: 5,
                                   ),
-                                  const Text(
-                                    'Marzena',
+                                  Text(
+                                    widget.data.professeurPratique!.professeur!
+                                        .user!.name
+                                        .toString(),
                                     style: TextStyle(
                                         color: Color(0xff838282), fontSize: 10),
                                   )
@@ -91,8 +96,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                   const SizedBox(
                                     width: 5,
                                   ),
-                                  const Text(
-                                    '16h20',
+                                  Text(
+                                    widget.data.heureFin.toString(),
                                     style: TextStyle(
                                         color: Color(0xff838282), fontSize: 10),
                                   )

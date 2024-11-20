@@ -141,10 +141,10 @@ class ScrollableTabPage2 extends StatelessWidget {
           children: data
               .map((toElement) => SizedBox(
                     width: size.width / 2 - 25,
-                    child: CardProduit(
-                      data: toElement,
-                      handlePress: () => {},
-                    ),
+                    // child: CardProduit(
+                    //   data: toElement,
+                    //   handlePress: () => {},
+                    // ),
                   ))
               .toList(),
         ),
