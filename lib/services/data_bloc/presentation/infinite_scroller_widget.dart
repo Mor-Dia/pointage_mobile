@@ -58,7 +58,7 @@ class _InfiniteScrollerWidgetState<T> extends State<InfiniteScrollerWidget<T>> {
     return SingleChildScrollView(
       controller: practiceListController,
       scrollDirection: Axis.vertical,
-      child: SizedBox()
+      child: const SizedBox()
       // Column(
       //     children:  [
       //       const SizedBox(
