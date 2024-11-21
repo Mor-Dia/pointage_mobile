@@ -41,11 +41,11 @@ class _HomePageState extends State<HomePage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Programme.shrinkedAttributs());
-    practiceBloc.add(FetchDataEvent(filter: globalFilter));
-    programmeBloc.add(FetchDataEvent(filter: {
-      ...globalFilter,
-      'date': '${date.year}-${date.month}-${date.day}'
-    }));
+    // practiceBloc.add(FetchDataEvent(filter: globalFilter));
+    // programmeBloc.add(FetchDataEvent(filter: {
+    //   ...globalFilter,
+    //   'date': '${date.year}-${date.month}-${date.day}'
+    // }));
     super.initState();
   }
 
@@ -217,37 +217,37 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 20,
             ),
-            BlocBasedWidget<List<Pratique>>(
-              customDataBloc: practiceBloc,
-              customWidget: (state) {
-                List<Pratique> pratiques = state.data;
-                Map<String, dynamic>? metadata = state.metadata;
-                bool canLoadNewData = state.canLoadNewData;
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      ...pratiques
-                          .map((toElement) => Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  CardPratique(
-                                    data: toElement,
-                                    handlePress: () => ShowBottomSheet(context),
-                                  )
-                                ],
-                              ))
-                          .toList(),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            )
+            // BlocBasedWidget<List<Pratique>>(
+            //   customDataBloc: practiceBloc,
+            //   customWidget: (state) {
+            //     List<Pratique> pratiques = state.data;
+            //     Map<String, dynamic>? metadata = state.metadata;
+            //     bool canLoadNewData = state.canLoadNewData;
+            //     return SingleChildScrollView(
+            //       scrollDirection: Axis.horizontal,
+            //       child: Row(
+            //         children: [
+            //           ...pratiques
+            //               .map((toElement) => Row(
+            //                     children: [
+            //                       const SizedBox(
+            //                         width: 20,
+            //                       ),
+            //                       CardPratique(
+            //                         data: toElement,
+            //                         handlePress: () => ShowBottomSheet(context),
+            //                       )
+            //                     ],
+            //                   ))
+            //               .toList(),
+            //           const SizedBox(
+            //             width: 20,
+            //           ),
+            //         ],
+            //       ),
+            //     );
+            //   },
+            // )
           ],
         ),
       ),

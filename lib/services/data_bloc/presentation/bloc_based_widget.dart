@@ -1,13 +1,61 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/data_bloc.dart';
 import 'custom_error.dart';
 import 'no_data_widget.dart';
 
-class BlocBasedWidget<T> extends StatelessWidget {
+class BlocBasedWidget<T> extends StatefulWidget {
   final Function customWidget;
   final DataBloc<T> customDataBloc;
-  const BlocBasedWidget({super.key, required this.customWidget, required this.customDataBloc});
+  final Map<String, dynamic>? filter;
+  final bool useInfiniteScroller;
+  const BlocBasedWidget({super.key, required this.customWidget, required this.customDataBloc, this.filter, this.useInfiniteScroller = false});
+
+  @override
+  State<BlocBasedWidget<T>> createState() => _BlocBasedWidgetState();
+}
+
+class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
+
+  late Function customWidget;
+  late DataBloc<T> customDataBloc;
+  late Map<String, dynamic> filter;
+  late bool useInfiniteScroller;
+  bool loadingNewData = false;
+
+  ScrollController scrollerController = ScrollController();
+
+  @override
+  initState(){
+    customWidget = widget.customWidget;
+    customDataBloc = widget.customDataBloc;
+    filter = widget.filter ?? {};
+    useInfiniteScroller = widget.useInfiniteScroller;
+    customDataBloc.add(FetchDataEvent(filter: filter));
+    scrollerController.addListener(getAdditionalData);
+    super.initState();
+  }
+
+  getAdditionalData(){
+    if (scrollerController.offset >= scrollerController.position.maxScrollExtent-50 &&
+        !scrollerController.position.outOfRange) {
+      if(customDataBloc.state is DataSuccess<T>){
+        int currentPage = 1;
+        Map<String, dynamic>? metadata = (customDataBloc.state as DataSuccess<T>).metadata;
+        bool canLoadNewData = (customDataBloc.state as DataSuccess<T>).canLoadNewData;
+        if(canLoadNewData){
+          if(metadata != null && metadata.containsKey("current_page")){
+            currentPage = metadata['current_page'];
+          }
+          setState((){
+            loadingNewData = true;
+          });
+          customDataBloc.add(FetchDataEvent(filter: {...filter, ...{"page": currentPage+1} },));
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +63,36 @@ class BlocBasedWidget<T> extends StatelessWidget {
       bloc: customDataBloc,
       builder: (context, state) {
         if (state is DataSuccess<T>) {
-          print("DATA BLOC BASED DATA $state");
           if(state.data != null || (state.data != null && (state.data as List).isNotEmpty)){
+            String tempString = "";
+            int len = 0;
+            for(dynamic val in (state.data as List)){
+              tempString += "${val.id}, ";
+              len += 1;
+            }
+            print("IDS $tempString ");
+            print("IDS LENGHT $len ");
+            if(useInfiniteScroller){
+              return SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                controller: scrollerController,
+                scrollDirection: Axis.vertical,
+                child: Column(
+                  children: [
+                    customWidget(state),
+                    Visibility(
+                        visible: loadingNewData,
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                    ),
+                  ],
+                ),
+              );
+            }
             return customWidget(state);
           }
           return const Center(

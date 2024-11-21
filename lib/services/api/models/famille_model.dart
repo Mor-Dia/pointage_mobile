@@ -19,14 +19,12 @@ class Famille with _$Famille {
     List<Famille> data = [];
     try {
       if (kDebugMode) {
-        print("DOC DATA RESPONSE $json");
       }
 
       for (var result in json) {
         data.add(Famille.fromJson(result as Map<String, dynamic>));
       }
       if (kDebugMode) {
-        print("DOC DATA RESPONSE TRANSFORMED $data");
       }
     } catch (error, stacktrace) {
       if (kDebugMode) {

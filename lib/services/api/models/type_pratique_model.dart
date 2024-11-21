@@ -18,14 +18,12 @@ class TypePratique with _$TypePratique {
     List<TypePratique> data = [];
     try{
       if (kDebugMode) {
-        print("DOC DATA RESPONSE $json");
       }
 
       for (var result in json) {
         data.add(TypePratique.fromJson(result as Map<String, dynamic>));
       }
       if (kDebugMode) {
-        print("DOC DATA RESPONSE TRANSFORMED $data");
       }
     } catch(error, stacktrace){
       if (kDebugMode) {

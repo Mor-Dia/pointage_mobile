@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:yogivida_mobile/services/api/model_helpers/data_extractor.dart';
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/professeur_pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/salle_pratique_model.dart';
@@ -17,7 +18,6 @@ class Programme with _$Programme {
     @JsonKey(name: "heure_debut")String? heureDebut,
     @JsonKey(name: "heure_fin")String? heureFin,
     @JsonKey(name: "professeur_pratique")ProfesseurPratique? professeurPratique,
-    // @JsonKey(name: "professeur_pratique")Pratique? pratique,
     @JsonKey(name: "salle_pratique")SallePratique? sallePratique,
   }) = _Programme;
 

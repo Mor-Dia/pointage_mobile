@@ -25,14 +25,12 @@ class Pratique with _$Pratique {
     List<Pratique> data = [];
     try{
       if (kDebugMode) {
-        print("DOC DATA RESPONSE $json");
       }
 
       for (var result in json) {
         data.add(Pratique.fromJson(result as Map<String, dynamic>));
       }
       if (kDebugMode) {
-        print("DOC DATA RESPONSE TRANSFORMED $data");
       }
     } catch(error, stacktrace){
       if (kDebugMode) {
@@ -43,7 +41,7 @@ class Pratique with _$Pratique {
   }
 
   static shrinkedAttributs () {
-    return "id,favoris,designation,image,description,description_en,type_pratique_id,type_pratique{id,designation}";
+    return "id,favoris,designation,description,description_en,type_pratique_id,type_pratique{id,designation}";
   }
 
   static String getEndpoint({bool isPagination = true}) {
