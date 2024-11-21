@@ -86,8 +86,9 @@ class _MyAppState extends State<MyApp> {
           initialRoute: '/',
           routes: {
             // '/': (context) => const PratiquesPage(),
-            '/': (context) => const Boutique(),
-            // '/': (context) => const SplashScreen(),
+            // '/': (context) => const (),
+            '/': (context) => const SplashScreen(),
+            // '/': (context) => const MonCompte(),
             '/login': (context) => const LoginScreen(),
             '/home': (context) => const HomePage(),
           },
