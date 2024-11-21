@@ -4,7 +4,8 @@ abstract class DataFetchEvent {}
 
 class FetchDataEvent<T> extends DataFetchEvent {
   final Map<String, dynamic>? filter;
-  FetchDataEvent({this.filter});
+  final bool loadNewData;
+  FetchDataEvent({this.filter, this.loadNewData = true});
 }
 
 class RefreshDataEvent<T> extends DataFetchEvent {

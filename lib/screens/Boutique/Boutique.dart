@@ -29,6 +29,7 @@ class _BoutiqueState extends State<Boutique> {
   int selectedFamilyIndex = 0; // Indice de la famille sélectionnée
   late DataBloc<List<Famille>> familleBloc;
   late DataBloc<List<Produit>> produitBloc;
+  late Map<String, dynamic> productFilter = {};
 
   @override
   void initState() {
@@ -44,7 +45,10 @@ class _BoutiqueState extends State<Boutique> {
         Produit.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
-        attributeToGet: Produit.shrinkedAttributs());
+        attributeToGet: Produit.shrinkedAttributs()
+    );
+
+    productFilter.addAll({'count': 15});
 
     // familleBloc.add(FetchDataEvent());
     // produitBloc.add(FetchDataEvent());
@@ -52,21 +56,19 @@ class _BoutiqueState extends State<Boutique> {
     super.initState();
   }
 
+
+  void filtre(index, famille_produit_id) {
+    print("DEFINE NEW FILTER $famille_produit_id");
+    setState(() {
+      selectedFamilyIndex = index; // Met à jour la famille sélectionnée
+      productFilter = {...productFilter..addAll({'famille_produit_id': famille_produit_id})};
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-
-    /*24 is for notification bar on Android*/
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
-    final double itemWidth = size.width / 2;
-
-    void filtre(index, famille_produit_id) {
-      setState(() {
-        selectedFamilyIndex = index; // Met à jour la famille sélectionnée
-        produitBloc.add(
-            FetchDataEvent(filter: {'famille_produit_id': famille_produit_id}));
-      });
-    }
 
     return Scaffold(
         appBar: AppBar(
@@ -278,10 +280,9 @@ class _BoutiqueState extends State<Boutique> {
                         child: BlocBasedWidget<List<Produit>>(
                             customDataBloc: produitBloc,
                             useInfiniteScroller: true,
+                            filter: productFilter,
                             customWidget: (state) {
                               List<Produit> produits = state.data;
-                              Map<String, dynamic>? metadata = state.metadata;
-                              bool canLoadNewData = state.canLoadNewData;
                               return Wrap(
                                 spacing: 10,
                                 runSpacing: 10,

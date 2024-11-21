@@ -37,6 +37,20 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
     super.initState();
   }
 
+  @override
+  void didUpdateWidget(covariant BlocBasedWidget<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if(widget.filter != oldWidget.filter){
+      customDataBloc.add(FetchDataEvent(filter: widget.filter));
+    }
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   getAdditionalData(){
     if (scrollerController.offset >= scrollerController.position.maxScrollExtent-50 &&
         !scrollerController.position.outOfRange) {
@@ -53,7 +67,7 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
           setState((){
             loadingNewData = true;
           });
-          customDataBloc.add(FetchDataEvent(filter: {...filter, ...{"page": currentPage+1} },));
+          customDataBloc.add(FetchDataEvent(loadNewData: false, filter: {...filter, ...{"page": currentPage+1} },));
         }
       }
     }
@@ -81,8 +95,6 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
               tempString += "${val.id}, ";
               len += 1;
             }
-            print("IDS $tempString ");
-            print("IDS LENGHT $len ");
             if(useInfiniteScroller){
               return SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
