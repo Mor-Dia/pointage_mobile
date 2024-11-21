@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardProduit.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
@@ -262,26 +263,31 @@ class _BoutiqueState extends State<Boutique> {
                           const SizedBox(width: 10),
                           const Text('|'),
                           const SizedBox(width: 10),
-                          Container(
-                            height: 45,
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            decoration: BoxDecoration(
-                              color: primaryColor, // Couleur de fond bleu
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset("assets/icons/stat.svg",
-                                    height: 15, color: Colors.white),
-                                const SizedBox(
-                                    width:
-                                        10.0), // Espace entre l'icône et le DropdownButton
-                                const Text(
-                                  'Par prix',
-                                  style: TextStyle(color: Colors.white),
-                                )
-                              ],
+                          GestureDetector(
+                            onTap: () {
+                              ShowBottomSheetFiltrePrix(context);
+                            },
+                            child: Container(
+                              height: 45,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              decoration: BoxDecoration(
+                                color: primaryColor, // Couleur de fond bleu
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset("assets/icons/stat.svg",
+                                      height: 15, color: Colors.white),
+                                  const SizedBox(
+                                      width:
+                                          10.0), // Espace entre l'icône et le DropdownButton
+                                  const Text(
+                                    'Par prix',
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                ],
+                              ),
                             ),
                           )
                         ],
@@ -317,4 +323,106 @@ class _BoutiqueState extends State<Boutique> {
               );
             }));
   }
+}
+
+Future<dynamic> ShowBottomSheetFiltrePrix(BuildContext context) {
+  return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    height: 2,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        color: greyColor,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Center(
+                  child: Text(
+                    'Filtrer par prix '.toUpperCase(),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(width: 1, color: primaryColor),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15))),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: TextField(
+                              decoration: InputDecoration(
+                                  icon: Text(
+                                    'Min',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryColor),
+                                  ),
+                                  border: InputBorder.none,
+                                  hintText: '0',
+                                  hintStyle: TextStyle(
+                                      fontSize: 14, color: primaryColor))),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(width: 1, color: primaryColor),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15))),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: TextField(
+                              decoration: InputDecoration(
+                                  icon: Text(
+                                    'Max',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryColor),
+                                  ),
+                                  border: InputBorder.none,
+                                  hintText: '0',
+                                  hintStyle: TextStyle(
+                                      fontSize: 14, color: primaryColor))),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                ButtonFiled(
+                  text: 'Valider',
+                  handlerPress: () {},
+                )
+              ],
+            ),
+          ),
+        );
+      });
 }

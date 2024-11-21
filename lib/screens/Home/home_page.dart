@@ -259,189 +259,204 @@ class _HomePageState extends State<HomePage> {
     return showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
-          return Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    height: 2,
-                    width: 50,
-                    color: Colors.black,
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Pilate former groupe'.toUpperCase(),
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text("Ouvert")
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      "assets/icons/heure.svg",
-                      height: 15,
-                      color: const Color(0xFF838282),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      "14H50",
-                      style: TextStyle(color: Color(0xff838282), fontSize: 12),
-                    ),
-                    Text(
-                      "- 14H50",
-                      style: TextStyle(color: Color(0xff838282), fontSize: 12),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xffE5DFC5),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Padding(
-                                padding: EdgeInsets.all(10),
-                                child: SvgPicture.asset(
-                                  "assets/icons/heure.svg",
-                                  height: 15,
-                                  color: const Color(0xFFA8923B),
-                                ))),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Mins",
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "14H50",
-                              style: TextStyle(
-                                  color: Color(0xff838282), fontSize: 12),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xffE5DFC5),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Padding(
-                                padding: EdgeInsets.all(10),
-                                child: SvgPicture.asset(
-                                  "assets/icons/heure.svg",
-                                  height: 15,
-                                  color: const Color(0xFFA8923B),
-                                ))),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Mins",
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "14H50",
-                              style: TextStyle(
-                                  color: Color(0xff838282), fontSize: 12),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xffE5DFC5),
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Padding(
-                                padding: EdgeInsets.all(10),
-                                child: SvgPicture.asset(
-                                  "assets/icons/heure.svg",
-                                  height: 15,
-                                  color: const Color(0xFFA8923B),
-                                ))),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Mins",
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              "14H50",
-                              style: TextStyle(
-                                  color: Color(0xff838282), fontSize: 12),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  'Description',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  'lorem',
-                  style: TextStyle(color: Color(0xff838282), fontSize: 12),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Center(
-                  child: Container(
-                    constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.50),
-                    child: ButtonFiled(
-                      text: 'Reserver',
-                      handlerPress: () => ShowBottomSheetPayment(context),
+          return Container(
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
+            child: Padding(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      height: 2,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          color: greyColor,
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
                     ),
                   ),
-                )
-              ],
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Pilate former groupe'.toUpperCase(),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "Ouvert",
+                        style: TextStyle(color: primaryColor),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/icons/heure.svg",
+                        height: 15,
+                        color: const Color(0xFF838282),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "14H50",
+                        style:
+                            TextStyle(color: Color(0xff838282), fontSize: 12),
+                      ),
+                      Text(
+                        "- 14H50",
+                        style:
+                            TextStyle(color: Color(0xff838282), fontSize: 12),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xffE5DFC5),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: SvgPicture.asset(
+                                    "assets/icons/heure.svg",
+                                    height: 15,
+                                    color: const Color(0xFFA8923B),
+                                  ))),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Mins",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "14H50",
+                                style: TextStyle(
+                                    color: Color(0xff838282), fontSize: 12),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xffE5DFC5),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: SvgPicture.asset(
+                                    "assets/icons/heure.svg",
+                                    height: 15,
+                                    color: const Color(0xFFA8923B),
+                                  ))),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Mins",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "14H50",
+                                style: TextStyle(
+                                    color: Color(0xff838282), fontSize: 12),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                  color: Color(0xffE5DFC5),
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: SvgPicture.asset(
+                                    "assets/icons/heure.svg",
+                                    height: 15,
+                                    color: const Color(0xFFA8923B),
+                                  ))),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Mins",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "14H50",
+                                style: TextStyle(
+                                    color: Color(0xff838282), fontSize: 12),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'Description',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'lorem',
+                    style: TextStyle(color: Color(0xff838282), fontSize: 12),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  // Spacer(flex: 1),
+                  Center(
+                    child: Container(
+                      constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.50),
+                      child: ButtonFiled(
+                        text: 'Reserver',
+                        handlerPress: () => ShowBottomSheetPayment(context),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           );
         });
@@ -452,28 +467,126 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
   return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  height: 2,
-                  width: 50,
-                  color: Colors.black,
+        return Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    height: 2,
+                    width: 50,
+                    decoration: BoxDecoration(
+                        color: greyColor,
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Center(
-                child: Text(
-                  'Payer par '.toUpperCase(),
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                SizedBox(
+                  height: 20,
                 ),
-              ),
-            ],
+                Center(
+                  child: Text(
+                    'Payer par '.toUpperCase(),
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: greyColorL),
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/lc.svg',
+                          height: 25,
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Text('Ligne crédit',
+                            style: TextStyle(color: primaryColor)),
+                        Spacer(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Solde actuel',
+                                style: TextStyle(
+                                    color: primaryColor, fontSize: 12)),
+                            Text('20.000' + ' xof'.toUpperCase(),
+                                style: TextStyle(
+                                    color: primaryColor,
+                                    fontWeight: FontWeight.bold))
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: greyColorL),
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/wv.png',
+                          height: 25,
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Text('Wave', style: TextStyle(color: primaryColor))
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: greyColorL),
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/om.png',
+                          height: 25,
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Text('Orange Money',
+                            style: TextStyle(color: primaryColor))
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       });
