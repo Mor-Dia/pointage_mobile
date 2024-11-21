@@ -35,9 +35,6 @@ class _PratiquesPageState extends State<PratiquesPage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Pratique.shrinkedAttributs());
-
-    // practiceBloc.add(FetchDataEvent());
-    // practiceListController.addListener(getAdditionalData);
     super.initState();
   }
 

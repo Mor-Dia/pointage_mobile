@@ -11,7 +11,32 @@ const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
 const LOGOUT_ENDPOINT = "deconnexion";
 const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
-const BASE_URL_QGL = '${ BASE_URL}graphql?query=';
+const BASE_URL_QGL = '${BASE_URL}graphql?query=';
+
+class Activite {
+  final String nomActivite;
+  final String nomProf;
+  final String heure;
+  final int color;
+
+  Activite(this.nomActivite, this.nomProf, this.heure, this.color);
+}
+
+class UserClass {
+  final dynamic data;
+  final dynamic errors;
+  final dynamic success;
+
+  factory UserClass.fromJson(Map<String, dynamic> json) {
+    return UserClass(
+      data: json['data'] ?? '',
+      success: json['success'] ?? '',
+      errors: json['errors'] ?? '',
+    );
+  }
+
+  UserClass({required this.data, required this.errors, required this.success});
+}
 
 final List<Item> items = [Item(id: 1, nom: 'Homme'), Item(id: 2, nom: 'Femme')];
 

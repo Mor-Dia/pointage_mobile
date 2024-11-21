@@ -40,11 +40,13 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
   getAdditionalData(){
     if (scrollerController.offset >= scrollerController.position.maxScrollExtent-50 &&
         !scrollerController.position.outOfRange) {
+      // Quand on est presque à la fin du scroll
       if(customDataBloc.state is DataSuccess<T>){
         int currentPage = 1;
         Map<String, dynamic>? metadata = (customDataBloc.state as DataSuccess<T>).metadata;
         bool canLoadNewData = (customDataBloc.state as DataSuccess<T>).canLoadNewData;
-        if(canLoadNewData){
+        if(canLoadNewData && !loadingNewData){
+          // Dans le cas où il y a encore des éléments à récupérer et qu'aucune récupération n'est en cours
           if(metadata != null && metadata.containsKey("current_page")){
             currentPage = metadata['current_page'];
           }
@@ -59,8 +61,17 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
+    return BlocConsumer(
       bloc: customDataBloc,
+      listener: (context, state){
+        if(state is DataSuccess<T>){
+          if(loadingNewData){
+            setState(() {
+              loadingNewData = false;
+            });
+          }
+        }
+      },
       builder: (context, state) {
         if (state is DataSuccess<T>) {
           if(state.data != null || (state.data != null && (state.data as List).isNotEmpty)){

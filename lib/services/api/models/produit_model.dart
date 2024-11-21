@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/services/api/models/taille_model.dart';
 
 part 'produit_model.freezed.dart';
 part 'produit_model.g.dart';
@@ -13,7 +15,7 @@ class Produit with _$Produit {
     String? description,
     int? marqueId,
     String? marqueDesignation,
-    List<dynamic>? produitTailles,
+    @JsonKey(name: "produit_tailles") List<Taille>? produitTailles,
     String? image,
     double? prix,
     double? prixSiteWebFr,

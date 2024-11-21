@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 
 class CardPratique extends StatefulWidget {
@@ -44,7 +45,7 @@ class _CardPratiqueState extends State<CardPratique> {
               children: [
                 Expanded(
                   child: Text(
-                    widget.data.designation??'',
+                    widget.data.designation.toString().toCapitalized ?? '',
                     softWrap: true,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -70,14 +71,15 @@ class _CardPratiqueState extends State<CardPratique> {
               height: 100,
               child: Container(
                 clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(8)),
                 child: CachedNetworkImage(
                   progressIndicatorBuilder: (context, url, progress) => Center(
                     child: CircularProgressIndicator(
                       value: progress.progress,
                     ),
                   ),
-                  imageUrl: widget.data.image??'',
+                  imageUrl: widget.data.image ?? '',
                   imageBuilder: (context, imageProvider) => Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(

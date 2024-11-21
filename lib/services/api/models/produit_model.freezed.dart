@@ -25,7 +25,8 @@ mixin _$Produit {
   String? get description => throw _privateConstructorUsedError;
   int? get marqueId => throw _privateConstructorUsedError;
   String? get marqueDesignation => throw _privateConstructorUsedError;
-  List<dynamic>? get produitTailles => throw _privateConstructorUsedError;
+  @JsonKey(name: "produit_tailles")
+  List<Taille>? get produitTailles => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
   double? get prix => throw _privateConstructorUsedError;
   double? get prixSiteWebFr => throw _privateConstructorUsedError;
@@ -52,7 +53,7 @@ abstract class $ProduitCopyWith<$Res> {
       String? description,
       int? marqueId,
       String? marqueDesignation,
-      List<dynamic>? produitTailles,
+      @JsonKey(name: "produit_tailles") List<Taille>? produitTailles,
       String? image,
       double? prix,
       double? prixSiteWebFr,
@@ -111,7 +112,7 @@ class _$ProduitCopyWithImpl<$Res, $Val extends Produit>
       produitTailles: freezed == produitTailles
           ? _value.produitTailles
           : produitTailles // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<Taille>?,
       image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
@@ -149,7 +150,7 @@ abstract class _$$ProduitImplCopyWith<$Res> implements $ProduitCopyWith<$Res> {
       String? description,
       int? marqueId,
       String? marqueDesignation,
-      List<dynamic>? produitTailles,
+      @JsonKey(name: "produit_tailles") List<Taille>? produitTailles,
       String? image,
       double? prix,
       double? prixSiteWebFr,
@@ -206,7 +207,7 @@ class __$$ProduitImplCopyWithImpl<$Res>
       produitTailles: freezed == produitTailles
           ? _value._produitTailles
           : produitTailles // ignore: cast_nullable_to_non_nullable
-              as List<dynamic>?,
+              as List<Taille>?,
       image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
@@ -240,7 +241,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
       this.description,
       this.marqueId,
       this.marqueDesignation,
-      final List<dynamic>? produitTailles,
+      @JsonKey(name: "produit_tailles") final List<Taille>? produitTailles,
       this.image,
       this.prix,
       this.prixSiteWebFr,
@@ -262,9 +263,10 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
   final int? marqueId;
   @override
   final String? marqueDesignation;
-  final List<dynamic>? _produitTailles;
+  final List<Taille>? _produitTailles;
   @override
-  List<dynamic>? get produitTailles {
+  @JsonKey(name: "produit_tailles")
+  List<Taille>? get produitTailles {
     final value = _produitTailles;
     if (value == null) return null;
     if (_produitTailles is EqualUnmodifiableListView) return _produitTailles;
@@ -373,7 +375,7 @@ abstract class _Produit extends Produit {
       final String? description,
       final int? marqueId,
       final String? marqueDesignation,
-      final List<dynamic>? produitTailles,
+      @JsonKey(name: "produit_tailles") final List<Taille>? produitTailles,
       final String? image,
       final double? prix,
       final double? prixSiteWebFr,
@@ -394,7 +396,8 @@ abstract class _Produit extends Produit {
   @override
   String? get marqueDesignation;
   @override
-  List<dynamic>? get produitTailles;
+  @JsonKey(name: "produit_tailles")
+  List<Taille>? get produitTailles;
   @override
   String? get image;
   @override

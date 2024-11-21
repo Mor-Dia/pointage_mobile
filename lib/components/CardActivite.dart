@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 
 class Cardactivite extends StatelessWidget {
@@ -33,7 +34,10 @@ class Cardactivite extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              data.professeurPratique?.pratique?.designation ?? "",
+              data.professeurPratique?.pratique?.designation
+                      .toString()
+                      .toCapitalized ??
+                  "",
               softWrap: true,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

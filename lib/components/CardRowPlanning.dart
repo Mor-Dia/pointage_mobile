@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 
 class CardRowPlanning extends StatefulWidget {
@@ -27,6 +28,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
             children: [
               Text(
                 widget.data.professeurPratique!.pratique!.designation
+                    .toString()
+                    .toCapitalized
                     .toString(),
                 style: TextStyle(
                     fontSize: 16,
@@ -73,16 +76,27 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                   const SizedBox(
                                     width: 5,
                                   ),
-                                  Text(
-                                    widget.data.professeurPratique!.professeur!
-                                        .user!.name
-                                        .toString(),
-                                    style: TextStyle(
-                                        color: Color(0xff838282), fontSize: 10),
+                                  Container(
+                                    width: 50,
+                                    child: Expanded(
+                                      child: Text(
+                                        widget.data.professeurPratique!
+                                            .professeur!.user!.name
+                                            .toString()
+                                            .toCapitalized,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: Color(0xff838282),
+                                            fontSize: 10),
+                                      ),
+                                    ),
                                   )
                                 ],
                               ),
                             ],
+                          ),
+                          SizedBox(
+                            width: 20,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

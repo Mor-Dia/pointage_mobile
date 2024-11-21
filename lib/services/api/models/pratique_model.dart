@@ -41,7 +41,7 @@ class Pratique with _$Pratique {
   }
 
   static shrinkedAttributs () {
-    return "id,favoris,designation,description,description_en,type_pratique_id,type_pratique{id,designation}";
+    return "id,favoris,image,designation,description,description_en,type_pratique_id,type_pratique{id,designation}";
   }
 
   static String getEndpoint({bool isPagination = true}) {
