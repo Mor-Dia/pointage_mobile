@@ -25,24 +25,8 @@ class Boutique extends StatefulWidget {
 
 class _BoutiqueState extends State<Boutique> {
   String? selectedValue;
-  final List<String> options = ['Option 1', 'Option 2', 'Option 3'];
-
-  List<Pratique> listPratique = [
-    // Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
-    // Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
-    // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
-    // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
-    // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
-  ];
 
   int selectedFamilyIndex = 0; // Indice de la famille sélectionnée
-  final List<String> families = [
-    'Fruits',
-    'Légumes',
-    'Céréales',
-    'Produits laitiers'
-  ];
-
   late DataBloc<List<Famille>> familleBloc;
   late DataBloc<List<Produit>> produitBloc;
 
@@ -54,6 +38,7 @@ class _BoutiqueState extends State<Boutique> {
         isGraphQl: true,
         isPagination: false,
         attributeToGet: Famille.shrinkedAttributs());
+
     produitBloc = DataBloc<List<Produit>>(
         (response) => Produit.fromJsonList(response),
         Produit.getEndpoint(isPagination: true),
@@ -61,8 +46,8 @@ class _BoutiqueState extends State<Boutique> {
         isPagination: true,
         attributeToGet: Produit.shrinkedAttributs());
 
-    familleBloc.add(FetchDataEvent());
-    produitBloc.add(FetchDataEvent());
+    // familleBloc.add(FetchDataEvent());
+    // produitBloc.add(FetchDataEvent());
 
     super.initState();
   }
@@ -165,8 +150,6 @@ class _BoutiqueState extends State<Boutique> {
             customDataBloc: familleBloc,
             customWidget: (state) {
               List<Famille> marques = state.data;
-              Map<String, dynamic>? metadata = state.metadata;
-              bool canLoadNewData = state.canLoadNewData;
               return Container(
                 color: Colors.white,
                 child: ListView(
@@ -294,6 +277,7 @@ class _BoutiqueState extends State<Boutique> {
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: BlocBasedWidget<List<Produit>>(
                             customDataBloc: produitBloc,
+                            useInfiniteScroller: true,
                             customWidget: (state) {
                               List<Produit> produits = state.data;
                               Map<String, dynamic>? metadata = state.metadata;

@@ -5,6 +5,11 @@ import 'package:yogivida_mobile/components/CardRowPlanning.dart';
 import 'package:yogivida_mobile/components/CardRowPlanning2.dart';
 import 'package:yogivida_mobile/constant.dart';
 
+import '../../services/data_bloc/bloc/data_bloc.dart';
+
+import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
+import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
+
 class Reservation extends StatefulWidget {
   const Reservation({super.key});
 
@@ -13,6 +18,22 @@ class Reservation extends StatefulWidget {
 }
 
 class _ReservationState extends State<Reservation> {
+
+  late DataBloc<List<Reservation>> reservationBloc;
+  Map<String, dynamic> globalFilter = {"count": 10};
+  final DateTime date = new DateTime.now();
+
+  @override
+  void initState() {
+    // reservationBloc = DataBloc<List<Reservation>>(
+    //         (response) => Reservation.fromJsonList(response),
+    //     Reservation.getEndpoint(isPagination: true),
+    //     isGraphQl: true,
+    //     isPagination: true,
+    //     attributeToGet: Reservation.shrinkedAttributs());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
