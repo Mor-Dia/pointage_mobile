@@ -28,44 +28,41 @@ class _PratiquesPageState extends State<PratiquesPage> {
 
   @override
   void initState() {
+    currentFilter.addAll({...initialFilter});
     practiceBloc = DataBloc<List<Pratique>>(
         (response) => Pratique.fromJsonList(response),
         Pratique.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Pratique.shrinkedAttributs());
-
-    practiceBloc.add(FetchDataEvent());
-    currentFilter.addAll({...initialFilter});
-    practiceListController.addListener(getAdditionalData);
     super.initState();
   }
 
 
-  getAdditionalData(){
-    if (kDebugMode) {
-      print("SCROLLING OFFSET: ${practiceListController.offset}, POSITION MAXCSROLL ${practiceListController.position.maxScrollExtent}, MAXSCROLL MINUS: ${practiceListController.position.maxScrollExtent-50}");
-    }
-    if (practiceListController.offset >= practiceListController.position.maxScrollExtent-50 &&
-        !practiceListController.position.outOfRange) {
-      print("SCROLLING ${practiceBloc.state is DataSuccess<List<Pratique>>}");
-      if(practiceBloc.state is DataSuccess<List<Pratique>>){
-        int currentPage = 1;
-        Map<String, dynamic>? metadata = (practiceBloc.state as DataSuccess<List<Pratique>>).metadata;
-        bool canLoadNewData = (practiceBloc.state as DataSuccess<List<Pratique>>).canLoadNewData;
-        if(canLoadNewData){
-          if(metadata != null && metadata.containsKey("page")){
-            currentPage = metadata['page'];
-          }
-          setState((){
-            loadingNewData = true;
-          });
-          practiceBloc.add(FetchDataEvent(filter: {...currentFilter, ...{"page": currentPage+1} },));
-        }
-      }
-    }
-    // practiceBloc.stream.listen(onData)
-  }
+  // getAdditionalData(){
+  //   if (kDebugMode) {
+  //     print("SCROLLING OFFSET: ${practiceListController.offset}, POSITION MAXCSROLL ${practiceListController.position.maxScrollExtent}, MAXSCROLL MINUS: ${practiceListController.position.maxScrollExtent-50}");
+  //   }
+  //   if (practiceListController.offset >= practiceListController.position.maxScrollExtent-50 &&
+  //       !practiceListController.position.outOfRange) {
+  //     print("SCROLLING ${practiceBloc.state is DataSuccess<List<Pratique>>}");
+  //     if(practiceBloc.state is DataSuccess<List<Pratique>>){
+  //       int currentPage = 1;
+  //       Map<String, dynamic>? metadata = (practiceBloc.state as DataSuccess<List<Pratique>>).metadata;
+  //       bool canLoadNewData = (practiceBloc.state as DataSuccess<List<Pratique>>).canLoadNewData;
+  //       if(canLoadNewData){
+  //         if(metadata != null && metadata.containsKey("page")){
+  //           currentPage = metadata['page'];
+  //         }
+  //         setState((){
+  //           loadingNewData = true;
+  //         });
+  //         practiceBloc.add(FetchDataEvent(filter: {...currentFilter, ...{"page": currentPage+1} },));
+  //       }
+  //     }
+  //   }
+  //   // practiceBloc.stream.listen(onData)
+  // }
 
   @override
   void dispose() {
@@ -116,51 +113,32 @@ class _PratiquesPageState extends State<PratiquesPage> {
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: BlocBasedWidget<List<Pratique>>(
               customDataBloc: practiceBloc,
+              filter: currentFilter,
+              useInfiniteScroller: true,
               customWidget: (state) {
                 List<Pratique> pratiques = state.data;
-                Map<String, dynamic>? metadata = state.metadata;
-                bool canLoadNewData = state.canLoadNewData;
-                return SingleChildScrollView(
-                  controller: practiceListController,
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    children:  [
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: [
-                          ...pratiques
-                              .map((toElement) => SizedBox(
-                              width: size.width / 2 - 25,
-                              child: CardPratique(
-                                data: toElement,
-                                handlePress: () => ShowBottomSheet(context),
-                              )))
-                              .toList(),
-                          Visibility(
-                            visible: loadingNewData,
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            )
-                          ),
-                          // ElevatedButton(
-                          //   onPressed: (){
-                          //     int currentPage = 1;
-                          //     if(metadata != null && metadata.containsKey("page")){
-                          //       currentPage = metadata['page'];
-                          //     }
-                          //     practiceBloc.add(FetchDataEvent(filter: {...currentFilter, ...{"page": currentPage+1} },));
-                          //   },
-                          //   child: const Text("Charger plus")
-                          // )
-                        ]
-                      ),
-                    ]
-                  ),
-                );
+                return
+                  Column(
+                      children:  [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: [
+                              ...pratiques
+                                  .map((toElement) => SizedBox(
+                                  width: size.width / 2 - 25,
+                                  child: CardPratique(
+                                    data: toElement,
+                                    handlePress: () => ShowBottomSheet(context),
+                                  )))
+                                  .toList(),
+                            ]
+                        ),
+                      ]
+                  );
               },
             ),
           ),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-final Color primaryColor = const Color(0xff15274D);
-final Color greyColor = const Color(0xffD9D9D9);
-final Color greyColorL = const Color(0xffF1F1F1);
-final Color secondColor = const Color(0xffA8923B);
+const Color primaryColor = const Color(0xff15274D);
+const Color greyColor = const Color(0xffD9D9D9);
+const Color greyColorL = const Color(0xffF1F1F1);
+const Color secondColor = const Color(0xffA8923B);
+
 const padding_constant = 20.0;
 const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";

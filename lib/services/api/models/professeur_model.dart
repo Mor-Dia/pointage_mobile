@@ -20,14 +20,12 @@ class Professeur with _$Professeur {
     List<Professeur> data = [];
     try{
       if (kDebugMode) {
-        print("DOC DATA RESPONSE $json");
       }
 
       for (var result in json) {
         data.add(Professeur.fromJson(result as Map<String, dynamic>));
       }
       if (kDebugMode) {
-        print("DOC DATA RESPONSE TRANSFORMED $data");
       }
     } catch(error, stacktrace){
       if (kDebugMode) {

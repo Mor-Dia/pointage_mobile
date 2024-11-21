@@ -83,12 +83,26 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
           jsonData = responseJsonDecoded["data"][path];
         }
         if (kDebugMode) {
-          print("JSON DATA $jsonData");
-          print("JSON DATA METADATA $metadata");
-          print("JSON DATA INITDATA $initialData");
+          // print("JSON DATA $jsonData");
+          // print("JSON DATA METADATA $metadata");
+          // print("JSON DATA INITDATA $initialData");
         }
         T data = this.transformerFunction(jsonData);
         bool canLoadNewData = false;
+        if(data is List && initialData != null) {
+          // data.addAll(initialData as Iterable);
+          // List de = [];
+          data.insertAll(0, (initialData as Iterable));
+          // data = [...(initialData as Iterable), ...data] as T;
+          String tempString = "";
+          int len = 0;
+          for(dynamic val in (data as List)){
+            tempString += "${val.id}, ";
+            len += 1;
+          }
+          print("IDS BL $tempString ");
+          print("IDS BL LENGHT $len ");
+        }
         if( metadata != null && metadata.containsKey("last_page")
             && metadata.containsKey("current_page")
             && metadata['last_page'] >= metadata['current_page']){

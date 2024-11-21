@@ -42,11 +42,11 @@ class _HomePageState extends State<HomePage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Programme.shrinkedAttributs());
-    practiceBloc.add(FetchDataEvent(filter: globalFilter));
-    programmeBloc.add(FetchDataEvent(filter: {
-      ...globalFilter,
-      'date': '${date.year}-${date.month}-${date.day}'
-    }));
+    // practiceBloc.add(FetchDataEvent(filter: globalFilter));
+    // programmeBloc.add(FetchDataEvent(filter: {
+    //   ...globalFilter,
+    //   'date': '${date.year}-${date.month}-${date.day}'
+    // }));
     super.initState();
   }
 
@@ -153,10 +153,12 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Programme>>(
               customDataBloc: programmeBloc,
+              filter: {
+                ...globalFilter,
+                'date': '${date.year}-${date.month}-${date.day}'
+              },
               customWidget: (state) {
                 List<Programme> programmes = state.data;
-                Map<String, dynamic>? metadata = state.metadata;
-                bool canLoadNewData = state.canLoadNewData;
                 return SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -220,6 +222,7 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Pratique>>(
               customDataBloc: practiceBloc,
+              filter: globalFilter,
               customWidget: (state) {
                 List<Pratique> pratiques = state.data;
                 Map<String, dynamic>? metadata = state.metadata;

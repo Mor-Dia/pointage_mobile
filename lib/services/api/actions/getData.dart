@@ -11,7 +11,7 @@ Future<dynamic> getApiData(endPoint, {Map<String, dynamic>? parameters, isGraphQ
     url = "${url}graphql";
   }
   if (kDebugMode) {
-    print("API CALL $url");
+    // print("API CALL $url");
   }
   Map<String, String>? headers = await getHeaders();
   var requestUri = Uri.parse(url).replace(queryParameters: parameters);
@@ -20,8 +20,8 @@ Future<dynamic> getApiData(endPoint, {Map<String, dynamic>? parameters, isGraphQ
   }
   var response = await http.get(requestUri, headers: headers);
   if (kDebugMode) {
-    print("API CALL RESPONSE ${response.body}");
-    print("API CALL RESPONSE HEADERS ${response.headers}");
+    // print("API CALL RESPONSE ${response.body}");
+    // print("API CALL RESPONSE HEADERS ${response.headers}");
   }
   return response;
 }
