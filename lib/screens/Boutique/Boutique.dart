@@ -60,10 +60,12 @@ class _BoutiqueState extends State<Boutique> {
     /*24 is for notification bar on Android*/
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
+    int? famille_produit_selected = 0;
 
     void filtre(index, famille_produit_id) {
       setState(() {
         selectedFamilyIndex = index; // Met à jour la famille sélectionnée
+        famille_produit_selected = famille_produit_id;
         produitBloc.add(
             FetchDataEvent(filter: {'famille_produit_id': famille_produit_id}));
       });
@@ -283,6 +285,9 @@ class _BoutiqueState extends State<Boutique> {
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: BlocBasedWidget<List<Produit>>(
                             customDataBloc: produitBloc,
+                            filter: {
+                              'famille_produit_id': famille_produit_selected
+                            },
                             useInfiniteScroller: true,
                             customWidget: (state) {
                               List<Produit> produits = state.data;
