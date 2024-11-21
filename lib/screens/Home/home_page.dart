@@ -153,10 +153,10 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Programme>>(
               customDataBloc: programmeBloc,
-              filter: {
-                ...globalFilter,
-                'date': '${date.year}-${date.month}-${date.day}'
-              },
+              // filter: {
+              //   ...globalFilter,
+              //   'date': '${date.year}-${date.month}-${date.day}'
+              // },
               customWidget: (state) {
                 List<Programme> programmes = state.data;
                 return SingleChildScrollView(
@@ -222,7 +222,7 @@ class _HomePageState extends State<HomePage> {
             ),
             BlocBasedWidget<List<Pratique>>(
               customDataBloc: practiceBloc,
-              filter: globalFilter,
+              // filter: globalFilter,
               customWidget: (state) {
                 List<Pratique> pratiques = state.data;
                 Map<String, dynamic>? metadata = state.metadata;
