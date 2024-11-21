@@ -42,11 +42,6 @@ class _HomePageState extends State<HomePage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Programme.shrinkedAttributs());
-    // practiceBloc.add(FetchDataEvent(filter: globalFilter));
-    // programmeBloc.add(FetchDataEvent(filter: {
-    //   ...globalFilter,
-    //   'date': '${date.year}-${date.month}-${date.day}'
-    // }));
     super.initState();
   }
 

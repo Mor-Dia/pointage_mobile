@@ -77,6 +77,7 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
             jsonData = responseJsonDecoded["data"][path]['data'];
             metadata = responseJsonDecoded["data"][path]['metadata'];
           } else {
+            print("PATH RESPONSE $path $responseJsonDecoded");
             jsonData = responseJsonDecoded["data"][path];
           }
         } else {

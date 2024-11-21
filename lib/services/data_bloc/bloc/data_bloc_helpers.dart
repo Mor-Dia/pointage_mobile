@@ -19,7 +19,7 @@ class DataBlocHelpers {
         };
       }
     }
-    if(filter != null){
+    if(filter != null && filter.keys.isNotEmpty){
       filter.forEach((key, value) {
         if(value.runtimeType == String ){
           filterToString += "$key: \"$value\"";

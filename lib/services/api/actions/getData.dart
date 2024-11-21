@@ -10,9 +10,6 @@ Future<dynamic> getApiData(endPoint, {Map<String, dynamic>? parameters, isGraphQ
   } else {
     url = "${url}graphql";
   }
-  if (kDebugMode) {
-    // print("API CALL $url");
-  }
   Map<String, String>? headers = await getHeaders();
   var requestUri = Uri.parse(url).replace(queryParameters: parameters);
   if (kDebugMode) {
