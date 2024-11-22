@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardProduit.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
@@ -10,6 +11,7 @@ import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Boutique/Panier.dart';
 import 'package:yogivida_mobile/services/api/models/famille_model.dart';
+import 'package:yogivida_mobile/services/api/models/panier_model.dart';
 import 'dart:ui' as ui;
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
@@ -30,10 +32,20 @@ class _BoutiqueState extends State<Boutique> {
   int selectedFamilyIndex = 0; // Indice de la famille sélectionnée
   late DataBloc<List<Famille>> familleBloc;
   late DataBloc<List<Produit>> produitBloc;
+  late DataBloc<List<PanierP>> panierBloc;
   late Map<String, dynamic> productFilter = {};
+  String? token;
+
+  Future getToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+    });
+  }
 
   @override
   void initState() {
+    getToken();
     familleBloc = DataBloc<List<Famille>>(
         (response) => Famille.fromJsonList(response),
         Famille.getEndpoint(isPagination: false),
@@ -47,6 +59,13 @@ class _BoutiqueState extends State<Boutique> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Produit.shrinkedAttributs());
+
+    panierBloc = DataBloc<List<PanierP>>(
+        (response) => PanierP.fromJsonList(response),
+        PanierP.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: PanierP.shrinkedAttributs());
 
     productFilter.addAll({'count': 15});
 
@@ -86,82 +105,90 @@ class _BoutiqueState extends State<Boutique> {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xffffffff),
-          elevation: 0,
-          automaticallyImplyLeading:
-              false, // Empêche l'affichage du bouton back
-          toolbarHeight: 60,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Boutique',
-                style: GoogleFonts.arimo(
-                  color: const Color(0xff15274d),
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Panier())),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: <Widget>[
-                    Container(
-                      height: 50,
-                      width: 45,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: secondColor,
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/icons/cadit.svg',
-                          width: 18,
-                          color: Colors.white,
+            backgroundColor: const Color(0xffffffff),
+            elevation: 0,
+            automaticallyImplyLeading:
+                false, // Empêche l'affichage du bouton back
+            toolbarHeight: 60,
+            title: BlocBasedWidget<List<PanierP>>(
+                customDataBloc: panierBloc,
+                filter: {"token": token},
+                customWidget: (state) {
+                  PanierP panier = state.data;
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Boutique",
+                        style: GoogleFonts.arimo(
+                          color: const Color(0xff15274d),
+                          fontSize: MediaQuery.of(context).size.width * 0.055,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    Positioned(
-                      right: -5,
-                      top: -5,
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                            color: secondColor,
-                            borderRadius: BorderRadius.circular(10),
-                            border:
-                                Border.all(width: 1.5, color: Colors.white)),
-                        constraints: const BoxConstraints(
-                          minWidth: 20,
-                          minHeight: 20,
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              '8', // Remplacez '3' par le nombre de notifications dynamiquement
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Panier())),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: <Widget>[
+                            Container(
+                              height: 50,
+                              width: 45,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: secondColor,
                               ),
-                              textAlign: TextAlign.center,
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/icons/cadit.svg',
+                                  width: 18,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: -5,
+                              top: -5,
+                              child: Container(
+                                width: 25,
+                                height: 25,
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                    color: secondColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        width: 1.5, color: Colors.white)),
+                                constraints: const BoxConstraints(
+                                  minWidth: 20,
+                                  minHeight: 20,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      panier.panierProduit!.length
+                                          .toString(), // Remplacez '3' par le nombre de notifications dynamiquement
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+                    ],
+                  );
+                })),
         body: BlocBasedWidget<List<Famille>>(
             customDataBloc: familleBloc,
             customWidget: (state) {
