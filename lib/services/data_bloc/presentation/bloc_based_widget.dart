@@ -10,14 +10,18 @@ class BlocBasedWidget<T> extends StatefulWidget {
   final DataBloc<T> customDataBloc;
   final Map<String, dynamic>? filter;
   final bool useInfiniteScroller;
-  const BlocBasedWidget({super.key, required this.customWidget, required this.customDataBloc, this.filter, this.useInfiniteScroller = false});
+  const BlocBasedWidget(
+      {super.key,
+      required this.customWidget,
+      required this.customDataBloc,
+      this.filter,
+      this.useInfiniteScroller = false});
 
   @override
   State<BlocBasedWidget<T>> createState() => _BlocBasedWidgetState();
 }
 
 class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
-
   late Function customWidget;
   late DataBloc<T> customDataBloc;
   late Map<String, dynamic> filter;
@@ -27,7 +31,7 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
   ScrollController scrollerController = ScrollController();
 
   @override
-  initState(){
+  initState() {
     customWidget = widget.customWidget;
     customDataBloc = widget.customDataBloc;
     filter = widget.filter ?? {};
@@ -37,23 +41,45 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
     super.initState();
   }
 
-  getAdditionalData(){
-    if (scrollerController.offset >= scrollerController.position.maxScrollExtent-50 &&
+  @override
+  void didUpdateWidget(covariant BlocBasedWidget<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.filter != oldWidget.filter) {
+      customDataBloc.add(FetchDataEvent(filter: widget.filter));
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  getAdditionalData() {
+    if (scrollerController.offset >=
+            scrollerController.position.maxScrollExtent - 50 &&
         !scrollerController.position.outOfRange) {
       // Quand on est presque à la fin du scroll
-      if(customDataBloc.state is DataSuccess<T>){
+      if (customDataBloc.state is DataSuccess<T>) {
         int currentPage = 1;
-        Map<String, dynamic>? metadata = (customDataBloc.state as DataSuccess<T>).metadata;
-        bool canLoadNewData = (customDataBloc.state as DataSuccess<T>).canLoadNewData;
-        if(canLoadNewData && !loadingNewData){
+        Map<String, dynamic>? metadata =
+            (customDataBloc.state as DataSuccess<T>).metadata;
+        bool canLoadNewData =
+            (customDataBloc.state as DataSuccess<T>).canLoadNewData;
+        if (canLoadNewData && !loadingNewData) {
           // Dans le cas où il y a encore des éléments à récupérer et qu'aucune récupération n'est en cours
-          if(metadata != null && metadata.containsKey("current_page")){
+          if (metadata != null && metadata.containsKey("current_page")) {
             currentPage = metadata['current_page'];
           }
-          setState((){
+          setState(() {
             loadingNewData = true;
           });
-          customDataBloc.add(FetchDataEvent(filter: {...filter, ...{"page": currentPage+1} },));
+          customDataBloc.add(FetchDataEvent(
+            loadNewData: false,
+            filter: {
+              ...filter,
+              ...{"page": currentPage + 1}
+            },
+          ));
         }
       }
     }
@@ -63,9 +89,9 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
   Widget build(BuildContext context) {
     return BlocConsumer(
       bloc: customDataBloc,
-      listener: (context, state){
-        if(state is DataSuccess<T>){
-          if(loadingNewData){
+      listener: (context, state) {
+        if (state is DataSuccess<T>) {
+          if (loadingNewData) {
             setState(() {
               loadingNewData = false;
             });
@@ -74,16 +100,15 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
       },
       builder: (context, state) {
         if (state is DataSuccess<T>) {
-          if(state.data != null || (state.data != null && (state.data as List).isNotEmpty)){
+          if (state.data != null ||
+              (state.data != null && (state.data as List).isNotEmpty)) {
             String tempString = "";
             int len = 0;
-            for(dynamic val in (state.data as List)){
+            for (dynamic val in (state.data as List)) {
               tempString += "${val.id}, ";
               len += 1;
             }
-            print("IDS $tempString ");
-            print("IDS LENGHT $len ");
-            if(useInfiniteScroller){
+            if (useInfiniteScroller) {
               return SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 controller: scrollerController,
@@ -98,8 +123,7 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
                           child: Center(
                             child: CircularProgressIndicator(),
                           ),
-                        )
-                    ),
+                        )),
                   ],
                 ),
               );

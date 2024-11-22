@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
+import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
@@ -73,31 +74,7 @@ class _CardPratiqueState extends State<CardPratique> {
                 clipBehavior: Clip.antiAlias,
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(8)),
-                child: CachedNetworkImage(
-                  progressIndicatorBuilder: (context, url, progress) => Center(
-                    child: CircularProgressIndicator(
-                      value: progress.progress,
-                    ),
-                  ),
-                  imageUrl: widget.data.image ?? '',
-                  imageBuilder: (context, imageProvider) => Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.red,
-                          BlendMode.colorBurn,
-                        ),
-                      ),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                  // placeholder: (context, url) => const CircleAvatar(
-                  //   backgroundColor: Colors.amber,
-                  //   radius: 150,
-                  // )
-                ),
+                child: CustomCachedNetworkImage(imageUrl: widget.data.image ?? '', fallBackAsset: 'assets/images/pratique_fallback.png')
               ),
             ),
             const SizedBox(height: 10),

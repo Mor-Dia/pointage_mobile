@@ -30,6 +30,7 @@ class _BoutiqueState extends State<Boutique> {
   int selectedFamilyIndex = 0; // Indice de la famille sélectionnée
   late DataBloc<List<Famille>> familleBloc;
   late DataBloc<List<Produit>> produitBloc;
+  late Map<String, dynamic> productFilter = {};
 
   @override
   void initState() {
@@ -47,10 +48,22 @@ class _BoutiqueState extends State<Boutique> {
         isPagination: true,
         attributeToGet: Produit.shrinkedAttributs());
 
+    productFilter.addAll({'count': 15});
+
     // familleBloc.add(FetchDataEvent());
     // produitBloc.add(FetchDataEvent());
 
     super.initState();
+  }
+
+  void filtre(index, famille_produit_id) {
+    print("DEFINE NEW FILTER $famille_produit_id");
+    setState(() {
+      selectedFamilyIndex = index; // Met à jour la famille sélectionnée
+      productFilter = {
+        ...productFilter..addAll({'famille_produit_id': famille_produit_id})
+      };
+    });
   }
 
   @override
@@ -285,14 +298,10 @@ class _BoutiqueState extends State<Boutique> {
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: BlocBasedWidget<List<Produit>>(
                             customDataBloc: produitBloc,
-                            filter: {
-                              'famille_produit_id': famille_produit_selected
-                            },
                             useInfiniteScroller: true,
+                            filter: productFilter,
                             customWidget: (state) {
                               List<Produit> produits = state.data;
-                              Map<String, dynamic>? metadata = state.metadata;
-                              bool canLoadNewData = state.canLoadNewData;
                               return Wrap(
                                 spacing: 10,
                                 runSpacing: 10,
