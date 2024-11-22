@@ -4,6 +4,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:yogivida_mobile/components/ConnectionNotifier.dart';
 import 'package:yogivida_mobile/screens/Boutique/Boutique.dart';
+import 'package:yogivida_mobile/screens/Compte/reservations_page.dart';
 import 'package:yogivida_mobile/screens/Compte/Update.dart';
 import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
 import 'package:yogivida_mobile/screens/splash/splash_screen.dart';
@@ -90,8 +91,8 @@ class _MyAppState extends State<MyApp> {
             // '/': (context) => const (),
             // '/': (context) => const MonCompte(),
             // '/': (context) => const Update(),
-            // '/': (context) => const Boutique(),
-            '/': (context) => const SplashScreen(),
+            '/': (context) => const ReservationsPage(),
+            // '/': (context) => const SplashScreen(),
             '/login': (context) => const LoginScreen(),
             '/home': (context) => const HomePage(),
           },

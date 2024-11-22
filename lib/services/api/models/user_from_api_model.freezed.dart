@@ -22,6 +22,7 @@ UserFromApi _$UserFromApiFromJson(Map<String, dynamic> json) {
 mixin _$UserFromApi {
   int? get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
+  String? get nom_complet => throw _privateConstructorUsedError;
 
   /// Serializes this UserFromApi to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +40,7 @@ abstract class $UserFromApiCopyWith<$Res> {
           UserFromApi value, $Res Function(UserFromApi) then) =
       _$UserFromApiCopyWithImpl<$Res, UserFromApi>;
   @useResult
-  $Res call({int? id, String? name});
+  $Res call({int? id, String? name, String? nom_complet});
 }
 
 /// @nodoc
@@ -59,6 +60,7 @@ class _$UserFromApiCopyWithImpl<$Res, $Val extends UserFromApi>
   $Res call({
     Object? id = freezed,
     Object? name = freezed,
+    Object? nom_complet = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -68,6 +70,10 @@ class _$UserFromApiCopyWithImpl<$Res, $Val extends UserFromApi>
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      nom_complet: freezed == nom_complet
+          ? _value.nom_complet
+          : nom_complet // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -81,7 +87,7 @@ abstract class _$$UserFromApiImplCopyWith<$Res>
       __$$UserFromApiImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? id, String? name});
+  $Res call({int? id, String? name, String? nom_complet});
 }
 
 /// @nodoc
@@ -99,6 +105,7 @@ class __$$UserFromApiImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? name = freezed,
+    Object? nom_complet = freezed,
   }) {
     return _then(_$UserFromApiImpl(
       id: freezed == id
@@ -109,6 +116,10 @@ class __$$UserFromApiImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String?,
+      nom_complet: freezed == nom_complet
+          ? _value.nom_complet
+          : nom_complet // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -116,7 +127,7 @@ class __$$UserFromApiImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$UserFromApiImpl extends _UserFromApi with DiagnosticableTreeMixin {
-  const _$UserFromApiImpl({this.id, this.name}) : super._();
+  const _$UserFromApiImpl({this.id, this.name, this.nom_complet}) : super._();
 
   factory _$UserFromApiImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserFromApiImplFromJson(json);
@@ -125,10 +136,12 @@ class _$UserFromApiImpl extends _UserFromApi with DiagnosticableTreeMixin {
   final int? id;
   @override
   final String? name;
+  @override
+  final String? nom_complet;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'UserFromApi(id: $id, name: $name)';
+    return 'UserFromApi(id: $id, name: $name, nom_complet: $nom_complet)';
   }
 
   @override
@@ -137,7 +150,8 @@ class _$UserFromApiImpl extends _UserFromApi with DiagnosticableTreeMixin {
     properties
       ..add(DiagnosticsProperty('type', 'UserFromApi'))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('name', name));
+      ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('nom_complet', nom_complet));
   }
 
   @override
@@ -146,12 +160,14 @@ class _$UserFromApiImpl extends _UserFromApi with DiagnosticableTreeMixin {
         (other.runtimeType == runtimeType &&
             other is _$UserFromApiImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.name, name) || other.name == name));
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.nom_complet, nom_complet) ||
+                other.nom_complet == nom_complet));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name);
+  int get hashCode => Object.hash(runtimeType, id, name, nom_complet);
 
   /// Create a copy of UserFromApi
   /// with the given fields replaced by the non-null parameter values.
@@ -170,8 +186,10 @@ class _$UserFromApiImpl extends _UserFromApi with DiagnosticableTreeMixin {
 }
 
 abstract class _UserFromApi extends UserFromApi {
-  const factory _UserFromApi({final int? id, final String? name}) =
-      _$UserFromApiImpl;
+  const factory _UserFromApi(
+      {final int? id,
+      final String? name,
+      final String? nom_complet}) = _$UserFromApiImpl;
   const _UserFromApi._() : super._();
 
   factory _UserFromApi.fromJson(Map<String, dynamic> json) =
@@ -181,6 +199,8 @@ abstract class _UserFromApi extends UserFromApi {
   int? get id;
   @override
   String? get name;
+  @override
+  String? get nom_complet;
 
   /// Create a copy of UserFromApi
   /// with the given fields replaced by the non-null parameter values.

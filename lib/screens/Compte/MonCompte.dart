@@ -12,11 +12,9 @@ import 'package:yogivida_mobile/screens/Compte/Commandes.dart';
 import 'package:yogivida_mobile/screens/Compte/Favoris.dart';
 import 'package:yogivida_mobile/screens/Compte/LigneCredit.dart';
 import 'package:yogivida_mobile/screens/Compte/LocalisationContact.dart';
-import 'package:yogivida_mobile/screens/Compte/Reservation.dart';
+import 'package:yogivida_mobile/screens/Compte/reservations_page.dart';
 import 'package:yogivida_mobile/screens/Compte/Update.dart';
-import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
 import 'package:yogivida_mobile/core/models/user_model.dart';
-
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
@@ -183,10 +181,10 @@ class _MonCompteState extends State<MonCompte> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Reservation()),
+                              builder: (context) => const ReservationsPage()),
                         ),
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               border: Border(
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(

@@ -10,6 +10,7 @@ class UserFromApi with _$UserFromApi {
   const factory UserFromApi({
     int? id,
     String? name,
+    String? nom_complet,
   }) = _UserFromApi;
 
   factory UserFromApi.fromJson(Map<String, dynamic> json)  => _$UserFromApiFromJson(json);
