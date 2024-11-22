@@ -78,17 +78,15 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                   ),
                                   Container(
                                     width: 50,
-                                    child: Expanded(
-                                      child: Text(
-                                        widget.data.professeurPratique!
-                                            .professeur!.user!.name
-                                            .toString()
-                                            .toCapitalized,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            color: Color(0xff838282),
-                                            fontSize: 10),
-                                      ),
+                                    child: Text(
+                                      widget.data.professeurPratique!
+                                          .professeur!.user!.name
+                                          .toString()
+                                          .toCapitalized,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Color(0xff838282),
+                                          fontSize: 10),
                                     ),
                                   )
                                 ],
@@ -129,10 +127,15 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                   const SizedBox(
                                     width: 5,
                                   ),
-                                  const Text(
-                                    'Dakar plateau',
-                                    style: TextStyle(
-                                        color: Color(0xff838282), fontSize: 10),
+                                  Container(
+                                    width: 50,
+                                    child: const Text(
+                                      'Dakar plateau',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: Color(0xff838282),
+                                          fontSize: 10),
+                                    ),
                                   )
                                 ],
                               )
