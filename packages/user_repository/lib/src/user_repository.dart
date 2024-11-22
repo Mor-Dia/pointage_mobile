@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,16 +34,15 @@ class UserRepository<T> {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String? username = prefs.getString('nom_complet');
       String? token = prefs.getString('token');
+      String? userInfo = prefs.getString('userinfos');
       if (kDebugMode) {
+        print('PREFERENCES TOKEN FROM GET USER: ${prefs.getString("userinfos")}');
         print('PREFERENCES TOKEN FROM GET USER: ${prefs.getString("token")}');
         print('PREFERENCES USERNAME FROM GET USER: ${prefs.getString("nom_complet")}');
       }
-      if(username != null && token != null){
-        Map<String, dynamic> tempMap = {
-          "nom_complet": username,
-          "token": token,
-        };
-        _user = factoryFunction(tempMap);
+      if(userInfo != null){
+        Map<String, dynamic> decoded = jsonDecode(userInfo);
+        _user = factoryFunction(decoded);
         if (kDebugMode) {
           print('CURRENT USERNAME FROM GET USER: $_user');
         }
@@ -74,7 +74,10 @@ class UserRepository<T> {
           break;
       }
     }
+    String encodedData = jsonEncode(data);
+    await prefs.setString("userinfos", encodedData);
     if (kDebugMode) {
+      print('PREFERENCES TOKEN: ${prefs.getString("userinfos")}');
       print('PREFERENCES TOKEN: ${prefs.getString("token")}');
       print('PREFERENCES USERNAME: ${prefs.getString("nom_complet")}');
     }
