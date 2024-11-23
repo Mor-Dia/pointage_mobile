@@ -155,7 +155,7 @@ class ScrollableTabPage extends StatelessWidget {
                           height: 20,
                         ),
                         ...reservations
-                            .map((toElement) => CardRowPlanning2())
+                            .map((toElement) => CardRowPlanning2(reservation: toElement,))
                             .toList(),
                       ]
                   );
