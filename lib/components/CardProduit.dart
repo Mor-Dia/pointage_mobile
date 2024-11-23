@@ -212,32 +212,35 @@ class _CardProduitState extends State<CardProduit> {
             ),
           ),
           const SizedBox(height: 10),
-          Container(
-            height: 30,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: primaryColor,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset('assets/icons/cadit.svg'),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Flexible(
-                    child: Text(
-                      'Ajouter au panier',
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.arimo(
-                        color: Colors.white,
-                        fontSize: MediaQuery.of(context).size.width * 0.030,
+          GestureDetector(
+            onTap: () => widget.handlePress,
+            child: Container(
+              height: 30,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: primaryColor,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset('assets/icons/cadit.svg'),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Flexible(
+                      child: Text(
+                        'Ajouter au panier',
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.arimo(
+                          color: Colors.white,
+                          fontSize: MediaQuery.of(context).size.width * 0.030,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

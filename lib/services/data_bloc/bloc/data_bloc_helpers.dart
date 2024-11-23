@@ -26,6 +26,7 @@ class DataBlocHelpers {
         } else {
           filterToString += "$key: $value";
         }
+        filterToString += ",";
       });
       filterToString = "($filterToString)";
     }

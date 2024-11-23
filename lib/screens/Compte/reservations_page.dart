@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,6 +49,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
 
     filter0.addAll({'en_attente': '0'});
     filter1.addAll({'en_attente': '1'});
+
     super.initState();
   }
 
@@ -137,11 +140,12 @@ class ScrollableTabPage extends StatelessWidget {
         builder: (context, authState) {
           AuthenticationStatus currentStatus = authState.status;
           int? clientId = authState.user?.id;
+          print("AUTH USER ${authState.user}");
           switch(currentStatus){
             case AuthenticationStatus.authenticated:
               return BlocBasedWidget<List<Reservation>>(
                 customDataBloc: reservationBloc,
-                filter: {...currentFilter, ...{"client_id": clientId} },
+                filter: {...currentFilter, "client_id":clientId  },
                 useInfiniteScroller: true,
                 customWidget: (state) {
                   List<Reservation> reservations = state.data;
@@ -150,17 +154,9 @@ class ScrollableTabPage extends StatelessWidget {
                         const SizedBox(
                           height: 20,
                         ),
-                        Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: [
-                              ...reservations
-                                  .map((toElement) => SizedBox(
-                                  width: size.width / 2 - 25,
-                                  child: const CardRowPlanning2()))
-                                  .toList(),
-                            ]
-                        ),
+                        ...reservations
+                            .map((toElement) => CardRowPlanning2())
+                            .toList(),
                       ]
                   );
                 },

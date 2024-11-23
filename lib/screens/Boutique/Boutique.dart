@@ -11,6 +11,7 @@ import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Boutique/Panier.dart';
 import 'package:yogivida_mobile/services/api/models/famille_model.dart';
+import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 import 'package:yogivida_mobile/services/api/models/panier_model.dart';
 import 'dart:ui' as ui;
 
@@ -46,6 +47,7 @@ class _BoutiqueState extends State<Boutique> {
   @override
   void initState() {
     getToken();
+
     familleBloc = DataBloc<List<Famille>>(
         (response) => Famille.fromJsonList(response),
         Famille.getEndpoint(isPagination: false),
@@ -62,9 +64,9 @@ class _BoutiqueState extends State<Boutique> {
 
     panierBloc = DataBloc<List<PanierP>>(
         (response) => PanierP.fromJsonList(response),
-        PanierP.getEndpoint(isPagination: true),
+        PanierP.getEndpoint(isPagination: false),
         isGraphQl: true,
-        isPagination: true,
+        isPagination: false,
         attributeToGet: PanierP.shrinkedAttributs());
 
     productFilter.addAll({'count': 15});
@@ -83,6 +85,10 @@ class _BoutiqueState extends State<Boutique> {
         ...productFilter..addAll({'famille_produit_id': famille_produit_id})
       };
     });
+  }
+
+  void addToPanier(Produit produitToAdd) {
+    print(produitToAdd);
   }
 
   @override
@@ -110,46 +116,44 @@ class _BoutiqueState extends State<Boutique> {
             automaticallyImplyLeading:
                 false, // Empêche l'affichage du bouton back
             toolbarHeight: 60,
-            title: BlocBasedWidget<List<PanierP>>(
-                customDataBloc: panierBloc,
-                filter: {"token": token},
-                customWidget: (state) {
-                  PanierP panier = state.data;
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Boutique",
-                        style: GoogleFonts.arimo(
-                          color: const Color(0xff15274d),
-                          fontSize: MediaQuery.of(context).size.width * 0.055,
-                          fontWeight: FontWeight.bold,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Boutique",
+                  style: GoogleFonts.arimo(
+                    color: const Color(0xff15274d),
+                    fontSize: MediaQuery.of(context).size.width * 0.055,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Panier())),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      Container(
+                        height: 50,
+                        width: 45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: secondColor,
+                        ),
+                        child: Center(
+                          child: SvgPicture.asset(
+                            'assets/icons/cadit.svg',
+                            width: 18,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Panier())),
-                        child: Stack(
-                          clipBehavior: Clip.none,
-                          children: <Widget>[
-                            Container(
-                              height: 50,
-                              width: 45,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: secondColor,
-                              ),
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/icons/cadit.svg',
-                                  width: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            Positioned(
+                      BlocBasedWidget<List<PanierP>>(
+                          customDataBloc: panierBloc,
+                          filter: {"token": token},
+                          customWidget: (state) {
+                            List<PanierP> panier = state.data;
+                            return Positioned(
                               right: -5,
                               top: -5,
                               child: Container(
@@ -170,7 +174,9 @@ class _BoutiqueState extends State<Boutique> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      panier.panierProduit!.length
+                                      panier[0]
+                                          .panierProduit!
+                                          .length
                                           .toString(), // Remplacez '3' par le nombre de notifications dynamiquement
                                       style: TextStyle(
                                         color: Colors.white,
@@ -182,13 +188,13 @@ class _BoutiqueState extends State<Boutique> {
                                   ],
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
+                            );
+                          })
                     ],
-                  );
-                })),
+                  ),
+                ),
+              ],
+            )),
         body: BlocBasedWidget<List<Famille>>(
             customDataBloc: familleBloc,
             customWidget: (state) {
@@ -337,7 +343,9 @@ class _BoutiqueState extends State<Boutique> {
                                           width: size.width / 2 - 25,
                                           child: CardProduit(
                                             data: toElement,
-                                            handlePress: () => {},
+                                            handlePress: () {
+                                              addToPanier(toElement);
+                                            },
                                           ),
                                         ))
                                     .toList(),

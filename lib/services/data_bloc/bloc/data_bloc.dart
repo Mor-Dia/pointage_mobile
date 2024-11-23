@@ -68,6 +68,7 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
               filter: event.filter, useMetadata: isPagination)
         };
       }
+      print("PARAMETERS $parameters");
       final response = await getApiData(endPoint,
           parameters: parameters, isGraphQl: isGraphQl);
       if (response.statusCode == 200) {
