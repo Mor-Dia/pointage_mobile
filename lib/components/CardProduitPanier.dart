@@ -1,13 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 
 class CardProduitPanier extends StatefulWidget {
-  final Pratique data;
+  final PanierPProduit data;
   final Function()? handlePress;
   const CardProduitPanier({
     super.key,
@@ -28,6 +30,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
     super.initState();
     // liked = widget.data.liked;
     liked = false;
+    qte = widget.data.qte!;
   }
 
   @override
@@ -44,16 +47,34 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
           children: [
             IntrinsicWidth(
               child: Container(
-                clipBehavior: Clip.antiAlias,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(8)),
-                child: Image.asset(
-                  widget.data.image??"",
-                  fit: BoxFit.cover,
-                  height: 105,
-                  width: 70,
-                ),
-              ),
+                  width: 50,
+                  height: 50,
+                  clipBehavior: Clip.antiAlias,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                  child: CachedNetworkImage(
+                    progressIndicatorBuilder: (context, url, progress) =>
+                        Center(
+                      child: CircularProgressIndicator(
+                        value: progress.progress,
+                      ),
+                    ),
+                    imageUrl: widget.data.produit!.image ?? '',
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                    // placeholder: (context, url) => const CircleAvatar(
+                    //   backgroundColor: Colors.amber,
+                    //   radius: 150,
+                    // )
+                  )),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -65,7 +86,8 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                       children: [
                         Flexible(
                           child: Text(
-                            (widget.data.designation??"").toUpperCase(),
+                            (widget.data.produit!.designation ?? "")
+                                .toUpperCase(),
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.arimo(
                               fontSize:
@@ -78,7 +100,8 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                         ),
                         Text(
                           textAlign: TextAlign.start,
-                          ("80.000" ' xof').toUpperCase(),
+                          (widget.data.produit!.prix.toString() + 'xof')
+                              .toUpperCase(),
                           style: GoogleFonts.arimo(
                               fontSize:
                                   MediaQuery.of(context).size.width * 0.040,
@@ -90,64 +113,39 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                       height: 10,
                     ),
                     Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () => {
-                            setState(() {
-                              if (qte > 0) {
-                                qte -= 1;
-                              }
-                            })
-                          },
-                          child: Container(
-                            height: 30,
-                            width: 30,
-                            decoration: BoxDecoration(
-                                color: greyColor,
-                                borderRadius: BorderRadius.circular(20)),
-                            child: const Center(
-                              child: Text(
-                                '-',
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 40,
-                          child: Text(
-                            qte.toString(),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => {
-                            setState(() {
-                              qte += 1;
-                            })
-                          },
-                          child: Container(
-                            height: 30,
-                            width: 30,
-                            decoration: BoxDecoration(
-                                color: greyColor,
-                                borderRadius: BorderRadius.circular(20)),
-                            child: const Center(
-                              child: Text(
-                                '+',
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
+                            GestureDetector(
+                              onTap: () => {
+                                setState(() {
+                                  if (qte > 0) {
+                                    qte -= 1;
+                                  }
+                                })
+                              },
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                decoration: BoxDecoration(
+                                    color: greyColor,
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: const Center(
+                                  child: Text(
+                                    '-',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 40,
+                              child: Text(
+                                qte.toString(),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                             GestureDetector(
                               onTap: () => {
                                 setState(() {
@@ -158,14 +156,11 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                                 height: 30,
                                 width: 30,
                                 decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    border: Border.all(
-                                        color: primaryColor, width: 1),
+                                    color: greyColor,
                                     borderRadius: BorderRadius.circular(20)),
                                 child: const Center(
                                   child: Text(
-                                    'UM',
-                                    style: TextStyle(fontSize: 8),
+                                    '+',
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
