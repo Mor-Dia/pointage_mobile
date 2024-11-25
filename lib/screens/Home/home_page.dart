@@ -127,127 +127,134 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Container(
         color: Colors.white,
-        child: ListView(
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              child: Container(
-                child: Text(
-                  "Votre activité du jour",
-                  style: GoogleFonts.montserrat(
-                      fontSize: MediaQuery.of(context).size.width * 0.045,
-                      fontWeight: FontWeight.bold),
+        child: RefreshIndicator(
+          onRefresh: () async {
+            programmeBloc.add(RefreshDataEvent());
+            practiceBloc.add(RefreshDataEvent());
+            await Future.delayed(const Duration(seconds: 2));
+          },
+          child: ListView(
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Container(
+                  child: Text(
+                    "Votre activité du jour",
+                    style: GoogleFonts.montserrat(
+                        fontSize: MediaQuery.of(context).size.width * 0.045,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            BlocBasedWidget<List<Programme>>(
-              customDataBloc: programmeBloc,
-              // filter: {
-              //   ...globalFilter,
-              //   'date': '${date.year}-${date.month}-${date.day}'
-              // },
-              customWidget: (state) {
-                List<Programme> programmes = state.data;
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      ...programmes
-                          .map((toElement) => Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Cardactivite(
-                                      data: toElement,
-                                      color: toElement.displaycoloretat ?? "",
-                                      handlePress: () {
-                                        ShowBottomSheet(context);
-                                      })
-                                ],
-                              ))
-                          .toList(),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Nos pratiques",
-                      style: GoogleFonts.montserrat(
-                          fontSize: MediaQuery.of(context).size.width * 0.045,
-                          fontWeight: FontWeight.bold),
+              const SizedBox(
+                height: 20,
+              ),
+              BlocBasedWidget<List<Programme>>(
+                customDataBloc: programmeBloc,
+                // filter: {
+                //   ...globalFilter,
+                //   'date': '${date.year}-${date.month}-${date.day}'
+                // },
+                customWidget: (state) {
+                  List<Programme> programmes = state.data;
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ...programmes
+                            .map((toElement) => Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    Cardactivite(
+                                        data: toElement,
+                                        color: toElement.displaycoloretat ?? "",
+                                        handlePress: () {
+                                          ShowBottomSheet(context);
+                                        })
+                                  ],
+                                ))
+                            .toList(),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                      ],
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const PratiquesPage()));
-                      },
-                      child: Icon(
-                        Icons.arrow_outward_rounded,
-                        color: primaryColor,
-                      ),
-                    )
-                  ],
-                ),
+                  );
+                },
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            BlocBasedWidget<List<Pratique>>(
-              customDataBloc: practiceBloc,
-              // filter: globalFilter,
-              customWidget: (state) {
-                List<Pratique> pratiques = state.data;
-                Map<String, dynamic>? metadata = state.metadata;
-                bool canLoadNewData = state.canLoadNewData;
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                child: Container(
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ...pratiques
-                          .map((toElement) => Row(
-                                children: [
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  CardPratique(
-                                    data: toElement,
-                                    handlePress: () => ShowBottomSheet(context),
-                                  )
-                                ],
-                              ))
-                          .toList(),
-                      const SizedBox(
-                        width: 20,
+                      Text(
+                        "Nos pratiques",
+                        style: GoogleFonts.montserrat(
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                            fontWeight: FontWeight.bold),
                       ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const PratiquesPage()));
+                        },
+                        child: Icon(
+                          Icons.arrow_outward_rounded,
+                          color: primaryColor,
+                        ),
+                      )
                     ],
                   ),
-                );
-              },
-            )
-          ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              BlocBasedWidget<List<Pratique>>(
+                customDataBloc: practiceBloc,
+                // filter: globalFilter,
+                customWidget: (state) {
+                  List<Pratique> pratiques = state.data;
+                  Map<String, dynamic>? metadata = state.metadata;
+                  bool canLoadNewData = state.canLoadNewData;
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ...pratiques
+                            .map((toElement) => Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 20,
+                                    ),
+                                    CardPratique(
+                                      data: toElement,
+                                      handlePress: () => ShowBottomSheet(context),
+                                    )
+                                  ],
+                                ))
+                            .toList(),
+                        const SizedBox(
+                          width: 20,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              )
+            ],
+          ),
         ),
       ),
     );
