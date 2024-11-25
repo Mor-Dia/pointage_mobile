@@ -65,6 +65,8 @@ class _BoutiqueState extends State<Boutique> {
     panierBloc = DataBloc<List<PanierP>>(
         (response) => PanierP.fromJsonList(response),
         PanierP.getEndpoint(isPagination: false),
+        postEndPoint: 'panier_client',
+        // customDataPath: 'panier',
         isGraphQl: true,
         isPagination: false,
         attributeToGet: PanierP.shrinkedAttributs());
@@ -87,8 +89,14 @@ class _BoutiqueState extends State<Boutique> {
     });
   }
 
-  void addToPanier(Produit produitToAdd) {
-    print(produitToAdd);
+  void addToPanier(Map<String, dynamic> arg) async {
+    // Produit produitToAdd
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var userId = prefs.getString('user_id');
+    arg['token'] = token;
+    arg['client_id'] = userId;
+
+    panierBloc.add(PostDataEvent(arg));
   }
 
   @override
@@ -343,8 +351,8 @@ class _BoutiqueState extends State<Boutique> {
                                           width: size.width / 2 - 25,
                                           child: CardProduit(
                                             data: toElement,
-                                            handlePress: () {
-                                              addToPanier(toElement);
+                                            handlePress: (value) {
+                                              addToPanier(value);
                                             },
                                           ),
                                         ))

@@ -8,6 +8,11 @@ class FetchDataEvent<T> extends DataFetchEvent {
   FetchDataEvent({this.filter, this.loadNewData = true});
 }
 
+class PostDataEvent<T> extends DataFetchEvent {
+  final Map<String, dynamic> body;
+  PostDataEvent(this.body);
+}
+
 class RefreshDataEvent<T> extends DataFetchEvent {
   final Map<String, dynamic>? filter;
   RefreshDataEvent({this.filter});

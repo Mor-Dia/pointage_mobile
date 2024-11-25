@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/CardRowPlanning.dart';
 import 'package:yogivida_mobile/components/CardRowPlanning2.dart';
 import 'package:yogivida_mobile/constant.dart';
@@ -23,7 +24,6 @@ class ReservationsPage extends StatefulWidget {
 }
 
 class _ReservationsPageState extends State<ReservationsPage> {
-
   late DataBloc<List<Reservation>> reservationBloc0;
   late DataBloc<List<Reservation>> reservationBloc1;
   Map<String, dynamic> globalFilter = {"count": 10};
@@ -34,14 +34,14 @@ class _ReservationsPageState extends State<ReservationsPage> {
   @override
   void initState() {
     reservationBloc0 = DataBloc<List<Reservation>>(
-            (response) => Reservation.fromJsonList(response),
+        (response) => Reservation.fromJsonList(response),
         Reservation.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Reservation.shrinkedAttributs());
 
     reservationBloc1 = DataBloc<List<Reservation>>(
-            (response) => Reservation.fromJsonList(response),
+        (response) => Reservation.fromJsonList(response),
         Reservation.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
@@ -115,8 +115,14 @@ class _ReservationsPageState extends State<ReservationsPage> {
           color: Colors.white,
           child: TabBarView(
             children: [
-              ScrollableTabPage(reservationBloc: reservationBloc0, currentFilter: filter0,),
-              ScrollableTabPage(reservationBloc: reservationBloc1,currentFilter: filter1,),
+              ScrollableTabPage(
+                reservationBloc: reservationBloc0,
+                currentFilter: filter0,
+              ),
+              ScrollableTabPage(
+                reservationBloc: reservationBloc1,
+                currentFilter: filter1,
+              ),
             ],
           ),
         ),
@@ -126,48 +132,45 @@ class _ReservationsPageState extends State<ReservationsPage> {
 }
 
 class ScrollableTabPage extends StatelessWidget {
-
   final DataBloc<List<Reservation>> reservationBloc;
   final Map<String, dynamic> currentFilter;
 
-  const ScrollableTabPage({Key? key, required this.reservationBloc, this.currentFilter= const {} }) : super(key: key);
+  const ScrollableTabPage(
+      {Key? key, required this.reservationBloc, this.currentFilter = const {}})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
-        builder: (context, authState) {
-          AuthenticationStatus currentStatus = authState.status;
-          int? clientId = authState.user?.id;
-          print("AUTH USER ${authState.user}");
-          switch(currentStatus){
-            case AuthenticationStatus.authenticated:
-              return BlocBasedWidget<List<Reservation>>(
-                customDataBloc: reservationBloc,
-                filter: {...currentFilter, "client_id":clientId  },
-                useInfiniteScroller: true,
-                customWidget: (state) {
-                  List<Reservation> reservations = state.data;
-                  return Column(
-                      children:  [
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        ...reservations
-                            .map((toElement) => CardRowPlanning2())
-                            .toList(),
-                      ]
-                  );
-                },
-              );
-            case AuthenticationStatus.unknown:
-            case AuthenticationStatus.unauthenticated:
-            case AuthenticationStatus.failure:
-              return const Center(child: PleaseLoginWidget());
-          }
-        }
-    );
+    return BlocBuilder<AuthenticationBloc<Utilisateur>,
+        AuthenticationState<Utilisateur>>(builder: (context, authState) {
+      AuthenticationStatus currentStatus = authState.status;
+      int? clientId = authState.user?.id;
+
+      print("AUTH USER ${authState.user}");
+      switch (currentStatus) {
+        case AuthenticationStatus.authenticated:
+          return BlocBasedWidget<List<Reservation>>(
+            customDataBloc: reservationBloc,
+            filter: {...currentFilter, "client_id": clientId},
+            useInfiniteScroller: true,
+            customWidget: (state) {
+              List<Reservation> reservations = state.data;
+              return Column(children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                ...reservations.map((toElement) => CardRowPlanning2()).toList(),
+              ]);
+            },
+          );
+        case AuthenticationStatus.unknown:
+        case AuthenticationStatus.unauthenticated:
+        case AuthenticationStatus.failure:
+          return const Center(child: PleaseLoginWidget());
+      }
+    });
     //   SingleChildScrollView(
     //   child: Column(
     //     children: data.map((toElement) => const CardRowPlanning2()).toList(),

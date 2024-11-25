@@ -7,10 +7,11 @@ import 'package:yogivida_mobile/constant.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/produit_model.dart';
+import 'package:yogivida_mobile/services/api/models/taille_model.dart';
 
 class CardProduit extends StatefulWidget {
   final Produit data;
-  final Function()? handlePress;
+  final Function(Map<String, dynamic>)? handlePress;
   const CardProduit({
     super.key,
     required this.data,
@@ -24,8 +25,11 @@ class CardProduit extends StatefulWidget {
 class _CardProduitState extends State<CardProduit> {
   @override
   bool? liked;
-  int qte = 0;
-  int selectedTaille = 0;
+  int qte = 1;
+
+  Taille? selectedTaille;
+  int indexOfSelectedTaille = 0;
+
   @override
   void initState() {
     super.initState();
@@ -121,7 +125,7 @@ class _CardProduitState extends State<CardProduit> {
               GestureDetector(
                 onTap: () => {
                   setState(() {
-                    if (qte > 0) {
+                    if (qte > 1) {
                       qte -= 1;
                     }
                   })
@@ -173,14 +177,17 @@ class _CardProduitState extends State<CardProduit> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: widget.data.produitTailles?.map((toElement) {
+              children: widget.data.produitTailles?.map((Taille toElement) {
                     int index = widget.data.produitTailles!.indexOf(toElement);
+                    selectedTaille = toElement;
                     return Row(
                       children: [
                         GestureDetector(
                           onTap: () {
                             setState(() {
-                              selectedTaille = index;
+                              print(toElement);
+                              indexOfSelectedTaille = index;
+                              selectedTaille = toElement;
                             });
                           },
                           child: Container(
@@ -188,7 +195,7 @@ class _CardProduitState extends State<CardProduit> {
                             width: 30,
                             decoration: BoxDecoration(
                                 color: Colors.transparent,
-                                border: index == selectedTaille
+                                border: index == indexOfSelectedTaille
                                     ? Border.all(color: primaryColor, width: 1)
                                     : Border.all(
                                         color: Colors.transparent, width: 1),
@@ -213,7 +220,17 @@ class _CardProduitState extends State<CardProduit> {
           ),
           const SizedBox(height: 10),
           GestureDetector(
-            onTap: () => widget.handlePress,
+            onTap: () {
+              if (widget.handlePress != null) {
+                widget.handlePress!({
+                  'client_id': null,
+                  'produit_id': widget.data.id,
+                  'quantite': qte,
+                  'taille_id': selectedTaille?.taille_id,
+                  'token': null
+                });
+              }
+            },
             child: Container(
               height: 30,
               decoration: BoxDecoration(

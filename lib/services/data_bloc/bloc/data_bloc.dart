@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:yogivida_mobile/services/api/actions/postData.dart';
+import 'package:yogivida_mobile/services/api/models/panier_model.dart';
 import '../../api/actions/getData.dart';
+// import '../../api/actions/PostData.dart';
 import 'data_bloc_helpers.dart';
 import 'package:equatable/equatable.dart';
 
@@ -16,6 +19,12 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
 
   /// Il s'agit de l'endpoint des données à récupérer
   final String? endPoint;
+
+  /// Il s'agit de l'endpoint des données à envoyer
+  final String? postEndPoint;
+
+  /// Il s'agit des données à envoyer
+  final Map<String, dynamic>? body;
 
   /// Représente le chémin à suivre pour extraire les données de la réponse de la requête.
   /// Ce paramètre, quand il est [null], le path utilisé est celui du endpoint
@@ -32,6 +41,8 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
   DataBloc(
     this.transformerFunction,
     this.endPoint, {
+    this.postEndPoint,
+    this.body,
     this.isGraphQl,
     this.isPagination = false,
     this.attributeToGet,
@@ -40,25 +51,53 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
     on<FetchDataEvent>((event, emit) async {
       await getDataFromApi(event);
     });
+    on<PostDataEvent>((event, emit) async {
+      await postDataToApi(event, emit);
+    });
     on<RefreshDataEvent>((event, emit) async {
       await getDataFromApi(event);
     });
+  }
+
+  postDataToApi(event, emit) async {
+    try {
+      T? initialData;
+
+      print(postEndPoint);
+
+      final response = await postApiData(postEndPoint, event.body);
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> responseJsonDecoded = jsonDecode(response.body);
+        emit(RefreshDataEvent());
+      } else {
+        emit(DataSuccess(data: null, metadata: null));
+      }
+    } catch (err, stacktrace) {
+      if (kDebugMode) {
+        print("DATA BLOC ERROR $err, $stacktrace");
+      }
+      emit(DataFailure(error: err));
+    }
   }
 
   getDataFromApi(event) async {
     try {
       bool forAddingDataPurpose = false;
       T? initialData;
-      if(event.loadNewData == false){
+      if (event.loadNewData == false) {
         // Dans le cas où il ne s'agit pas de récupération de nouvelle données.
-        if(state is DataSuccess<T> && (state as DataSuccess<T>).data != null){
+        if (state is DataSuccess<T> && (state as DataSuccess<T>).data != null) {
           initialData = (state as DataSuccess<T>).data;
-          Map<String, dynamic>? initialMetadata = (state as DataSuccess<T>).metadata;
+          Map<String, dynamic>? initialMetadata =
+              (state as DataSuccess<T>).metadata;
           forAddingDataPurpose = true;
           // emit(DataSuccess(data: initialData, metadata: initialMetadata, canLoadNewData: true));
         }
       }
-      if (!forAddingDataPurpose)emit(DataLoading()); //Dans le cas où il ne s'agit pas d'infinite scroll, réinitialiser le BLOC
+      if (!forAddingDataPurpose)
+        emit(
+            DataLoading()); //Dans le cas où il ne s'agit pas d'infinite scroll, réinitialiser le BLOC
 
       Map<String, dynamic>? parameters;
       if (isGraphQl == true) {
@@ -93,15 +132,17 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
         }
         T data = this.transformerFunction(jsonData);
         bool canLoadNewData = false;
-        if(data is List && initialData != null) {
+        if (data is List && initialData != null) {
           data.insertAll(0, (initialData as Iterable));
         }
-        if( metadata != null && metadata.containsKey("last_page")
-            && metadata.containsKey("current_page")
-            && metadata['last_page'] >= metadata['current_page']){
+        if (metadata != null &&
+            metadata.containsKey("last_page") &&
+            metadata.containsKey("current_page") &&
+            metadata['last_page'] >= metadata['current_page']) {
           canLoadNewData = true;
         }
-        emit(DataSuccess(data: data, metadata: metadata, canLoadNewData: canLoadNewData));
+        emit(DataSuccess(
+            data: data, metadata: metadata, canLoadNewData: canLoadNewData));
       } else {
         emit(DataSuccess(data: null, metadata: null));
       }
