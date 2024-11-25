@@ -147,7 +147,6 @@ class ScrollableTabPage extends StatelessWidget {
         AuthenticationState<Utilisateur>>(builder: (context, authState) {
       AuthenticationStatus currentStatus = authState.status;
       int? clientId = authState.user?.id;
-
       print("AUTH USER ${authState.user}");
       switch (currentStatus) {
         case AuthenticationStatus.authenticated:
@@ -161,7 +160,11 @@ class ScrollableTabPage extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                ...reservations.map((toElement) => CardRowPlanning2()).toList(),
+                ...reservations
+                    .map((toElement) => CardRowPlanning2(
+                          reservation: toElement,
+                        ))
+                    .toList(),
               ]);
             },
           );
