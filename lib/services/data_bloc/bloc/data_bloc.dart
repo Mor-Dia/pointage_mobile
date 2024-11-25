@@ -85,7 +85,7 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
     try {
       bool forAddingDataPurpose = false;
       T? initialData;
-      if (event.loadNewData == false) {
+      if (event is FetchDataEvent && event.loadNewData == false) {
         // Dans le cas où il ne s'agit pas de récupération de nouvelle données.
         if (state is DataSuccess<T> && (state as DataSuccess<T>).data != null) {
           initialData = (state as DataSuccess<T>).data;
