@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/screens/Compte/Commandes.dart';
+import 'package:yogivida_mobile/screens/Compte/commandes_page.dart';
 import 'package:yogivida_mobile/screens/Compte/Favoris.dart';
 import 'package:yogivida_mobile/screens/Compte/LigneCredit.dart';
 import 'package:yogivida_mobile/screens/Compte/LocalisationContact.dart';
@@ -207,7 +207,7 @@ class _MonCompteState extends State<MonCompte> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Commandes()),
+                              builder: (context) => const CommandesPage()),
                         ),
                         child: Container(
                           decoration: BoxDecoration(
