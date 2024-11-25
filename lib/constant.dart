@@ -6,22 +6,30 @@ const Color greyColor = const Color(0xffD9D9D9);
 const Color greyColorL = const Color(0xffF1F1F1);
 const Color secondColor = const Color(0xffA8923B);
 
+const Color successColor = Color(0xff37BC9B);
+const Color dangerColor = Color(0xffDA4453);
+const Color warningColor = Color(0xffF6BB42);
+
+Color getDisplayColor(className){
+  switch(className){
+    case "success":
+      return successColor;
+    case "danger":
+      return dangerColor;
+    case "warning":
+      return warningColor;
+    default:
+      return successColor;
+  }
+}
+
 const padding_constant = 20.0;
 const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
 const LOGOUT_ENDPOINT = "deconnexion";
-// const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
-const BASE_URL = 'http://localhost/yogivida_back/public/';
+const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
+// const BASE_URL = 'http://localhost/yogivida_back/public/';
 const BASE_URL_QGL = '${BASE_URL}graphql?query=';
-
-class Activite {
-  final String nomActivite;
-  final String nomProf;
-  final String heure;
-  final int color;
-
-  Activite(this.nomActivite, this.nomProf, this.heure, this.color);
-}
 
 class UserClass {
   final dynamic data;
