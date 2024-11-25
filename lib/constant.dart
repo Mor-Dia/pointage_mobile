@@ -10,8 +10,8 @@ const Color successColor = Color(0xff37BC9B);
 const Color dangerColor = Color(0xffDA4453);
 const Color warningColor = Color(0xffF6BB42);
 
-Color getDisplayColor(className){
-  switch(className){
+Color getDisplayColor(className) {
+  switch (className) {
     case "success":
       return successColor;
     case "danger":
@@ -27,8 +27,8 @@ const padding_constant = 20.0;
 const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
 const LOGOUT_ENDPOINT = "deconnexion";
-const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
-// const BASE_URL = 'http://localhost/yogivida_back/public/';
+// const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
+const BASE_URL = 'http://localhost/yogivida_back/public/';
 const BASE_URL_QGL = '${BASE_URL}graphql?query=';
 
 class UserClass {

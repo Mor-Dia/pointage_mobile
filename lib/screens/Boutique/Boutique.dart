@@ -35,6 +35,11 @@ class _BoutiqueState extends State<Boutique> {
   late DataBloc<List<Produit>> produitBloc;
   late DataBloc<List<PanierP>> panierBloc;
   late Map<String, dynamic> productFilter = {};
+
+  TextEditingController minController = TextEditingController();
+  TextEditingController maxController = TextEditingController();
+
+  late Map<String, dynamic> minMax;
   String? token;
 
   Future getToken() async {
@@ -47,6 +52,12 @@ class _BoutiqueState extends State<Boutique> {
   @override
   void initState() {
     getToken();
+
+    minMax = {
+      "min": minController.text,
+      "max": maxController.text,
+      "isFiltering": false
+    };
 
     familleBloc = DataBloc<List<Famille>>(
         (response) => Famille.fromJsonList(response),
@@ -97,6 +108,30 @@ class _BoutiqueState extends State<Boutique> {
     arg['client_id'] = userId;
 
     panierBloc.add(PostDataEvent(arg));
+  }
+
+  void setMinMax(TextEditingController min, TextEditingController max) {
+    setState(() {
+      minMax['min'] = min.text;
+      minMax['max'] = max.text;
+      minMax['isFiltering'] = true;
+    });
+
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+  }
+
+  void reset(TextEditingController min, TextEditingController max) {
+    setState(() {
+      minMax['min'] = 0;
+      minMax['max'] = 0;
+      minMax['isFiltering'] = false;
+    });
+
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -304,7 +339,8 @@ class _BoutiqueState extends State<Boutique> {
                           const SizedBox(width: 10),
                           GestureDetector(
                             onTap: () {
-                              ShowBottomSheetFiltrePrix(context);
+                              ShowBottomSheetFiltrePrix(context, minController,
+                                  maxController, setMinMax);
                             },
                             child: Container(
                               height: 45,
@@ -314,17 +350,29 @@ class _BoutiqueState extends State<Boutique> {
                                 color: primaryColor, // Couleur de fond bleu
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
-                              child: Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  SvgPicture.asset("assets/icons/stat.svg",
-                                      height: 15, color: Colors.white),
-                                  const SizedBox(
-                                      width:
-                                          10.0), // Espace entre l'icône et le DropdownButton
-                                  const Text(
-                                    'Par prix',
-                                    style: TextStyle(color: Colors.white),
-                                  )
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset("assets/icons/stat.svg",
+                                          height: 15, color: Colors.white),
+                                      const SizedBox(
+                                          width:
+                                              10.0), // Espace entre l'icône et le DropdownButton
+                                      const Text(
+                                        'Par prix',
+                                        style: TextStyle(color: Colors.white),
+                                      )
+                                    ],
+                                  ),
+                                  minMax['isFiltering']
+                                      ? Text(
+                                          '${minMax['min']} - ${minMax['max']}',
+                                          style: TextStyle(color: Colors.white),
+                                        )
+                                      : SizedBox.shrink()
                                 ],
                               ),
                             ),
@@ -366,7 +414,16 @@ class _BoutiqueState extends State<Boutique> {
   }
 }
 
-Future<dynamic> ShowBottomSheetFiltrePrix(BuildContext context) {
+Future<dynamic> ShowBottomSheetFiltrePrix(
+    BuildContext context,
+    TextEditingController minController,
+    TextEditingController maxController,
+    Function(TextEditingController min, TextEditingController max)
+        handlePress) {
+  void validate() {
+    handlePress(minController, maxController);
+  }
+
   return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -412,6 +469,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(BuildContext context) {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: TextField(
+                              controller: minController,
                               decoration: InputDecoration(
                                   icon: Text(
                                     'Min',
@@ -438,6 +496,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(BuildContext context) {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: TextField(
+                              controller: maxController,
                               decoration: InputDecoration(
                                   icon: Text(
                                     'Max',
@@ -457,9 +516,29 @@ Future<dynamic> ShowBottomSheetFiltrePrix(BuildContext context) {
                 SizedBox(
                   height: 20,
                 ),
-                ButtonFiled(
-                  text: 'Valider',
-                  handlerPress: () {},
+                Row(
+                  children: [
+                    Expanded(
+                      child: ButtonFiled(
+                        text: 'Valider',
+                        handlerPress: () {
+                          validate();
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: ButtonFiled(
+                        text: 'Reinitialiser',
+                        color: Colors.red,
+                        handlerPress: () {
+                          reset();
+                        },
+                      ),
+                    )
+                  ],
                 )
               ],
             ),
