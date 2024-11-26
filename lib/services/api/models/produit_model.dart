@@ -16,9 +16,9 @@ class Produit with _$Produit {
     int? marqueId,
     String? marqueDesignation,
     @JsonKey(name: "produit_tailles") List<Taille>? produitTailles,
+    @JsonKey(name: "prix_site_web_fr") String? prixSiteWebFr,
     String? image,
     double? prix,
-    double? prixSiteWebFr,
     int? familleProduitId,
     String? familleProduitDesignation,
   }) = _Produit;
@@ -29,14 +29,12 @@ class Produit with _$Produit {
   static fromJsonList(List<dynamic> json) {
     List<Produit> data = [];
     try {
-      if (kDebugMode) {
-      }
+      if (kDebugMode) {}
 
       for (var result in json) {
         data.add(Produit.fromJson(result as Map<String, dynamic>));
       }
-      if (kDebugMode) {
-      }
+      if (kDebugMode) {}
     } catch (error, stacktrace) {
       if (kDebugMode) {
         print("ERROR WHILE TRANSFORMING $error $stacktrace");
