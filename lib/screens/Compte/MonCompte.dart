@@ -10,7 +10,7 @@ import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Compte/commandes_page.dart';
 import 'package:yogivida_mobile/screens/Compte/Favoris.dart';
-import 'package:yogivida_mobile/screens/Compte/LigneCredit.dart';
+import 'package:yogivida_mobile/screens/Compte/ligne_credit_page.dart';
 import 'package:yogivida_mobile/screens/Compte/LocalisationContact.dart';
 import 'package:yogivida_mobile/screens/Compte/reservations_page.dart';
 import 'package:yogivida_mobile/screens/Compte/Update.dart';
@@ -142,7 +142,7 @@ class _MonCompteState extends State<MonCompte> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const LigneCredit()),
+                                    builder: (context) => const LigneCreditPage()),
                               )
                             },
                             child: Container(

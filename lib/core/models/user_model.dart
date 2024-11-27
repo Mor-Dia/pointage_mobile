@@ -15,6 +15,7 @@ class Utilisateur with _$Utilisateur {
     String? token,
     String? nom_complet,
     dynamic ca_souscription,
+    dynamic solde,
   }) = _Utilisateur;
 
   factory Utilisateur.fromJson(Map<String, dynamic> json)  => _$UtilisateurFromJson(json);

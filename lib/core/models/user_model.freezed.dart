@@ -27,6 +27,7 @@ mixin _$Utilisateur {
   String? get token => throw _privateConstructorUsedError;
   String? get nom_complet => throw _privateConstructorUsedError;
   dynamic get ca_souscription => throw _privateConstructorUsedError;
+  dynamic get solde => throw _privateConstructorUsedError;
 
   /// Serializes this Utilisateur to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -51,7 +52,8 @@ abstract class $UtilisateurCopyWith<$Res> {
       String? email,
       String? token,
       String? nom_complet,
-      dynamic ca_souscription});
+      dynamic ca_souscription,
+      dynamic solde});
 }
 
 /// @nodoc
@@ -76,6 +78,7 @@ class _$UtilisateurCopyWithImpl<$Res, $Val extends Utilisateur>
     Object? token = freezed,
     Object? nom_complet = freezed,
     Object? ca_souscription = freezed,
+    Object? solde = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -106,6 +109,10 @@ class _$UtilisateurCopyWithImpl<$Res, $Val extends Utilisateur>
           ? _value.ca_souscription
           : ca_souscription // ignore: cast_nullable_to_non_nullable
               as dynamic,
+      solde: freezed == solde
+          ? _value.solde
+          : solde // ignore: cast_nullable_to_non_nullable
+              as dynamic,
     ) as $Val);
   }
 }
@@ -125,7 +132,8 @@ abstract class _$$UtilisateurImplCopyWith<$Res>
       String? email,
       String? token,
       String? nom_complet,
-      dynamic ca_souscription});
+      dynamic ca_souscription,
+      dynamic solde});
 }
 
 /// @nodoc
@@ -148,6 +156,7 @@ class __$$UtilisateurImplCopyWithImpl<$Res>
     Object? token = freezed,
     Object? nom_complet = freezed,
     Object? ca_souscription = freezed,
+    Object? solde = freezed,
   }) {
     return _then(_$UtilisateurImpl(
       id: freezed == id
@@ -178,6 +187,10 @@ class __$$UtilisateurImplCopyWithImpl<$Res>
           ? _value.ca_souscription
           : ca_souscription // ignore: cast_nullable_to_non_nullable
               as dynamic,
+      solde: freezed == solde
+          ? _value.solde
+          : solde // ignore: cast_nullable_to_non_nullable
+              as dynamic,
     ));
   }
 }
@@ -192,7 +205,8 @@ class _$UtilisateurImpl extends _Utilisateur with DiagnosticableTreeMixin {
       this.email,
       this.token,
       this.nom_complet,
-      this.ca_souscription})
+      this.ca_souscription,
+      this.solde})
       : super._();
 
   factory _$UtilisateurImpl.fromJson(Map<String, dynamic> json) =>
@@ -212,10 +226,12 @@ class _$UtilisateurImpl extends _Utilisateur with DiagnosticableTreeMixin {
   final String? nom_complet;
   @override
   final dynamic ca_souscription;
+  @override
+  final dynamic solde;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Utilisateur(id: $id, nom: $nom, prenom: $prenom, email: $email, token: $token, nom_complet: $nom_complet, ca_souscription: $ca_souscription)';
+    return 'Utilisateur(id: $id, nom: $nom, prenom: $prenom, email: $email, token: $token, nom_complet: $nom_complet, ca_souscription: $ca_souscription, solde: $solde)';
   }
 
   @override
@@ -229,7 +245,8 @@ class _$UtilisateurImpl extends _Utilisateur with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('email', email))
       ..add(DiagnosticsProperty('token', token))
       ..add(DiagnosticsProperty('nom_complet', nom_complet))
-      ..add(DiagnosticsProperty('ca_souscription', ca_souscription));
+      ..add(DiagnosticsProperty('ca_souscription', ca_souscription))
+      ..add(DiagnosticsProperty('solde', solde));
   }
 
   @override
@@ -245,13 +262,22 @@ class _$UtilisateurImpl extends _Utilisateur with DiagnosticableTreeMixin {
             (identical(other.nom_complet, nom_complet) ||
                 other.nom_complet == nom_complet) &&
             const DeepCollectionEquality()
-                .equals(other.ca_souscription, ca_souscription));
+                .equals(other.ca_souscription, ca_souscription) &&
+            const DeepCollectionEquality().equals(other.solde, solde));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, nom, prenom, email, token,
-      nom_complet, const DeepCollectionEquality().hash(ca_souscription));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      nom,
+      prenom,
+      email,
+      token,
+      nom_complet,
+      const DeepCollectionEquality().hash(ca_souscription),
+      const DeepCollectionEquality().hash(solde));
 
   /// Create a copy of Utilisateur
   /// with the given fields replaced by the non-null parameter values.
@@ -277,7 +303,8 @@ abstract class _Utilisateur extends Utilisateur {
       final String? email,
       final String? token,
       final String? nom_complet,
-      final dynamic ca_souscription}) = _$UtilisateurImpl;
+      final dynamic ca_souscription,
+      final dynamic solde}) = _$UtilisateurImpl;
   const _Utilisateur._() : super._();
 
   factory _Utilisateur.fromJson(Map<String, dynamic> json) =
@@ -297,6 +324,8 @@ abstract class _Utilisateur extends Utilisateur {
   String? get nom_complet;
   @override
   dynamic get ca_souscription;
+  @override
+  dynamic get solde;
 
   /// Create a copy of Utilisateur
   /// with the given fields replaced by the non-null parameter values.

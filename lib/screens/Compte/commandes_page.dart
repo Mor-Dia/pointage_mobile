@@ -24,8 +24,6 @@ class _CommandesPageState extends State<CommandesPage> {
 
   late DataBloc<List<Commande>> commandeBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
-  Map<String, dynamic> filter1 = {"count": 10};
-  Map<String, dynamic> filter0 = {"count": 10};
 
   @override
   void initState() {
