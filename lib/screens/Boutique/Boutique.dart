@@ -35,6 +35,13 @@ class _BoutiqueState extends State<Boutique> {
   late DataBloc<List<Produit>> produitBloc;
   late DataBloc<List<PanierP>> panierBloc;
   late Map<String, dynamic> productFilter = {};
+  late Map<String, dynamic> familleFilter = {};
+
+  TextEditingController minController = TextEditingController();
+  TextEditingController maxController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
+
+  late Map<String, dynamic> minMax;
   String? token;
 
   Future getToken() async {
@@ -47,6 +54,12 @@ class _BoutiqueState extends State<Boutique> {
   @override
   void initState() {
     getToken();
+
+    minMax = {
+      "min": minController.text,
+      "max": maxController.text,
+      "isFiltering": false
+    };
 
     familleBloc = DataBloc<List<Famille>>(
         (response) => Famille.fromJsonList(response),
@@ -71,22 +84,61 @@ class _BoutiqueState extends State<Boutique> {
         isPagination: false,
         attributeToGet: PanierP.shrinkedAttributs());
 
-    productFilter.addAll({'count': 15});
+    productFilter.addAll({'count': 15, 'showatwebsite': 'true'});
 
-    // familleBloc.add(FetchDataEvent());
+    familleFilter.addAll({'showatwebsite': 'true'});
     // produitBloc.add(FetchDataEvent());
 
     super.initState();
   }
 
-  void filtre(index, famille_produit_id) {
-    print("DEFINE NEW FILTER $famille_produit_id");
+  void filtreFamille(index, famille_produit_id) {
     setState(() {
       selectedFamilyIndex = index; // Met à jour la famille sélectionnée
+      if (famille_produit_id == null) {
+        productFilter = {...productFilter..remove('famille_produit_id')};
+      }
       productFilter = {
         ...productFilter..addAll({'famille_produit_id': famille_produit_id})
       };
     });
+  }
+
+  void filtreSearch() {
+    print(searchController.text);
+    if (searchController.text != '') {
+      setState(() {
+        productFilter = {
+          ...productFilter..addAll({'search': searchController.text})
+        };
+      });
+    }
+  }
+
+  void filtreMinMax(TextEditingController min, TextEditingController max) {
+    setState(() {
+      minMax['min'] = min.text;
+      minMax['max'] = max.text;
+      minMax['isFiltering'] = true;
+
+      if (min.text != '' && int.parse(min.text.trim()) > 0) {
+        productFilter = {
+          ...productFilter
+            ..addAll({'prix_min': int.parse(min.text), 'prix_croissant': true})
+        };
+      }
+
+      if (max.text != '' && int.parse(max.text.trim()) > 0) {
+        productFilter = {
+          ...productFilter
+            ..addAll({'prix_max': int.parse(max.text), 'prix_croissant': true})
+        };
+      }
+    });
+
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   void addToPanier(Map<String, dynamic> arg) async {
@@ -99,6 +151,30 @@ class _BoutiqueState extends State<Boutique> {
     panierBloc.add(PostDataEvent(arg));
   }
 
+  void reset(type) {
+    setState(() {
+      if (type == 'search') {
+        productFilter = {...productFilter..remove('search')};
+        searchController.text = '';
+      } else if (type == 'minmax') {
+        productFilter = {...productFilter..remove('prix_min')};
+        productFilter = {...productFilter..remove('prix_max')};
+        productFilter = {...productFilter..remove('prix_croissant')};
+        minMax = {"min": '', "max": '', "isFiltering": false};
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      }
+    });
+  }
+
+  void dispose() {
+    minController.dispose();
+    maxController.dispose();
+    searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -107,15 +183,6 @@ class _BoutiqueState extends State<Boutique> {
     final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
     final double itemWidth = size.width / 2;
     int? famille_produit_selected = 0;
-
-    void filtre(index, famille_produit_id) {
-      setState(() {
-        selectedFamilyIndex = index; // Met à jour la famille sélectionnée
-        famille_produit_selected = famille_produit_id;
-        produitBloc.add(
-            FetchDataEvent(filter: {'famille_produit_id': famille_produit_id}));
-      });
-    }
 
     return Scaffold(
         appBar: AppBar(
@@ -205,8 +272,11 @@ class _BoutiqueState extends State<Boutique> {
             )),
         body: BlocBasedWidget<List<Famille>>(
             customDataBloc: familleBloc,
+            filter: familleFilter,
             customWidget: (state) {
-              List<Famille> marques = state.data;
+              List<Famille> marques = [];
+              marques = marques..add(Famille(id: null, designation: 'Tout'));
+              marques = marques..addAll(state.data);
               return Container(
                 color: Colors.white,
                 child: ListView(
@@ -223,7 +293,7 @@ class _BoutiqueState extends State<Boutique> {
 
                           return GestureDetector(
                             onTap: () {
-                              filtre(index, marque.id);
+                              filtreFamille(index, marque.id);
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
@@ -290,13 +360,49 @@ class _BoutiqueState extends State<Boutique> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             flex: 1,
                             child: Inputfiled(
                               type: "text",
+                              controller: searchController,
                               text: 'Désignation',
                               icon: 'loupe',
                               error: '',
+                              // handleChangeValue: (value) => Filter(),
+                            ),
+                          ),
+                          SizedBox(width: searchController.text != '' ? 10 : 0),
+                          searchController.text != ''
+                              ? GestureDetector(
+                                  onTap: () {
+                                    reset('search');
+                                  },
+                                  child: Icon(
+                                    Icons.cancel,
+                                    size: 20,
+                                    color: Colors.red,
+                                  ),
+                                )
+                              : SizedBox.shrink(),
+                          const SizedBox(width: 10),
+                          GestureDetector(
+                            onTap: () {
+                              filtreSearch();
+                            },
+                            child: Container(
+                              height: 45,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10.0),
+                              decoration: BoxDecoration(
+                                color: primaryColor, // Couleur de fond bleu
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: SvgPicture.asset(
+                                color: Colors.white,
+                                'assets/icons/loupe.svg',
+                                fit: BoxFit.scaleDown,
+                                height: 20,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -304,7 +410,10 @@ class _BoutiqueState extends State<Boutique> {
                           const SizedBox(width: 10),
                           GestureDetector(
                             onTap: () {
-                              ShowBottomSheetFiltrePrix(context);
+                              ShowBottomSheetFiltrePrix(context, minController,
+                                  maxController, filtreMinMax, handleReset: () {
+                                reset('minmax');
+                              });
                             },
                             child: Container(
                               height: 45,
@@ -314,17 +423,29 @@ class _BoutiqueState extends State<Boutique> {
                                 color: primaryColor, // Couleur de fond bleu
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
-                              child: Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  SvgPicture.asset("assets/icons/stat.svg",
-                                      height: 15, color: Colors.white),
-                                  const SizedBox(
-                                      width:
-                                          10.0), // Espace entre l'icône et le DropdownButton
-                                  const Text(
-                                    'Par prix',
-                                    style: TextStyle(color: Colors.white),
-                                  )
+                                  Row(
+                                    children: [
+                                      SvgPicture.asset("assets/icons/stat.svg",
+                                          height: 15, color: Colors.white),
+                                      const SizedBox(
+                                          width:
+                                              10.0), // Espace entre l'icône et le DropdownButton
+                                      const Text(
+                                        'Par prix',
+                                        style: TextStyle(color: Colors.white),
+                                      )
+                                    ],
+                                  ),
+                                  minMax['isFiltering']
+                                      ? Text(
+                                          '${minMax['min']} - ${minMax['max']}',
+                                          style: TextStyle(color: Colors.white),
+                                        )
+                                      : SizedBox.shrink()
                                 ],
                               ),
                             ),
@@ -343,7 +464,13 @@ class _BoutiqueState extends State<Boutique> {
                             filter: productFilter,
                             customWidget: (state) {
                               List<Produit> produits = state.data;
+
+                              if (produits.isEmpty) {
+                                return Center(
+                                    child: Text('Aucun produits trouvés'));
+                              }
                               return Wrap(
+                                alignment: WrapAlignment.start,
                                 spacing: 10,
                                 runSpacing: 10,
                                 children: produits
@@ -366,7 +493,20 @@ class _BoutiqueState extends State<Boutique> {
   }
 }
 
-Future<dynamic> ShowBottomSheetFiltrePrix(BuildContext context) {
+Future<dynamic> ShowBottomSheetFiltrePrix(
+    BuildContext context,
+    TextEditingController minController,
+    TextEditingController maxController,
+    Function(TextEditingController min, TextEditingController max) handlePress,
+    {Function()? handleReset}) {
+  void validate() {
+    handlePress(minController, maxController);
+  }
+
+  void reset() {
+    handleReset!();
+  }
+
   return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -412,6 +552,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(BuildContext context) {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: TextField(
+                              controller: minController,
                               decoration: InputDecoration(
                                   icon: Text(
                                     'Min',
@@ -438,6 +579,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(BuildContext context) {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: TextField(
+                              controller: maxController,
                               decoration: InputDecoration(
                                   icon: Text(
                                     'Max',
@@ -457,9 +599,29 @@ Future<dynamic> ShowBottomSheetFiltrePrix(BuildContext context) {
                 SizedBox(
                   height: 20,
                 ),
-                ButtonFiled(
-                  text: 'Valider',
-                  handlerPress: () {},
+                Row(
+                  children: [
+                    Expanded(
+                      child: ButtonFiled(
+                        text: 'Valider',
+                        handlerPress: () {
+                          validate();
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: ButtonFiled(
+                        text: 'Reinitialiser',
+                        color: Colors.red,
+                        handlerPress: () {
+                          reset();
+                        },
+                      ),
+                    )
+                  ],
                 )
               ],
             ),

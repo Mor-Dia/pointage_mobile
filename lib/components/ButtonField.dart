@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:yogivida_mobile/constant.dart';
 
 class ButtonFiled extends StatelessWidget {
   final String text;
   final Function()? handlerPress;
   final bool? isLoading;
+  final Color? color;
   const ButtonFiled(
-      {super.key, required this.text, this.handlerPress, this.isLoading});
+      {super.key,
+      required this.text,
+      this.handlerPress,
+      this.isLoading,
+      this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +22,7 @@ class ButtonFiled extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        backgroundColor: const Color(0xff15274d),
+        backgroundColor: color != null ? color : primaryColor,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

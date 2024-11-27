@@ -10,8 +10,8 @@ const Color successColor = Color(0xff37BC9B);
 const Color dangerColor = Color(0xffDA4453);
 const Color warningColor = Color(0xffF6BB42);
 
-Color getDisplayColor(className){
-  switch(className){
+Color getDisplayColor(className) {
+  switch (className) {
     case "success":
       return successColor;
     case "danger":

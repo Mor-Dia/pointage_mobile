@@ -112,7 +112,7 @@ class _CardProduitState extends State<CardProduit> {
           const SizedBox(height: 5),
           Text(
             textAlign: TextAlign.start,
-            ("80.000" ' xof').toUpperCase(),
+            widget.data.prixSiteWebFr.toString(),
             style: GoogleFonts.arimo(
                 fontSize: MediaQuery.of(context).size.width * 0.040,
                 fontWeight: FontWeight.bold),
