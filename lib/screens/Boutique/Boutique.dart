@@ -468,7 +468,7 @@ class _BoutiqueState extends State<Boutique> {
                               if (produits.isEmpty) {
                                 return Center(
                                     child: Text('Aucun produits trouvés'));
-                              }
+                                }
                               return Wrap(
                                 alignment: WrapAlignment.start,
                                 spacing: 10,

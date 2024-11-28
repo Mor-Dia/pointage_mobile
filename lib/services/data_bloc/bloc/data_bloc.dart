@@ -95,9 +95,9 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
           // emit(DataSuccess(data: initialData, metadata: initialMetadata, canLoadNewData: true));
         }
       }
-      if (!forAddingDataPurpose)
-        emit(
-            DataLoading()); //Dans le cas où il ne s'agit pas d'infinite scroll, réinitialiser le BLOC
+      if (!forAddingDataPurpose) {
+        emit(DataLoading()); //Dans le cas où il ne s'agit pas d'infinite scroll, réinitialiser le BLOC
+      }
 
       Map<String, dynamic>? parameters;
       if (isGraphQl == true) {

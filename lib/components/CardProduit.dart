@@ -1,13 +1,20 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
+import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/constant.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/produit_model.dart';
 import 'package:yogivida_mobile/services/api/models/taille_model.dart';
+import 'package:yogivida_mobile/services/post_api_bloc.dart';
+
+import '../core/models/user_model.dart';
+import '../services/authentication_bloc/authentication_bloc.dart';
 
 class CardProduit extends StatefulWidget {
   final Produit data;
@@ -23,7 +30,8 @@ class CardProduit extends StatefulWidget {
 }
 
 class _CardProduitState extends State<CardProduit> {
-  @override
+
+  late PostApiBloc favorisPostBloc;
   bool? liked;
   int qte = 1;
 
@@ -33,8 +41,12 @@ class _CardProduitState extends State<CardProduit> {
   @override
   void initState() {
     super.initState();
+    favorisPostBloc = PostApiBloc();
     liked = false;
-    // liked = widget.data.liked;
+  }
+
+  likeProduct({required Map<String, dynamic> parameters}){
+    favorisPostBloc.add(PostApiMakeCall(endpoint: 'favoris', parameters: parameters));
   }
 
   @override
@@ -90,22 +102,45 @@ class _CardProduitState extends State<CardProduit> {
                   ),
                 ),
               ),
-              GestureDetector(
-                child: liked == false
-                    ? const Icon(
-                        Icons.favorite_outline,
-                        size: 25,
-                      )
-                    : const Icon(
-                        Icons.favorite,
-                        color: Color(0xffFF0000),
-                        size: 25,
-                      ),
-                onTap: () {
-                  setState(() {
-                    liked = !liked!;
-                  });
-                },
+              BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+                  builder: (context, authState) {
+                    AuthenticationStatus currentStatus = authState.status;
+                    Utilisateur? user = authState.user;
+                    switch(currentStatus){
+                      case AuthenticationStatus.authenticated:
+                        return BlocBuilder(
+                          bloc: favorisPostBloc,
+                          builder:(BuildContext context, state){
+                            return AnimatedGestureButton(
+                              child: GestureDetector(
+                                child: liked == false
+                                    ? const Icon(
+                                  Icons.favorite_outline,
+                                  size: 25,
+                                )
+                                    : const Icon(
+                                  Icons.favorite,
+                                  color: Color(0xffFF0000),
+                                  size: 25,
+                                ),
+                                onTap: () {
+                                  Map<String, dynamic> parameters = {
+                                    "token": user?.token ?? "",
+                                    "produit_id": widget.data.id,
+                                    "etat": 0,
+                                  };
+                                  likeProduct(parameters: parameters);
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      case AuthenticationStatus.unknown:
+                      case AuthenticationStatus.unauthenticated:
+                      case AuthenticationStatus.failure:
+                        return const Center(child: PleaseLoginWidget());
+                    }
+                  }
               )
             ],
           ),
@@ -266,3 +301,82 @@ class _CardProduitState extends State<CardProduit> {
     );
   }
 }
+
+
+class AnimatedGestureButton extends StatefulWidget {
+  final Widget child;
+  final bool animate;
+  const AnimatedGestureButton({required this.child, this.animate=false});
+
+  @override
+  _AnimatedGestureButtonState createState() => _AnimatedGestureButtonState();
+}
+
+class _AnimatedGestureButtonState extends State<AnimatedGestureButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
+    _animation = Tween<double>(begin: 0, end: 1).animate(_controller);
+    if(widget.animate){
+      _controller.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: GestureBorderPainter(_animation),
+      child: widget.child,
+    );
+  }
+}
+
+class GestureBorderPainter extends CustomPainter {
+  final Animation<double> animation;
+
+  GestureBorderPainter(this.animation) : super(repaint: animation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = Colors.yellow
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke;
+
+    final path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        const Radius.circular(16),
+      ));
+
+    final pathMetrics = path.computeMetrics().toList();
+    if (pathMetrics.isNotEmpty) {
+      final metric = pathMetrics.first;
+      final length = metric.length;
+      final start = animation.value * length;
+      final end = start + 25; // Longueur du trait jaune
+      canvas.drawPath(
+        metric.extractPath(start % length, end % length),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
