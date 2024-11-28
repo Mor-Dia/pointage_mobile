@@ -11,6 +11,7 @@ Future<dynamic> postApiData(endPoint, Map<String, dynamic> body) async {
 
   Map<String, String>? headers = await getHeaders();
   final bodyJson = jsonEncode((body));
+
   var requestUri = Uri.parse(url);
   if (kDebugMode) {
     print("API CALL LOGIN URI $requestUri");
@@ -20,5 +21,6 @@ Future<dynamic> postApiData(endPoint, Map<String, dynamic> body) async {
     // print("API CALL RESPONSE ${response.body}");
     // print("API CALL RESPONSE HEADERS ${response.headers}");
   }
+
   return response;
 }

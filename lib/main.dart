@@ -18,6 +18,7 @@ import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Home/MainHome.dart';
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
 import 'package:yogivida_mobile/screens/Home/home_page.dart';
+import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 import 'core/models/user_model.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -80,6 +81,10 @@ class _MyAppState extends State<MyApp> {
               authenticationRepository: _authenticationRepository,
               userRepository: _userRepository,
             ),
+          ),
+          BlocProvider(
+            create: (_) =>
+                PanierBlocBloc()..add(const PanierBlocEvent.started()),
           ),
         ],
         child: MaterialApp(

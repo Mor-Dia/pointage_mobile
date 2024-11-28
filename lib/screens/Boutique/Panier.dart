@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yogivida_mobile/components/CardPratique.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
 import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/services/api/models/panier_model.dart';
-
-import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
-import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
+import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
 class Panier extends StatefulWidget {
   const Panier({super.key});
@@ -19,40 +16,10 @@ class Panier extends StatefulWidget {
 }
 
 class _PanierState extends State<Panier> {
-  late Map<String, dynamic> productFilter = {};
-  late DataBloc<List<PanierP>> panierBloc;
-  String? token;
-
-  Future getToken() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      token = prefs.getString('token');
-    });
-    print(prefs.getString('token'));
-  }
-
-  @override
-  void initState() {
-    getToken();
-
-    panierBloc = DataBloc<List<PanierP>>(
-        (response) => PanierP.fromJsonList(response),
-        PanierP.getEndpoint(isPagination: false),
-        isGraphQl: true,
-        isPagination: false,
-        attributeToGet: PanierP.shrinkedAttributs());
-
-    productFilter.addAll({'count': 15});
-
-    // familleBloc.add(FetchDataEvent());
-    // produitBloc.add(FetchDataEvent());
-
-    super.initState();
-  }
+  List<PanierPProduit>? _panier;
 
   @override
   Widget build(BuildContext context) {
-    List<Pratique> listPratique = [];
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
@@ -88,18 +55,43 @@ class _PanierState extends State<Panier> {
         ),
         body: Container(
             color: Colors.white,
-            child: BlocBasedWidget<List<PanierP>>(
-                customDataBloc: panierBloc,
-                filter: {"token": token},
-                customWidget: (state) {
-                  List<PanierP> panier = state.data;
-
-                  return ListView(
-                    children: panier[0]
-                        .panierProduit!
+            child: BlocBuilder<PanierBlocBloc, PanierBlocState>(
+                builder: (context, state) {
+              if (state is PanierLoaded) {
+                return Stack(children: [
+                  ListView(
+                    children: state.panier
                         .map((toElement) => CardProduitPanier(data: toElement))
                         .toList(),
-                  );
-                })));
+                  ),
+                  (state is PanierLoading)
+                      ? Positioned(
+                          child: Opacity(
+                          opacity: .7,
+                          child: Container(
+                              color: Colors.white,
+                              child:
+                                  Center(child: CircularProgressIndicator())),
+                        ))
+                      : SizedBox.shrink()
+                ]);
+              }
+              return Stack(children: [
+                ListView(
+                  children: (_panier ?? [])
+                      .map((toElement) => CardProduitPanier(data: toElement))
+                      .toList(),
+                ),
+                (state is PanierLoading)
+                    ? Positioned(
+                        child: Opacity(
+                        opacity: .7,
+                        child: Container(
+                            color: Colors.white,
+                            child: Center(child: CircularProgressIndicator())),
+                      ))
+                    : SizedBox.shrink()
+              ]);
+            })));
   }
 }
