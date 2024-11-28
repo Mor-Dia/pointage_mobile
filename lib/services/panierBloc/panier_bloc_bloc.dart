@@ -20,7 +20,7 @@ part 'panier_bloc_bloc.freezed.dart';
 class PanierBlocBloc<T> extends Bloc<PanierBlocEvent, PanierBlocState> {
   PanierBlocBloc() : super(PanierBlocState.initial()) {
     on<PanierStarted>(_onStarted);
-    on<FetchPanier>(_onFetchPanier);
+    on<PostPanier>(_onPostPanier);
     on<RefreshPanier>(_onRefreshPanier);
   }
 
@@ -29,9 +29,9 @@ class PanierBlocBloc<T> extends Bloc<PanierBlocEvent, PanierBlocState> {
     emit(const PanierBlocState.initial());
   }
 
-  // Gestion de l'événement FetchPanier
-  Future<void> _onFetchPanier(
-      FetchPanier event, Emitter<PanierBlocState> emit) async {
+  // Gestion de l'événement PostPanier
+  Future<void> _onPostPanier(
+      PostPanier event, Emitter<PanierBlocState> emit) async {
     emit(const PanierBlocState.loading());
 
     try {

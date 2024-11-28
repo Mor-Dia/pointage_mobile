@@ -143,7 +143,7 @@ class _BoutiqueState extends State<Boutique> {
 
     context
         .read<PanierBlocBloc>()
-        .add(PanierBlocEvent.fetchPanier(body: arg, token: token ?? ''));
+        .add(PanierBlocEvent.postPanier(body: arg, token: token ?? ''));
   }
 
   void reset(type) {

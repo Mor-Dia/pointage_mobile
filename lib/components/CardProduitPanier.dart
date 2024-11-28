@@ -68,7 +68,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
 
     context
         .read<PanierBlocBloc>()
-        .add(PanierBlocEvent.fetchPanier(body: newArg, token: token ?? ''));
+        .add(PanierBlocEvent.postPanier(body: newArg, token: token ?? ''));
   }
 
   @override

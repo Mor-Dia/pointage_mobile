@@ -20,21 +20,21 @@ mixin _$PanierBlocEvent {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function(Map<String, dynamic> body, String token)
-        fetchPanier,
+        postPanier,
     required TResult Function(String token) refresh,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(Map<String, dynamic> body, String token)? fetchPanier,
+    TResult? Function(Map<String, dynamic> body, String token)? postPanier,
     TResult? Function(String token)? refresh,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(Map<String, dynamic> body, String token)? fetchPanier,
+    TResult Function(Map<String, dynamic> body, String token)? postPanier,
     TResult Function(String token)? refresh,
     required TResult orElse(),
   }) =>
@@ -42,21 +42,21 @@ mixin _$PanierBlocEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PanierStarted value) started,
-    required TResult Function(FetchPanier value) fetchPanier,
+    required TResult Function(PostPanier value) postPanier,
     required TResult Function(RefreshPanier value) refresh,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PanierStarted value)? started,
-    TResult? Function(FetchPanier value)? fetchPanier,
+    TResult? Function(PostPanier value)? postPanier,
     TResult? Function(RefreshPanier value)? refresh,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PanierStarted value)? started,
-    TResult Function(FetchPanier value)? fetchPanier,
+    TResult Function(PostPanier value)? postPanier,
     TResult Function(RefreshPanier value)? refresh,
     required TResult orElse(),
   }) =>
@@ -135,7 +135,7 @@ class _$PanierStartedImpl
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function(Map<String, dynamic> body, String token)
-        fetchPanier,
+        postPanier,
     required TResult Function(String token) refresh,
   }) {
     return started();
@@ -145,7 +145,7 @@ class _$PanierStartedImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(Map<String, dynamic> body, String token)? fetchPanier,
+    TResult? Function(Map<String, dynamic> body, String token)? postPanier,
     TResult? Function(String token)? refresh,
   }) {
     return started?.call();
@@ -155,7 +155,7 @@ class _$PanierStartedImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(Map<String, dynamic> body, String token)? fetchPanier,
+    TResult Function(Map<String, dynamic> body, String token)? postPanier,
     TResult Function(String token)? refresh,
     required TResult orElse(),
   }) {
@@ -169,7 +169,7 @@ class _$PanierStartedImpl
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PanierStarted value) started,
-    required TResult Function(FetchPanier value) fetchPanier,
+    required TResult Function(PostPanier value) postPanier,
     required TResult Function(RefreshPanier value) refresh,
   }) {
     return started(this);
@@ -179,7 +179,7 @@ class _$PanierStartedImpl
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PanierStarted value)? started,
-    TResult? Function(FetchPanier value)? fetchPanier,
+    TResult? Function(PostPanier value)? postPanier,
     TResult? Function(RefreshPanier value)? refresh,
   }) {
     return started?.call(this);
@@ -189,7 +189,7 @@ class _$PanierStartedImpl
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PanierStarted value)? started,
-    TResult Function(FetchPanier value)? fetchPanier,
+    TResult Function(PostPanier value)? postPanier,
     TResult Function(RefreshPanier value)? refresh,
     required TResult orElse(),
   }) {
@@ -205,20 +205,20 @@ abstract class PanierStarted implements PanierBlocEvent {
 }
 
 /// @nodoc
-abstract class _$$FetchPanierImplCopyWith<$Res> {
-  factory _$$FetchPanierImplCopyWith(
-          _$FetchPanierImpl value, $Res Function(_$FetchPanierImpl) then) =
-      __$$FetchPanierImplCopyWithImpl<$Res>;
+abstract class _$$PostPanierImplCopyWith<$Res> {
+  factory _$$PostPanierImplCopyWith(
+          _$PostPanierImpl value, $Res Function(_$PostPanierImpl) then) =
+      __$$PostPanierImplCopyWithImpl<$Res>;
   @useResult
   $Res call({Map<String, dynamic> body, String token});
 }
 
 /// @nodoc
-class __$$FetchPanierImplCopyWithImpl<$Res>
-    extends _$PanierBlocEventCopyWithImpl<$Res, _$FetchPanierImpl>
-    implements _$$FetchPanierImplCopyWith<$Res> {
-  __$$FetchPanierImplCopyWithImpl(
-      _$FetchPanierImpl _value, $Res Function(_$FetchPanierImpl) _then)
+class __$$PostPanierImplCopyWithImpl<$Res>
+    extends _$PanierBlocEventCopyWithImpl<$Res, _$PostPanierImpl>
+    implements _$$PostPanierImplCopyWith<$Res> {
+  __$$PostPanierImplCopyWithImpl(
+      _$PostPanierImpl _value, $Res Function(_$PostPanierImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of PanierBlocEvent
@@ -229,7 +229,7 @@ class __$$FetchPanierImplCopyWithImpl<$Res>
     Object? body = null,
     Object? token = null,
   }) {
-    return _then(_$FetchPanierImpl(
+    return _then(_$PostPanierImpl(
       body: null == body
           ? _value._body
           : body // ignore: cast_nullable_to_non_nullable
@@ -244,8 +244,8 @@ class __$$FetchPanierImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$FetchPanierImpl with DiagnosticableTreeMixin implements FetchPanier {
-  const _$FetchPanierImpl(
+class _$PostPanierImpl with DiagnosticableTreeMixin implements PostPanier {
+  const _$PostPanierImpl(
       {required final Map<String, dynamic> body, required this.token})
       : _body = body;
 
@@ -262,14 +262,14 @@ class _$FetchPanierImpl with DiagnosticableTreeMixin implements FetchPanier {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PanierBlocEvent.fetchPanier(body: $body, token: $token)';
+    return 'PanierBlocEvent.postPanier(body: $body, token: $token)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'PanierBlocEvent.fetchPanier'))
+      ..add(DiagnosticsProperty('type', 'PanierBlocEvent.postPanier'))
       ..add(DiagnosticsProperty('body', body))
       ..add(DiagnosticsProperty('token', token));
   }
@@ -278,7 +278,7 @@ class _$FetchPanierImpl with DiagnosticableTreeMixin implements FetchPanier {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$FetchPanierImpl &&
+            other is _$PostPanierImpl &&
             const DeepCollectionEquality().equals(other._body, _body) &&
             (identical(other.token, token) || other.token == token));
   }
@@ -292,40 +292,40 @@ class _$FetchPanierImpl with DiagnosticableTreeMixin implements FetchPanier {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$FetchPanierImplCopyWith<_$FetchPanierImpl> get copyWith =>
-      __$$FetchPanierImplCopyWithImpl<_$FetchPanierImpl>(this, _$identity);
+  _$$PostPanierImplCopyWith<_$PostPanierImpl> get copyWith =>
+      __$$PostPanierImplCopyWithImpl<_$PostPanierImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function(Map<String, dynamic> body, String token)
-        fetchPanier,
+        postPanier,
     required TResult Function(String token) refresh,
   }) {
-    return fetchPanier(body, token);
+    return postPanier(body, token);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(Map<String, dynamic> body, String token)? fetchPanier,
+    TResult? Function(Map<String, dynamic> body, String token)? postPanier,
     TResult? Function(String token)? refresh,
   }) {
-    return fetchPanier?.call(body, token);
+    return postPanier?.call(body, token);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(Map<String, dynamic> body, String token)? fetchPanier,
+    TResult Function(Map<String, dynamic> body, String token)? postPanier,
     TResult Function(String token)? refresh,
     required TResult orElse(),
   }) {
-    if (fetchPanier != null) {
-      return fetchPanier(body, token);
+    if (postPanier != null) {
+      return postPanier(body, token);
     }
     return orElse();
   }
@@ -334,41 +334,41 @@ class _$FetchPanierImpl with DiagnosticableTreeMixin implements FetchPanier {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PanierStarted value) started,
-    required TResult Function(FetchPanier value) fetchPanier,
+    required TResult Function(PostPanier value) postPanier,
     required TResult Function(RefreshPanier value) refresh,
   }) {
-    return fetchPanier(this);
+    return postPanier(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PanierStarted value)? started,
-    TResult? Function(FetchPanier value)? fetchPanier,
+    TResult? Function(PostPanier value)? postPanier,
     TResult? Function(RefreshPanier value)? refresh,
   }) {
-    return fetchPanier?.call(this);
+    return postPanier?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PanierStarted value)? started,
-    TResult Function(FetchPanier value)? fetchPanier,
+    TResult Function(PostPanier value)? postPanier,
     TResult Function(RefreshPanier value)? refresh,
     required TResult orElse(),
   }) {
-    if (fetchPanier != null) {
-      return fetchPanier(this);
+    if (postPanier != null) {
+      return postPanier(this);
     }
     return orElse();
   }
 }
 
-abstract class FetchPanier implements PanierBlocEvent {
-  const factory FetchPanier(
+abstract class PostPanier implements PanierBlocEvent {
+  const factory PostPanier(
       {required final Map<String, dynamic> body,
-      required final String token}) = _$FetchPanierImpl;
+      required final String token}) = _$PostPanierImpl;
 
   Map<String, dynamic> get body;
   String get token;
@@ -376,7 +376,7 @@ abstract class FetchPanier implements PanierBlocEvent {
   /// Create a copy of PanierBlocEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$FetchPanierImplCopyWith<_$FetchPanierImpl> get copyWith =>
+  _$$PostPanierImplCopyWith<_$PostPanierImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -460,7 +460,7 @@ class _$RefreshPanierImpl
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function(Map<String, dynamic> body, String token)
-        fetchPanier,
+        postPanier,
     required TResult Function(String token) refresh,
   }) {
     return refresh(token);
@@ -470,7 +470,7 @@ class _$RefreshPanierImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(Map<String, dynamic> body, String token)? fetchPanier,
+    TResult? Function(Map<String, dynamic> body, String token)? postPanier,
     TResult? Function(String token)? refresh,
   }) {
     return refresh?.call(token);
@@ -480,7 +480,7 @@ class _$RefreshPanierImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(Map<String, dynamic> body, String token)? fetchPanier,
+    TResult Function(Map<String, dynamic> body, String token)? postPanier,
     TResult Function(String token)? refresh,
     required TResult orElse(),
   }) {
@@ -494,7 +494,7 @@ class _$RefreshPanierImpl
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(PanierStarted value) started,
-    required TResult Function(FetchPanier value) fetchPanier,
+    required TResult Function(PostPanier value) postPanier,
     required TResult Function(RefreshPanier value) refresh,
   }) {
     return refresh(this);
@@ -504,7 +504,7 @@ class _$RefreshPanierImpl
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(PanierStarted value)? started,
-    TResult? Function(FetchPanier value)? fetchPanier,
+    TResult? Function(PostPanier value)? postPanier,
     TResult? Function(RefreshPanier value)? refresh,
   }) {
     return refresh?.call(this);
@@ -514,7 +514,7 @@ class _$RefreshPanierImpl
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(PanierStarted value)? started,
-    TResult Function(FetchPanier value)? fetchPanier,
+    TResult Function(PostPanier value)? postPanier,
     TResult Function(RefreshPanier value)? refresh,
     required TResult orElse(),
   }) {
