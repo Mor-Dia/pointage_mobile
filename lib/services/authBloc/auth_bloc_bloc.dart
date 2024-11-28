@@ -4,23 +4,23 @@
 // import 'package:http/http.dart' as http;
 // import 'dart:convert';
 // import 'package:shared_preferences/shared_preferences.dart';
-//
+
 // import 'package:yogivida_mobile/constant.dart';
 // import 'package:yogivida_mobile/screens/Home/MainHome.dart';
-//
+
 // part 'auth_bloc_event.dart';
 // part 'auth_bloc_state.dart';
-//
+
 // Future<void> storeUserData(dynamic data) async {
 //   final prefs = await SharedPreferences.getInstance();
 //   await prefs.setString('user_token', data["token"]); // Stocke le token
 //   await prefs.setString('user_id', data["id"].toString()); // Stocke le token
 // }
-//
+
 // Future<dynamic> refreshConnexion(Emitter<AuthenticationState<Utilisateur>> emit) async {
 //   final prefs = await SharedPreferences.getInstance();
 //   String? currentUser = prefs.getString('user_id'); // Récupère le token,
-//
+
 //   if (currentUser != null) {
 //     final url = Uri.parse(BASE_URL_QGL +
 //         '{clientspaginated(page:1,count:1,id:' +
@@ -30,13 +30,13 @@
 //       url,
 //       headers: {'Content-Type': 'application/json'},
 //     );
-//
+
 //     try {
 //       // Vérification si la requête a réussi (statut 200-299)
 //       if (response.statusCode >= 200 && response.statusCode < 300) {
 //         // Parsing des données JSON reçues
 //         final responseData = jsonDecode(response.body);
-//
+
 //         UserClass user = UserClass.fromJson({
 //           'data': responseData['data']['clientspaginated']['data'][0]
 //         }); // Conversion du Map en User
@@ -49,7 +49,7 @@
 //     }
 //   }
 // }
-//
+
 // Future<dynamic> loginUser(
 //     Map<String, dynamic>? data, Emitter<AuthenticationState<Utilisateur>> emit) async {
 //   try {
@@ -60,7 +60,7 @@
 //       headers: {'Content-Type': 'application/json'},
 //       body: jsonEncode(data),
 //     );
-//
+
 //     // Vérification si la requête a réussi (statut 200-299)
 //     if (response.statusCode >= 200 && response.statusCode < 300) {
 //       // Parsing des données JSON reçues
@@ -68,7 +68,7 @@
 //       UserClass user =
 //           UserClass.fromJson(responseData); // Conversion du Map en User
 //       emit(AuthBlocInitial(user: user));
-//
+
 //       if (user.data != '') {
 //         await storeUserData(user.data);
 //         await refreshConnexion(emit);
@@ -80,7 +80,7 @@
 //     print('Erreur réseau ou autre: $error');
 //   }
 // }
-//
+
 // Future<dynamic> updateUser(
 //     Map<String, dynamic>? data, Emitter<AuthenticationState<Utilisateur>> emit) async {
 //   print(data);
@@ -92,7 +92,7 @@
 //       headers: {'Content-Type': 'application/json'},
 //       body: jsonEncode(data),
 //     );
-//
+
 //     // Vérification si la requête a réussi (statut 200-299)
 //     if (response.statusCode >= 200 && response.statusCode <= 302) {
 //       await refreshConnexion(emit);
@@ -103,11 +103,11 @@
 //     print('Erreur réseau ou autre: $error');
 //   }
 // }
-//
+
 // Future<dynamic> signUpUser(
 //     Map<String, dynamic> data, Emitter<AuthenticationState<Utilisateur>> emit) async {
 //   final url = Uri.parse(BASE_URL + 'inscription');
-//
+
 //   try {
 //     // Requête POST avec le corps de la requête encodé en JSON
 //     final response = await http.post(
@@ -115,7 +115,7 @@
 //       headers: {'Content-Type': 'application/json'},
 //       body: jsonEncode(data),
 //     );
-//
+
 //     // Vérification si la requête a réussi (statut 200-299)
 //     if (response.statusCode >= 200 && response.statusCode < 300) {
 //       // Parsing des données JSON reçues
@@ -123,7 +123,7 @@
 //       UserClass user =
 //           UserClass.fromJson(responseData); // Conversion du Map en User
 //       emit(AuthBlocInitial(user: user));
-//
+
 //       if (user.data != '') {
 //         storeUserData(user.data["token"]);
 //       }
@@ -134,25 +134,25 @@
 //     print('Erreur réseau ou autre: $error');
 //   }
 // }
-//
+
 // class AuthenticationBloc<Utilisateur> extends Bloc<AuthBlocEvent, AuthenticationState<Utilisateur>> {
 //   AuthenticationBloc<Utilisateur>() : super(AuthBlocInitial(user: null)) {
 //     on<AppStartedEvent>((event, emit) async {
 //       emit(AuthBlocLoading());
 //       await refreshConnexion(emit);
 //     });
-//
+
 //     on<LoginEvent>((event, emit) async {
 //       emit(AuthBlocLoading());
 //       await loginUser(event.data, emit);
 //     });
-//
+
 //     on<UpdateUserEvent>((event, emit) async {
 //       emit(AuthBlocLoading());
 //       await updateUser(event.data, emit);
 //       await refreshConnexion(emit);
 //     });
-//
+
 //     on<SignUpEvent>((event, emit) async {
 //       Map<String, dynamic> data = {
 //         "login": event.emailController,

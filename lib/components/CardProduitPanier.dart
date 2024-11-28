@@ -1,12 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
 class CardProduitPanier extends StatefulWidget {
   final PanierPProduit data;
@@ -25,12 +28,47 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
   @override
   bool? liked;
   int qte = 0;
+  String? token;
+  String? userId;
+
+  Future getCredentials() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      userId = prefs.getString('user_id');
+    });
+    // context.read<PanierBlocBloc>().add(PanierBlocEvent.refresh(token: token!));
+  }
+
   @override
   void initState() {
     super.initState();
     // liked = widget.data.liked;
     liked = false;
     qte = widget.data.qte!;
+    getCredentials();
+  }
+
+  void addToPanier(PanierPProduit arg, int sentqte) async {
+    int newQte = qte + sentqte;
+
+    if (sentqte == 0) {
+      newQte = 0;
+    }
+
+    Map<String, dynamic> newArg = {
+      'client_id': userId,
+      'produit_id': newQte == 0 ? widget.data.id : widget.data.produit?.id,
+      'quantite': newQte,
+      'taille_id': 1,
+      'token': token
+    };
+
+    print(newArg);
+
+    context
+        .read<PanierBlocBloc>()
+        .add(PanierBlocEvent.fetchPanier(body: newArg, token: token ?? ''));
   }
 
   @override
@@ -119,11 +157,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                           children: [
                             GestureDetector(
                               onTap: () => {
-                                setState(() {
-                                  if (qte > 0) {
-                                    qte -= 1;
-                                  }
-                                })
+                                addToPanier(widget.data, -1),
                               },
                               child: Container(
                                 height: 30,
@@ -147,11 +181,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => {
-                                setState(() {
-                                  qte += 1;
-                                })
-                              },
+                              onTap: () => {addToPanier(widget.data, 1)},
                               child: Container(
                                 height: 30,
                                 width: 30,
@@ -172,22 +202,27 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                           width: 10,
                         ),
                         IntrinsicWidth(
-                          child: Container(
-                            height: 30,
-                            width: 30,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: Colors.red,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/trash.svg',
-                                  width: 15,
-                                  color: Colors.white,
-                                ),
-                              ],
+                          child: GestureDetector(
+                            onTap: () {
+                              addToPanier(widget.data, 0);
+                            },
+                            child: Container(
+                              height: 30,
+                              width: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.red,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icons/trash.svg',
+                                    width: 15,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

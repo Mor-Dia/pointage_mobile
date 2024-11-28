@@ -69,7 +69,6 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
 
       if (response.statusCode == 200) {
         Map<String, dynamic> responseJsonDecoded = jsonDecode(response.body);
-        emit(RefreshDataEvent());
       } else {
         emit(DataSuccess(data: null, metadata: null));
       }

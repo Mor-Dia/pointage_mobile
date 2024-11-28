@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +20,7 @@ import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/produit_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
+import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
 class Boutique extends StatefulWidget {
   const Boutique({super.key});
@@ -33,9 +35,9 @@ class _BoutiqueState extends State<Boutique> {
   int selectedFamilyIndex = 0; // Indice de la famille sélectionnée
   late DataBloc<List<Famille>> familleBloc;
   late DataBloc<List<Produit>> produitBloc;
-  late DataBloc<List<PanierP>> panierBloc;
   late Map<String, dynamic> productFilter = {};
   late Map<String, dynamic> familleFilter = {};
+  List<PanierPProduit>? _panier;
 
   TextEditingController minController = TextEditingController();
   TextEditingController maxController = TextEditingController();
@@ -43,17 +45,20 @@ class _BoutiqueState extends State<Boutique> {
 
   late Map<String, dynamic> minMax;
   String? token;
+  String? userId;
 
-  Future getToken() async {
+  Future getCredentials() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       token = prefs.getString('token');
+      userId = prefs.getString('user_id');
     });
+    context.read<PanierBlocBloc>().add(PanierBlocEvent.refresh(token: token!));
   }
 
   @override
   void initState() {
-    getToken();
+    getCredentials();
 
     minMax = {
       "min": minController.text,
@@ -75,19 +80,10 @@ class _BoutiqueState extends State<Boutique> {
         isPagination: true,
         attributeToGet: Produit.shrinkedAttributs());
 
-    panierBloc = DataBloc<List<PanierP>>(
-        (response) => PanierP.fromJsonList(response),
-        PanierP.getEndpoint(isPagination: false),
-        postEndPoint: 'panier_client',
-        // customDataPath: 'panier',
-        isGraphQl: true,
-        isPagination: false,
-        attributeToGet: PanierP.shrinkedAttributs());
-
     productFilter.addAll({'count': 15, 'showatwebsite': 'true'});
 
     familleFilter.addAll({'showatwebsite': 'true'});
-    // produitBloc.add(FetchDataEvent());
+    // produitBloc.add(FetchDataEvent())
 
     super.initState();
   }
@@ -142,13 +138,12 @@ class _BoutiqueState extends State<Boutique> {
   }
 
   void addToPanier(Map<String, dynamic> arg) async {
-    // Produit produitToAdd
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var userId = prefs.getString('user_id');
     arg['token'] = token;
     arg['client_id'] = userId;
 
-    panierBloc.add(PostDataEvent(arg));
+    context
+        .read<PanierBlocBloc>()
+        .add(PanierBlocEvent.fetchPanier(body: arg, token: token ?? ''));
   }
 
   void reset(type) {
@@ -223,48 +218,72 @@ class _BoutiqueState extends State<Boutique> {
                           ),
                         ),
                       ),
-                      BlocBasedWidget<List<PanierP>>(
-                          customDataBloc: panierBloc,
-                          filter: {"token": token},
-                          customWidget: (state) {
-                            List<PanierP> panier = state.data;
-                            return Positioned(
-                              right: -5,
-                              top: -5,
-                              child: Container(
-                                width: 25,
-                                height: 25,
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                    color: secondColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        width: 1.5, color: Colors.white)),
-                                constraints: const BoxConstraints(
-                                  minWidth: 20,
-                                  minHeight: 20,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      panier[0]
-                                          .panierProduit!
-                                          .length
-                                          .toString(), // Remplacez '3' par le nombre de notifications dynamiquement
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
+                      BlocConsumer<PanierBlocBloc, PanierBlocState>(
+                          listener: (context, state) {
+                        if (state is PanierError) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.message)),
+                          );
+                        }
+                        if (state is PanierSuccess) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                state.message,
+                                style: TextStyle(color: Colors.white),
                               ),
-                            );
-                          })
+                              backgroundColor: Colors.green[400],
+                            ),
+                          );
+                        }
+
+                        if (state is PanierLoaded) {
+                          _panier = state.panier;
+                        }
+                      }, builder: (context, state) {
+                        return Positioned(
+                          right: -5,
+                          top: -5,
+                          child: Container(
+                            width: 25,
+                            height: 25,
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                                color: secondColor,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                    width: 1.5, color: Colors.white)),
+                            constraints: const BoxConstraints(
+                              minWidth: 20,
+                              minHeight: 20,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                (state is PanierLoading)
+                                    ? Container(
+                                        width: 10,
+                                        height: 10,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Text(
+                                        (_panier?.length ?? 0).toString(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                              ],
+                            ),
+                          ),
+                        );
+                      })
                     ],
                   ),
                 ),
