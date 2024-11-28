@@ -176,7 +176,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                             SizedBox(
                               width: 40,
                               child: Text(
-                                qte.toString(),
+                                widget.data.qte.toString(),
                                 textAlign: TextAlign.center,
                               ),
                             ),

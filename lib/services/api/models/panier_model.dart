@@ -8,25 +8,24 @@ part 'panier_model.freezed.dart';
 part 'panier_model.g.dart';
 
 @freezed
-class PanierP with _$PanierP {
-  const PanierP._();
-  const factory PanierP({
+class Panier with _$Panier {
+  const Panier._();
+  const factory Panier({
     int? id, // Identifiant unique pour la commande ou le panier
     int? total, // Montant total de la commande
     @JsonKey(name: 'panier_produit')
     List<PanierPProduit>? panierProduit, // Liste des produits du panier
   }) = _PanierP;
 
-  factory PanierP.fromJson(Map<String, dynamic> json) =>
-      _$PanierPFromJson(json);
+  factory Panier.fromJson(Map<String, dynamic> json) => _$PanierPFromJson(json);
 
   static fromJsonList(List<dynamic> json) {
-    List<PanierP> data = [];
+    List<Panier> data = [];
     try {
       if (kDebugMode) {}
 
       for (var result in json) {
-        data.add(PanierP.fromJson(result as Map<String, dynamic>));
+        data.add(Panier.fromJson(result as Map<String, dynamic>));
       }
       if (kDebugMode) {}
     } catch (error, stacktrace) {

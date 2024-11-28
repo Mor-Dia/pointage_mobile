@@ -8,14 +8,14 @@ import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
-class Panier extends StatefulWidget {
-  const Panier({super.key});
+class PanierPage extends StatefulWidget {
+  const PanierPage({super.key});
 
   @override
-  State<Panier> createState() => _PanierState();
+  State<PanierPage> createState() => _PanierState();
 }
 
-class _PanierState extends State<Panier> {
+class _PanierState extends State<PanierPage> {
   List<PanierPProduit>? _panier;
 
   @override
@@ -55,30 +55,20 @@ class _PanierState extends State<Panier> {
         ),
         body: Container(
             color: Colors.white,
-            child: BlocBuilder<PanierBlocBloc, PanierBlocState>(
-                builder: (context, state) {
+            child: BlocConsumer<PanierBlocBloc, PanierBlocState>(
+                listener: (context, state) {
               if (state is PanierLoaded) {
-                return Stack(children: [
-                  ListView(
-                    children: state.panier
-                        .map((toElement) => CardProduitPanier(data: toElement))
-                        .toList(),
-                  ),
-                  (state is PanierLoading)
-                      ? Positioned(
-                          child: Opacity(
-                          opacity: .7,
-                          child: Container(
-                              color: Colors.white,
-                              child:
-                                  Center(child: CircularProgressIndicator())),
-                        ))
-                      : SizedBox.shrink()
-                ]);
+                print("HERE GOES PANIER STATE: ${state}");
+              } else {
+                print("HERE GOES PANIER STATE NOT LOADED : ${state}");
+              }
+            }, builder: (context, state) {
+              if (state is PanierLoaded) {
+                _panier = state.panier;
               }
               return Stack(children: [
                 ListView(
-                  children: (_panier ?? [])
+                  children: ((state is PanierLoaded) ? state.panier : _panier!)
                       .map((toElement) => CardProduitPanier(data: toElement))
                       .toList(),
                 ),

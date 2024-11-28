@@ -198,8 +198,10 @@ class _BoutiqueState extends State<Boutique> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Panier())),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PanierPage())),
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: <Widget>[

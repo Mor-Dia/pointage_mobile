@@ -17,7 +17,7 @@ part 'panier_bloc_event.dart';
 part 'panier_bloc_state.dart';
 part 'panier_bloc_bloc.freezed.dart';
 
-class PanierBlocBloc<T> extends Bloc<PanierBlocEvent, PanierBlocState> {
+class PanierBlocBloc extends Bloc<PanierBlocEvent, PanierBlocState> {
   PanierBlocBloc() : super(PanierBlocState.initial()) {
     on<PanierStarted>(_onStarted);
     on<FetchPanier>(_onFetchPanier);
@@ -35,8 +35,6 @@ class PanierBlocBloc<T> extends Bloc<PanierBlocEvent, PanierBlocState> {
     emit(const PanierBlocState.loading());
 
     try {
-      T? initialData;
-
       final response = await postApiData('panier_client', event.body);
 
       if (response.statusCode == 200) {
@@ -70,12 +68,12 @@ class PanierBlocBloc<T> extends Bloc<PanierBlocEvent, PanierBlocState> {
   Future<void> _onRefreshPanier(
       RefreshPanier event, Emitter<PanierBlocState> emit) async {
     Map<String, dynamic>? parameters;
-    String endPoint = PanierP.getEndpoint(isPagination: true);
+    String endPoint = Panier.getEndpoint(isPagination: true);
     emit(const PanierBlocState.loading());
 
     parameters = {
       "query": DataBlocHelpers.generateGraphQLQuery(
-          endPoint, PanierP.shrinkedAttributs(),
+          endPoint, Panier.shrinkedAttributs(),
           filter: {'token': event.token}, useMetadata: true)
     };
 
@@ -88,7 +86,7 @@ class PanierBlocBloc<T> extends Bloc<PanierBlocEvent, PanierBlocState> {
         var jsonData =
             responseJsonDecoded['data']['panierspaginated']['data'][0];
         print(jsonData);
-        PanierP data = PanierP.fromJson(jsonData);
+        Panier data = Panier.fromJson(jsonData);
         emit(PanierBlocState.loaded(panier: data.panierProduit!));
       } else {
         emit(PanierBlocState.error(
