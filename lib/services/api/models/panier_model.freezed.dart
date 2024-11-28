@@ -14,12 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-PanierP _$PanierPFromJson(Map<String, dynamic> json) {
+Panier _$PanierPFromJson(Map<String, dynamic> json) {
   return _PanierP.fromJson(json);
 }
 
 /// @nodoc
-mixin _$PanierP {
+mixin _$Panier {
   int? get id =>
       throw _privateConstructorUsedError; // Identifiant unique pour la commande ou le panier
   int? get total =>
@@ -27,19 +27,19 @@ mixin _$PanierP {
   @JsonKey(name: 'panier_produit')
   List<PanierPProduit>? get panierProduit => throw _privateConstructorUsedError;
 
-  /// Serializes this PanierP to a JSON map.
+  /// Serializes this Panier to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of PanierP
+  /// Create a copy of Panier
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $PanierPCopyWith<PanierP> get copyWith => throw _privateConstructorUsedError;
+  $PanierPCopyWith<Panier> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $PanierPCopyWith<$Res> {
-  factory $PanierPCopyWith(PanierP value, $Res Function(PanierP) then) =
-      _$PanierPCopyWithImpl<$Res, PanierP>;
+  factory $PanierPCopyWith(Panier value, $Res Function(Panier) then) =
+      _$PanierPCopyWithImpl<$Res, Panier>;
   @useResult
   $Res call(
       {int? id,
@@ -48,7 +48,7 @@ abstract class $PanierPCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$PanierPCopyWithImpl<$Res, $Val extends PanierP>
+class _$PanierPCopyWithImpl<$Res, $Val extends Panier>
     implements $PanierPCopyWith<$Res> {
   _$PanierPCopyWithImpl(this._value, this._then);
 
@@ -57,7 +57,7 @@ class _$PanierPCopyWithImpl<$Res, $Val extends PanierP>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of PanierP
+  /// Create a copy of Panier
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -104,7 +104,7 @@ class __$$PanierPImplCopyWithImpl<$Res>
       _$PanierPImpl _value, $Res Function(_$PanierPImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of PanierP
+  /// Create a copy of Panier
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -164,14 +164,14 @@ class _$PanierPImpl extends _PanierP with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PanierP(id: $id, total: $total, panierProduit: $panierProduit)';
+    return 'Panier(id: $id, total: $total, panierProduit: $panierProduit)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'PanierP'))
+      ..add(DiagnosticsProperty('type', 'Panier'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('total', total))
       ..add(DiagnosticsProperty('panierProduit', panierProduit));
@@ -193,7 +193,7 @@ class _$PanierPImpl extends _PanierP with DiagnosticableTreeMixin {
   int get hashCode => Object.hash(runtimeType, id, total,
       const DeepCollectionEquality().hash(_panierProduit));
 
-  /// Create a copy of PanierP
+  /// Create a copy of Panier
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
@@ -209,7 +209,7 @@ class _$PanierPImpl extends _PanierP with DiagnosticableTreeMixin {
   }
 }
 
-abstract class _PanierP extends PanierP {
+abstract class _PanierP extends Panier {
   const factory _PanierP(
       {final int? id,
       final int? total,
@@ -227,7 +227,7 @@ abstract class _PanierP extends PanierP {
   @JsonKey(name: 'panier_produit')
   List<PanierPProduit>? get panierProduit;
 
-  /// Create a copy of PanierP
+  /// Create a copy of Panier
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
