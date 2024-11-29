@@ -56,32 +56,31 @@ class _PanierState extends State<PanierPage> {
         body: Container(
             color: Colors.white,
             child: BlocConsumer<PanierBlocBloc, PanierBlocState>(
-                listener: (context, state) {
-              if (state is PanierLoaded) {
-                print("HERE GOES PANIER STATE: ${state}");
-              } else {
-                print("HERE GOES PANIER STATE NOT LOADED : ${state}");
-              }
-            }, builder: (context, state) {
-              if (state is PanierLoaded) {
-                _panier = state.panier;
-              }
-              return Stack(children: [
-                ListView(
-                  children: ((state is PanierLoaded) ? state.panier : _panier!)
-                      .map((toElement) => CardProduitPanier(data: toElement))
-                      .toList(),
-                ),
-                (state is PanierLoading)
-                    ? Positioned(
-                        child: Opacity(
-                        opacity: .7,
-                        child: Container(
-                            color: Colors.white,
-                            child: Center(child: CircularProgressIndicator())),
-                      ))
-                    : SizedBox.shrink()
-              ]);
-            })));
+                listener: (context, state) {},
+                builder: (context, state) {
+                  if (state is PanierLoaded) {
+                    _panier = state.panier;
+                  }
+                  return Stack(children: [
+                    ListView(
+                      children: ((state is PanierLoaded)
+                              ? state.panier
+                              : _panier!)
+                          .map(
+                              (toElement) => CardProduitPanier(data: toElement))
+                          .toList(),
+                    ),
+                    (state is PanierLoading)
+                        ? Positioned(
+                            child: Opacity(
+                            opacity: .7,
+                            child: Container(
+                                color: Colors.white,
+                                child:
+                                    Center(child: CircularProgressIndicator())),
+                          ))
+                        : SizedBox.shrink()
+                  ]);
+                })));
   }
 }
