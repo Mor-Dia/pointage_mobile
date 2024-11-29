@@ -15,6 +15,7 @@ Future<dynamic> postApiData(endPoint, Map<String, dynamic> body) async {
   var requestUri = Uri.parse(url);
   if (kDebugMode) {
     print("API CALL LOGIN URI $requestUri");
+    print("API CALL BODY $bodyJson");
   }
   var response = await http.post(requestUri, headers: headers, body: bodyJson);
   if (kDebugMode) {

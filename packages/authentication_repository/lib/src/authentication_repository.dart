@@ -130,6 +130,7 @@ class AuthenticationRepository {
       // }
       await prefs.remove("token");
       await prefs.remove("nom_complet");
+      await prefs.remove("userinfos");
       _controller.add(AuthenticationStatus.unauthenticated);
       return ;
     } catch(e) {

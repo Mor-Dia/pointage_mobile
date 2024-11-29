@@ -46,6 +46,7 @@ class _CardProduitState extends State<CardProduit> {
   }
 
   likeProduct({required Map<String, dynamic> parameters}){
+    print("LF $parameters ");
     favorisPostBloc.add(PostApiMakeCall(endpoint: 'favoris', parameters: parameters));
   }
 
