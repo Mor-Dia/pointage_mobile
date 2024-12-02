@@ -22,7 +22,7 @@ class ButtonFiled extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        backgroundColor: color != null ? color : primaryColor,
+        backgroundColor: color ?? primaryColor,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -33,11 +33,11 @@ class ButtonFiled extends StatelessWidget {
                 color: Colors.white,
                 fontSize: MediaQuery.of(context).size.width * 0.030),
           ),
-          SizedBox(
+          const SizedBox(
             width: 10,
           ),
           isLoading ?? isLoading == true
-              ? Container(
+              ? const SizedBox(
                   height: 10,
                   width: 10,
                   child: CircularProgressIndicator(
@@ -45,7 +45,7 @@ class ButtonFiled extends StatelessWidget {
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 )
-              : SizedBox.shrink(),
+              : const SizedBox.shrink(),
         ],
       ),
     );
