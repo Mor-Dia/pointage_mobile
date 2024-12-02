@@ -17,7 +17,7 @@ class Panier with _$Panier {
     List<PanierPProduit>? panierProduit, // Liste des produits du panier
   }) = _PanierP;
 
-  factory Panier.fromJson(Map<String, dynamic> json) => _$PanierPFromJson(json);
+  factory Panier.fromJson(Map<String, dynamic> json) => _$PanierFromJson(json);
 
   static fromJsonList(List<dynamic> json) {
     List<Panier> data = [];

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-Panier _$PanierPFromJson(Map<String, dynamic> json) {
+Panier _$PanierFromJson(Map<String, dynamic> json) {
   return _PanierP.fromJson(json);
 }
 
@@ -33,13 +33,13 @@ mixin _$Panier {
   /// Create a copy of Panier
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $PanierPCopyWith<Panier> get copyWith => throw _privateConstructorUsedError;
+  $PanierCopyWith<Panier> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $PanierPCopyWith<$Res> {
-  factory $PanierPCopyWith(Panier value, $Res Function(Panier) then) =
-      _$PanierPCopyWithImpl<$Res, Panier>;
+abstract class $PanierCopyWith<$Res> {
+  factory $PanierCopyWith(Panier value, $Res Function(Panier) then) =
+      _$PanierCopyWithImpl<$Res, Panier>;
   @useResult
   $Res call(
       {int? id,
@@ -48,9 +48,9 @@ abstract class $PanierPCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$PanierPCopyWithImpl<$Res, $Val extends Panier>
-    implements $PanierPCopyWith<$Res> {
-  _$PanierPCopyWithImpl(this._value, this._then);
+class _$PanierCopyWithImpl<$Res, $Val extends Panier>
+    implements $PanierCopyWith<$Res> {
+  _$PanierCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -84,7 +84,7 @@ class _$PanierPCopyWithImpl<$Res, $Val extends Panier>
 }
 
 /// @nodoc
-abstract class _$$PanierPImplCopyWith<$Res> implements $PanierPCopyWith<$Res> {
+abstract class _$$PanierPImplCopyWith<$Res> implements $PanierCopyWith<$Res> {
   factory _$$PanierPImplCopyWith(
           _$PanierPImpl value, $Res Function(_$PanierPImpl) then) =
       __$$PanierPImplCopyWithImpl<$Res>;
@@ -98,7 +98,7 @@ abstract class _$$PanierPImplCopyWith<$Res> implements $PanierPCopyWith<$Res> {
 
 /// @nodoc
 class __$$PanierPImplCopyWithImpl<$Res>
-    extends _$PanierPCopyWithImpl<$Res, _$PanierPImpl>
+    extends _$PanierCopyWithImpl<$Res, _$PanierPImpl>
     implements _$$PanierPImplCopyWith<$Res> {
   __$$PanierPImplCopyWithImpl(
       _$PanierPImpl _value, $Res Function(_$PanierPImpl) _then)

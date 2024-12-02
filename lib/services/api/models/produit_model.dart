@@ -12,6 +12,7 @@ class Produit with _$Produit {
   const factory Produit({
     int? id,
     String? designation,
+    bool? favoris,
     String? description,
     int? marqueId,
     String? marqueDesignation,
@@ -44,7 +45,7 @@ class Produit with _$Produit {
   }
 
   static shrinkedAttributs() {
-    return "id,en_promo,pourcentage_promo,prix_avant_promo,prix_avant_promo_siteweb_fr,prix_apres_promo_siteweb_fr,prix_apres_promo,prix_avant_promo,favoris,designation,description,marque_id,marque{id,designation},produit_tailles{id,taille_id,taille{id,designation,abreviation}},image,prix,prix_site_web,prix_site_web_fr,famille_produit_id,famille_produit{id,designation},current_quantity";
+    return "id,en_promo,favoris,pourcentage_promo,prix_avant_promo,prix_avant_promo_siteweb_fr,prix_apres_promo_siteweb_fr,prix_apres_promo,prix_avant_promo,favoris,designation,description,marque_id,marque{id,designation},produit_tailles{id,taille_id,taille{id,designation,abreviation}},image,prix,prix_site_web,prix_site_web_fr,famille_produit_id,famille_produit{id,designation},current_quantity";
   }
 
   static String getEndpoint({bool isPagination = true}) {

@@ -22,6 +22,7 @@ Produit _$ProduitFromJson(Map<String, dynamic> json) {
 mixin _$Produit {
   int? get id => throw _privateConstructorUsedError;
   String? get designation => throw _privateConstructorUsedError;
+  bool? get favoris => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   int? get marqueId => throw _privateConstructorUsedError;
   String? get marqueDesignation => throw _privateConstructorUsedError;
@@ -51,6 +52,7 @@ abstract class $ProduitCopyWith<$Res> {
   $Res call(
       {int? id,
       String? designation,
+      bool? favoris,
       String? description,
       int? marqueId,
       String? marqueDesignation,
@@ -79,6 +81,7 @@ class _$ProduitCopyWithImpl<$Res, $Val extends Produit>
   $Res call({
     Object? id = freezed,
     Object? designation = freezed,
+    Object? favoris = freezed,
     Object? description = freezed,
     Object? marqueId = freezed,
     Object? marqueDesignation = freezed,
@@ -98,6 +101,10 @@ class _$ProduitCopyWithImpl<$Res, $Val extends Produit>
           ? _value.designation
           : designation // ignore: cast_nullable_to_non_nullable
               as String?,
+      favoris: freezed == favoris
+          ? _value.favoris
+          : favoris // ignore: cast_nullable_to_non_nullable
+              as bool?,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -148,6 +155,7 @@ abstract class _$$ProduitImplCopyWith<$Res> implements $ProduitCopyWith<$Res> {
   $Res call(
       {int? id,
       String? designation,
+      bool? favoris,
       String? description,
       int? marqueId,
       String? marqueDesignation,
@@ -174,6 +182,7 @@ class __$$ProduitImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? designation = freezed,
+    Object? favoris = freezed,
     Object? description = freezed,
     Object? marqueId = freezed,
     Object? marqueDesignation = freezed,
@@ -193,6 +202,10 @@ class __$$ProduitImplCopyWithImpl<$Res>
           ? _value.designation
           : designation // ignore: cast_nullable_to_non_nullable
               as String?,
+      favoris: freezed == favoris
+          ? _value.favoris
+          : favoris // ignore: cast_nullable_to_non_nullable
+              as bool?,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -239,6 +252,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
   const _$ProduitImpl(
       {this.id,
       this.designation,
+      this.favoris,
       this.description,
       this.marqueId,
       this.marqueDesignation,
@@ -258,6 +272,8 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
   final int? id;
   @override
   final String? designation;
+  @override
+  final bool? favoris;
   @override
   final String? description;
   @override
@@ -289,7 +305,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Produit(id: $id, designation: $designation, description: $description, marqueId: $marqueId, marqueDesignation: $marqueDesignation, produitTailles: $produitTailles, prixSiteWebFr: $prixSiteWebFr, image: $image, prix: $prix, familleProduitId: $familleProduitId, familleProduitDesignation: $familleProduitDesignation)';
+    return 'Produit(id: $id, designation: $designation, favoris: $favoris, description: $description, marqueId: $marqueId, marqueDesignation: $marqueDesignation, produitTailles: $produitTailles, prixSiteWebFr: $prixSiteWebFr, image: $image, prix: $prix, familleProduitId: $familleProduitId, familleProduitDesignation: $familleProduitDesignation)';
   }
 
   @override
@@ -299,6 +315,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('type', 'Produit'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('designation', designation))
+      ..add(DiagnosticsProperty('favoris', favoris))
       ..add(DiagnosticsProperty('description', description))
       ..add(DiagnosticsProperty('marqueId', marqueId))
       ..add(DiagnosticsProperty('marqueDesignation', marqueDesignation))
@@ -319,6 +336,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.designation, designation) ||
                 other.designation == designation) &&
+            (identical(other.favoris, favoris) || other.favoris == favoris) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.marqueId, marqueId) ||
@@ -344,6 +362,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
       runtimeType,
       id,
       designation,
+      favoris,
       description,
       marqueId,
       marqueDesignation,
@@ -374,6 +393,7 @@ abstract class _Produit extends Produit {
   const factory _Produit(
       {final int? id,
       final String? designation,
+      final bool? favoris,
       final String? description,
       final int? marqueId,
       final String? marqueDesignation,
@@ -391,6 +411,8 @@ abstract class _Produit extends Produit {
   int? get id;
   @override
   String? get designation;
+  @override
+  bool? get favoris;
   @override
   String? get description;
   @override

@@ -46,22 +46,22 @@ class _MonCompteState extends State<MonCompte> {
 
     return BlocConsumer<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
       listener: (context, state) {
-        // AuthenticationStatus currentStatus = state.status;
-        // switch(currentStatus){
-        //   case AuthenticationStatus.authenticated:
-        //     break;
-        //   case AuthenticationStatus.unknown:
-        //   case AuthenticationStatus.unauthenticated:
-        //   case AuthenticationStatus.failure:
-        //     if (kDebugMode) {
-        //       print("AUTH STATE NOT AUTHENTICATED ${state.status}");
-        //     }
-        //     Navigator.pushAndRemoveUntil(
-        //         context,
-        //         MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
-        //             (route) => false
-        //     );
-        // }
+        AuthenticationStatus currentStatus = state.status;
+        switch(currentStatus){
+          case AuthenticationStatus.authenticated:
+            break;
+          case AuthenticationStatus.unknown:
+          case AuthenticationStatus.unauthenticated:
+          case AuthenticationStatus.failure:
+            if (kDebugMode) {
+              print("AUTH STATE NOT AUTHENTICATED ${state.status}");
+            }
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
+                    (route) => false
+            );
+        }
       },
       builder: (context, state) {
         AuthenticationStatus currentStatus = state.status;
@@ -293,7 +293,7 @@ class _MonCompteState extends State<MonCompte> {
                       GestureDetector(
                         onTap: () => logout(),
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               border: Border(
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(

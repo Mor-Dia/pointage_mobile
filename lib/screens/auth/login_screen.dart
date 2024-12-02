@@ -11,6 +11,7 @@ import 'package:yogivida_mobile/screens/Home/home_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:yogivida_mobile/screens/auth/request_password_screen.dart';
 import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
 
 import 'package:yogivida_mobile/core/models/user_model.dart';
@@ -292,8 +293,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 GestureDetector(
-                                  onTap: () =>
-                                      {print("Mot de passe oublier")},
+                                  onTap: () {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(builder: (BuildContext context) => const RequestPasswordScreen(), ),
+                                            (route) => false
+                                    );
+                                  },
                                   child: Text(
                                     'Mot de passe oublier ?',
                                     textAlign: TextAlign.right,

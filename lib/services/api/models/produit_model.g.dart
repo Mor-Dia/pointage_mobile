@@ -10,6 +10,7 @@ _$ProduitImpl _$$ProduitImplFromJson(Map<String, dynamic> json) =>
     _$ProduitImpl(
       id: (json['id'] as num?)?.toInt(),
       designation: json['designation'] as String?,
+      favoris: json['favoris'] as bool?,
       description: json['description'] as String?,
       marqueId: (json['marqueId'] as num?)?.toInt(),
       marqueDesignation: json['marqueDesignation'] as String?,
@@ -27,6 +28,7 @@ Map<String, dynamic> _$$ProduitImplToJson(_$ProduitImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'designation': instance.designation,
+      'favoris': instance.favoris,
       'description': instance.description,
       'marqueId': instance.marqueId,
       'marqueDesignation': instance.marqueDesignation,
