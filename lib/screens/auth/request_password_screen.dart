@@ -32,84 +32,73 @@ class RequestPasswordScreen extends StatefulWidget {
 class _RequestPasswordScreenState extends State<RequestPasswordScreen> {
   bool isLoading = false;
   String? currentErrorMessage;
-  List<TextEditingController> _controllers = [];
-
-  // Liste de champs avec leurs attributs
-  List<Map<String, dynamic>>? inputFields;
+  String? emailError;
+  TextEditingController emailController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    inputFields = [
-      {
-        'type': 'text',
-        'text': 'Email',
-        'icon': 'mail',
-        'controller': null,
-        'error': ''
-      },
-    ];
   }
 
   void dispose() {
-    // Ne pas oublier de nettoyer le contrôleur lorsque le widget est supprimé
-    for (var i = 0; i < _controllers.length; i++) {
-      _controllers[i].dispose();
-    }
     super.dispose();
   }
 
   Future requestPassword() async {
     setState(() {
-      isLoading = false;
+      isLoading = true;
     });
 
     String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
     RegExp regex = RegExp(emailPattern);
 
     bool _areFieldsEmpty() {
-      var isValid = false;
-      for (int i = 0; i < inputFields!.length; i++) {
+      var isValid = true;
+      setState(() {
+        emailError = '';
+      });
+      if (emailController.text.isEmpty) {
         setState(() {
-          inputFields![i]['error'] = '';
+          emailError = 'Ce champ est requis !';
+          isValid = false;
         });
-
-        if (inputFields![i]['text'].toString().toLowerCase() == 'email') {
-          if (!regex.hasMatch(_controllers[i].text.trim())) {
-            setState(() {
-              inputFields![i]['error'] = 'Entrez un email valide!';
-            });
-          }
-        }
-
-        if (_controllers[i].text.isEmpty) {
-          setState(() {
-            inputFields![i]['error'] = 'Ce champ est requis !';
-          });
-          isValid = true;
-        }
+      } else if (!regex.hasMatch(emailController.text.trim())) {
+        setState(() {
+          emailError = 'Entrez un email valide!';
+          isValid = false;
+        });
       }
       return isValid;
     }
-
     bool isFormValid = _areFieldsEmpty();
+    print("REQUE IS FORM VALID $isFormValid");
+
     if(isFormValid){
       String requestUrl = "$BASE_URL$REQUEST_PWD_ENDPOINT";
       var requestUri = Uri.parse(requestUrl);
       Map<String, String> headers = {};
+      Map<String, dynamic> postData = {
+        "email": emailController.text,
+      };
+
+      print("REQUE URI $requestUri");
       headers.addAll({"Accept": "application/json", "Content-Type": "application/json"});
-      var requestPwdResponse = await http.post(requestUri, headers: headers);
+      var requestPwdResponse = await http.post(requestUri, body: jsonEncode(postData), headers: headers);
       var responseBody = jsonDecode(requestPwdResponse.body) as Map<String, dynamic>;
       String message = "";
       bool isError = false;
-      if(responseBody.containsKey("data") && responseBody['data'] != null){
-        message = responseBody['success'];
+      print("REQUE RESP $responseBody");
+      if(responseBody['message'] != null){
+        message = responseBody['message'];
         isError = false;
       }  else if(responseBody.containsKey("errors") && responseBody['errors'] != null) {
         message = responseBody['errors'];
         isError = true;
       }
       showNotifyingDialog(context: context, message: message, isError: isError);
+      setState(() {
+        isLoading = false;
+      });
 
     }
   }
@@ -164,21 +153,17 @@ class _RequestPasswordScreenState extends State<RequestPasswordScreen> {
                         const SizedBox(height: 30),
 
                         Column(
-                            children: inputFields!.map((field) {
-                              return Column(
-                                children: [
-                                  Inputfiled(
-                                    type: field['type'],
-                                    text: field['text'],
-                                    icon: field['icon'],
-                                    controller: field['controller'],
-                                    error: field[
-                                    'error'], // L'erreur est vide au départ
-                                  ),
-                                  const SizedBox(height: 30),
-                                ],
-                              );
-                            }).toList()),
+                            children: [
+                              Inputfiled(
+                                type: "email",
+                                text: "Email",
+                                icon: 'user',
+                                controller: emailController,
+                                error: emailError??"", // L'erreur est vide au départ
+                              ),
+                              const SizedBox(height: 30),
+                            ]
+                        ),
                         Center(
                           child: IntrinsicWidth(
                             child: Column(
