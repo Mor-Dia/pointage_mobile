@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
               'Accueil',
               style: GoogleFonts.arimo(
                 color: Color(0xff15274d),
-                fontSize: MediaQuery.of(context).size.width * 0.055,
+                fontSize: titreConstant,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                   child: Text(
                     "Votre activité du jour",
                     style: GoogleFonts.montserrat(
-                        fontSize: MediaQuery.of(context).size.width * 0.045,
+                        fontSize: titreConstant,
                         fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -199,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         "Nos pratiques",
                         style: GoogleFonts.montserrat(
-                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                            fontSize: titreConstant,
                             fontWeight: FontWeight.bold),
                       ),
                       GestureDetector(
@@ -292,7 +292,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       Text(
                         'Pilate former groupe'.toUpperCase(),
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(fontWeight: FontWeight.bold,fontSize: textConstant),
                       ),
                       Text(
                         "Ouvert",

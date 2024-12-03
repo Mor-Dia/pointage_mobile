@@ -10,6 +10,17 @@ const Color successColor = Color(0xff37BC9B);
 const Color dangerColor = Color(0xffDA4453);
 const Color warningColor = Color(0xffF6BB42);
 
+const double titreConstant= 30;
+const double textConstant= 18;
+const double textminConstant= 12;
+
+double responsiveSize(BuildContext context, double baseSize) {
+  double screenWidth = MediaQuery.of(context).size.width;
+  // Choisissez une largeur de base, par exemple 375 (iPhone 11 Pro)
+  double baseWidth = 375.0;
+  return baseSize * (screenWidth / baseWidth);
+}
+
 Color getDisplayColor(className) {
   switch (className) {
     case "success":
@@ -28,8 +39,8 @@ const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
 const LOGOUT_ENDPOINT = "deconnexion";
 const REQUEST_PWD_ENDPOINT = "password-reset";
-// const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
-const BASE_URL = 'https://localhost/yogivida_back/';
+const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
+// const BASE_URL = 'https://localhost/yogivida_back/';
 const BASE_URL_QGL = '${BASE_URL}graphql?query=';
 
 class UserClass {

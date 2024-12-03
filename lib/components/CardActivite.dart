@@ -23,6 +23,7 @@ class Cardactivite extends StatelessWidget {
     }
 
     return Container(
+      constraints: BoxConstraints(maxWidth: 300),
       width: MediaQuery.of(context).size.width * 0.60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
@@ -43,7 +44,7 @@ class Cardactivite extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.arimo(
                   fontWeight: FontWeight.bold,
-                  fontSize: MediaQuery.of(context).size.width * 0.040),
+                  fontSize: textConstant),
             ),
             const SizedBox(height: 5),
             Row(
@@ -93,7 +94,7 @@ class Cardactivite extends StatelessWidget {
                           children: [
                             Text('Reservé',
                                 style: GoogleFonts.arimo(
-                                    fontSize: 11, fontWeight: FontWeight.bold)),
+                                    fontSize: 12, fontWeight: FontWeight.bold)),
                             SizedBox(
                                 width:
                                     MediaQuery.of(context).size.width * 0.020),
