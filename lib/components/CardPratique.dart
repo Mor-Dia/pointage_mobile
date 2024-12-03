@@ -33,6 +33,7 @@ class _CardPratiqueState extends State<CardPratique> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      constraints: BoxConstraints(maxWidth: 300),
       width: MediaQuery.of(context).size.width * 0.60,
       decoration: BoxDecoration(
           border: Border.all(width: 1, color: primaryColor.withOpacity(.2)),
@@ -51,7 +52,7 @@ class _CardPratiqueState extends State<CardPratique> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.arimo(
-                        fontSize: MediaQuery.of(context).size.width * 0.040,
+                        fontSize:textConstant,
                         fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -91,7 +92,7 @@ class _CardPratiqueState extends State<CardPratique> {
                 'Reserver',
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: MediaQuery.of(context).size.width * 0.030),
+                    fontSize: textminConstant),
               ),
             )
           ],

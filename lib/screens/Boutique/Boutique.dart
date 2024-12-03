@@ -495,12 +495,12 @@ class _BoutiqueState extends State<Boutique> {
                                 spacing: 10,
                                 runSpacing: 10,
                                 children: produits
-                                    .map((toElement) => SizedBox(
+                                    .map((Produit toElement) => SizedBox(
                                           width: size.width / 2 - 25,
                                           child: CardProduit(
                                             data: toElement,
                                             handlePress: (value) {
-                                              addToPanier(value);
+                                             toElement.currentQuantity! >=1 ? addToPanier(value) : null;
                                             },
                                           ),
                                         ))

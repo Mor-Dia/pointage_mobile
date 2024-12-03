@@ -30,6 +30,8 @@ mixin _$Produit {
   List<Taille>? get produitTailles => throw _privateConstructorUsedError;
   @JsonKey(name: "prix_site_web_fr")
   String? get prixSiteWebFr => throw _privateConstructorUsedError;
+  @JsonKey(name: "current_quantity")
+  int? get currentQuantity => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
   double? get prix => throw _privateConstructorUsedError;
   int? get familleProduitId => throw _privateConstructorUsedError;
@@ -58,6 +60,7 @@ abstract class $ProduitCopyWith<$Res> {
       String? marqueDesignation,
       @JsonKey(name: "produit_tailles") List<Taille>? produitTailles,
       @JsonKey(name: "prix_site_web_fr") String? prixSiteWebFr,
+      @JsonKey(name: "current_quantity") int? currentQuantity,
       String? image,
       double? prix,
       int? familleProduitId,
@@ -87,6 +90,7 @@ class _$ProduitCopyWithImpl<$Res, $Val extends Produit>
     Object? marqueDesignation = freezed,
     Object? produitTailles = freezed,
     Object? prixSiteWebFr = freezed,
+    Object? currentQuantity = freezed,
     Object? image = freezed,
     Object? prix = freezed,
     Object? familleProduitId = freezed,
@@ -125,6 +129,10 @@ class _$ProduitCopyWithImpl<$Res, $Val extends Produit>
           ? _value.prixSiteWebFr
           : prixSiteWebFr // ignore: cast_nullable_to_non_nullable
               as String?,
+      currentQuantity: freezed == currentQuantity
+          ? _value.currentQuantity
+          : currentQuantity // ignore: cast_nullable_to_non_nullable
+              as int?,
       image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
@@ -161,6 +169,7 @@ abstract class _$$ProduitImplCopyWith<$Res> implements $ProduitCopyWith<$Res> {
       String? marqueDesignation,
       @JsonKey(name: "produit_tailles") List<Taille>? produitTailles,
       @JsonKey(name: "prix_site_web_fr") String? prixSiteWebFr,
+      @JsonKey(name: "current_quantity") int? currentQuantity,
       String? image,
       double? prix,
       int? familleProduitId,
@@ -188,6 +197,7 @@ class __$$ProduitImplCopyWithImpl<$Res>
     Object? marqueDesignation = freezed,
     Object? produitTailles = freezed,
     Object? prixSiteWebFr = freezed,
+    Object? currentQuantity = freezed,
     Object? image = freezed,
     Object? prix = freezed,
     Object? familleProduitId = freezed,
@@ -226,6 +236,10 @@ class __$$ProduitImplCopyWithImpl<$Res>
           ? _value.prixSiteWebFr
           : prixSiteWebFr // ignore: cast_nullable_to_non_nullable
               as String?,
+      currentQuantity: freezed == currentQuantity
+          ? _value.currentQuantity
+          : currentQuantity // ignore: cast_nullable_to_non_nullable
+              as int?,
       image: freezed == image
           ? _value.image
           : image // ignore: cast_nullable_to_non_nullable
@@ -258,6 +272,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
       this.marqueDesignation,
       @JsonKey(name: "produit_tailles") final List<Taille>? produitTailles,
       @JsonKey(name: "prix_site_web_fr") this.prixSiteWebFr,
+      @JsonKey(name: "current_quantity") this.currentQuantity,
       this.image,
       this.prix,
       this.familleProduitId,
@@ -295,6 +310,9 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
   @JsonKey(name: "prix_site_web_fr")
   final String? prixSiteWebFr;
   @override
+  @JsonKey(name: "current_quantity")
+  final int? currentQuantity;
+  @override
   final String? image;
   @override
   final double? prix;
@@ -305,7 +323,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Produit(id: $id, designation: $designation, favoris: $favoris, description: $description, marqueId: $marqueId, marqueDesignation: $marqueDesignation, produitTailles: $produitTailles, prixSiteWebFr: $prixSiteWebFr, image: $image, prix: $prix, familleProduitId: $familleProduitId, familleProduitDesignation: $familleProduitDesignation)';
+    return 'Produit(id: $id, designation: $designation, favoris: $favoris, description: $description, marqueId: $marqueId, marqueDesignation: $marqueDesignation, produitTailles: $produitTailles, prixSiteWebFr: $prixSiteWebFr, currentQuantity: $currentQuantity, image: $image, prix: $prix, familleProduitId: $familleProduitId, familleProduitDesignation: $familleProduitDesignation)';
   }
 
   @override
@@ -321,6 +339,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('marqueDesignation', marqueDesignation))
       ..add(DiagnosticsProperty('produitTailles', produitTailles))
       ..add(DiagnosticsProperty('prixSiteWebFr', prixSiteWebFr))
+      ..add(DiagnosticsProperty('currentQuantity', currentQuantity))
       ..add(DiagnosticsProperty('image', image))
       ..add(DiagnosticsProperty('prix', prix))
       ..add(DiagnosticsProperty('familleProduitId', familleProduitId))
@@ -347,6 +366,8 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
                 .equals(other._produitTailles, _produitTailles) &&
             (identical(other.prixSiteWebFr, prixSiteWebFr) ||
                 other.prixSiteWebFr == prixSiteWebFr) &&
+            (identical(other.currentQuantity, currentQuantity) ||
+                other.currentQuantity == currentQuantity) &&
             (identical(other.image, image) || other.image == image) &&
             (identical(other.prix, prix) || other.prix == prix) &&
             (identical(other.familleProduitId, familleProduitId) ||
@@ -368,6 +389,7 @@ class _$ProduitImpl extends _Produit with DiagnosticableTreeMixin {
       marqueDesignation,
       const DeepCollectionEquality().hash(_produitTailles),
       prixSiteWebFr,
+      currentQuantity,
       image,
       prix,
       familleProduitId,
@@ -399,6 +421,7 @@ abstract class _Produit extends Produit {
       final String? marqueDesignation,
       @JsonKey(name: "produit_tailles") final List<Taille>? produitTailles,
       @JsonKey(name: "prix_site_web_fr") final String? prixSiteWebFr,
+      @JsonKey(name: "current_quantity") final int? currentQuantity,
       final String? image,
       final double? prix,
       final int? familleProduitId,
@@ -425,6 +448,9 @@ abstract class _Produit extends Produit {
   @override
   @JsonKey(name: "prix_site_web_fr")
   String? get prixSiteWebFr;
+  @override
+  @JsonKey(name: "current_quantity")
+  int? get currentQuantity;
   @override
   String? get image;
   @override

@@ -18,6 +18,7 @@ _$ProduitImpl _$$ProduitImplFromJson(Map<String, dynamic> json) =>
           ?.map((e) => Taille.fromJson(e as Map<String, dynamic>))
           .toList(),
       prixSiteWebFr: json['prix_site_web_fr'] as String?,
+      currentQuantity: (json['current_quantity'] as num?)?.toInt(),
       image: json['image'] as String?,
       prix: (json['prix'] as num?)?.toDouble(),
       familleProduitId: (json['familleProduitId'] as num?)?.toInt(),
@@ -34,6 +35,7 @@ Map<String, dynamic> _$$ProduitImplToJson(_$ProduitImpl instance) =>
       'marqueDesignation': instance.marqueDesignation,
       'produit_tailles': instance.produitTailles,
       'prix_site_web_fr': instance.prixSiteWebFr,
+      'current_quantity': instance.currentQuantity,
       'image': instance.image,
       'prix': instance.prix,
       'familleProduitId': instance.familleProduitId,

@@ -18,6 +18,7 @@ class Produit with _$Produit {
     String? marqueDesignation,
     @JsonKey(name: "produit_tailles") List<Taille>? produitTailles,
     @JsonKey(name: "prix_site_web_fr") String? prixSiteWebFr,
+    @JsonKey(name: "current_quantity") int? currentQuantity,
     String? image,
     double? prix,
     int? familleProduitId,

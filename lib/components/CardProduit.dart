@@ -272,7 +272,7 @@ class _CardProduitState extends State<CardProduit> {
               height: 30,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: primaryColor,
+                color: widget.data.currentQuantity! >=1 ? primaryColor : Colors.red,
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -285,7 +285,7 @@ class _CardProduitState extends State<CardProduit> {
                     ),
                     Flexible(
                       child: Text(
-                        'Ajouter au panier',
+                        widget.data.currentQuantity! >=1 ? 'Ajouter au panier' : "Rupture de stock",
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.arimo(
                           color: Colors.white,
