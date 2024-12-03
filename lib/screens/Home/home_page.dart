@@ -5,6 +5,7 @@ import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
   late DataBloc<List<Programme>> programmeBloc;
   Map<String, dynamic> globalFilter = {"count": 5};
-  final DateTime date = new DateTime.now();
+  final DateTime date = DateTime.now();
 
   @override
   void initState() {
@@ -174,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                                         data: toElement,
                                         color: toElement.displaycoloretat ?? "",
                                         handlePress: () {
-                                          ShowBottomSheet(context);
+                                          showBottomSheet(context, toElement);
                                         })
                                   ],
                                 ))
@@ -260,18 +261,18 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<dynamic> ShowBottomSheet(BuildContext context) {
+  Future<dynamic> showBottomSheet(BuildContext context, Programme programme) {
     return showModalBottomSheet(
         context: context,
         builder: (BuildContext context) {
           return Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
             child: Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -279,28 +280,28 @@ class _HomePageState extends State<HomePage> {
                     child: Container(
                       height: 2,
                       width: 50,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                           color: greyColor,
                           borderRadius: BorderRadius.all(Radius.circular(20))),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Pilate former groupe'.toUpperCase(),
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        "${programme.professeurPratique?.pratique?.designation.toString().toCapitalized}",
+                        style: const TextStyle(fontWeight: FontWeight.w900),
                       ),
                       Text(
-                        "Ouvert",
-                        style: TextStyle(color: primaryColor),
+                        "${programme.fileAttenteDisplay}",
+                        style: const TextStyle(color: primaryColor),
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Row(
@@ -314,18 +315,16 @@ class _HomePageState extends State<HomePage> {
                         width: 5,
                       ),
                       Text(
-                        "14H50",
-                        style:
-                            TextStyle(color: Color(0xff838282), fontSize: 12),
+                        "${programme.heureDebut}",
+                        style: const TextStyle(color: Color(0xff838282), fontSize: 12),
                       ),
                       Text(
-                        "- 14H50",
-                        style:
-                            TextStyle(color: Color(0xff838282), fontSize: 12),
+                        " - ${programme.heureFin}",
+                        style: const TextStyle(color: Color(0xff838282), fontSize: 12),
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   Row(
@@ -335,10 +334,10 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Container(
                               decoration: BoxDecoration(
-                                  color: Color(0xffE5DFC5),
+                                  color: const Color(0xffE5DFC5),
                                   borderRadius: BorderRadius.circular(5)),
                               child: Padding(
-                                  padding: EdgeInsets.all(10),
+                                  padding: const EdgeInsets.all(10),
                                   child: SvgPicture.asset(
                                     "assets/icons/heure.svg",
                                     height: 15,
@@ -350,14 +349,14 @@ class _HomePageState extends State<HomePage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Mins",
+                              const Text(
+                                "Durée",
                                 style: TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                "14H50",
-                                style: TextStyle(
+                                "${programme.duration}",
+                                style: const TextStyle(
                                     color: Color(0xff838282), fontSize: 12),
                               ),
                             ],
@@ -368,12 +367,12 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Container(
                               decoration: BoxDecoration(
-                                  color: Color(0xffE5DFC5),
+                                  color: const Color(0xffE5DFC5),
                                   borderRadius: BorderRadius.circular(5)),
                               child: Padding(
-                                  padding: EdgeInsets.all(10),
+                                  padding: const EdgeInsets.all(10),
                                   child: SvgPicture.asset(
-                                    "assets/icons/heure.svg",
+                                    "assets/icons/person.svg",
                                     height: 15,
                                     color: const Color(0xFFA8923B),
                                   ))),
@@ -383,14 +382,14 @@ class _HomePageState extends State<HomePage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Mins",
+                              const Text(
+                                "Professeur",
                                 style: TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                "14H50",
-                                style: TextStyle(
+                                "${programme.professeurPratique?.professeur?.user?.name.toString().toCapitalized}",
+                                style: const TextStyle(
                                     color: Color(0xff838282), fontSize: 12),
                               ),
                             ],
@@ -401,12 +400,12 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Container(
                               decoration: BoxDecoration(
-                                  color: Color(0xffE5DFC5),
+                                  color: const Color(0xffE5DFC5),
                                   borderRadius: BorderRadius.circular(5)),
                               child: Padding(
-                                  padding: EdgeInsets.all(10),
+                                  padding: const EdgeInsets.all(10),
                                   child: SvgPicture.asset(
-                                    "assets/icons/heure.svg",
+                                    "assets/icons/home2.svg",
                                     height: 15,
                                     color: const Color(0xFFA8923B),
                                   ))),
@@ -416,14 +415,14 @@ class _HomePageState extends State<HomePage> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Mins",
+                              const Text(
+                                "Salle",
                                 style: TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                "14H50",
-                                style: TextStyle(
+                                "${programme.sallePratique?.salle?.designation.toString().toCapitalized}",
+                                style: const TextStyle(
                                     color: Color(0xff838282), fontSize: 12),
                               ),
                             ],
@@ -432,30 +431,15 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
-                  Text(
-                    'Description',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'lorem',
-                    style: TextStyle(color: Color(0xff838282), fontSize: 12),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  // Spacer(flex: 1),
                   Center(
                     child: Container(
                       constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
                       child: ButtonFiled(
-                        text: 'Reserver',
+                        text: 'Réserver',
                         handlerPress: () => ShowBottomSheetPayment(context),
                       ),
                     ),

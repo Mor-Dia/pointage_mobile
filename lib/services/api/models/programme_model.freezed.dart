@@ -25,6 +25,11 @@ mixin _$Programme {
   String? get displayetat => throw _privateConstructorUsedError;
   @JsonKey(name: "date_fr")
   String? get dateFr => throw _privateConstructorUsedError;
+  String? get duration => throw _privateConstructorUsedError;
+  @JsonKey(name: "file_attente")
+  bool? get fileAttente => throw _privateConstructorUsedError;
+  @JsonKey(name: "file_attente_display")
+  String? get fileAttenteDisplay => throw _privateConstructorUsedError;
   @JsonKey(name: "heure_debut")
   String? get heureDebut => throw _privateConstructorUsedError;
   @JsonKey(name: "heure_fin")
@@ -55,6 +60,9 @@ abstract class $ProgrammeCopyWith<$Res> {
       String? displaycoloretat,
       String? displayetat,
       @JsonKey(name: "date_fr") String? dateFr,
+      String? duration,
+      @JsonKey(name: "file_attente") bool? fileAttente,
+      @JsonKey(name: "file_attente_display") String? fileAttenteDisplay,
       @JsonKey(name: "heure_debut") String? heureDebut,
       @JsonKey(name: "heure_fin") String? heureFin,
       @JsonKey(name: "professeur_pratique")
@@ -84,6 +92,9 @@ class _$ProgrammeCopyWithImpl<$Res, $Val extends Programme>
     Object? displaycoloretat = freezed,
     Object? displayetat = freezed,
     Object? dateFr = freezed,
+    Object? duration = freezed,
+    Object? fileAttente = freezed,
+    Object? fileAttenteDisplay = freezed,
     Object? heureDebut = freezed,
     Object? heureFin = freezed,
     Object? professeurPratique = freezed,
@@ -105,6 +116,18 @@ class _$ProgrammeCopyWithImpl<$Res, $Val extends Programme>
       dateFr: freezed == dateFr
           ? _value.dateFr
           : dateFr // ignore: cast_nullable_to_non_nullable
+              as String?,
+      duration: freezed == duration
+          ? _value.duration
+          : duration // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fileAttente: freezed == fileAttente
+          ? _value.fileAttente
+          : fileAttente // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      fileAttenteDisplay: freezed == fileAttenteDisplay
+          ? _value.fileAttenteDisplay
+          : fileAttenteDisplay // ignore: cast_nullable_to_non_nullable
               as String?,
       heureDebut: freezed == heureDebut
           ? _value.heureDebut
@@ -168,6 +191,9 @@ abstract class _$$ProgrammeImplCopyWith<$Res>
       String? displaycoloretat,
       String? displayetat,
       @JsonKey(name: "date_fr") String? dateFr,
+      String? duration,
+      @JsonKey(name: "file_attente") bool? fileAttente,
+      @JsonKey(name: "file_attente_display") String? fileAttenteDisplay,
       @JsonKey(name: "heure_debut") String? heureDebut,
       @JsonKey(name: "heure_fin") String? heureFin,
       @JsonKey(name: "professeur_pratique")
@@ -197,6 +223,9 @@ class __$$ProgrammeImplCopyWithImpl<$Res>
     Object? displaycoloretat = freezed,
     Object? displayetat = freezed,
     Object? dateFr = freezed,
+    Object? duration = freezed,
+    Object? fileAttente = freezed,
+    Object? fileAttenteDisplay = freezed,
     Object? heureDebut = freezed,
     Object? heureFin = freezed,
     Object? professeurPratique = freezed,
@@ -218,6 +247,18 @@ class __$$ProgrammeImplCopyWithImpl<$Res>
       dateFr: freezed == dateFr
           ? _value.dateFr
           : dateFr // ignore: cast_nullable_to_non_nullable
+              as String?,
+      duration: freezed == duration
+          ? _value.duration
+          : duration // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fileAttente: freezed == fileAttente
+          ? _value.fileAttente
+          : fileAttente // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      fileAttenteDisplay: freezed == fileAttenteDisplay
+          ? _value.fileAttenteDisplay
+          : fileAttenteDisplay // ignore: cast_nullable_to_non_nullable
               as String?,
       heureDebut: freezed == heureDebut
           ? _value.heureDebut
@@ -247,6 +288,9 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
       this.displaycoloretat,
       this.displayetat,
       @JsonKey(name: "date_fr") this.dateFr,
+      this.duration,
+      @JsonKey(name: "file_attente") this.fileAttente,
+      @JsonKey(name: "file_attente_display") this.fileAttenteDisplay,
       @JsonKey(name: "heure_debut") this.heureDebut,
       @JsonKey(name: "heure_fin") this.heureFin,
       @JsonKey(name: "professeur_pratique") this.professeurPratique,
@@ -266,6 +310,14 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
   @JsonKey(name: "date_fr")
   final String? dateFr;
   @override
+  final String? duration;
+  @override
+  @JsonKey(name: "file_attente")
+  final bool? fileAttente;
+  @override
+  @JsonKey(name: "file_attente_display")
+  final String? fileAttenteDisplay;
+  @override
   @JsonKey(name: "heure_debut")
   final String? heureDebut;
   @override
@@ -280,7 +332,7 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Programme(id: $id, displaycoloretat: $displaycoloretat, displayetat: $displayetat, dateFr: $dateFr, heureDebut: $heureDebut, heureFin: $heureFin, professeurPratique: $professeurPratique, sallePratique: $sallePratique)';
+    return 'Programme(id: $id, displaycoloretat: $displaycoloretat, displayetat: $displayetat, dateFr: $dateFr, duration: $duration, fileAttente: $fileAttente, fileAttenteDisplay: $fileAttenteDisplay, heureDebut: $heureDebut, heureFin: $heureFin, professeurPratique: $professeurPratique, sallePratique: $sallePratique)';
   }
 
   @override
@@ -292,6 +344,9 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('displaycoloretat', displaycoloretat))
       ..add(DiagnosticsProperty('displayetat', displayetat))
       ..add(DiagnosticsProperty('dateFr', dateFr))
+      ..add(DiagnosticsProperty('duration', duration))
+      ..add(DiagnosticsProperty('fileAttente', fileAttente))
+      ..add(DiagnosticsProperty('fileAttenteDisplay', fileAttenteDisplay))
       ..add(DiagnosticsProperty('heureDebut', heureDebut))
       ..add(DiagnosticsProperty('heureFin', heureFin))
       ..add(DiagnosticsProperty('professeurPratique', professeurPratique))
@@ -309,6 +364,12 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
             (identical(other.displayetat, displayetat) ||
                 other.displayetat == displayetat) &&
             (identical(other.dateFr, dateFr) || other.dateFr == dateFr) &&
+            (identical(other.duration, duration) ||
+                other.duration == duration) &&
+            (identical(other.fileAttente, fileAttente) ||
+                other.fileAttente == fileAttente) &&
+            (identical(other.fileAttenteDisplay, fileAttenteDisplay) ||
+                other.fileAttenteDisplay == fileAttenteDisplay) &&
             (identical(other.heureDebut, heureDebut) ||
                 other.heureDebut == heureDebut) &&
             (identical(other.heureFin, heureFin) ||
@@ -327,6 +388,9 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
       displaycoloretat,
       displayetat,
       dateFr,
+      duration,
+      fileAttente,
+      fileAttenteDisplay,
       heureDebut,
       heureFin,
       professeurPratique,
@@ -354,6 +418,9 @@ abstract class _Programme extends Programme {
       final String? displaycoloretat,
       final String? displayetat,
       @JsonKey(name: "date_fr") final String? dateFr,
+      final String? duration,
+      @JsonKey(name: "file_attente") final bool? fileAttente,
+      @JsonKey(name: "file_attente_display") final String? fileAttenteDisplay,
       @JsonKey(name: "heure_debut") final String? heureDebut,
       @JsonKey(name: "heure_fin") final String? heureFin,
       @JsonKey(name: "professeur_pratique")
@@ -374,6 +441,14 @@ abstract class _Programme extends Programme {
   @override
   @JsonKey(name: "date_fr")
   String? get dateFr;
+  @override
+  String? get duration;
+  @override
+  @JsonKey(name: "file_attente")
+  bool? get fileAttente;
+  @override
+  @JsonKey(name: "file_attente_display")
+  String? get fileAttenteDisplay;
   @override
   @JsonKey(name: "heure_debut")
   String? get heureDebut;
