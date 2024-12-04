@@ -65,7 +65,7 @@ class _CommandesPageState extends State<CommandesPage> {
               'Mes commandes',
               style: GoogleFonts.arimo(
                 color: const Color(0xff15274d),
-                fontSize: MediaQuery.of(context).size.width * 0.055,
+                fontSize: titreConstant,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -89,7 +89,7 @@ class _CommandesPageState extends State<CommandesPage> {
                       return Column(
                           children:  [
                             const SizedBox(
-                              height: 20,
+                              height: spacingConstant,
                             ),
                             ...commandes
                                 .map((toElement) => CardCommande(commande: toElement,))

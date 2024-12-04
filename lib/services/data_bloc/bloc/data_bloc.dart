@@ -125,8 +125,8 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
           jsonData = responseJsonDecoded["data"][path];
         }
         if (kDebugMode) {
-          print("JSON DATA $jsonData");
-          print("JSON DATA METADATA $metadata");
+          // print("JSON DATA $jsonData");
+          // print("JSON DATA METADATA $metadata");
           // print("JSON DATA INITDATA $initialData");
         }
         T data = this.transformerFunction(jsonData);

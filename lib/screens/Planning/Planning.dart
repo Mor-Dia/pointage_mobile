@@ -72,7 +72,7 @@ class _PlanningState extends State<Planning> {
                 'Planning',
                 style: GoogleFonts.arimo(
                   color: const Color(0xff15274d),
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                  fontSize: titreConstant,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -103,8 +103,8 @@ class _PlanningState extends State<Planning> {
                       right: -5,
                       top: -5,
                       child: Container(
-                        width: 20,
-                        height: 20,
+                        width: spacingConstant,
+                        height: spacingConstant,
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
                             color: primaryColor,
@@ -112,8 +112,8 @@ class _PlanningState extends State<Planning> {
                             border:
                                 Border.all(width: 1.5, color: Colors.white)),
                         constraints: const BoxConstraints(
-                          minWidth: 20,
-                          minHeight: 20,
+                          minWidth: spacingConstant,
+                          minHeight: spacingConstant,
                         ),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -143,16 +143,16 @@ class _PlanningState extends State<Planning> {
           child: ListView(
             children: [
               const SizedBox(
-                height: 20,
+                height: spacingConstant,
               ),
               HorizontalCalendar(
                 handleDate: (date) => ChangeDate(date),
               ),
               const SizedBox(
-                height: 20,
+                height: spacingConstant,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
                 child: Row(
                   children: [
                     Expanded(
@@ -224,7 +224,7 @@ class _PlanningState extends State<Planning> {
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: spacingConstant,
               ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
@@ -299,11 +299,11 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
       children: [
         // Affichage du mois et de l'année (fixe, pas de navigation)
         Padding(
-          padding: const EdgeInsets.only(bottom: 20.0),
+          padding: const EdgeInsets.only(bottom: spacingConstant),
           child: Text(
             DateFormat.yMMM('fr_FR').format(DateTime.now()).toCapitalized,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: titreConstant,
               color: primaryColor,
             ),
           ),
@@ -331,8 +331,8 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                 child: Container(
                   width: 60,
                   margin: index == 0
-                      ? const EdgeInsets.only(right: 20.0, left: 20)
-                      : const EdgeInsets.only(right: 20.0),
+                      ? const EdgeInsets.only(right: spacingConstant, left: spacingConstant)
+                      : const EdgeInsets.only(right: spacingConstant),
                   decoration: BoxDecoration(
                     color: isSelected ? const Color(0xffA8923B) : Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -348,7 +348,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                             .format(date)
                             .toCapitalized, // Jour abrégé
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: textConstant,
                           color: isSelected ? primaryColor : greyColor,
                         ),
                       ),

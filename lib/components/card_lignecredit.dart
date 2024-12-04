@@ -19,9 +19,9 @@ class CardLignecredit extends StatelessWidget {
           )
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        padding: const EdgeInsets.symmetric(vertical: spacingConstant),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -35,7 +35,7 @@ class NotificationsPage extends StatelessWidget {
                 'Notifications',
                 style: GoogleFonts.arimo(
                   color: primaryColor,
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                  fontSize: titreConstant,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -51,7 +51,7 @@ class NotificationsPage extends StatelessWidget {
                           border: Border(
                               bottom: BorderSide(width: 1, color: greyColorL))),
                       child: Padding(
-                        padding: const EdgeInsets.all(20.0),
+                        padding: const EdgeInsets.all(spacingConstant),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

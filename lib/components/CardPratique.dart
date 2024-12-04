@@ -39,7 +39,7 @@ class _CardPratiqueState extends State<CardPratique> {
           border: Border.all(width: 1, color: primaryColor.withOpacity(.2)),
           borderRadius: BorderRadius.circular(15)),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(spacingConstant),
         child: Column(
           children: [
             Row(

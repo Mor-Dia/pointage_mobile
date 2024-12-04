@@ -38,7 +38,7 @@ class _AnimatedGestureButtonState extends State<AnimatedGestureButton>
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: GestureBorderPainter(_animation),
+      painter: widget.animate ? GestureBorderPainter(_animation) : null,
       child: widget.child,
     );
   }

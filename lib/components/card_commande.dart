@@ -19,7 +19,7 @@ class CardCommande extends StatelessWidget {
       decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(width: 1, color: greyColor))),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: spacingConstant, horizontal: spacingConstant),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

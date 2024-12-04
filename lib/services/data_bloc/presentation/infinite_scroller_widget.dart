@@ -62,7 +62,7 @@ class _InfiniteScrollerWidgetState<T> extends State<InfiniteScrollerWidget<T>> {
       // Column(
       //     children:  [
       //       const SizedBox(
-      //         height: 20,
+      //         height: spacingConstant,
       //       ),
       //       Wrap(
       //           spacing: 10,

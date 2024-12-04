@@ -66,7 +66,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
               'Mes lignes crédits',
               style: GoogleFonts.arimo(
                 color: const Color(0xff15274d),
-                fontSize: MediaQuery.of(context).size.width * 0.055,
+                fontSize: titreConstant,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -77,9 +77,9 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
         color: Colors.white,
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: spacingConstant),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
               child: Container(
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: greyColor),
@@ -123,7 +123,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                                   },
                                   icon: Icon(
                                     hide ? Icons.visibility_off : Icons.remove_red_eye,
-                                    size: 20,
+                                    size: spacingConstant,
                                     color: const Color(0xff15274d),
                                   ),
                                 ),
@@ -140,17 +140,17 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: spacingConstant,
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
               child: ButtonFiled(
                 text: 'Approvisionner le compte',
                 handlerPress: () => {},
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: spacingConstant,
             ),
             Expanded(
               child: BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
@@ -168,7 +168,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                             return Column(
                                 children:  [
                                   const SizedBox(
-                                    height: 20,
+                                    height: spacingConstant,
                                   ),
                                   ...lcs
                                       .map((toElement) => CardLignecredit(ligneCredit: toElement,))

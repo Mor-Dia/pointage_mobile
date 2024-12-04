@@ -70,14 +70,14 @@ class _InputfiledState extends State<Inputfiled> {
                         hintText: widget.text,
                         hintStyle: TextStyle(
                             fontSize:
-                                MediaQuery.of(context).size.width * 0.035),
+                               textConstant),
                         prefixIcon: SvgPicture.asset(
                           color: const Color(0xff15274d),
                           widget.type == 'password'
                               ? 'assets/icons/lock.svg'
                               : 'assets/icons/${widget.icon}.svg',
                           fit: BoxFit.scaleDown,
-                          height: 20,
+                          height: spacingConstant,
                         ),
                         suffixIcon: widget.type == 'password'
                             ? IconButton(
@@ -90,7 +90,7 @@ class _InputfiledState extends State<Inputfiled> {
                                   hide
                                       ? Icons.visibility_off
                                       : Icons.remove_red_eye,
-                                  size: 20,
+                                  size: spacingConstant,
                                   color: const Color(0xff15274d),
                                 ),
                               )

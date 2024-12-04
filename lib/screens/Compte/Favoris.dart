@@ -1,28 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
 import 'package:yogivida_mobile/components/CardProduit.dart';
+import 'package:yogivida_mobile/components/CardProduitFavoris.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
 import 'package:yogivida_mobile/components/CardRowPlanning.dart';
 import 'package:yogivida_mobile/components/CardRowPlanning2.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/services/api/models/favoris_model.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+import 'package:yogivida_mobile/services/api/models/produit_model.dart';
+import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
+import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
-class Favoris extends StatefulWidget {
-  const Favoris({super.key});
+class FavorisPage extends StatefulWidget {
+  const FavorisPage({super.key});
 
   @override
-  State<Favoris> createState() => _FavorisState();
+  State<FavorisPage> createState() => _FavorisState();
 }
 
-class _FavorisState extends State<Favoris> {
+class _FavorisState extends State<FavorisPage> {
+  late DataBloc<List<Produit>> favorisBloc;
   @override
   List<Pratique> listPratique = [
     // Pratique('Fly yoga', 'assets/images/pratique1.jpg', false),
     // Pratique('Fly yoga', 'assets/images/pratique2.jpg', true),
   ];
+
+  String? token;
+  String? userId;
+
+  Future getCredentials() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      token = prefs.getString('token');
+      userId = prefs.getString('user_id');
+    });
+  }
+
+  @override
+  void initState() {
+    getCredentials();
+    favorisBloc = DataBloc<List<Produit>>(
+        (response) => Favoris.fromJsonList(response),
+        Favoris.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: Favoris.shrinkedAttributs());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -53,7 +84,7 @@ class _FavorisState extends State<Favoris> {
                 'Mes Favoris',
                 style: GoogleFonts.arimo(
                   color: primaryColor,
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                  fontSize: titreConstant,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -86,9 +117,9 @@ class _FavorisState extends State<Favoris> {
           child: TabBarView(
             children: [
               ScrollableTabPage(
-                data: listPratique,
+                data: favorisBloc,
               ),
-              ScrollableTabPage2(data: listPratique)
+              ScrollableTabPage2(data: favorisBloc, token: token)
             ],
           ),
         ),
@@ -98,26 +129,21 @@ class _FavorisState extends State<Favoris> {
 }
 
 class ScrollableTabPage extends StatelessWidget {
-  final List<Pratique> data;
-  const ScrollableTabPage({Key? key, required this.data}) : super(key: key);
+  final DataBloc<List<Produit>> data;
+  final String? token;
+  const ScrollableTabPage({Key? key, required this.data, this.token})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(spacingConstant),
         child: Wrap(
           spacing: 10,
           runSpacing: 10,
-          children: data
-              .map((toElement) => SizedBox(
-                  width: size.width / 2 - 25,
-                  child: CardPratique(
-                    data: toElement,
-                    handlePress: () => null,
-                  )))
-              .toList(),
+          children: [],
         ),
       ),
     );
@@ -125,30 +151,37 @@ class ScrollableTabPage extends StatelessWidget {
 }
 
 class ScrollableTabPage2 extends StatelessWidget {
-  final List<Pratique> data;
-
-  const ScrollableTabPage2({Key? key, required this.data}) : super(key: key);
+  final DataBloc<List<Produit>> data;
+  final String? token;
+  const ScrollableTabPage2({Key? key, required this.data, this.token})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Wrap(
-          spacing: 10,
-          runSpacing: 10,
-          children: data
-              .map((toElement) => SizedBox(
-                    width: size.width / 2 - 25,
-                    // child: CardProduit(
-                    //   data: toElement,
-                    //   handlePress: () => {},
-                    // ),
-                  ))
-              .toList(),
-        ),
-      ),
-    );
+    return BlocBasedWidget<List<Produit>>(
+        customDataBloc: data,
+        filter: {"token": token, 'count': 8},
+        customWidget: (state) {
+          List<Produit> produits = state.data;
+          print(produits);
+          return SingleChildScrollView(
+            child: Padding(
+                padding: const EdgeInsets.all(spacingConstant),
+                child: Wrap(
+                  alignment: WrapAlignment.start,
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: produits
+                      .map((Produit toElement) => SizedBox(
+                            width: size.width / (MediaQuery.of(context).size.width > 400 ? 3  : 2) - 25,
+                            child: CardProduitFavoris(
+                              data: toElement,
+                            ),
+                          ))
+                      .toList(),
+                )),
+          );
+        });
   }
 }

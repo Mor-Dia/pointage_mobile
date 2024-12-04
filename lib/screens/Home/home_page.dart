@@ -91,16 +91,16 @@ class _HomePageState extends State<HomePage> {
                     right: -5,
                     top: -5,
                     child: Container(
-                      width: 20,
-                      height: 20,
+                      width: spacingConstant,
+                      height: spacingConstant,
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                           color: primaryColor,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(width: 1.5, color: Colors.white)),
                       constraints: const BoxConstraints(
-                        minWidth: 20,
-                        minHeight: 20,
+                        minWidth: spacingConstant,
+                        minHeight: spacingConstant,
                       ),
                       child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -136,10 +136,10 @@ class _HomePageState extends State<HomePage> {
           child: ListView(
             children: [
               const SizedBox(
-                height: 20,
+                height: spacingConstant,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
                 child: Container(
                   child: Text(
                     "Votre activité du jour",
@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: spacingConstant,
               ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                             .map((toElement) => Row(
                                   children: [
                                     const SizedBox(
-                                      width: 20,
+                                      width: spacingConstant,
                                     ),
                                     Cardactivite(
                                         data: toElement,
@@ -180,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                                 ))
                             .toList(),
                         const SizedBox(
-                          width: 20,
+                          width: spacingConstant,
                         ),
                       ],
                     ),
@@ -188,10 +188,10 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               const SizedBox(
-                height: 20,
+                height: spacingConstant,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
+                padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
                 child: Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -219,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(
-                height: 20,
+                height: spacingConstant,
               ),
               BlocBasedWidget<List<Pratique>>(
                 customDataBloc: practiceBloc,
@@ -236,7 +236,7 @@ class _HomePageState extends State<HomePage> {
                             .map((toElement) => Row(
                                   children: [
                                     const SizedBox(
-                                      width: 20,
+                                      width: spacingConstant,
                                     ),
                                     CardPratique(
                                       data: toElement,
@@ -246,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                                 ))
                             .toList(),
                         const SizedBox(
-                          width: 20,
+                          width: spacingConstant,
                         ),
                       ],
                     ),
@@ -268,10 +268,10 @@ class _HomePageState extends State<HomePage> {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
+                    topLeft: Radius.circular(spacingConstant),
+                    topRight: Radius.circular(spacingConstant))),
             child: Padding(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(spacingConstant),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -281,11 +281,11 @@ class _HomePageState extends State<HomePage> {
                       width: 50,
                       decoration: BoxDecoration(
                           color: greyColor,
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                          borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: spacingConstant,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -301,7 +301,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   SizedBox(
-                    height: 20,
+                    height: spacingConstant,
                   ),
                   Row(
                     children: [
@@ -326,7 +326,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   SizedBox(
-                    height: 20,
+                    height: spacingConstant,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -433,21 +433,21 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   SizedBox(
-                    height: 20,
+                    height: spacingConstant,
                   ),
                   Text(
                     'Description',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: spacingConstant,
                   ),
                   Text(
                     'lorem',
                     style: TextStyle(color: Color(0xff838282), fontSize: 12),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: spacingConstant,
                   ),
                   // Spacer(flex: 1),
                   Center(
@@ -476,9 +476,9 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+                  topLeft: Radius.circular(spacingConstant), topRight: Radius.circular(spacingConstant))),
           child: Padding(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(spacingConstant),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -488,11 +488,11 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
                     width: 50,
                     decoration: BoxDecoration(
                         color: greyColor,
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                        borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: spacingConstant,
                 ),
                 Center(
                   child: Text(
@@ -501,14 +501,14 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: spacingConstant,
                 ),
                 Container(
                   decoration: BoxDecoration(
                       border: Border.all(width: 1, color: greyColorL),
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                      borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(spacingConstant),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -518,7 +518,7 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
                           height: 25,
                         ),
                         SizedBox(
-                          width: 20,
+                          width: spacingConstant,
                         ),
                         Text('Ligne crédit',
                             style: TextStyle(color: primaryColor)),
@@ -540,14 +540,14 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: spacingConstant,
                 ),
                 Container(
                   decoration: BoxDecoration(
                       border: Border.all(width: 1, color: greyColorL),
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                      borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(spacingConstant),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -557,7 +557,7 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
                           height: 25,
                         ),
                         SizedBox(
-                          width: 20,
+                          width: spacingConstant,
                         ),
                         Text('Wave', style: TextStyle(color: primaryColor))
                       ],
@@ -565,14 +565,14 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: spacingConstant,
                 ),
                 Container(
                   decoration: BoxDecoration(
                       border: Border.all(width: 1, color: greyColorL),
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                      borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
                   child: Padding(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(spacingConstant),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -582,7 +582,7 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
                           height: 25,
                         ),
                         SizedBox(
-                          width: 20,
+                          width: spacingConstant,
                         ),
                         Text('Orange Money',
                             style: TextStyle(color: primaryColor))

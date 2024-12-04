@@ -97,10 +97,10 @@ class _PratiquesPageState extends State<PratiquesPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'PratiquesPage',
+                'Pratiques',
                 style: GoogleFonts.arimo(
                   color: primaryColor,
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                  fontSize: titreConstant,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -110,7 +110,7 @@ class _PratiquesPageState extends State<PratiquesPage> {
         body: Container(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
+            padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
             child: BlocBasedWidget<List<Pratique>>(
               customDataBloc: practiceBloc,
               filter: currentFilter,
@@ -121,7 +121,7 @@ class _PratiquesPageState extends State<PratiquesPage> {
                   Column(
                       children:  [
                         const SizedBox(
-                          height: 20,
+                          height: spacingConstant,
                         ),
                         Wrap(
                             spacing: 10,
@@ -129,7 +129,7 @@ class _PratiquesPageState extends State<PratiquesPage> {
                             children: [
                               ...pratiques
                                   .map((toElement) => SizedBox(
-                                  width: size.width / 2 - 25,
+                                  width: size.width / (MediaQuery.of(context).size.width > 400 ? 3:2) - 25,
                                   child: CardPratique(
                                     data: toElement,
                                     handlePress: () => ShowBottomSheet(context),
@@ -153,7 +153,7 @@ Future<dynamic> ShowBottomSheet(BuildContext context) {
       context: context,
       builder: (BuildContext context) {
         return const Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(spacingConstant),
           child: Row(
             children: [Text("hello")],
           ),

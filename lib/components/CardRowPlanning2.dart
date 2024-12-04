@@ -44,9 +44,9 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
       decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(color: greyColor, width: 1))),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        padding: const EdgeInsets.symmetric(vertical: spacingConstant),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

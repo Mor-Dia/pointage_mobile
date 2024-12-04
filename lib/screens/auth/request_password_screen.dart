@@ -110,7 +110,7 @@ class _RequestPasswordScreenState extends State<RequestPasswordScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(spacingConstant),
             child: Column(
               children: [
                 Expanded(

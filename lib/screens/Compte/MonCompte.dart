@@ -81,7 +81,7 @@ class _MonCompteState extends State<MonCompte> {
                       'Mon compte',
                       style: GoogleFonts.arimo(
                         color: const Color(0xff15274d),
-                        fontSize: MediaQuery.of(context).size.width * 0.055,
+                        fontSize: titreConstant,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -115,7 +115,7 @@ class _MonCompteState extends State<MonCompte> {
               body: Container(
                 color: Colors.white,
                 child: ListView(children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: spacingConstant),
                   Center(
                     child: Column(children: [
                       SvgPicture.asset(
@@ -131,9 +131,9 @@ class _MonCompteState extends State<MonCompte> {
                       )
                     ]),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: spacingConstant),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
                     child: Row(
                       children: [
                         Expanded(
@@ -174,7 +174,7 @@ class _MonCompteState extends State<MonCompte> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: spacingConstant),
                   Column(
                     children: [
                       GestureDetector(
@@ -189,7 +189,7 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 20),
+                                horizontal: spacingConstant, vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset("assets/icons/historique.svg"),
@@ -215,7 +215,7 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 20),
+                                horizontal: spacingConstant, vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -236,7 +236,7 @@ class _MonCompteState extends State<MonCompte> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Favoris()),
+                              builder: (context) => const FavorisPage()),
                         ),
                         child: Container(
                           decoration: BoxDecoration(
@@ -244,7 +244,7 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 20),
+                                horizontal: spacingConstant, vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -273,7 +273,7 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 20),
+                                horizontal: spacingConstant, vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -298,7 +298,7 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 20),
+                                horizontal: spacingConstant, vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -324,7 +324,7 @@ class _MonCompteState extends State<MonCompte> {
                                 top: BorderSide(width: 1, color: greyColor))),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
+                              horizontal: spacingConstant, vertical: spacingConstant),
                           child: GestureDetector(
                             onTap: () => {},
                             child: Row(

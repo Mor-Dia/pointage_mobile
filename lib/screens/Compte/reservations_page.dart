@@ -83,7 +83,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
                 'Mes Réservations',
                 style: GoogleFonts.arimo(
                   color: primaryColor,
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                  fontSize: titreConstant,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -158,7 +158,7 @@ class ScrollableTabPage extends StatelessWidget {
               List<Reservation> reservations = state.data;
               return Column(children: [
                 const SizedBox(
-                  height: 20,
+                  height: spacingConstant,
                 ),
                 ...reservations
                     .map((toElement) => CardRowPlanning2(

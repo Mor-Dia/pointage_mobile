@@ -17,20 +17,20 @@ import '../core/models/user_model.dart';
 import '../services/authentication_bloc/authentication_bloc.dart';
 import 'animated_gesture_detector.dart';
 
-class CardProduit extends StatefulWidget {
+class CardProduitFavoris extends StatefulWidget {
   final Produit data;
   final Function(Map<String, dynamic>)? handlePress;
-  const CardProduit({
+  const CardProduitFavoris({
     super.key,
     required this.data,
     this.handlePress,
   });
 
   @override
-  State<CardProduit> createState() => _CardProduitState();
+  State<CardProduitFavoris> createState() => _CardProduitFavorisState();
 }
 
-class _CardProduitState extends State<CardProduit> {
+class _CardProduitFavorisState extends State<CardProduitFavoris> {
   late PostApiBloc favorisPostBloc;
   bool? liked;
   int qte = 1;

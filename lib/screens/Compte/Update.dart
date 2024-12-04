@@ -270,7 +270,7 @@ class _UpdateState extends State<Update> {
             ),
           ),
           body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
             child: Column(
               children: [
                 Expanded(
@@ -284,7 +284,7 @@ class _UpdateState extends State<Update> {
                         children: [
                           const SizedBox(
                               height:
-                                  20), // Espacement pour centrer verticalement
+                                  spacingConstant), // Espacement pour centrer verticalement
                           Column(
                               children: inputFields!.map((field) {
                             return field['type'] != "password"

@@ -114,7 +114,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                     // )
                   )),
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: spacingConstant),
             Expanded(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,7 +129,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.arimo(
                               fontSize:
-                                  MediaQuery.of(context).size.width * 0.040,
+                                  textConstant,
                             ),
                           ),
                         ),
@@ -142,7 +142,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                               .toUpperCase(),
                           style: GoogleFonts.arimo(
                               fontSize:
-                                  MediaQuery.of(context).size.width * 0.040,
+                                  textConstant,
                               fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -164,7 +164,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                                 width: 30,
                                 decoration: BoxDecoration(
                                     color: greyColor,
-                                    borderRadius: BorderRadius.circular(20)),
+                                    borderRadius: BorderRadius.circular(spacingConstant)),
                                 child: const Center(
                                   child: Text(
                                     '-',
@@ -187,7 +187,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                                 width: 30,
                                 decoration: BoxDecoration(
                                     color: greyColor,
-                                    borderRadius: BorderRadius.circular(20)),
+                                    borderRadius: BorderRadius.circular(spacingConstant)),
                                 child: const Center(
                                   child: Text(
                                     '+',

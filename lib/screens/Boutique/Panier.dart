@@ -46,7 +46,7 @@ class _PanierState extends State<PanierPage> {
                 'Mon panier',
                 style: GoogleFonts.arimo(
                   color: const Color(0xff15274d),
-                  fontSize: MediaQuery.of(context).size.width * 0.055,
+                  fontSize: titreConstant,
                   fontWeight: FontWeight.bold,
                 ),
               ),

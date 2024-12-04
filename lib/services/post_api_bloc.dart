@@ -10,11 +10,12 @@ part 'post_api_state.dart';
 class PostApiBloc extends Bloc<PostApiEvent, PostApiState> {
   PostApiBloc() : super(PostApiInitial()) {
     on<PostApiMakeCall>((event, emit) async {
-      await makeCall(event);
+      await makeCall(event,emit);
     });
   }
 
-  makeCall(event) async {
+  makeCall(event,emit) async {
+     emit(const PostApiProcessing());
     final response = await postApiData(event.endpoint, event.parameters);
     if (kDebugMode) {
       print("POST REQUEST RESPONSE ${response.body}");
@@ -26,6 +27,10 @@ class PostApiBloc extends Bloc<PostApiEvent, PostApiState> {
           String message = responseJsonDecoded["errors"] == "" ? "Une erreur s'est produite" : "";
           emit(PostApiFailure(message: message));
         } else {
+          String message = responseJsonDecoded["errors"] == "" ? "Opération effectuée avec succès" : "";
+          emit(PostApiSuccess(message: message));
+        }
+        if(responseJsonDecoded["data"] == 0) {
           String message = responseJsonDecoded["errors"] == "" ? "Opération effectuée avec succès" : "";
           emit(PostApiSuccess(message: message));
         }

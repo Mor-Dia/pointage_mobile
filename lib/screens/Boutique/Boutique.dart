@@ -174,11 +174,6 @@ class _BoutiqueState extends State<Boutique> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    /*24 is for notification bar on Android*/
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 2;
-    final double itemWidth = size.width / 2;
-    int? famille_produit_selected = 0;
-
     return Scaffold(
         appBar: AppBar(
             backgroundColor: const Color(0xffffffff),
@@ -193,7 +188,7 @@ class _BoutiqueState extends State<Boutique> {
                   "Boutique",
                   style: GoogleFonts.arimo(
                     color: const Color(0xff15274d),
-                    fontSize: MediaQuery.of(context).size.width * 0.055,
+                    fontSize: titreConstant,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -238,9 +233,11 @@ class _BoutiqueState extends State<Boutique> {
                             ),
                           );
                         }
-
                         if (state is PanierLoaded) {
                           _panier = state.panier;
+                        }
+                        if (state is PanierLoading) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         }
                       }, builder: (context, state) {
                         return Positioned(
@@ -256,8 +253,8 @@ class _BoutiqueState extends State<Boutique> {
                                 border: Border.all(
                                     width: 1.5, color: Colors.white)),
                             constraints: const BoxConstraints(
-                              minWidth: 20,
-                              minHeight: 20,
+                              minWidth: spacingConstant,
+                              minHeight: spacingConstant,
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -303,7 +300,7 @@ class _BoutiqueState extends State<Boutique> {
                 child: ListView(
                   children: [
                     const SizedBox(
-                      height: 20,
+                      height: spacingConstant,
                     ),
                     SingleChildScrollView(
                       scrollDirection:
@@ -375,10 +372,10 @@ class _BoutiqueState extends State<Boutique> {
                       ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: spacingConstant,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Row(
                         children: [
                           Expanded(
@@ -400,7 +397,7 @@ class _BoutiqueState extends State<Boutique> {
                                   },
                                   child: Icon(
                                     Icons.cancel,
-                                    size: 20,
+                                    size: spacingConstant,
                                     color: Colors.red,
                                   ),
                                 )
@@ -422,7 +419,7 @@ class _BoutiqueState extends State<Boutique> {
                                 color: Colors.white,
                                 'assets/icons/loupe.svg',
                                 fit: BoxFit.scaleDown,
-                                height: 20,
+                                height: spacingConstant,
                               ),
                             ),
                           ),
@@ -475,10 +472,11 @@ class _BoutiqueState extends State<Boutique> {
                       ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      height: spacingConstant,
                     ),
                     Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: spacingConstant),
                         child: BlocBasedWidget<List<Produit>>(
                             customDataBloc: produitBloc,
                             useInfiniteScroller: true,
@@ -489,18 +487,27 @@ class _BoutiqueState extends State<Boutique> {
                               if (produits.isEmpty) {
                                 return Center(
                                     child: Text('Aucun produits trouvés'));
-                                }
+                              }
                               return Wrap(
                                 alignment: WrapAlignment.start,
                                 spacing: 10,
                                 runSpacing: 10,
                                 children: produits
                                     .map((Produit toElement) => SizedBox(
-                                          width: size.width / 2 - 25,
+                                          width: size.width /
+                                                  (MediaQuery.of(context)
+                                                              .size
+                                                              .width >
+                                                          400
+                                                      ? 3
+                                                      : 2) -
+                                              25,
                                           child: CardProduit(
                                             data: toElement,
                                             handlePress: (value) {
-                                             toElement.currentQuantity! >=1 ? addToPanier(value) : null;
+                                              toElement.currentQuantity! >= 1
+                                                  ? addToPanier(value)
+                                                  : null;
                                             },
                                           ),
                                         ))
@@ -535,9 +542,10 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+                  topLeft: Radius.circular(spacingConstant),
+                  topRight: Radius.circular(spacingConstant))),
           child: Padding(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(spacingConstant),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -547,11 +555,12 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                     width: 50,
                     decoration: BoxDecoration(
                         color: greyColor,
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(spacingConstant))),
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: spacingConstant,
                 ),
                 Center(
                   child: Text(
@@ -560,7 +569,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: spacingConstant,
                 ),
                 Row(
                   children: [
@@ -571,7 +580,8 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(15))),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: spacingConstant),
                           child: TextField(
                               controller: minController,
                               decoration: InputDecoration(
@@ -589,7 +599,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                       ),
                     ),
                     SizedBox(
-                      width: 20,
+                      width: spacingConstant,
                     ),
                     Expanded(
                       child: Container(
@@ -598,7 +608,8 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(15))),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: spacingConstant),
                           child: TextField(
                               controller: maxController,
                               decoration: InputDecoration(
@@ -618,7 +629,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                   ],
                 ),
                 SizedBox(
-                  height: 20,
+                  height: spacingConstant,
                 ),
                 Row(
                   children: [
@@ -631,7 +642,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                       ),
                     ),
                     SizedBox(
-                      width: 20,
+                      width: spacingConstant,
                     ),
                     Expanded(
                       child: ButtonFiled(

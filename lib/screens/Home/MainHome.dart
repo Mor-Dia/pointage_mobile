@@ -62,7 +62,7 @@ class _MainhomeState extends State<Mainhome> {
                     height: 25,
                   ),
                   Positioned(
-                    bottom: -20,
+                    bottom: -spacingConstant,
                     left: 10,
                     child: Container(
                       height: 7,
@@ -92,7 +92,7 @@ class _MainhomeState extends State<Mainhome> {
                     height: 25,
                   ),
                   Positioned(
-                    bottom: -20,
+                    bottom: -spacingConstant,
                     left: 10,
                     child: Container(
                       height: 7,
@@ -122,7 +122,7 @@ class _MainhomeState extends State<Mainhome> {
                     height: 25,
                   ),
                   Positioned(
-                    bottom: -20,
+                    bottom: -spacingConstant,
                     left: 10,
                     child: Container(
                       height: 7,
@@ -152,7 +152,7 @@ class _MainhomeState extends State<Mainhome> {
                     height: 25,
                   ),
                   Positioned(
-                    bottom: -20,
+                    bottom: -spacingConstant,
                     left: 10,
                     child: Container(
                       height: 7,

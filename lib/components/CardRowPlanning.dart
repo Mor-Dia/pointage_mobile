@@ -20,9 +20,9 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
       decoration: BoxDecoration(
           border: Border(top: BorderSide(width: 1, color: greyColor))),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0),
+        padding: const EdgeInsets.symmetric(vertical: spacingConstant),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -43,108 +43,110 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                 children: [
                   Expanded(
                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/heure.svg",
-                                    color: const Color(0xFF838282),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    widget.data.heureDebut.toString(),
-                                    style: TextStyle(
-                                        color: Color(0xff838282), fontSize: 10),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/person.svg",
-                                    color: const Color(0xFF838282),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Container(
-                                    width: 50,
-                                    child: Text(
-                                      widget.data.professeurPratique!
-                                          .professeur!.user!.name
-                                          .toString()
-                                          .toCapitalized,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: Color(0xff838282),
-                                          fontSize: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/heure.svg",
+                                      color: const Color(0xFF838282),
                                     ),
-                                  )
-                                ],
-                              ),
-                            ],
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      widget.data.heureDebut.toString(),
+                                      style: TextStyle(
+                                          color: Color(0xff838282), fontSize: textminConstant),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/person.svg",
+                                      color: const Color(0xFF838282),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        widget.data.professeurPratique!
+                                            .professeur!.user!.name
+                                            .toString()
+                                            .toCapitalized,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: Color(0xff838282),
+                                            fontSize: textminConstant),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                           SizedBox(
-                            width: 20,
+                            width: spacingConstant,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/heure.svg",
-                                    color: const Color(0xFF838282),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    widget.data.heureFin.toString(),
-                                    style: TextStyle(
-                                        color: Color(0xff838282), fontSize: 10),
-                                  )
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  SvgPicture.asset(
-                                    "assets/icons/loc.svg",
-                                    color: const Color(0xFF838282),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Container(
-                                    width: 50,
-                                    child: const Text(
-                                      'Dakar plateau',
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: Color(0xff838282),
-                                          fontSize: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/heure.svg",
+                                      color: const Color(0xFF838282),
                                     ),
-                                  )
-                                ],
-                              )
-                            ],
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      widget.data.heureFin.toString(),
+                                      style: TextStyle(
+                                          color: Color(0xff838282), fontSize: textminConstant),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    SvgPicture.asset(
+                                      "assets/icons/loc.svg",
+                                      color: const Color(0xFF838282),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    const Expanded(
+                                      child: Text(
+                                        'Dakar plateau',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: Color(0xff838282),
+                                            fontSize: textminConstant),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ]),
                   ),
                   const SizedBox(
-                    width: 20,
+                    width: spacingConstant,
                   ),
                   Expanded(
                       child: ButtonFiled(

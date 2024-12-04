@@ -75,9 +75,9 @@ class _LocalisationContactState extends State<LocalisationContact> {
           ),
           // Floating contact info card
           Positioned(
-            bottom: 20.0,
-            left: 20.0,
-            right: 20.0,
+            bottom: spacingConstant,
+            left: spacingConstant,
+            right: spacingConstant,
             child: Card(
               color: Colors.white,
               elevation: 5,
@@ -96,7 +96,7 @@ class _LocalisationContactState extends State<LocalisationContact> {
                           const Text('YOGI VIDA',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                fontSize: spacingConstant,
                               )),
                           IntrinsicWidth(
                               child: ButtonFiled(
