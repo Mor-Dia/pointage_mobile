@@ -234,11 +234,9 @@ class _BoutiqueState extends State<Boutique> {
                           );
                         }
                         if (state is PanierLoaded) {
-                          _panier = state.panier;
+                          _panier = state.panier.panierProduit;
                         }
-                        if (state is PanierLoading) {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        }
+                       
                       }, builder: (context, state) {
                         return Positioned(
                           right: -5,

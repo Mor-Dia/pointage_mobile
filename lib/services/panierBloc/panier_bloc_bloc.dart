@@ -87,7 +87,7 @@ class PanierBlocBloc extends Bloc<PanierBlocEvent, PanierBlocState> {
             responseJsonDecoded['data']['panierspaginated']['data'][0];
         print(jsonData);
         Panier data = Panier.fromJson(jsonData);
-        emit(PanierBlocState.loaded(panier: data.panierProduit!));
+        emit(PanierBlocState.loaded(panier: data));
       } else {
         emit(PanierBlocState.error(
             message: "Erreur lors de la récupération du panier 1"));

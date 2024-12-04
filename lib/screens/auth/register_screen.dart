@@ -19,6 +19,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   List<TextEditingController> _controllers = [];
+  bool isLoading = false;
   String? currentError;
   List<Map<String, dynamic>> inputFields = [];
 
@@ -120,6 +121,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void signUp() async {
+    setState(() {
+      isLoading = false;
+    });
     Map<String, dynamic> postData = {
       "nom": null,
       "prenom": null,
@@ -152,6 +156,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     var registrationLink = Uri.parse("$BASE_URL$REGISTRATION_ENDPOINT");
     await http.post(registrationLink, body: postData).then((Response response) {
+      setState(() {
+        isLoading = false;
+      });
       var responseBody = jsonDecode(response.body) as Map<String, dynamic>;
       var isError = false;
       var message = "";
@@ -230,6 +237,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Column(
                 children: [
                   ButtonFiled(
+                    isLoading: isLoading,
                     text: "S'inscrire",
                     handlerPress: () => {
                       signUp()

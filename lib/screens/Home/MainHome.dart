@@ -20,7 +20,7 @@ class _MainhomeState extends State<Mainhome> {
 
   // Liste des pages à afficher dans l'IndexedStack
   final List<Widget> _pages = [
-    HomePage(),
+    const HomePage(),
     const Planning(),
     const Boutique(),
     const MonCompte(),

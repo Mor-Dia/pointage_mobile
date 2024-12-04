@@ -6,7 +6,7 @@ class PanierBlocState with _$PanierBlocState {
   const factory PanierBlocState.loading() = PanierLoading;
   const factory PanierBlocState.success({required String message}) =
       PanierSuccess;
-  const factory PanierBlocState.loaded({required List<PanierPProduit> panier}) =
+  const factory PanierBlocState.loaded({required Panier panier}) =
       PanierLoaded;
   const factory PanierBlocState.error({required String message}) = PanierError;
 }

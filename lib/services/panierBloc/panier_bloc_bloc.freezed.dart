@@ -545,7 +545,7 @@ mixin _$PanierBlocState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String message) success,
-    required TResult Function(List<PanierPProduit> panier) loaded,
+    required TResult Function(Panier panier) loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -554,7 +554,7 @@ mixin _$PanierBlocState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String message)? success,
-    TResult? Function(List<PanierPProduit> panier)? loaded,
+    TResult? Function(Panier panier)? loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -563,7 +563,7 @@ mixin _$PanierBlocState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String message)? success,
-    TResult Function(List<PanierPProduit> panier)? loaded,
+    TResult Function(Panier panier)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -671,7 +671,7 @@ class _$PanierInitialImpl
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String message) success,
-    required TResult Function(List<PanierPProduit> panier) loaded,
+    required TResult Function(Panier panier) loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -683,7 +683,7 @@ class _$PanierInitialImpl
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String message)? success,
-    TResult? Function(List<PanierPProduit> panier)? loaded,
+    TResult? Function(Panier panier)? loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -695,7 +695,7 @@ class _$PanierInitialImpl
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String message)? success,
-    TResult Function(List<PanierPProduit> panier)? loaded,
+    TResult Function(Panier panier)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -802,7 +802,7 @@ class _$PanierLoadingImpl
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String message) success,
-    required TResult Function(List<PanierPProduit> panier) loaded,
+    required TResult Function(Panier panier) loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -814,7 +814,7 @@ class _$PanierLoadingImpl
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String message)? success,
-    TResult? Function(List<PanierPProduit> panier)? loaded,
+    TResult? Function(Panier panier)? loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -826,7 +826,7 @@ class _$PanierLoadingImpl
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String message)? success,
-    TResult Function(List<PanierPProduit> panier)? loaded,
+    TResult Function(Panier panier)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -962,7 +962,7 @@ class _$PanierSuccessImpl
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String message) success,
-    required TResult Function(List<PanierPProduit> panier) loaded,
+    required TResult Function(Panier panier) loaded,
     required TResult Function(String message) error,
   }) {
     return success(message);
@@ -974,7 +974,7 @@ class _$PanierSuccessImpl
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String message)? success,
-    TResult? Function(List<PanierPProduit> panier)? loaded,
+    TResult? Function(Panier panier)? loaded,
     TResult? Function(String message)? error,
   }) {
     return success?.call(message);
@@ -986,7 +986,7 @@ class _$PanierSuccessImpl
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String message)? success,
-    TResult Function(List<PanierPProduit> panier)? loaded,
+    TResult Function(Panier panier)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -1056,7 +1056,9 @@ abstract class _$$PanierLoadedImplCopyWith<$Res> {
           _$PanierLoadedImpl value, $Res Function(_$PanierLoadedImpl) then) =
       __$$PanierLoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<PanierPProduit> panier});
+  $Res call({Panier panier});
+
+  $PanierCopyWith<$Res> get panier;
 }
 
 /// @nodoc
@@ -1076,26 +1078,30 @@ class __$$PanierLoadedImplCopyWithImpl<$Res>
   }) {
     return _then(_$PanierLoadedImpl(
       panier: null == panier
-          ? _value._panier
+          ? _value.panier
           : panier // ignore: cast_nullable_to_non_nullable
-              as List<PanierPProduit>,
+              as Panier,
     ));
+  }
+
+  /// Create a copy of PanierBlocState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PanierCopyWith<$Res> get panier {
+    return $PanierCopyWith<$Res>(_value.panier, (value) {
+      return _then(_value.copyWith(panier: value));
+    });
   }
 }
 
 /// @nodoc
 
 class _$PanierLoadedImpl with DiagnosticableTreeMixin implements PanierLoaded {
-  const _$PanierLoadedImpl({required final List<PanierPProduit> panier})
-      : _panier = panier;
+  const _$PanierLoadedImpl({required this.panier});
 
-  final List<PanierPProduit> _panier;
   @override
-  List<PanierPProduit> get panier {
-    if (_panier is EqualUnmodifiableListView) return _panier;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_panier);
-  }
+  final Panier panier;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -1115,12 +1121,11 @@ class _$PanierLoadedImpl with DiagnosticableTreeMixin implements PanierLoaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PanierLoadedImpl &&
-            const DeepCollectionEquality().equals(other._panier, _panier));
+            (identical(other.panier, panier) || other.panier == panier));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_panier));
+  int get hashCode => Object.hash(runtimeType, panier);
 
   /// Create a copy of PanierBlocState
   /// with the given fields replaced by the non-null parameter values.
@@ -1136,7 +1141,7 @@ class _$PanierLoadedImpl with DiagnosticableTreeMixin implements PanierLoaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String message) success,
-    required TResult Function(List<PanierPProduit> panier) loaded,
+    required TResult Function(Panier panier) loaded,
     required TResult Function(String message) error,
   }) {
     return loaded(panier);
@@ -1148,7 +1153,7 @@ class _$PanierLoadedImpl with DiagnosticableTreeMixin implements PanierLoaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String message)? success,
-    TResult? Function(List<PanierPProduit> panier)? loaded,
+    TResult? Function(Panier panier)? loaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(panier);
@@ -1160,7 +1165,7 @@ class _$PanierLoadedImpl with DiagnosticableTreeMixin implements PanierLoaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String message)? success,
-    TResult Function(List<PanierPProduit> panier)? loaded,
+    TResult Function(Panier panier)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -1212,10 +1217,10 @@ class _$PanierLoadedImpl with DiagnosticableTreeMixin implements PanierLoaded {
 }
 
 abstract class PanierLoaded implements PanierBlocState {
-  const factory PanierLoaded({required final List<PanierPProduit> panier}) =
+  const factory PanierLoaded({required final Panier panier}) =
       _$PanierLoadedImpl;
 
-  List<PanierPProduit> get panier;
+  Panier get panier;
 
   /// Create a copy of PanierBlocState
   /// with the given fields replaced by the non-null parameter values.
@@ -1303,7 +1308,7 @@ class _$PanierErrorImpl with DiagnosticableTreeMixin implements PanierError {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String message) success,
-    required TResult Function(List<PanierPProduit> panier) loaded,
+    required TResult Function(Panier panier) loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -1315,7 +1320,7 @@ class _$PanierErrorImpl with DiagnosticableTreeMixin implements PanierError {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String message)? success,
-    TResult? Function(List<PanierPProduit> panier)? loaded,
+    TResult? Function(Panier panier)? loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -1327,7 +1332,7 @@ class _$PanierErrorImpl with DiagnosticableTreeMixin implements PanierError {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String message)? success,
-    TResult Function(List<PanierPProduit> panier)? loaded,
+    TResult Function(Panier panier)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
