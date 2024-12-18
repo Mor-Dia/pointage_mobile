@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +17,8 @@ import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
 
 import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
+
+import '../../core/global.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -165,13 +168,19 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
 
     return BlocConsumer<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
-      listener: (context, state) {
+      listener: (context, state) async {
         AuthenticationStatus currentStatus = state.status;
         switch(currentStatus){
           case AuthenticationStatus.authenticated:
             if (kDebugMode) {
               print("AUTH STATE AUTHENTICATED ${state.status}");
             }
+            FirebaseMessaging fcm = firebaseMessagingInstance();
+            await fcm.setAutoInitEnabled(true);
+            fcm.getToken().then((value) {
+              print("FCM TOKEN $value");
+            //   ENVOYER LE TOKEN DANS LA DB
+            });
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (BuildContext context) => const Mainhome(), ),

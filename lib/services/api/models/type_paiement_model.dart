@@ -10,6 +10,8 @@ class TypePaiement with _$TypePaiement {
   const factory TypePaiement({
     int? id,
     String? designation,
+    @JsonKey(name: "solde_disponible")double? soldeDisponible,
+    @JsonKey(name: "is_ligne_credit")bool? isLigneCredit,
   }) = _TypePaiement;
 
   factory TypePaiement.fromJson(Map<String, dynamic> json)  => _$TypePaiementFromJson(json);
@@ -34,7 +36,7 @@ class TypePaiement with _$TypePaiement {
   }
 
   static shrinkedAttributs () {
-    return "id,designation";
+    return "id,designation,solde_disponible,is_ligne_credit";
   }
 
   static String getEndpoint({bool isPagination = true}) {

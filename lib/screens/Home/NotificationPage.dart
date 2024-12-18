@@ -3,8 +3,37 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/constant.dart';
 
-class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({super.key});
+import '../../components/notification_container.dart';
+import '../../services/api/models/notificationpush_model.dart';
+import '../../services/data_bloc/bloc/data_bloc.dart';
+import '../../services/data_bloc/presentation/bloc_based_widget.dart';
+
+
+
+class NotificationPushPage extends StatefulWidget {
+  const NotificationPushPage({super.key});
+
+  @override
+  State<NotificationPushPage> createState() => _NotificationPushPageState();
+}
+
+class _NotificationPushPageState extends State<NotificationPushPage> {
+
+  late DataBloc<List<NotificationPush>> notificationPushBloc;
+  Map<String, dynamic> initialFilter = {"count": 10};
+  Map<String, dynamic> currentFilter = {};
+
+  @override
+  void initState() {
+    currentFilter.addAll({...initialFilter});
+    notificationPushBloc = DataBloc<List<NotificationPush>>(
+            (response) => NotificationPush.fromJsonList(response),
+        NotificationPush.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: NotificationPush.shrinkedAttributs());
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,35 +72,32 @@ class NotificationsPage extends StatelessWidget {
           ),
         ),
         body: Container(
-          color: Colors.white,
-          child: ListView(
-            children: [1, 2, 3]
-                .map((toElement) => Container(
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(width: 1, color: greyColorL))),
-                      child: Padding(
-                        padding: const EdgeInsets.all(spacingConstant),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Lorem ipsum dolor sit amet, consectetur adipiscing',
-                              style: TextStyle(
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            const Text(
-                              "Lorem ipsum dolor sit amet, consectetur ",
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 11),
-                            )
-                          ],
+            color: Colors.white,
+            child: BlocBasedWidget<List<NotificationPush>>(
+              customDataBloc: notificationPushBloc,
+              filter: currentFilter,
+              useInfiniteScroller: true,
+              customWidget: (state) {
+                List<NotificationPush> notificationPushs = state.data;
+                return
+                  Column(
+                      children:  [
+                        const SizedBox(
+                          height: spacingConstant,
                         ),
-                      ),
-                    ))
-                .toList(),
-          ),
+                        Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: [
+                              ...notificationPushs
+                                  .map((toElement) => NotificationContainer(notificationPush: toElement))
+                                  .toList(),
+                            ]
+                        ),
+                      ]
+                  );
+              },
+            )
         ));
   }
 }

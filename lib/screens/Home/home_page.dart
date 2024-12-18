@@ -1,9 +1,13 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
+import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
@@ -14,7 +18,12 @@ import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 
+import '../../components/animated_gesture_detector.dart';
+import '../../core/models/user_model.dart';
 import '../../services/api/models/programme_model.dart';
+import '../../services/api/models/type_paiement_model.dart';
+import '../../services/authentication_bloc/authentication_bloc.dart';
+import '../../services/post_api_bloc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
   late DataBloc<List<Programme>> programmeBloc;
   Map<String, dynamic> globalFilter = {"count": 5};
+  Map<String, dynamic> programmeBlocFilter = {"is_front": true};
   final DateTime date = DateTime.now();
 
   @override
@@ -69,7 +79,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const NotificationsPage())),
+                      builder: (context) => const NotificationPushPage())),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: <Widget>[
@@ -155,12 +165,10 @@ class _HomePageState extends State<HomePage> {
               ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
-                // filter: {
-                //   ...globalFilter,
-                //   'date': '${date.year}-${date.month}-${date.day}'
-                // },
+                filter: programmeBlocFilter,
                 customWidget: (state) {
                   List<Programme> programmes = state.data;
+                  print("PRO ${programmes[0]}");
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -210,7 +218,7 @@ class _HomePageState extends State<HomePage> {
                               MaterialPageRoute(
                                   builder: (context) => const PratiquesPage()));
                         },
-                        child: Icon(
+                        child: const Icon(
                           Icons.arrow_outward_rounded,
                           color: primaryColor,
                         ),
@@ -272,7 +280,7 @@ class _HomePageState extends State<HomePage> {
                     topLeft: Radius.circular(spacingConstant),
                     topRight: Radius.circular(spacingConstant))),
             child: Padding(
-              padding: EdgeInsets.all(spacingConstant),
+              padding: const EdgeInsets.all(spacingConstant),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -285,7 +293,7 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: spacingConstant,
                   ),
                   Row(
@@ -301,7 +309,7 @@ class _HomePageState extends State<HomePage> {
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: spacingConstant,
                   ),
                   Row(
@@ -324,128 +332,117 @@ class _HomePageState extends State<HomePage> {
                       )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: spacingConstant,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                              decoration: BoxDecoration(
-                                  color: const Color(0xffE5DFC5),
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: SvgPicture.asset(
-                                    "assets/icons/heure.svg",
-                                    height: 15,
-                                    color: const Color(0xFFA8923B),
-                                  ))),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Durée",
-                                style: TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "${programme.duration}",
-                                style: const TextStyle(
-                                    color: Color(0xff838282), fontSize: 12),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                              decoration: BoxDecoration(
-                                  color: const Color(0xffE5DFC5),
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: SvgPicture.asset(
-                                    "assets/icons/person.svg",
-                                    height: 15,
-                                    color: const Color(0xFFA8923B),
-                                  ))),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Professeur",
-                                style: TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "${programme.professeurPratique?.professeur?.user?.name.toString().toCapitalized}",
-                                style: const TextStyle(
-                                    color: Color(0xff838282), fontSize: 12),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                              decoration: BoxDecoration(
-                                  color: const Color(0xffE5DFC5),
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: SvgPicture.asset(
-                                    "assets/icons/home2.svg",
-                                    height: 15,
-                                    color: const Color(0xFFA8923B),
-                                  ))),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                "Salle",
-                                style: TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "${programme.sallePratique?.salle?.designation.toString().toCapitalized}",
-                                style: const TextStyle(
-                                    color: Color(0xff838282), fontSize: 12),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                                decoration: BoxDecoration(
+                                    color: const Color(0xffE5DFC5),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/heure.svg",
+                                      height: 15,
+                                      color: const Color(0xFFA8923B),
+                                    ))),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Durée",
+                                  style: TextStyle(
+                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "${programme.duration}",
+                                  style: const TextStyle(
+                                      color: Color(0xff838282), fontSize: 12),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                                decoration: BoxDecoration(
+                                    color: const Color(0xffE5DFC5),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/person.svg",
+                                      height: 15,
+                                      color: const Color(0xFFA8923B),
+                                    ))),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Professeur",
+                                  style: TextStyle(
+                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "${programme.professeurPratique?.professeur?.user?.name.toString().toCapitalized}",
+                                  style: const TextStyle(
+                                      color: Color(0xff838282), fontSize: 12),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                                decoration: BoxDecoration(
+                                    color: const Color(0xffE5DFC5),
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: SvgPicture.asset(
+                                      "assets/icons/home2.svg",
+                                      height: 15,
+                                      color: const Color(0xFFA8923B),
+                                    ))),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Salle",
+                                  style: TextStyle(
+                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "${programme.sallePratique?.salle?.designation.toString().toCapitalized}",
+                                  style: const TextStyle(
+                                      color: Color(0xff838282), fontSize: 12),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(
-                    height: spacingConstant,
-                  ),
-                  Text(
-                    'Description',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: spacingConstant,
-                  ),
-                  Text(
-                    'lorem',
-                    style: TextStyle(color: Color(0xff838282), fontSize: 12),
-                  ),
-                  SizedBox(
+                  const SizedBox(
                     height: spacingConstant,
                   ),
                   // Spacer(flex: 1),
@@ -455,7 +452,7 @@ class _HomePageState extends State<HomePage> {
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
                       child: ButtonFiled(
                         text: 'Réserver',
-                        handlerPress: () => ShowBottomSheetPayment(context),
+                        handlerPress: () => ShowBottomSheetPayment(context, programme),
                       ),
                     ),
                   )
@@ -467,131 +464,154 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Future<dynamic> ShowBottomSheetPayment(BuildContext context) {
+Future<dynamic> ShowBottomSheetPayment(BuildContext context, Programme programme, {Function? customFunction}) {
+  DataBloc<List<TypePaiement>> typePaiementPushBloc = DataBloc<List<TypePaiement>>(
+          (response) => TypePaiement.fromJsonList(response),
+      TypePaiement.getEndpoint(isPagination: false),
+      isGraphQl: true,
+      isPagination: false,
+      attributeToGet: TypePaiement.shrinkedAttributs());
+
   return showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(spacingConstant), topRight: Radius.circular(spacingConstant))),
-          child: Padding(
-            padding: EdgeInsets.all(spacingConstant),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    height: 2,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        color: greyColor,
-                        borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
-                  ),
-                ),
-                SizedBox(
-                  height: spacingConstant,
-                ),
-                Center(
-                  child: Text(
-                    'Payer par '.toUpperCase(),
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(
-                  height: spacingConstant,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: greyColorL),
-                      borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(spacingConstant),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/lc.svg',
-                          height: 25,
-                        ),
-                        SizedBox(
-                          width: spacingConstant,
-                        ),
-                        Text('Ligne crédit',
-                            style: TextStyle(color: primaryColor)),
-                        Spacer(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Solde actuel',
-                                style: TextStyle(
-                                    color: primaryColor, fontSize: 12)),
-                            Text('20.000' + ' xof'.toUpperCase(),
-                                style: TextStyle(
-                                    color: primaryColor,
-                                    fontWeight: FontWeight.bold))
-                          ],
-                        )
-                      ],
+      builder: (BuildContext currentContext) {
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Container(
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(spacingConstant), topRight: Radius.circular(spacingConstant))),
+            child: Padding(
+              padding: const EdgeInsets.all(spacingConstant),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 2,
+                        width: 50,
+                        decoration: const BoxDecoration(
+                            color: greyColor,
+                            borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: spacingConstant,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: greyColorL),
-                      borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(spacingConstant),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/wv.png',
-                          height: 25,
-                        ),
-                        SizedBox(
-                          width: spacingConstant,
-                        ),
-                        Text('Wave', style: TextStyle(color: primaryColor))
-                      ],
+                    const SizedBox(
+                      height: spacingConstant,
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: spacingConstant,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: greyColorL),
-                      borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
-                  child: Padding(
-                    padding: const EdgeInsets.all(spacingConstant),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/om.png',
-                          height: 25,
-                        ),
-                        SizedBox(
-                          width: spacingConstant,
-                        ),
-                        Text('Orange Money',
-                            style: TextStyle(color: primaryColor))
-                      ],
+                    Center(
+                      child: Text(
+                        'Payer par '.toUpperCase(),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
+                    const SizedBox(
+                      height: spacingConstant,
+                    ),
+                    BlocBasedWidget<List<TypePaiement>>(
+                      customDataBloc: typePaiementPushBloc,
+                      // filter: currentFilter,
+                      useInfiniteScroller: true,
+                      customWidget: (state) {
+                        List<TypePaiement> typePaiements = state.data;
+                        return
+                          Column(
+                              children:  [
+                                const SizedBox(
+                                  height: spacingConstant,
+                                ),
+                                Wrap(
+                                    spacing: 10,
+                                    runSpacing: 10,
+                                    children: [
+                                      ...buildTypePaiementList(currentContext, typePaiements, programme),
+                                    ]
+                                ),
+                              ]
+                          );
+                      },
+                    )
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         );
       });
+}
+
+List<Widget> buildTypePaiementList(BuildContext parentContext, List<TypePaiement> typePaiements, Programme programme){
+  late PostApiBloc reservationPostBloc;
+  reservationPostBloc = PostApiBloc();
+
+  reserverCours({required Map<String, dynamic> parameters}) {
+    print("RESERVATION EN COURS $parameters");
+    reservationPostBloc.add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
+  }
+
+  return [
+    ...typePaiements.map((toElement) {
+      return BlocBuilder<AuthenticationBloc<Utilisateur>,
+          AuthenticationState<Utilisateur>>(
+          builder: (context, authState) {
+            AuthenticationStatus currentStatus = authState.status;
+            Utilisateur? user = authState.user;
+            switch (currentStatus) {
+              case AuthenticationStatus.authenticated:
+                return BlocConsumer(
+                  bloc: reservationPostBloc,
+                  listener: (context, state) {
+                    print("NEW STATE EMITTED");
+                    if (state is PostApiSuccess) {
+                      ScaffoldMessenger.of(parentContext).showSnackBar(
+                        SnackBar(
+                          content: const Text(
+                           "Réservation effectuée",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.green[400],
+                        ),
+                      );
+                    }
+                    if (state is PostApiFailure) {
+                      print("NEW STATE ${state.message}");
+                      ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(parentContext).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "${state.message}",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
+                  builder: (BuildContext context, postBlocState) {
+                    return AnimatedGestureButton(
+                      animate: postBlocState is PostApiProcessing,
+                      child: GestureDetector(
+                          onTap: (){
+                            Map<String, dynamic> parameters = {
+                              "programme": programme.id,
+                              "client": user?.id,
+                              "from_site": true,
+                              "mode_paiement_id": toElement.id,
+                            };
+                            reserverCours(parameters: parameters);
+                          },
+                          child: TypePaiementCard(typePaiement: toElement)
+                      ),
+                    );
+                  },
+                );
+              case AuthenticationStatus.unknown:
+              case AuthenticationStatus.unauthenticated:
+              case AuthenticationStatus.failure:
+                return const SizedBox();
+            }
+          });
+    }).toList(),
+  ];
 }

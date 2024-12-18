@@ -12,6 +12,7 @@ Future<Map<String, String>> getHeaders() async {
       {"Accept": "application/json", "Content-Type": "application/json"});
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? token = prefs.getString('token');
+  print("TOOKEN $token");
   if (token != null) {
     headers.addAll({"Authorization": "Bearer $token"});
   }

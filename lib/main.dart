@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:authentication_repository/authentication_repository.dart';
@@ -19,10 +20,16 @@ import 'package:yogivida_mobile/screens/Home/MainHome.dart';
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
 import 'package:yogivida_mobile/screens/Home/home_page.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
+import 'package:yogivida_mobile/simple_bloc_observer.dart';
+import 'core/global.dart';
 import 'core/models/user_model.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message");
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +37,13 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging fcm = firebaseMessagingInstance();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  Bloc.observer = SimpleBlocObserver();
+  await fcm.setAutoInitEnabled(true);
+  fcm.getToken().then((value) {
+    print("FCM TOKEN $value");
+  });
   runApp(const MyApp());
 }
 
@@ -54,6 +68,11 @@ class _MyAppState extends State<MyApp> {
         registrationUrl: "$BASE_URL$LOGIN_ENDPOINT",
         logoutUrl: "$BASE_URL$LOGIN_ENDPOINT",
         userRepository: _userRepository);
+    askForNotificationPermission();
+  }
+
+  askForNotificationPermission() async{
+    final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
   }
 
   @override

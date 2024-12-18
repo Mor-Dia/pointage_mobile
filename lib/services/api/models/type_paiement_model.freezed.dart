@@ -22,6 +22,10 @@ TypePaiement _$TypePaiementFromJson(Map<String, dynamic> json) {
 mixin _$TypePaiement {
   int? get id => throw _privateConstructorUsedError;
   String? get designation => throw _privateConstructorUsedError;
+  @JsonKey(name: "solde_disponible")
+  double? get soldeDisponible => throw _privateConstructorUsedError;
+  @JsonKey(name: "is_ligne_credit")
+  bool? get isLigneCredit => throw _privateConstructorUsedError;
 
   /// Serializes this TypePaiement to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +43,11 @@ abstract class $TypePaiementCopyWith<$Res> {
           TypePaiement value, $Res Function(TypePaiement) then) =
       _$TypePaiementCopyWithImpl<$Res, TypePaiement>;
   @useResult
-  $Res call({int? id, String? designation});
+  $Res call(
+      {int? id,
+      String? designation,
+      @JsonKey(name: "solde_disponible") double? soldeDisponible,
+      @JsonKey(name: "is_ligne_credit") bool? isLigneCredit});
 }
 
 /// @nodoc
@@ -59,6 +67,8 @@ class _$TypePaiementCopyWithImpl<$Res, $Val extends TypePaiement>
   $Res call({
     Object? id = freezed,
     Object? designation = freezed,
+    Object? soldeDisponible = freezed,
+    Object? isLigneCredit = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -69,6 +79,14 @@ class _$TypePaiementCopyWithImpl<$Res, $Val extends TypePaiement>
           ? _value.designation
           : designation // ignore: cast_nullable_to_non_nullable
               as String?,
+      soldeDisponible: freezed == soldeDisponible
+          ? _value.soldeDisponible
+          : soldeDisponible // ignore: cast_nullable_to_non_nullable
+              as double?,
+      isLigneCredit: freezed == isLigneCredit
+          ? _value.isLigneCredit
+          : isLigneCredit // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -81,7 +99,11 @@ abstract class _$$TypePaiementImplCopyWith<$Res>
       __$$TypePaiementImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? id, String? designation});
+  $Res call(
+      {int? id,
+      String? designation,
+      @JsonKey(name: "solde_disponible") double? soldeDisponible,
+      @JsonKey(name: "is_ligne_credit") bool? isLigneCredit});
 }
 
 /// @nodoc
@@ -99,6 +121,8 @@ class __$$TypePaiementImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? designation = freezed,
+    Object? soldeDisponible = freezed,
+    Object? isLigneCredit = freezed,
   }) {
     return _then(_$TypePaiementImpl(
       id: freezed == id
@@ -109,6 +133,14 @@ class __$$TypePaiementImplCopyWithImpl<$Res>
           ? _value.designation
           : designation // ignore: cast_nullable_to_non_nullable
               as String?,
+      soldeDisponible: freezed == soldeDisponible
+          ? _value.soldeDisponible
+          : soldeDisponible // ignore: cast_nullable_to_non_nullable
+              as double?,
+      isLigneCredit: freezed == isLigneCredit
+          ? _value.isLigneCredit
+          : isLigneCredit // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -116,7 +148,12 @@ class __$$TypePaiementImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$TypePaiementImpl extends _TypePaiement with DiagnosticableTreeMixin {
-  const _$TypePaiementImpl({this.id, this.designation}) : super._();
+  const _$TypePaiementImpl(
+      {this.id,
+      this.designation,
+      @JsonKey(name: "solde_disponible") this.soldeDisponible,
+      @JsonKey(name: "is_ligne_credit") this.isLigneCredit})
+      : super._();
 
   factory _$TypePaiementImpl.fromJson(Map<String, dynamic> json) =>
       _$$TypePaiementImplFromJson(json);
@@ -125,10 +162,16 @@ class _$TypePaiementImpl extends _TypePaiement with DiagnosticableTreeMixin {
   final int? id;
   @override
   final String? designation;
+  @override
+  @JsonKey(name: "solde_disponible")
+  final double? soldeDisponible;
+  @override
+  @JsonKey(name: "is_ligne_credit")
+  final bool? isLigneCredit;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'TypePaiement(id: $id, designation: $designation)';
+    return 'TypePaiement(id: $id, designation: $designation, soldeDisponible: $soldeDisponible, isLigneCredit: $isLigneCredit)';
   }
 
   @override
@@ -137,7 +180,9 @@ class _$TypePaiementImpl extends _TypePaiement with DiagnosticableTreeMixin {
     properties
       ..add(DiagnosticsProperty('type', 'TypePaiement'))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('designation', designation));
+      ..add(DiagnosticsProperty('designation', designation))
+      ..add(DiagnosticsProperty('soldeDisponible', soldeDisponible))
+      ..add(DiagnosticsProperty('isLigneCredit', isLigneCredit));
   }
 
   @override
@@ -147,12 +192,17 @@ class _$TypePaiementImpl extends _TypePaiement with DiagnosticableTreeMixin {
             other is _$TypePaiementImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.designation, designation) ||
-                other.designation == designation));
+                other.designation == designation) &&
+            (identical(other.soldeDisponible, soldeDisponible) ||
+                other.soldeDisponible == soldeDisponible) &&
+            (identical(other.isLigneCredit, isLigneCredit) ||
+                other.isLigneCredit == isLigneCredit));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, designation);
+  int get hashCode =>
+      Object.hash(runtimeType, id, designation, soldeDisponible, isLigneCredit);
 
   /// Create a copy of TypePaiement
   /// with the given fields replaced by the non-null parameter values.
@@ -171,7 +221,11 @@ class _$TypePaiementImpl extends _TypePaiement with DiagnosticableTreeMixin {
 }
 
 abstract class _TypePaiement extends TypePaiement {
-  const factory _TypePaiement({final int? id, final String? designation}) =
+  const factory _TypePaiement(
+          {final int? id,
+          final String? designation,
+          @JsonKey(name: "solde_disponible") final double? soldeDisponible,
+          @JsonKey(name: "is_ligne_credit") final bool? isLigneCredit}) =
       _$TypePaiementImpl;
   const _TypePaiement._() : super._();
 
@@ -182,6 +236,12 @@ abstract class _TypePaiement extends TypePaiement {
   int? get id;
   @override
   String? get designation;
+  @override
+  @JsonKey(name: "solde_disponible")
+  double? get soldeDisponible;
+  @override
+  @JsonKey(name: "is_ligne_credit")
+  bool? get isLigneCredit;
 
   /// Create a copy of TypePaiement
   /// with the given fields replaced by the non-null parameter values.

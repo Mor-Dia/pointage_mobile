@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-const Color primaryColor = const Color(0xff15274D);
-const Color greyColor = const Color(0xffD9D9D9);
-const Color greyColorL = const Color(0xffF1F1F1);
-const Color secondColor = const Color(0xffA8923B);
+const Color primaryColor = Color(0xff15274D);
+const Color greyColor = Color(0xffD9D9D9);
+const Color greyColorL = Color(0xffF1F1F1);
+const Color secondColor = Color(0xffA8923B);
 
 const Color successColor = Color(0xff37BC9B);
 const Color dangerColor = Color(0xffDA4453);
@@ -40,8 +40,9 @@ const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
 const LOGOUT_ENDPOINT = "deconnexion";
 const REQUEST_PWD_ENDPOINT = "password-reset";
+const BASE_URL = 'https://0c58-41-214-3-207.ngrok-free.app/yogivida_back/public/';
 // const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
-const BASE_URL = 'http://localhost/yogivida_back/public/'; //NE TOUCHE PAS A CA ULYSSE !!!!!!!!!
+// const BASE_URL = 'http://localhost/yogivida_back/public/'; //NE TOUCHE PAS A CA ULYSSE !!!!!!!!!
 const BASE_URL_QGL = '${BASE_URL}graphql?query=';
 
 class UserClass {
