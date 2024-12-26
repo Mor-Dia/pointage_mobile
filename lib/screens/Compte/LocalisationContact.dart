@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+// import 'package:latlong2/latlong.dart' as latLng;
+import 'package:latlong2/latlong.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,14 +14,10 @@ class LocalisationContact extends StatefulWidget {
 }
 
 class _LocalisationContactState extends State<LocalisationContact> {
-  late GoogleMapController mapController;
 
   final LatLng _center =
       const LatLng(14.692, -17.4474); // Coordonnées approximatives de Dakar
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
 
   final String phoneNumber = "+221774567890"; // Remplace par ton numéro
 
@@ -38,27 +36,31 @@ class _LocalisationContactState extends State<LocalisationContact> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body:
+      Stack(
         children: [
-          // Google Map
-          GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(
-              target: _center,
-              zoom: 15.0,
+          FlutterMap(
+            options: MapOptions(
+              initialCenter: _center,
+              initialZoom: 15,
             ),
-            markers: {
-              Marker(
-                markerId: const MarkerId('yogi_vida'),
-                position: _center,
-                infoWindow: const InfoWindow(
-                  title: 'YOGI VIDA',
-                  snippet: '137 rue Moussè Diop x rue Jules Ferry',
-                ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               ),
-            },
+              MarkerLayer(
+                markers: [
+                  Marker(
+                    point: _center,
+                    width: 80,
+                    height: 80,
+                    rotate: true,
+                    child: const Icon(Icons.pin_drop, color: Colors.red, size: 70),
+                  ),
+                ],
+              ),
+            ],
           ),
-          // Back button
           Positioned(
             top: 40.0,
             left: 10.0,
@@ -66,7 +68,7 @@ class _LocalisationContactState extends State<LocalisationContact> {
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(8)),
               child: IconButton(
-                icon: Icon(Icons.arrow_back, color: primaryColor),
+                icon: const Icon(Icons.arrow_back, color: primaryColor),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -105,10 +107,10 @@ class _LocalisationContactState extends State<LocalisationContact> {
                           ))
                         ]),
                     const SizedBox(height: 8.0),
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.location_on, color: primaryColor),
-                        const SizedBox(width: 8.0),
+                        SizedBox(width: 8.0),
                         Expanded(
                           child: Text(
                             '137 rue Moussè Diop x rue Jules Ferry',
@@ -118,10 +120,10 @@ class _LocalisationContactState extends State<LocalisationContact> {
                       ],
                     ),
                     const SizedBox(height: 8.0),
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.phone, color: primaryColor),
-                        const SizedBox(width: 8.0),
+                        SizedBox(width: 8.0),
                         Text(
                           '+221 33 822 60 35',
                           style: TextStyle(color: primaryColor),
@@ -129,10 +131,10 @@ class _LocalisationContactState extends State<LocalisationContact> {
                       ],
                     ),
                     const SizedBox(height: 8.0),
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.email, color: primaryColor),
-                        const SizedBox(width: 8.0),
+                        SizedBox(width: 8.0),
                         Text(
                           'yogivida18@gmail.com',
                           style: TextStyle(color: primaryColor),

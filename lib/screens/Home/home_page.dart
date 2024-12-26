@@ -168,7 +168,6 @@ class _HomePageState extends State<HomePage> {
                 filter: programmeBlocFilter,
                 customWidget: (state) {
                   List<Programme> programmes = state.data;
-                  print("PRO ${programmes[0]}");
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -373,6 +372,7 @@ class _HomePageState extends State<HomePage> {
                             )
                           ],
                         ),
+                        const SizedBox.square(dimension: 10,),
                         Row(
                           children: [
                             Container(
@@ -406,6 +406,7 @@ class _HomePageState extends State<HomePage> {
                             )
                           ],
                         ),
+                        const SizedBox.square(dimension: 10,),
                         Row(
                           children: [
                             Container(
@@ -546,7 +547,6 @@ List<Widget> buildTypePaiementList(BuildContext parentContext, List<TypePaiement
   reservationPostBloc = PostApiBloc();
 
   reserverCours({required Map<String, dynamic> parameters}) {
-    print("RESERVATION EN COURS $parameters");
     reservationPostBloc.add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
   }
 
@@ -562,12 +562,11 @@ List<Widget> buildTypePaiementList(BuildContext parentContext, List<TypePaiement
                 return BlocConsumer(
                   bloc: reservationPostBloc,
                   listener: (context, state) {
-                    print("NEW STATE EMITTED");
                     if (state is PostApiSuccess) {
                       ScaffoldMessenger.of(parentContext).showSnackBar(
                         SnackBar(
-                          content: const Text(
-                           "Réservation effectuée",
+                          content: Text(
+                           "${state.message}",
                             style: TextStyle(color: Colors.white),
                           ),
                           backgroundColor: Colors.green[400],

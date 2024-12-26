@@ -90,7 +90,7 @@ class _MonCompteState extends State<MonCompte> {
                       children: <Widget>[
                         GestureDetector(
                           onTap: () => Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Update())),
+                              MaterialPageRoute(builder: (context) => const Update())),
                           child: Container(
                             height: 50,
                             width: 45,
@@ -265,10 +265,10 @@ class _MonCompteState extends State<MonCompte> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => LocalisationContact()),
+                              builder: (context) => const LocalisationContact()),
                         ),
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               border: Border(
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(

@@ -78,23 +78,23 @@ class _CardPratiqueState extends State<CardPratique> {
                 child: CustomCachedNetworkImage(imageUrl: widget.data.image ?? '', fallBackAsset: 'assets/images/pratique_fallback.png')
               ),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: widget.handlePress,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 40),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                backgroundColor: const Color(0xff15274d),
-              ),
-              child: Text(
-                'Reserver',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: textminConstant),
-              ),
-            )
+            // const SizedBox(height: 10),
+            // ElevatedButton(
+            //   onPressed: widget.handlePress,
+            //   style: ElevatedButton.styleFrom(
+            //     minimumSize: const Size(double.infinity, 40),
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(15),
+            //     ),
+            //     backgroundColor: const Color(0xff15274d),
+            //   ),
+            //   child: Text(
+            //     'Reserver',
+            //     style: TextStyle(
+            //         color: Colors.white,
+            //         fontSize: textminConstant),
+            //   ),
+            // )
           ],
         ),
       ),

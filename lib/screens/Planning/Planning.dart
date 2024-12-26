@@ -234,7 +234,7 @@ class _PlanningState extends State<Planning> {
                   bool canLoadNewData = state.canLoadNewData;
 
                   if (programmes.isEmpty) {
-                    return Center(child: Text('Aucune activitées programmées'));
+                    return Center(child: const Text('Aucune activitées programmées'));
                   }
                   List<dynamic> dataFiltered = programmes
                       .where((element) => element
@@ -244,7 +244,7 @@ class _PlanningState extends State<Planning> {
                           .startsWith(designationFilter.text.toLowerCase()))
                       .toList();
                   if (dataFiltered.isEmpty) {
-                    return Center(child: Text('Aucune activitées trouvées'));
+                    return const Center(child: Text('Aucune activitées trouvées'));
                   }
                   return Column(
                     children: [
