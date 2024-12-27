@@ -26,5 +26,15 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:574310982609:ios:a261b43e0615a713de76f0</string>
+	
+
+	<key>UIBackgroundModes</key>
+	<array>
+	<string>fetch</string>
+	<string>remote-notification</string>
+	</array>
+
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Nous avons besoin de votre permission pour vous envoyer des notifications</string>
 </dict>
 </plist>
