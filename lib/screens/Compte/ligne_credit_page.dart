@@ -14,16 +14,11 @@ import '../../services/authentication_bloc/authentication_bloc.dart';
 import '../../services/data_bloc/bloc/data_bloc.dart';
 import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 
-class LigneCreditPage extends StatefulWidget {
-  const LigneCreditPage({super.key});
-
-  @override
-  State<LigneCreditPage> createState() => _LigneCreditPageState();
-}
-
 class _LigneCreditPageState extends State<LigneCreditPage> {
+
   late DataBloc<List<LigneCredit>> lcBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
+  bool hide = false;
 
   @override
   void initState() {
@@ -36,8 +31,13 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
 
     super.initState();
   }
-  
-  bool hide = false;
+
+  hideAndShowBalance(){
+    setState(() {
+      hide = !hide;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +106,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                                         style: TextStyle(fontSize: 13, color: primaryColor)
                                     ),
                                     Text(
-                                        "${solde} XOF",
+                                        hide? "*******" : "${solde} XOF",
                                         style: const TextStyle(
                                             fontSize: 16,
                                             color: primaryColor,
@@ -116,11 +116,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                                   ],
                                 ),
                                 IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      hide = !hide;
-                                    });
-                                  },
+                                  onPressed: hideAndShowBalance,
                                   icon: Icon(
                                     hide ? Icons.visibility_off : Icons.remove_red_eye,
                                     size: spacingConstant,
@@ -190,4 +186,11 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
       ),
     );
   }
+}
+
+class LigneCreditPage extends StatefulWidget {
+  const LigneCreditPage({super.key});
+
+  @override
+  State<LigneCreditPage> createState() => _LigneCreditPageState();
 }
