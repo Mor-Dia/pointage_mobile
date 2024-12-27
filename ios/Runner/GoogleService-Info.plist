@@ -27,7 +27,6 @@
 	<key>GOOGLE_APP_ID</key>
 	<string>1:574310982609:ios:a261b43e0615a713de76f0</string>
 	
-
 	<key>UIBackgroundModes</key>
 	<array>
 	<string>fetch</string>
