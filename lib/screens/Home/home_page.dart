@@ -20,6 +20,7 @@ import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 
 import '../../components/animated_gesture_detector.dart';
 import '../../core/models/user_model.dart';
+import '../../services/api/models/notificationpush_model.dart';
 import '../../services/api/models/programme_model.dart';
 import '../../services/api/models/type_paiement_model.dart';
 import '../../services/authentication_bloc/authentication_bloc.dart';
@@ -35,6 +36,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
   late DataBloc<List<Programme>> programmeBloc;
+  late DataBloc<List<NotificationPush>> notificationPushBloc;
   Map<String, dynamic> globalFilter = {"count": 5};
   Map<String, dynamic> programmeBlocFilter = {"is_front": true};
   final DateTime date = DateTime.now();
@@ -53,6 +55,13 @@ class _HomePageState extends State<HomePage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Programme.shrinkedAttributs());
+
+    notificationPushBloc = DataBloc<List<NotificationPush>>(
+            (response) => NotificationPush.fromJsonList(response),
+        NotificationPush.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: NotificationPush.shrinkedAttributs());
     super.initState();
   }
 
@@ -99,37 +108,44 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Positioned(
-                    right: -5,
+                    right: 0,
                     top: -5,
                     child: Container(
                       width: spacingConstant,
                       height: spacingConstant,
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
-                          color: primaryColor,
+                          color: Colors.red,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(width: 1.5, color: Colors.white)),
-                      constraints: const BoxConstraints(
-                        minWidth: spacingConstant,
-                        minHeight: spacingConstant,
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            '8', // Remplacez '3' par le nombre de notifications dynamiquement
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                          border: Border.all(width: 1, color: Colors.white)),
+                      // constraints: const BoxConstraints(
+                      //   minWidth: spacingConstant,
+                      //   minHeight: spacingConstant,
+                      // ),
+                      child: Center(
+                        child: BlocBasedWidget<List<NotificationPush>>(
+                          customDataBloc: notificationPushBloc,
+                          useInfiniteScroller: true,
+                          customWidget: (state, ) {
+                            Map<String, dynamic> metadata = state.metadata;
+                            dynamic totalNotifs = metadata['total'];
+                            print("NOTIF TOTAL ${totalNotifs}");
+                            return
+                              Text(
+                                "${totalNotifs}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  // overflow: TextOverflow.ellipsis,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              );
+                          },
+                        ),
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
