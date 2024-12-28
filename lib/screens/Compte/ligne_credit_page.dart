@@ -15,7 +15,6 @@ import '../../services/data_bloc/bloc/data_bloc.dart';
 import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 
 class _LigneCreditPageState extends State<LigneCreditPage> {
-
   late DataBloc<List<LigneCredit>> lcBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
   bool hide = false;
@@ -23,7 +22,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
   @override
   void initState() {
     lcBloc = DataBloc<List<LigneCredit>>(
-            (response) => LigneCredit.fromJsonList(response),
+        (response) => LigneCredit.fromJsonList(response),
         LigneCredit.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
@@ -32,7 +31,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
     super.initState();
   }
 
-  hideAndShowBalance(){
+  hideAndShowBalance() {
     setState(() {
       hide = !hide;
     });
@@ -84,55 +83,53 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: greyColor),
                     borderRadius: BorderRadius.circular(8)),
-                child: BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+                child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                        AuthenticationState<Utilisateur>>(
                     builder: (context, authState) {
-                      AuthenticationStatus currentStatus = authState.status;
-                      // dynamic solde = authState.user?.solde;
-                      dynamic solde = "15 0000";
-                      switch(currentStatus){
-                        case AuthenticationStatus.authenticated:
-                          return Padding(
-                            padding:
-                            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  AuthenticationStatus currentStatus = authState.status;
+                  // dynamic solde = authState.user?.solde;
+                  dynamic solde = "15 0000";
+                  switch (currentStatus) {
+                    case AuthenticationStatus.authenticated:
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                        'Solde',
-                                        style: TextStyle(fontSize: 13, color: primaryColor)
-                                    ),
-                                    Text(
-                                        hide? "*******" : "${solde} XOF",
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            color: primaryColor,
-                                            fontWeight: FontWeight.bold
-                                        )
-                                    )
-                                  ],
-                                ),
-                                IconButton(
-                                  onPressed: hideAndShowBalance,
-                                  icon: Icon(
-                                    hide ? Icons.visibility_off : Icons.remove_red_eye,
-                                    size: spacingConstant,
-                                    color: const Color(0xff15274d),
-                                  ),
-                                ),
+                                const Text('Solde',
+                                    style: TextStyle(
+                                        fontSize: 13, color: primaryColor)),
+                                Text(hide ? "*******" : "${solde} XOF",
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        color: primaryColor,
+                                        fontWeight: FontWeight.bold))
                               ],
                             ),
-                          );
-                        case AuthenticationStatus.unknown:
-                        case AuthenticationStatus.unauthenticated:
-                        case AuthenticationStatus.failure:
-                          return const Center(child: PleaseLoginWidget());
-                      }
-                    }
-                ),
+                            IconButton(
+                              onPressed: hideAndShowBalance,
+                              icon: Icon(
+                                hide
+                                    ? Icons.visibility_off
+                                    : Icons.remove_red_eye,
+                                size: spacingConstant,
+                                color: const Color(0xff15274d),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    case AuthenticationStatus.unknown:
+                    case AuthenticationStatus.unauthenticated:
+                    case AuthenticationStatus.failure:
+                      return const Center(child: PleaseLoginWidget());
+                  }
+                }),
               ),
             ),
             const SizedBox(
@@ -148,39 +145,37 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
             const SizedBox(
               height: spacingConstant,
             ),
-            Expanded(
-              child: BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
-                  builder: (context, authState) {
-                    AuthenticationStatus currentStatus = authState.status;
-                    int? clientId = authState.user?.id;
-                    switch(currentStatus){
-                      case AuthenticationStatus.authenticated:
-                        return BlocBasedWidget<List<LigneCredit>>(
-                          customDataBloc: lcBloc,
-                          filter: {...globalFilter, "client_id":clientId  },
-                          useInfiniteScroller: true,
-                          customWidget: (state) {
-                            List<LigneCredit> lcs = state.data;
-                            return Column(
-                                children:  [
-                                  const SizedBox(
-                                    height: spacingConstant,
-                                  ),
-                                  ...lcs
-                                      .map((toElement) => CardLignecredit(ligneCredit: toElement,))
-                                      .toList(),
-                                ]
-                            );
-                          },
-                        );
-                      case AuthenticationStatus.unknown:
-                      case AuthenticationStatus.unauthenticated:
-                      case AuthenticationStatus.failure:
-                        return const Center(child: PleaseLoginWidget());
-                    }
-                  }
-              )
-            )
+            Expanded(child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                    AuthenticationState<Utilisateur>>(
+                builder: (context, authState) {
+              AuthenticationStatus currentStatus = authState.status;
+              int? clientId = authState.user?.id;
+              switch (currentStatus) {
+                case AuthenticationStatus.authenticated:
+                  return BlocBasedWidget<List<LigneCredit>>(
+                    customDataBloc: lcBloc,
+                    filter: {...globalFilter, "client_id": clientId},
+                    useInfiniteScroller: true,
+                    customWidget: (state) {
+                      List<LigneCredit> lcs = state.data;
+                      return Column(children: [
+                        const SizedBox(
+                          height: spacingConstant,
+                        ),
+                        ...lcs
+                            .map((toElement) => CardLignecredit(
+                                  ligneCredit: toElement,
+                                ))
+                            .toList(),
+                      ]);
+                    },
+                  );
+                case AuthenticationStatus.unknown:
+                case AuthenticationStatus.unauthenticated:
+                case AuthenticationStatus.failure:
+                  return const Center(child: PleaseLoginWidget());
+              }
+            }))
           ],
         ),
       ),
