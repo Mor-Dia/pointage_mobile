@@ -11,6 +11,8 @@ import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
+import '../../services/api/models/notificationpush_model.dart';
+
 class Planning extends StatefulWidget {
   const Planning({super.key});
 
@@ -23,6 +25,7 @@ class _PlanningState extends State<Planning> {
   late DataBloc<List<Programme>> programmeBloc;
   final List<String> options = [];
   TextEditingController designationFilter = TextEditingController();
+  late DataBloc<List<NotificationPush>> notificationPushBloc;
 
   final DateTime date = new DateTime.now();
 
@@ -37,6 +40,14 @@ class _PlanningState extends State<Planning> {
 
     programmeBloc.add(FetchDataEvent(
         filter: {'date': '${date.year}-${date.month}-${date.day}'}));
+
+    notificationPushBloc = DataBloc<List<NotificationPush>>(
+        (response) => NotificationPush.fromJsonList(response),
+        NotificationPush.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: NotificationPush.shrinkedAttributs());
+
     super.initState();
   }
 
@@ -100,38 +111,45 @@ class _PlanningState extends State<Planning> {
                       ),
                     ),
                     Positioned(
-                      right: -5,
+                      right: 0,
                       top: -5,
                       child: Container(
                         width: spacingConstant,
                         height: spacingConstant,
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                            color: primaryColor,
+                            color: Colors.red,
                             borderRadius: BorderRadius.circular(10),
-                            border:
-                                Border.all(width: 1.5, color: Colors.white)),
-                        constraints: const BoxConstraints(
-                          minWidth: spacingConstant,
-                          minHeight: spacingConstant,
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              '8', // Remplacez '3' par le nombre de notifications dynamiquement
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                            border: Border.all(width: 1, color: Colors.white)),
+                        // constraints: const BoxConstraints(
+                        //   minWidth: spacingConstant,
+                        //   minHeight: spacingConstant,
+                        // ),
+                        child: Center(
+                          child: BlocBasedWidget<List<NotificationPush>>(
+                            customDataBloc: notificationPushBloc,
+                            useInfiniteScroller: true,
+                            customWidget: (
+                              state,
+                            ) {
+                              Map<String, dynamic> metadata = state.metadata;
+                              dynamic totalNotifs = metadata['total'];
+                              print("NOTIF TOTAL ${totalNotifs}");
+                              return Text(
+                                "${totalNotifs}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  // overflow: TextOverflow.ellipsis,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -152,7 +170,8 @@ class _PlanningState extends State<Planning> {
                 height: spacingConstant,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: spacingConstant),
                 child: Row(
                   children: [
                     Expanded(
@@ -234,7 +253,8 @@ class _PlanningState extends State<Planning> {
                   bool canLoadNewData = state.canLoadNewData;
 
                   if (programmes.isEmpty) {
-                    return Center(child: const Text('Aucune activitées programmées'));
+                    return Center(
+                        child: const Text('Aucune activitées programmées'));
                   }
                   List<dynamic> dataFiltered = programmes
                       .where((element) => element
@@ -244,7 +264,8 @@ class _PlanningState extends State<Planning> {
                           .startsWith(designationFilter.text.toLowerCase()))
                       .toList();
                   if (dataFiltered.isEmpty) {
-                    return const Center(child: Text('Aucune activitées trouvées'));
+                    return const Center(
+                        child: Text('Aucune activitées trouvées'));
                   }
                   return Column(
                     children: [
@@ -331,7 +352,8 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                 child: Container(
                   width: 60,
                   margin: index == 0
-                      ? const EdgeInsets.only(right: spacingConstant, left: spacingConstant)
+                      ? const EdgeInsets.only(
+                          right: spacingConstant, left: spacingConstant)
                       : const EdgeInsets.only(right: spacingConstant),
                   decoration: BoxDecoration(
                     color: isSelected ? const Color(0xffA8923B) : Colors.white,

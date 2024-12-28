@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
         attributeToGet: Programme.shrinkedAttributs());
 
     notificationPushBloc = DataBloc<List<NotificationPush>>(
-            (response) => NotificationPush.fromJsonList(response),
+        (response) => NotificationPush.fromJsonList(response),
         NotificationPush.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
@@ -126,21 +126,22 @@ class _HomePageState extends State<HomePage> {
                         child: BlocBasedWidget<List<NotificationPush>>(
                           customDataBloc: notificationPushBloc,
                           useInfiniteScroller: true,
-                          customWidget: (state, ) {
+                          customWidget: (
+                            state,
+                          ) {
                             Map<String, dynamic> metadata = state.metadata;
                             dynamic totalNotifs = metadata['total'];
                             print("NOTIF TOTAL ${totalNotifs}");
-                            return
-                              Text(
-                                "${totalNotifs}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  // overflow: TextOverflow.ellipsis,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              );
+                            return Text(
+                              "${totalNotifs}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                // overflow: TextOverflow.ellipsis,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            );
                           },
                         ),
                       ),
@@ -166,7 +167,8 @@ class _HomePageState extends State<HomePage> {
                 height: spacingConstant,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
+                padding: const EdgeInsets.only(
+                    left: spacingConstant, right: spacingConstant),
                 child: Container(
                   child: Text(
                     "Votre activité du jour",
@@ -215,7 +217,8 @@ class _HomePageState extends State<HomePage> {
                 height: spacingConstant,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
+                padding: const EdgeInsets.only(
+                    left: spacingConstant, right: spacingConstant),
                 child: Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -264,7 +267,8 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     CardPratique(
                                       data: toElement,
-                                      handlePress: () => ShowBottomSheet(context),
+                                      handlePress: () =>
+                                          ShowBottomSheet(context),
                                     )
                                   ],
                                 ))
@@ -305,7 +309,8 @@ class _HomePageState extends State<HomePage> {
                       width: 50,
                       decoration: const BoxDecoration(
                           color: greyColor,
-                          borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(spacingConstant))),
                     ),
                   ),
                   const SizedBox(
@@ -339,11 +344,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                       Text(
                         "${programme.heureDebut}",
-                        style: const TextStyle(color: Color(0xff838282), fontSize: 12),
+                        style: const TextStyle(
+                            color: Color(0xff838282), fontSize: 12),
                       ),
                       Text(
                         " - ${programme.heureFin}",
-                        style: const TextStyle(color: Color(0xff838282), fontSize: 12),
+                        style: const TextStyle(
+                            color: Color(0xff838282), fontSize: 12),
                       )
                     ],
                   ),
@@ -377,7 +384,8 @@ class _HomePageState extends State<HomePage> {
                                 const Text(
                                   "Durée",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "${programme.duration}",
@@ -388,7 +396,9 @@ class _HomePageState extends State<HomePage> {
                             )
                           ],
                         ),
-                        const SizedBox.square(dimension: 10,),
+                        const SizedBox.square(
+                          dimension: 10,
+                        ),
                         Row(
                           children: [
                             Container(
@@ -411,7 +421,8 @@ class _HomePageState extends State<HomePage> {
                                 const Text(
                                   "Professeur",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "${programme.professeurPratique?.professeur?.user?.name.toString().toCapitalized}",
@@ -422,7 +433,9 @@ class _HomePageState extends State<HomePage> {
                             )
                           ],
                         ),
-                        const SizedBox.square(dimension: 10,),
+                        const SizedBox.square(
+                          dimension: 10,
+                        ),
                         Row(
                           children: [
                             Container(
@@ -445,7 +458,8 @@ class _HomePageState extends State<HomePage> {
                                 const Text(
                                   "Salle",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "${programme.sallePratique?.salle?.designation.toString().toCapitalized}",
@@ -469,7 +483,8 @@ class _HomePageState extends State<HomePage> {
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
                       child: ButtonFiled(
                         text: 'Réserver',
-                        handlerPress: () => ShowBottomSheetPayment(context, programme),
+                        handlerPress: () =>
+                            ShowBottomSheetPayment(context, programme),
                       ),
                     ),
                   )
@@ -481,13 +496,16 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Future<dynamic> ShowBottomSheetPayment(BuildContext context, Programme programme, {Function? customFunction}) {
-  DataBloc<List<TypePaiement>> typePaiementPushBloc = DataBloc<List<TypePaiement>>(
+Future<dynamic> ShowBottomSheetPayment(
+    BuildContext context, Programme programme,
+    {Function? customFunction}) {
+  DataBloc<List<TypePaiement>> typePaiementPushBloc =
+      DataBloc<List<TypePaiement>>(
           (response) => TypePaiement.fromJsonList(response),
-      TypePaiement.getEndpoint(isPagination: false),
-      isGraphQl: true,
-      isPagination: false,
-      attributeToGet: TypePaiement.shrinkedAttributs());
+          TypePaiement.getEndpoint(isPagination: false),
+          isGraphQl: true,
+          isPagination: false,
+          attributeToGet: TypePaiement.shrinkedAttributs());
 
   return showModalBottomSheet(
       context: context,
@@ -498,7 +516,8 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context, Programme programme
             decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(spacingConstant), topRight: Radius.circular(spacingConstant))),
+                    topLeft: Radius.circular(spacingConstant),
+                    topRight: Radius.circular(spacingConstant))),
             child: Padding(
               padding: const EdgeInsets.all(spacingConstant),
               child: SingleChildScrollView(
@@ -511,7 +530,8 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context, Programme programme
                         width: 50,
                         decoration: const BoxDecoration(
                             color: greyColor,
-                            borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(spacingConstant))),
                       ),
                     ),
                     const SizedBox(
@@ -532,21 +552,15 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context, Programme programme
                       useInfiniteScroller: true,
                       customWidget: (state) {
                         List<TypePaiement> typePaiements = state.data;
-                        return
-                          Column(
-                              children:  [
-                                const SizedBox(
-                                  height: spacingConstant,
-                                ),
-                                Wrap(
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: [
-                                      ...buildTypePaiementList(currentContext, typePaiements, programme),
-                                    ]
-                                ),
-                              ]
-                          );
+                        return Column(children: [
+                          const SizedBox(
+                            height: spacingConstant,
+                          ),
+                          Wrap(spacing: 10, runSpacing: 10, children: [
+                            ...buildTypePaiementList(
+                                currentContext, typePaiements, programme),
+                          ]),
+                        ]);
                       },
                     )
                   ],
@@ -558,75 +572,75 @@ Future<dynamic> ShowBottomSheetPayment(BuildContext context, Programme programme
       });
 }
 
-List<Widget> buildTypePaiementList(BuildContext parentContext, List<TypePaiement> typePaiements, Programme programme){
+List<Widget> buildTypePaiementList(BuildContext parentContext,
+    List<TypePaiement> typePaiements, Programme programme) {
   late PostApiBloc reservationPostBloc;
   reservationPostBloc = PostApiBloc();
 
   reserverCours({required Map<String, dynamic> parameters}) {
-    reservationPostBloc.add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
+    reservationPostBloc
+        .add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
   }
 
   return [
     ...typePaiements.map((toElement) {
       return BlocBuilder<AuthenticationBloc<Utilisateur>,
-          AuthenticationState<Utilisateur>>(
-          builder: (context, authState) {
-            AuthenticationStatus currentStatus = authState.status;
-            Utilisateur? user = authState.user;
-            switch (currentStatus) {
-              case AuthenticationStatus.authenticated:
-                return BlocConsumer(
-                  bloc: reservationPostBloc,
-                  listener: (context, state) {
-                    if (state is PostApiSuccess) {
-                      ScaffoldMessenger.of(parentContext).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                           "${state.message}",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          backgroundColor: Colors.green[400],
-                        ),
-                      );
-                    }
-                    if (state is PostApiFailure) {
-                      print("NEW STATE ${state.message}");
-                      ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                      ScaffoldMessenger.of(parentContext).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "${state.message}",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                  },
-                  builder: (BuildContext context, postBlocState) {
-                    return AnimatedGestureButton(
-                      animate: postBlocState is PostApiProcessing,
-                      child: GestureDetector(
-                          onTap: (){
-                            Map<String, dynamic> parameters = {
-                              "programme": programme.id,
-                              "client": user?.id,
-                              "from_site": true,
-                              "mode_paiement_id": toElement.id,
-                            };
-                            reserverCours(parameters: parameters);
-                          },
-                          child: TypePaiementCard(typePaiement: toElement)
+          AuthenticationState<Utilisateur>>(builder: (context, authState) {
+        AuthenticationStatus currentStatus = authState.status;
+        Utilisateur? user = authState.user;
+        switch (currentStatus) {
+          case AuthenticationStatus.authenticated:
+            return BlocConsumer(
+              bloc: reservationPostBloc,
+              listener: (context, state) {
+                if (state is PostApiSuccess) {
+                  ScaffoldMessenger.of(parentContext).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "${state.message}",
+                        style: TextStyle(color: Colors.white),
                       ),
-                    );
-                  },
+                      backgroundColor: Colors.green[400],
+                    ),
+                  );
+                }
+                if (state is PostApiFailure) {
+                  print("NEW STATE ${state.message}");
+                  ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(parentContext).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "${state.message}",
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              builder: (BuildContext context, postBlocState) {
+                return AnimatedGestureButton(
+                  animate: postBlocState is PostApiProcessing,
+                  child: GestureDetector(
+                      onTap: () {
+                        Map<String, dynamic> parameters = {
+                          "programme": programme.id,
+                          "client": user?.id,
+                          "from_site": true,
+                          "mode_paiement_id": toElement.id,
+                        };
+                        reserverCours(parameters: parameters);
+                      },
+                      child: TypePaiementCard(typePaiement: toElement)),
                 );
-              case AuthenticationStatus.unknown:
-              case AuthenticationStatus.unauthenticated:
-              case AuthenticationStatus.failure:
-                return const SizedBox();
-            }
-          });
+              },
+            );
+          case AuthenticationStatus.unknown:
+          case AuthenticationStatus.unauthenticated:
+          case AuthenticationStatus.failure:
+            return const SizedBox();
+        }
+      });
     }).toList(),
   ];
 }
