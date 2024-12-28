@@ -27,6 +27,7 @@ mixin _$Utilisateur {
   String? get token => throw _privateConstructorUsedError;
   String? get nom_complet => throw _privateConstructorUsedError;
   dynamic get ca_souscription => throw _privateConstructorUsedError;
+  @JsonKey(name: "current_credit")
   dynamic get solde => throw _privateConstructorUsedError;
 
   /// Serializes this Utilisateur to a JSON map.
@@ -53,7 +54,7 @@ abstract class $UtilisateurCopyWith<$Res> {
       String? token,
       String? nom_complet,
       dynamic ca_souscription,
-      dynamic solde});
+      @JsonKey(name: "current_credit") dynamic solde});
 }
 
 /// @nodoc
@@ -133,7 +134,7 @@ abstract class _$$UtilisateurImplCopyWith<$Res>
       String? token,
       String? nom_complet,
       dynamic ca_souscription,
-      dynamic solde});
+      @JsonKey(name: "current_credit") dynamic solde});
 }
 
 /// @nodoc
@@ -206,7 +207,7 @@ class _$UtilisateurImpl extends _Utilisateur with DiagnosticableTreeMixin {
       this.token,
       this.nom_complet,
       this.ca_souscription,
-      this.solde})
+      @JsonKey(name: "current_credit") this.solde})
       : super._();
 
   factory _$UtilisateurImpl.fromJson(Map<String, dynamic> json) =>
@@ -227,6 +228,7 @@ class _$UtilisateurImpl extends _Utilisateur with DiagnosticableTreeMixin {
   @override
   final dynamic ca_souscription;
   @override
+  @JsonKey(name: "current_credit")
   final dynamic solde;
 
   @override
@@ -297,14 +299,15 @@ class _$UtilisateurImpl extends _Utilisateur with DiagnosticableTreeMixin {
 
 abstract class _Utilisateur extends Utilisateur {
   const factory _Utilisateur(
-      {final int? id,
-      final String? nom,
-      final String? prenom,
-      final String? email,
-      final String? token,
-      final String? nom_complet,
-      final dynamic ca_souscription,
-      final dynamic solde}) = _$UtilisateurImpl;
+          {final int? id,
+          final String? nom,
+          final String? prenom,
+          final String? email,
+          final String? token,
+          final String? nom_complet,
+          final dynamic ca_souscription,
+          @JsonKey(name: "current_credit") final dynamic solde}) =
+      _$UtilisateurImpl;
   const _Utilisateur._() : super._();
 
   factory _Utilisateur.fromJson(Map<String, dynamic> json) =
@@ -325,6 +328,7 @@ abstract class _Utilisateur extends Utilisateur {
   @override
   dynamic get ca_souscription;
   @override
+  @JsonKey(name: "current_credit")
   dynamic get solde;
 
   /// Create a copy of Utilisateur

@@ -17,6 +17,7 @@ import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 class _LigneCreditPageState extends State<LigneCreditPage> {
 
   late DataBloc<List<LigneCredit>> lcBloc;
+  late DataBloc<List<Utilisateur>> utilisateurBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
   bool hide = false;
 
@@ -28,6 +29,13 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: LigneCredit.shrinkedAttributs());
+
+    utilisateurBloc = DataBloc<List<Utilisateur>>(
+            (response) => Utilisateur.fromJsonList(response),
+        Utilisateur.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: Utilisateur.shrinkedAttributs());
 
     super.initState();
   }
@@ -87,8 +95,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                 child: BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
                     builder: (context, authState) {
                       AuthenticationStatus currentStatus = authState.status;
-                      // dynamic solde = authState.user?.solde;
-                      dynamic solde = "15 0000";
+                      Utilisateur? currentUser = authState.user;
                       switch(currentStatus){
                         case AuthenticationStatus.authenticated:
                           return Padding(
@@ -105,13 +112,22 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                                         'Solde',
                                         style: TextStyle(fontSize: 13, color: primaryColor)
                                     ),
-                                    Text(
-                                        hide? "*******" : "${solde} XOF",
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            color: primaryColor,
-                                            fontWeight: FontWeight.bold
-                                        )
+                                    BlocBasedWidget<List<Utilisateur>>(
+                                      customDataBloc: utilisateurBloc,
+                                      filter: {"id": currentUser?.id},
+                                      customWidget: (state) {
+                                        List<Utilisateur> users = state.data;
+                                        Utilisateur currentClient = users[0];
+                                        return
+                                        Text(
+                                          hide? "*******" : "${currentClient.solde} XOF",
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              color: primaryColor,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        );
+                                      },
                                     )
                                   ],
                                 ),

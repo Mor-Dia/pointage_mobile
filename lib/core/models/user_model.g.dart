@@ -15,7 +15,7 @@ _$UtilisateurImpl _$$UtilisateurImplFromJson(Map<String, dynamic> json) =>
       token: json['token'] as String?,
       nom_complet: json['nom_complet'] as String?,
       ca_souscription: json['ca_souscription'],
-      solde: json['solde'],
+      solde: json['current_credit'],
     );
 
 Map<String, dynamic> _$$UtilisateurImplToJson(_$UtilisateurImpl instance) =>
@@ -27,5 +27,5 @@ Map<String, dynamic> _$$UtilisateurImplToJson(_$UtilisateurImpl instance) =>
       'token': instance.token,
       'nom_complet': instance.nom_complet,
       'ca_souscription': instance.ca_souscription,
-      'solde': instance.solde,
+      'current_credit': instance.solde,
     };

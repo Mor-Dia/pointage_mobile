@@ -19,6 +19,9 @@ import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc
 
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
 
+import '../../services/data_bloc/bloc/data_bloc.dart';
+import '../../services/data_bloc/presentation/bloc_based_widget.dart';
+
 class MonCompte extends StatefulWidget {
   const MonCompte({super.key});
 
@@ -27,6 +30,21 @@ class MonCompte extends StatefulWidget {
 }
 
 class _MonCompteState extends State<MonCompte> {
+
+  late DataBloc<List<Utilisateur>> utilisateurBloc;
+
+  @override
+  @override
+  void initState() {
+    utilisateurBloc = DataBloc<List<Utilisateur>>(
+            (response) => Utilisateur.fromJsonList(response),
+        Utilisateur.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: Utilisateur.shrinkedAttributs());
+
+    super.initState();
+  }
 
   Future logout() async {
     AuthenticationRepository authenticationRepository = RepositoryProvider.of<AuthenticationRepository>(context);
@@ -65,6 +83,7 @@ class _MonCompteState extends State<MonCompte> {
       },
       builder: (context, state) {
         AuthenticationStatus currentStatus = state.status;
+        Utilisateur? currentUser = state.user;
         switch(currentStatus){
           case AuthenticationStatus.authenticated:
             return Scaffold(
@@ -158,13 +177,19 @@ class _MonCompteState extends State<MonCompte> {
                                     "Mes lignes crédit",
                                     style: TextStyle(color: Color(0xff5EAB43)),
                                   ),
-                                  Text(
-                                    (state.user?.ca_souscription ?? "")
-                                        .toString() +
-                                        '${' xof'.toUpperCase()}',
-                                    style: const TextStyle(
-                                        color: Color(0xff5EAB43),
-                                        fontWeight: FontWeight.bold),
+                                  BlocBasedWidget<List<Utilisateur>>(
+                                    customDataBloc: utilisateurBloc,
+                                    filter: {"id": currentUser?.id},
+                                    customWidget: (state) {
+                                      List<Utilisateur> users = state.data;
+                                      Utilisateur currentClient = users[0];
+                                      return Text(
+                                        "${currentClient.solde} XOF",
+                                        style: const TextStyle(
+                                            color: Color(0xff5EAB43),
+                                            fontWeight: FontWeight.bold),
+                                      );
+                                    },
                                   )
                                 ],
                               ),
