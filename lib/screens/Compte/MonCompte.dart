@@ -19,8 +19,10 @@ import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc
 
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
 
+import '../../components/animated_gesture_detector.dart';
 import '../../services/data_bloc/bloc/data_bloc.dart';
 import '../../services/data_bloc/presentation/bloc_based_widget.dart';
+import '../../services/post_api_bloc.dart';
 
 class MonCompte extends StatefulWidget {
   const MonCompte({super.key});
@@ -32,10 +34,12 @@ class MonCompte extends StatefulWidget {
 class _MonCompteState extends State<MonCompte> {
 
   late DataBloc<List<Utilisateur>> utilisateurBloc;
+  late PostApiBloc accountDeletionPostBloc;
 
   @override
   @override
   void initState() {
+    accountDeletionPostBloc = PostApiBloc();
     utilisateurBloc = DataBloc<List<Utilisateur>>(
             (response) => Utilisateur.fromJsonList(response),
         Utilisateur.getEndpoint(isPagination: true),
@@ -57,6 +61,22 @@ class _MonCompteState extends State<MonCompte> {
         print("ERROOR WHILE DISCONNECTING USER $e $stacktrace");
       }
     }); // Récupère le token,
+  }
+
+  deleteAccount() {
+    AuthenticationBloc currentAuthBloc = BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
+    AuthenticationStatus currentStatus = currentAuthBloc.state.status;
+    switch (currentStatus) {
+      case AuthenticationStatus.unknown:
+      case AuthenticationStatus.unauthenticated:
+      case AuthenticationStatus.failure:
+        break;
+      case AuthenticationStatus.authenticated:
+        Utilisateur currentUser = currentAuthBloc.state.user;
+        int? currentUserId = currentUser.id;
+        String endpoint = "clientfrontdel/${currentUserId}";
+        accountDeletionPostBloc.add(PostApiMakeCall(endpoint: endpoint, parameters: {}, isDeletion: true));
+    }
   }
 
   @override
@@ -343,15 +363,17 @@ class _MonCompteState extends State<MonCompte> {
                           ),
                         ),
                       ),
-                      Container(
-                        decoration: const BoxDecoration(
-                            border: Border(
-                                top: BorderSide(width: 1, color: greyColor))),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: spacingConstant, vertical: spacingConstant),
-                          child: GestureDetector(
-                            onTap: () => {},
+                      GestureDetector(
+                        onTap: () {
+                          showAccountDeletionDialog(context);
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  top: BorderSide(width: 1, color: greyColor))),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: spacingConstant, vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -379,6 +401,111 @@ class _MonCompteState extends State<MonCompte> {
           case AuthenticationStatus.failure:
             return const Center(child: PleaseLoginWidget());
         }
+      },
+    );
+  }
+
+
+  showAccountDeletionDialog(BuildContext context){
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          child: Dialog(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Suppression de votre compte',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: Colors.red,
+                      fontSize: 20
+                    ),
+                  ),
+                  const SizedBox.square(dimension: 20),
+                  const Center(
+                      child: Text(
+                        'Etes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(),
+                      )
+                  ),
+                  const SizedBox.square(dimension: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      BlocConsumer(
+                        bloc: accountDeletionPostBloc,
+                        listener: (context, state) {
+                          print("SUCCESS DEL ");
+                          if (state is PostApiSuccess) {
+                            print("SUCCESS DEL DEL ");
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text(
+                                  "Suppression effectuée",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: Colors.green[400],
+                              ),
+                            );
+                            Future.delayed(const Duration(seconds: 5), () {
+                              logout();
+                            });
+                          }
+                          if (state is PostApiProcessing) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          }
+                        },
+                        builder: (BuildContext context, postBlocState) {
+                          return AnimatedGestureButton(
+                            animate: postBlocState is PostApiProcessing,
+                            child: GestureDetector(
+                              child: TextButton(
+                                style: const ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll<Color>(Colors.transparent),
+                                    side: WidgetStatePropertyAll<BorderSide>(BorderSide(color: Colors.red, width: 1))
+                                ),
+                                onPressed: () {
+                                  deleteAccount();
+                                },
+                                child: const Text(
+                                  'OUI',
+                                  style: TextStyle(
+                                      color: primaryColor
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox.square(dimension: 20),
+                      TextButton(
+                        style: const ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll<Color>(primaryColor)
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          'NON',
+                          style: TextStyle(
+                            color: Colors.white
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }

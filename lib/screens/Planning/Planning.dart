@@ -8,6 +8,7 @@ import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/services/api/models/programme_model.dart';
+import 'package:yogivida_mobile/services/api/models/salle_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
@@ -21,7 +22,7 @@ class Planning extends StatefulWidget {
 }
 
 class _PlanningState extends State<Planning> {
-  String? selectedValue;
+  var selectedValue;
   late DataBloc<List<Programme>> programmeBloc;
   final List<String> options = [];
   TextEditingController designationFilter = TextEditingController();
@@ -49,6 +50,16 @@ class _PlanningState extends State<Planning> {
         attributeToGet: NotificationPush.shrinkedAttributs());
 
     super.initState();
+  }
+
+  List<Salle?> extractStudiosOptions(List<Programme> programmes){
+    List<Salle?> studioList = [];
+    studioList = programmes.map((toElement){
+      if(toElement.sallePratique != null){
+        return toElement.sallePratique?.salle;
+      }
+    }).toList();
+    return studioList;
   }
 
   @override
@@ -169,115 +180,120 @@ class _PlanningState extends State<Planning> {
               const SizedBox(
                 height: spacingConstant,
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: spacingConstant),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Inputfiled(
-                        controller: designationFilter,
-                        type: "text",
-                        text: 'Désignation',
-                        icon: 'loupe',
-                        error: '',
-                        handleChangeValue: (value) => Filter(),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text('|'),
-                    const SizedBox(width: 10),
-                    Container(
-                      height: 45,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      decoration: BoxDecoration(
-                        color: primaryColor, // Couleur de fond bleu
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset("assets/icons/home2.svg",
-                              height: 15, color: Colors.white),
-                          const SizedBox(
-                              width:
-                                  10.0), // Espace entre l'icône et le DropdownButton
-                          DropdownButton(
-                            dropdownColor: primaryColor, // Couleur du dropdown
-                            value: selectedValue,
-                            hint: const Text(
-                              'Studio',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            style: const TextStyle(
-                                color: Colors.white), // Couleur du texte
-                            icon: Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: SvgPicture.asset(
-                                'assets/icons/arrow_b.svg',
-                                color: Colors.white,
-                              ),
-                            ),
-                            underline:
-                                const SizedBox(), // Supprime la ligne par défaut
-                            items: options.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,
-                                    style:
-                                        const TextStyle(color: Colors.white)),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedValue = newValue;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: spacingConstant,
-              ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
                 customWidget: (state) {
                   List<Programme> programmes = state.data;
                   Map<String, dynamic>? metadata = state.metadata;
                   bool canLoadNewData = state.canLoadNewData;
+                  List<Salle?> studioList = extractStudiosOptions(programmes);
 
                   if (programmes.isEmpty) {
-                    return Center(
-                        child: const Text('Aucune activitées programmées'));
+                    return const Center(
+                        child: const Text('Aucune activité programmée'));
                   }
                   List<dynamic> dataFiltered = programmes
                       .where((element) => element
-                          .professeurPratique!.pratique!.designation
-                          .toString()
-                          .toLowerCase()
-                          .startsWith(designationFilter.text.toLowerCase()))
+                      .professeurPratique!.pratique!.designation
+                      .toString()
+                      .toLowerCase()
+                      .startsWith(designationFilter.text.toLowerCase()))
                       .toList();
                   if (dataFiltered.isEmpty) {
                     return const Center(
-                        child: Text('Aucune activitées trouvées'));
+                        child: Text('Aucune activité trouvée'));
                   }
                   return Column(
                     children: [
+                      Padding(
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: spacingConstant),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Inputfiled(
+                                controller: designationFilter,
+                                type: "text",
+                                text: 'Désignation',
+                                icon: 'loupe',
+                                error: '',
+                                handleChangeValue: (value) => Filter(),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            const Text('|'),
+                            const SizedBox(width: 10),
+                            Container(
+                              height: 45,
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              decoration: BoxDecoration(
+                                color: primaryColor, // Couleur de fond bleu
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset("assets/icons/home2.svg",
+                                      height: 15, color: Colors.white),
+                                  const SizedBox(
+                                      width:
+                                      10.0), // Espace entre l'icône et le DropdownButton
+                                  DropdownButton(
+                                    dropdownColor: primaryColor, // Couleur du dropdown
+                                    value: selectedValue,
+                                    hint: const Text(
+                                      'Studio',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    style: const TextStyle(
+                                        color: Colors.white), // Couleur du texte
+                                    icon: Padding(
+                                      padding: const EdgeInsets.only(left: 10.0),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/arrow_b.svg',
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    underline:
+                                    const SizedBox(), // Supprime la ligne par défaut
+                                    items: studioList.map((Salle? salle) {
+                                      return DropdownMenuItem(
+                                        value: salle?.id,
+                                        child: Text(
+                                            "${salle?.designation}",
+                                            style: const TextStyle(color: Colors.white)),
+                                      );
+                                    }).toList(),
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        selectedValue = newValue;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: spacingConstant,
+                      ),
                       ...dataFiltered
                           .map((toElement) => CardRowPlanning(
-                                data: toElement,
-                              ))
+                        data: toElement,
+                      ))
                           .toList(),
                     ],
                   );
                 },
               ),
+              const SizedBox(
+                height: spacingConstant,
+              ),
+
             ],
           ),
         ));
