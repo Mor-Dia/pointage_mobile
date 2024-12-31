@@ -15,6 +15,7 @@ import 'package:yogivida_mobile/screens/Compte/LocalisationContact.dart';
 import 'package:yogivida_mobile/screens/Compte/reservations_page.dart';
 import 'package:yogivida_mobile/screens/Compte/Update.dart';
 import 'package:yogivida_mobile/core/models/user_model.dart';
+import 'package:yogivida_mobile/screens/Compte/type_notificationpush_page.dart';
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
@@ -310,6 +311,32 @@ class _MonCompteState extends State<MonCompte> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
+                              builder: (context) => const TypeNotificationPushsPage()),
+                        ),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            border: Border(top: BorderSide(width: 1, color: greyColor))
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: spacingConstant, vertical: spacingConstant),
+                            child: Row(
+                              children: [
+                                Icon(Icons.settings),
+                                SizedBox(width: 10),
+                                Text(
+                                  "Paramètres de notification",
+                                  style: TextStyle(fontSize: 16),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
                               builder: (context) => const LocalisationContact()),
                         ),
                         child: Container(
@@ -440,9 +467,7 @@ class _MonCompteState extends State<MonCompte> {
                       BlocConsumer(
                         bloc: accountDeletionPostBloc,
                         listener: (context, state) {
-                          print("SUCCESS DEL ");
                           if (state is PostApiSuccess) {
-                            print("SUCCESS DEL DEL ");
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
