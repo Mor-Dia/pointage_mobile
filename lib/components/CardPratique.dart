@@ -1,11 +1,18 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+
+import '../core/models/user_model.dart';
+import '../services/authentication_bloc/authentication_bloc.dart';
+import '../services/post_api_bloc.dart';
+import 'animated_gesture_detector.dart';
 
 class CardPratique extends StatefulWidget {
   final Pratique data;
@@ -21,14 +28,29 @@ class CardPratique extends StatefulWidget {
 }
 
 class _CardPratiqueState extends State<CardPratique> {
+  late PostApiBloc favorisPostBloc;
+
   @override
   bool? liked;
   @override
   void initState() {
     super.initState();
-    liked = false;
-    // liked = widget.data.liked;
+    favorisPostBloc = PostApiBloc();
+    liked = widget.data.favoris;
   }
+
+
+  likePratique({required Map<String, dynamic> parameters}) {
+    favorisPostBloc
+        .add(PostApiMakeCall(endpoint: 'pratique_favoris', parameters: parameters));
+  }
+
+  changeStateFavoris(){
+    setState(() {
+      liked = !liked!;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,16 +78,64 @@ class _CardPratiqueState extends State<CardPratique> {
                         fontWeight: FontWeight.bold),
                   ),
                 ),
-                GestureDetector(
-                  child: liked == false
-                      ? const Icon(Icons.favorite_outline)
-                      : const Icon(Icons.favorite, color: Color(0xffFF0000)),
-                  onTap: () {
-                    setState(() {
-                      liked = !liked!;
-                    });
-                  },
-                )
+                BlocBuilder<AuthenticationBloc<Utilisateur>,
+                    AuthenticationState<Utilisateur>>(
+                    builder: (context, authState) {
+                      AuthenticationStatus currentStatus = authState.status;
+                      Utilisateur? user = authState.user;
+                      switch (currentStatus) {
+                        case AuthenticationStatus.authenticated:
+                          return BlocConsumer(
+                            bloc: favorisPostBloc,
+                            listener: (context, state) {
+                              if (state is PostApiSuccess) {
+                                changeStateFavoris();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      liked!?  'Ajouter au favoris' : 'Retirer des favoris',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    backgroundColor: Colors.green[400],
+                                  ),
+                                );
+                              }
+                              if (state is PostApiProcessing) {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                              }
+                            },
+                            builder: (BuildContext context, postBlocState) {
+                              return AnimatedGestureButton(
+                                animate: postBlocState is PostApiProcessing,
+                                child: GestureDetector(
+                                  child: !liked!
+                                      ? const Icon(
+                                    Icons.favorite_outline,
+                                    size: 25,
+                                  )
+                                      : const Icon(
+                                    Icons.favorite,
+                                    color: Color(0xffFF0000),
+                                    size: 25,
+                                  ),
+                                  onTap: () {
+                                    Map<String, dynamic> parameters = {
+                                      "token": user?.token ?? "",
+                                      "pratique_id": widget.data.id,
+                                      "etat": liked,
+                                    };
+                                    likePratique(parameters: parameters);
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        case AuthenticationStatus.unknown:
+                        case AuthenticationStatus.unauthenticated:
+                        case AuthenticationStatus.failure:
+                          return const Center(child: SizedBox.shrink());
+                      }
+                    })
               ],
             ),
             const SizedBox(height: 10),
@@ -78,23 +148,6 @@ class _CardPratiqueState extends State<CardPratique> {
                 child: CustomCachedNetworkImage(imageUrl: widget.data.image ?? '', fallBackAsset: 'assets/images/pratique_fallback.png')
               ),
             ),
-            // const SizedBox(height: 10),
-            // ElevatedButton(
-            //   onPressed: widget.handlePress,
-            //   style: ElevatedButton.styleFrom(
-            //     minimumSize: const Size(double.infinity, 40),
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(15),
-            //     ),
-            //     backgroundColor: const Color(0xff15274d),
-            //   ),
-            //   child: Text(
-            //     'Reserver',
-            //     style: TextStyle(
-            //         color: Colors.white,
-            //         fontSize: textminConstant),
-            //   ),
-            // )
           ],
         ),
       ),

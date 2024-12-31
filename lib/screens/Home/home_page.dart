@@ -267,8 +267,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     CardPratique(
                                       data: toElement,
-                                      handlePress: () =>
-                                          ShowBottomSheet(context),
+                                      handlePress: () {},
                                     )
                                   ],
                                 ))

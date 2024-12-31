@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Compte/commandes_page.dart';
-import 'package:yogivida_mobile/screens/Compte/Favoris.dart';
+import 'package:yogivida_mobile/screens/Compte/favoris_page.dart';
 import 'package:yogivida_mobile/screens/Compte/ligne_credit_page.dart';
 import 'package:yogivida_mobile/screens/Compte/LocalisationContact.dart';
 import 'package:yogivida_mobile/screens/Compte/reservations_page.dart';
@@ -235,7 +235,7 @@ class _MonCompteState extends State<MonCompte> {
                               builder: (context) => const CommandesPage()),
                         ),
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               border: Border(
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
@@ -264,7 +264,7 @@ class _MonCompteState extends State<MonCompte> {
                               builder: (context) => const FavorisPage()),
                         ),
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               border: Border(
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
@@ -344,7 +344,7 @@ class _MonCompteState extends State<MonCompte> {
                         ),
                       ),
                       Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             border: Border(
                                 top: BorderSide(width: 1, color: greyColor))),
                         child: Padding(

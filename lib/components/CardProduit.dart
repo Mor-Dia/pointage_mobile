@@ -164,7 +164,7 @@ class _CardProduitState extends State<CardProduit> {
                   case AuthenticationStatus.unknown:
                   case AuthenticationStatus.unauthenticated:
                   case AuthenticationStatus.failure:
-                    return const Center(child: PleaseLoginWidget());
+                    return const Center(child: SizedBox.shrink());
                 }
               })
             ],
