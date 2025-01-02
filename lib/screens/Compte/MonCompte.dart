@@ -446,6 +446,7 @@ class _MonCompteState extends State<MonCompte> {
                 children: [
                   const Text(
                     'Suppression de votre compte',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
                       color: Colors.red,

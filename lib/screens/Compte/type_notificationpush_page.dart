@@ -32,6 +32,7 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
   bool hideAppBar = false;
   bool loadingNewData = false;
   bool isApiProcessing = false;
+  // List<int> selectedInt;
 
   ScrollController practiceListController = ScrollController();
 
@@ -164,13 +165,13 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
                   List<TypeNotificationPush> tnps = state.data;
                   return
                     Column(
-                        children:  [
-                          ...tnps
-                              .map((toElement) => CardTypeNotificationPush(
-                                tnp: toElement,
-                                onTNPChecked: () {},
-                              )).toList(),
-                        ]
+                      children:  [
+                        ...tnps
+                          .map((toElement) => CardTypeNotificationPush(
+                            tnp: toElement,
+                            onTNPChecked: () {},
+                          )).toList(),
+                      ]
                     );
                 },
               ),
