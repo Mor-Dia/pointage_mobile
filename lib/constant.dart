@@ -18,10 +18,10 @@ const Color successColor = Color(0xff37BC9B);
 const Color dangerColor = Color(0xffDA4453);
 const Color warningColor = Color(0xffF6BB42);
 
-const double titreConstant= 20;
-const double textConstant= 18;
-const double textminConstant= 12;
-const double spacingConstant= 20;
+const double titreConstant = 20;
+const double textConstant = 18;
+const double textminConstant = 12;
+const double spacingConstant = 20;
 
 double responsiveSize(BuildContext context, double baseSize) {
   double screenWidth = MediaQuery.of(context).size.width;
