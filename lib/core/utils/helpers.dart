@@ -17,6 +17,35 @@ class Helpers {
     }
   }
 
+  static String formatNumber(dynamic number) {
+    if (number is! int && number is! double) {
+      throw ArgumentError('Input must be an int or double.');
+    }
+
+    // Convert the number to a string
+    String numberString = number.toStringAsFixed(number is double ? 2 : 0);
+
+    // Split into integer and decimal parts
+    List<String> parts = numberString.split('.');
+    String integerPart = parts[0];
+    String decimalPart = parts.length > 1 ? parts[1] : '';
+
+    // Format the integer part with commas
+    StringBuffer formattedInteger = StringBuffer();
+    for (int i = 0; i < integerPart.length; i++) {
+      if (i > 0 && (integerPart.length - i) % 3 == 0) {
+        formattedInteger.write(',');
+      }
+      formattedInteger.write(integerPart[i]);
+    }
+
+    // Combine formatted integer and decimal parts
+    return decimalPart.isEmpty
+        ? formattedInteger.toString()
+        : '${formattedInteger.toString()}.${decimalPart}';
+  }
+
+
   static showSnackBar(BuildContext context, {bool isError = false, String? message}){
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

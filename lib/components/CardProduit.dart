@@ -171,8 +171,8 @@ class _CardProduitState extends State<CardProduit> {
           ),
           const SizedBox(height: 5),
           Text(
-            textAlign: TextAlign.start,
             widget.data.prixSiteWebFr.toString(),
+            textAlign: TextAlign.start,
             style: GoogleFonts.arimo(
                 fontSize: textConstant, fontWeight: FontWeight.bold),
           ),

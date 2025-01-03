@@ -11,6 +11,7 @@ import 'package:yogivida_mobile/screens/Compte/reservations_page.dart';
 import 'package:yogivida_mobile/screens/Compte/commandes_page.dart';
 import 'package:yogivida_mobile/screens/Compte/Update.dart';
 import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
+import 'package:yogivida_mobile/screens/Planning/Planning.dart';
 import 'package:yogivida_mobile/screens/splash/splash_screen.dart';
 import 'package:yogivida_mobile/services/connection/Connectivity_service.dart'; // Le service de connectivité
 import 'package:yogivida_mobile/components/ConnectionNotifier.dart'; // Le ConnectionNotifier
@@ -118,7 +119,7 @@ class _MyAppState extends State<MyApp> {
             // '/': (context) => const MonCompte(),
             // '/': (context) => const Update(),
             // '/': (context) => const CommandesPage(),
-            // '/': (context) => const LocalisationContact(),
+            // '/': (context) => const Planning(),
             '/': (context) => const SplashScreen(),
             '/login': (context) => const LoginScreen(),
             '/home': (context) => const HomePage(),

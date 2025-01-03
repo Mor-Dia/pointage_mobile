@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
@@ -20,6 +21,8 @@ import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc
 
 import '../../components/animated_gesture_detector.dart';
 import '../../components/please_login_widget.dart';
+import '../../services/data_bloc/bloc/data_bloc.dart';
+import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 import '../../services/post_api_bloc.dart';
 
 class Update extends StatefulWidget {
@@ -31,9 +34,11 @@ class Update extends StatefulWidget {
 
 class _UpdateState extends State<Update> {
   late PostApiBloc updateUserPostBloc;
+  late DataBloc<List<Utilisateur>> utilisateurBloc;
   List<TextEditingController> _controllers = [];
   String? currentError;
   int? currentUserId;
+  bool gettingUsersInfos = true;
   final TextEditingController controlerConfirmationPassword =
       TextEditingController();
   List<Map<String, dynamic>> inputFields = [];
@@ -52,6 +57,12 @@ class _UpdateState extends State<Update> {
   void initState() {
     super.initState();
     updateUserPostBloc = PostApiBloc();
+    utilisateurBloc = DataBloc<List<Utilisateur>>(
+            (response) => Utilisateur.fromJsonList(response),
+        Utilisateur.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: Utilisateur.shrinkedAttributs());
     fillFields();
   }
 
@@ -85,7 +96,7 @@ class _UpdateState extends State<Update> {
         'type': 'text',
         'text': 'Numéro de téléphone',
         'icon': 'phone',
-        'tag': 'phone',
+        'tag': 'telephone',
         'controller': null,
         'error': ''
       },
@@ -117,28 +128,44 @@ class _UpdateState extends State<Update> {
       }
     ];
     AuthenticationBloc currentAuthBloc = BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
-    AuthenticationStatus currentStatus = currentAuthBloc.state.status;
-
-    switch (currentStatus) {
-      case AuthenticationStatus.unknown:
-      case AuthenticationStatus.unauthenticated:
-      case AuthenticationStatus.failure:
-        break;
-      case AuthenticationStatus.authenticated:
-        Utilisateur currentUser = currentAuthBloc.state.user;
-        currentUserId = currentUser.id;
-        Map currentUserJson = currentUser.toJson();
-        for (int i = 0; i < inputFields!.length; i++) {
-          String tag = inputFields?[i]['tag'];
-          _controllers.add(TextEditingController(text: currentUserJson[tag]));
-          if (inputFields?[i]['type'] == "text" ||
-              inputFields?[i]['type'] == "password") {
-            setState(() {
-              inputFields![i]['controller'] = _controllers[i];
-            });
-          }
-        }
-    }
+    currentAuthBloc.stream.listen((onData){
+      AuthenticationStatus currentStatus = currentAuthBloc.state.status;
+      switch (currentStatus) {
+        case AuthenticationStatus.unknown:
+        case AuthenticationStatus.unauthenticated:
+        case AuthenticationStatus.failure:
+          break;
+        case AuthenticationStatus.authenticated:
+          Utilisateur currentUser = currentAuthBloc.state.user;
+          currentUserId = currentUser.id;
+          utilisateurBloc.add(FetchDataEvent(filter: {"id": currentUserId}));
+          utilisateurBloc.stream.listen((onData){
+            if(onData is DataSuccess){
+              setState(() {
+                gettingUsersInfos = false;
+              });
+              Utilisateur currentUser = onData.data[0];
+              List<Map<String, dynamic>>  tempInputFields = inputFields;
+              for (int i = 0; i < tempInputFields!.length; i++) {
+                String tag = tempInputFields?[i]['tag'];
+                if (tempInputFields?[i]['type'] == "text" || tempInputFields?[i]['type'] == "password") {
+                  tempInputFields![i]['controller'] = renderController(tag, currentUser);
+                } 
+                else if(tempInputFields?[i]['type'] == "select"){
+                  tempInputFields![i]['selected'] = retrieveItem(currentUser.typePersonne);
+                }
+              }
+              setState(() {
+                inputFields = [...tempInputFields];
+              });
+            } else {
+              setState(() {
+                gettingUsersInfos = false;
+              });
+            }
+          });
+      }
+    });
   }
 
   void selectGenre(Item value) {
@@ -155,12 +182,27 @@ class _UpdateState extends State<Update> {
     });
   }
 
+  Item? retrieveItem(elementId){
+    if(elementId != null){
+      return items.firstWhere((elmt) => elmt.id == elementId);
+    }
+  }
+
   void dispose() {
     // Ne pas oublier de nettoyer le contrôleur lorsque le widget est supprimé
     for (var i = 0; i < _controllers.length; i++) {
       _controllers[i].dispose();
     }
     super.dispose();
+  }
+
+  TextEditingController renderController(String tag, Utilisateur currentClient) {
+    Map<String, dynamic> currentClientJson = currentClient.toJson();
+    if(currentClientJson[tag] != null){
+      print("HETS TAG VAL ${currentClientJson[tag]}");
+      return TextEditingController(text: currentClientJson[tag]);
+    }
+    return TextEditingController();
   }
 
   Future<dynamic> changePassword(Map<String, dynamic>? data) async {
@@ -214,17 +256,17 @@ class _UpdateState extends State<Update> {
       isLoading = false;
       currentError = null;
     });
+    List<String> keysToRemove = [];
     Map<String, dynamic> postData = {
       "id": currentUserId,
       "nom": null,
       "prenom": null,
       "email": null,
-      "phone": null,
+      "telephone": null,
       "password": null,
       "confirmpassword": null,
       "genre": null,
     };
-
     if(inputFields.isNotEmpty){
       for(String key in postData.keys){
         print("HOLD $inputFields");
@@ -234,15 +276,21 @@ class _UpdateState extends State<Update> {
           }
           return false;
         },  orElse: () => {}, );
-        print("CurrentField $currentField");
         TextEditingController? currentController = currentField['controller'];
         if(currentController != null){
           postData[key] = currentController.text;
         } else {
           postData['genre'] = selectedGender?.id.toString();
         }
+        if(postData[key] == "" || postData[key] == null){
+          keysToRemove.add(key);
+        }
       }
     }
+    postData.removeWhere((key, value)=>keysToRemove.contains(key));
+    postData['phone'] = postData['telephone'];
+    postData['nom_complet'] = "${postData['prenom']} ${postData['nom']}";
+    print("POST DATA $postData");
     updateUserPostBloc.add(PostApiMakeCall(endpoint: 'update-user', parameters: postData));
   }
 
@@ -251,6 +299,7 @@ class _UpdateState extends State<Update> {
     return BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
       builder: (context, authState) {
         AuthenticationStatus currentStatus = authState.status;
+        Utilisateur? currentUser = authState.user;
         switch (currentStatus) {
           case AuthenticationStatus.unknown:
           case AuthenticationStatus.unauthenticated:
@@ -258,6 +307,7 @@ class _UpdateState extends State<Update> {
             return const Center(child: PleaseLoginWidget());
           case AuthenticationStatus.authenticated:
             return Scaffold(
+              resizeToAvoidBottomInset: true,
               backgroundColor: Colors.white,
               appBar: AppBar(
                 backgroundColor: const Color(0xffffffff),
@@ -294,34 +344,42 @@ class _UpdateState extends State<Update> {
               ),
               body: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
-                child: Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: Visibility(
-                        visible: currentError != null,
-                        child: Center(
-                          child: Text(
-                            "$currentError",
-                            style: const TextStyle(
-                              color: Colors.red,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: Visibility(
+                          visible: currentError != null,
+                          child: Center(
+                            child: Text(
+                              "$currentError",
+                              style: const TextStyle(
+                                color: Colors.red,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Container(
+                      Visibility(
+                        visible: gettingUsersInfos,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      Visibility(
+                        visible: !gettingUsersInfos,
                         child: Column(
                             children: inputFields.map((field) {
                               return Column(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Inputfiled(
                                     type: field['type'],
                                     text: field['text'],
                                     icon: field['icon'],
                                     controller: field['controller'],
-                                    selectedValue: selectedGender,
+                                    selectedValue: field['selectedValue'],
                                     items: field['items'],
                                     handleAction: (value) => selectGenre(value!),
                                     error: field['error'], // L'erreur est vide au départ
@@ -329,38 +387,56 @@ class _UpdateState extends State<Update> {
                                   const SizedBox(height: 30),
                                 ],
                               );
-                            }).toList()),
+                            }).toList())
                       ),
-                    ),
-                    Column(
-                      children: [
-                        const SizedBox(height: 30),
-                        BlocConsumer(
-                          bloc: updateUserPostBloc,
-                          listener: (context, state) {
-                            if (state is PostApiSuccess) {
-                              print("User Update Success ${state.message}");
-                            }
-                            if (state is PostApiFailure) {
-                              print("User Update Failure ${state.message}");
-                            }
-                            if (state is PostApiProcessing) {
-                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            }
-                          },
-                          builder: (BuildContext context, postBlocState) {
-                            return AnimatedGestureButton(
-                              animate: postBlocState is PostApiProcessing,
-                              child: ButtonFiled(
-                                text: "Enregistrer",
-                                handlerPress: () => {updateProfile()},
-                              ),
-                            );
-                          },
-                        )
-                      ],
-                    ),
-                  ],
+                      Column(
+                        children: [
+                          const SizedBox(height: 30),
+                          BlocConsumer(
+                            bloc: updateUserPostBloc,
+                            listener: (context, state) {
+                              if (state is PostApiSuccess) {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "${state.message}",
+                                      style: const TextStyle(color: Colors.white),
+                                    ),
+                                    backgroundColor: Colors.green[400],
+                                  ),
+                                );
+                              }
+                              if (state is PostApiFailure) {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      "${state.message}",
+                                      style: const TextStyle(color: Colors.white),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                              if (state is PostApiProcessing) {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                              }
+                            },
+                            builder: (BuildContext context, postBlocState) {
+                              return AnimatedGestureButton(
+                                animate: postBlocState is PostApiProcessing,
+                                child: ButtonFiled(
+                                  text: "Enregistrer",
+                                  handlerPress: () => {updateProfile()},
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

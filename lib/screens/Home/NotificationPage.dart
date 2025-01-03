@@ -82,17 +82,13 @@ class _NotificationPushPageState extends State<NotificationPushPage> {
                 return
                   Column(
                       children:  [
-                        const SizedBox(
-                          height: spacingConstant,
-                        ),
-                        Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: [
-                              ...notificationPushs
-                                  .map((toElement) => NotificationContainer(notificationPush: toElement))
-                                  .toList(),
-                            ]
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ...notificationPushs
+                                .map((toElement) => NotificationContainer(notificationPush: toElement))
+                                .toList(),
+                          ]
                         ),
                       ]
                   );

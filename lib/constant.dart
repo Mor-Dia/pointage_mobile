@@ -7,6 +7,7 @@ const LOGOUT_ENDPOINT = "deconnexion";
 const REQUEST_PWD_ENDPOINT = "password-reset";
 const BASE_URL = 'http://192.168.1.12:8001/yogivida_back/public/';
 // const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
+// const BASE_URL = 'https://b016-41-85-178-233.ngrok-free.app/yogivida_back/public/';
 const BASE_URL_QGL = '${BASE_URL}graphql?query=';
 
 const Color primaryColor = Color(0xff15274D);
@@ -18,10 +19,10 @@ const Color successColor = Color(0xff37BC9B);
 const Color dangerColor = Color(0xffDA4453);
 const Color warningColor = Color(0xffF6BB42);
 
-const double titreConstant= 20;
-const double textConstant= 18;
-const double textminConstant= 12;
-const double spacingConstant= 20;
+const double titreConstant = 20;
+const double textConstant = 18;
+const double textminConstant = 12;
+const double spacingConstant = 20;
 
 double responsiveSize(BuildContext context, double baseSize) {
   double screenWidth = MediaQuery.of(context).size.width;

@@ -47,6 +47,7 @@ class PostApiBloc extends Bloc<PostApiEvent, PostApiState> {
       }
     } catch(e, stacktrace){
       if (kDebugMode) {
+        emit(const PostApiFailure(message: "Une erreur est survenue"));
         print("ERROR WHILE MAKING POST REQUEST $e");
       }
     }

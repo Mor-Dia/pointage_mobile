@@ -26,31 +26,33 @@ class _NotificationContainerState extends State<NotificationContainer> {
   Widget build(BuildContext context) {
     return
       Container(
+        width: double.infinity,
         decoration: const BoxDecoration(
             border: Border(bottom: BorderSide(width: 1, color: greyColorL))
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(spacingConstant),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${notificationPush.title}",
-                    style: const TextStyle(
-                        color: primaryColor,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "${notificationPush.description}",
-                    style: const TextStyle(color: Colors.grey, fontSize: 11),
-                  )
-                ],
+        child: Padding(
+          padding: const EdgeInsets.all(spacingConstant),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${notificationPush.title}",
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
+                maxLines: 3,
+                style: const TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold
+                ),
               ),
-            ),
-          ],
+              Text(
+                "${notificationPush.description}",
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
+                style: const TextStyle(color: Colors.grey, fontSize: 11),
+              )
+            ],
+          ),
         ),
       );
   }

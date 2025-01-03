@@ -47,8 +47,8 @@ class _ReservationsPageState extends State<ReservationsPage> {
         isPagination: true,
         attributeToGet: Reservation.shrinkedAttributs());
 
-    filter0.addAll({'en_attente': '0'});
-    filter1.addAll({'en_attente': '1'});
+    filter0.addAll({'etat': '1'});
+    filter1.addAll({'etat': '0'});
 
     super.initState();
   }

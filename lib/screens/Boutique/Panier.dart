@@ -82,22 +82,25 @@ class _PanierState extends State<PanierPage> {
                                 opacity: .7,
                                 child: Container(
                                     color: Colors.white,
-                                    child: Center(
+                                    child: const Center(
                                         child: CircularProgressIndicator())),
                               ))
-                            : SizedBox.shrink()
+                            : const SizedBox.shrink()
                       ]),
-                      Spacer(),
-                      Text((state is PanierLoaded)
-                          ? 'TOTAL TTC : '+ state.panier.total.toString()
-                          : '0',style: TextStyle(color: primaryColor,fontWeight: FontWeight.bold,fontSize: titreConstant),),
+                      const Spacer(),
+                      Text(
+                        (state is PanierLoaded)
+                          ? 'TOTAL TTC : ${state.panier.total}'
+                          : '0',
+                        style: const TextStyle(color: primaryColor,fontWeight: FontWeight.bold,fontSize: titreConstant),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
                         child: ButtonFiled(text: 'FINALISER LA COMMANDE', handlerPress: () {
                           
                         },),
                       ),
-                      SizedBox(height: 40)
+                      const SizedBox(height: 40)
                     ],
                   );
                 })));
