@@ -23,12 +23,15 @@ class Planning extends StatefulWidget {
 
 class _PlanningState extends State<Planning> {
   var selectedValue;
+  Map<String, dynamic> currentFilter = {};
   late DataBloc<List<Programme>> programmeBloc;
+  late DataBloc<List<Salle>> salleBloc;
   final List<String> options = [];
   TextEditingController designationFilter = TextEditingController();
   late DataBloc<List<NotificationPush>> notificationPushBloc;
-
-  final DateTime date = new DateTime.now();
+  DateTime selectedDate = DateTime.now();
+  final DateTime date = DateTime.now();
+  List<Salle?> studioList = [];
 
   @override
   void initState() {
@@ -39,8 +42,12 @@ class _PlanningState extends State<Planning> {
         isPagination: true,
         attributeToGet: Programme.shrinkedAttributs());
 
-    programmeBloc.add(FetchDataEvent(
-        filter: {'date': '${date.year}-${date.month}-${date.day}'}));
+    salleBloc = DataBloc<List<Salle>>(
+            (response) => Salle.fromJsonList(response),
+        Salle.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        isPagination: false,
+        attributeToGet: Salle.shrinkedAttributs());
 
     notificationPushBloc = DataBloc<List<NotificationPush>>(
         (response) => NotificationPush.fromJsonList(response),
@@ -49,37 +56,57 @@ class _PlanningState extends State<Planning> {
         isPagination: true,
         attributeToGet: NotificationPush.shrinkedAttributs());
 
+    initFilter();
     super.initState();
   }
 
-  List<Salle?> extractStudiosOptions(List<Programme> programmes){
-    List<Salle?> studioList = [];
-    studioList = programmes.map((toElement){
-      if(toElement.sallePratique != null){
-        return toElement.sallePratique?.salle;
-      }
-    }).toList();
-    return studioList;
+  // extractStudiosOptions(List<Salle> salles){
+  //   List<Salle?> tempStudioList = [];
+  //   tempStudioList = programmes.map((toElement){
+  //     return toElement;
+  //   }).toList();
+  //   setState(() {
+  //     studioList = tempStudioList;
+  //   });
+  // }
+
+  initFilter(){
+    currentFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+  }
+  // List<Salle?> studioList = extractStudiosOptions(programmes);
+
+  selectStudio(dynamic newValue){
+    print("SELECTION FF $newValue");
+    setState(() {
+      currentFilter = {...currentFilter, ...{'salle_id': newValue}};
+    });
+  }
+
+  void changeDate(DateTime date) {
+    setState(() {
+      selectedDate = date;
+      currentFilter = {'date': "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"};
+    });
+    // var currentDate = '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}';
+
+    // programmeBloc.add(FetchDataEvent(filter: {'date': currentDate}));
+  }
+
+  void Filter() {
+    setState(() {});
   }
 
   @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    designationFilter.dispose();
+    super.dispose();
+  }
+
+  
+  @override
   Widget build(BuildContext context) {
-    void ChangeDate(DateTime date) {
-      var currentDate = '${date.year}-${date.month}-${date.day}';
-      programmeBloc.add(FetchDataEvent(filter: {'date': currentDate}));
-    }
-
-    void Filter() {
-      setState(() {});
-    }
-
-    void dispose() {
-      // Clean up the controller when the widget is removed from the
-      // widget tree.
-      designationFilter.dispose();
-      super.dispose();
-    }
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
@@ -175,19 +202,56 @@ class _PlanningState extends State<Planning> {
                 height: spacingConstant,
               ),
               HorizontalCalendar(
-                handleDate: (date) => ChangeDate(date),
+                selectedDate: selectedDate,
+                handleDate: (date) => changeDate(date),
+              ),
+              const SizedBox(
+                height: spacingConstant,
+              ),
+              Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: spacingConstant),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Inputfiled(
+                        controller: designationFilter,
+                        type: "text",
+                        text: 'Désignation',
+                        icon: 'loupe',
+                        error: '',
+                        handleChangeValue: (value) => Filter(),
+                      ),
+                    ),
+                    const SizedBox.square(dimension: 2,),
+                    // const Spacer(),
+                    // // const Text('|'),
+                    // const Spacer(),
+                    Flexible(
+                      flex: 1,
+                      child: BlocBasedWidget<List<Salle>>(
+                        customDataBloc: salleBloc,
+                        customWidget: (state) {
+                          List<Salle> salles = state.data;
+                          return StudioSelect(studioList: salles, onSelect: selectStudio,);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(
                 height: spacingConstant,
               ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
+                filter: {...currentFilter},
                 customWidget: (state) {
                   List<Programme> programmes = state.data;
                   Map<String, dynamic>? metadata = state.metadata;
-                  bool canLoadNewData = state.canLoadNewData;
-                  List<Salle?> studioList = extractStudiosOptions(programmes);
-
+                  // extractStudiosOptions(programmes);
                   if (programmes.isEmpty) {
                     return const Center(
                         child: const Text('Aucune activité programmée'));
@@ -205,82 +269,6 @@ class _PlanningState extends State<Planning> {
                   }
                   return Column(
                     children: [
-                      Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: spacingConstant),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Inputfiled(
-                                controller: designationFilter,
-                                type: "text",
-                                text: 'Désignation',
-                                icon: 'loupe',
-                                error: '',
-                                handleChangeValue: (value) => Filter(),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            const Text('|'),
-                            const SizedBox(width: 10),
-                            Container(
-                              height: 45,
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              decoration: BoxDecoration(
-                                color: primaryColor, // Couleur de fond bleu
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              child: Row(
-                                children: [
-                                  SvgPicture.asset("assets/icons/home2.svg",
-                                      height: 15, color: Colors.white),
-                                  const SizedBox(
-                                      width:
-                                      10.0), // Espace entre l'icône et le DropdownButton
-                                  DropdownButton(
-                                    dropdownColor: primaryColor, // Couleur du dropdown
-                                    value: selectedValue,
-                                    hint: const Text(
-                                      'Studio',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    style: const TextStyle(
-                                        color: Colors.white), // Couleur du texte
-                                    icon: Padding(
-                                      padding: const EdgeInsets.only(left: 10.0),
-                                      child: SvgPicture.asset(
-                                        'assets/icons/arrow_b.svg',
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    underline:
-                                    const SizedBox(), // Supprime la ligne par défaut
-                                    items: studioList.map((Salle? salle) {
-                                      return DropdownMenuItem(
-                                        value: salle?.id,
-                                        child: Text(
-                                            "${salle?.designation}",
-                                            style: const TextStyle(color: Colors.white)),
-                                      );
-                                    }).toList(),
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        selectedValue = newValue;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        height: spacingConstant,
-                      ),
                       ...dataFiltered
                           .map((toElement) => CardRowPlanning(
                         data: toElement,
@@ -302,7 +290,8 @@ class _PlanningState extends State<Planning> {
 
 class HorizontalCalendar extends StatefulWidget {
   final Function(DateTime date)? handleDate;
-  const HorizontalCalendar({super.key, this.handleDate});
+  final DateTime? selectedDate;
+  const HorizontalCalendar({super.key, this.handleDate, this.selectedDate});
 
   @override
   _HorizontalCalendarState createState() => _HorizontalCalendarState();
@@ -317,6 +306,9 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
     super.initState();
     // Générer la liste des jours de la semaine courante
     weekDays = _generateWeekDays();
+    if(widget.selectedDate != null ){
+      selectedDate = DateTime.now();
+    }
   }
 
   // Fonction pour générer les jours restants de la semaine courante
@@ -339,7 +331,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
           padding: const EdgeInsets.only(bottom: spacingConstant),
           child: Text(
             DateFormat.yMMM('fr_FR').format(DateTime.now()).toCapitalized,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: titreConstant,
               color: primaryColor,
             ),
@@ -406,6 +398,87 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+class StudioSelect extends StatefulWidget {
+  final List<Salle?> studioList;
+  final Function? onSelect;
+  const StudioSelect({super.key, required this.studioList, this.onSelect});
+
+  @override
+  State<StudioSelect> createState() => _StudioSelectState();
+}
+
+class _StudioSelectState extends State<StudioSelect> {
+  List<Salle?> studioList = [];
+  Function? onSelect;
+  dynamic selectedValue;
+
+  @override
+  void initState() {
+    studioList = widget.studioList;
+    onSelect = widget.onSelect;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 45,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: primaryColor, // Couleur de fond bleu
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+              "assets/icons/home2.svg",
+              height: 15, color: Colors.white
+          ),
+          const SizedBox(width: 5.0), // Espace entre l'icône et le DropdownButton
+          DropdownButton(
+            dropdownColor: primaryColor, // Couleur du dropdown
+            value: selectedValue,
+            hint: const Text(
+              'Studio',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+            style: const TextStyle(color: Colors.white), // Couleur du texte
+            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+            underline: const SizedBox(), // Supprime la ligne par défaut
+            items: [
+              ...studioList.map((Salle? salle) {
+                return DropdownMenuItem(
+                  value: salle?.id,
+                  child: Text(
+                      "${salle?.designation}",
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white)),
+                );
+              }).toList(),
+
+            ],
+            onChanged: (newValue) {
+              print("SELECTION $newValue ${onSelect != null}");
+              setState((){
+                selectedValue = newValue;
+              });
+              if(onSelect != null){
+                onSelect!(newValue);
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }

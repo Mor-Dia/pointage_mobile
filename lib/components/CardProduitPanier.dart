@@ -50,7 +50,8 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
   }
 
   void addToPanier(PanierPProduit arg, int sentqte) async {
-    int newQte = qte + sentqte;
+    int currentQte = arg.qte??0;
+    int newQte = currentQte + sentqte;
 
     if (sentqte == 0) {
       newQte = 0;
@@ -138,7 +139,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                         ),
                         Text(
                           textAlign: TextAlign.start,
-                          (widget.data.produit!.prix.toString() + 'xof')
+                          ('${widget.data.produit!.prix}xof')
                               .toUpperCase(),
                           style: GoogleFonts.arimo(
                               fontSize:

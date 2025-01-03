@@ -14,8 +14,10 @@ class Utilisateur with _$Utilisateur {
     String? email,
     String? token,
     String? nom_complet,
+    String? telephone,
     dynamic ca_souscription,
     @JsonKey(name: "current_credit")dynamic solde,
+    @JsonKey(name: "type_personne_id")int? typePersonne,
   }) = _Utilisateur;
 
   factory Utilisateur.fromJson(Map<String, dynamic> json)  => _$UtilisateurFromJson(json);
@@ -35,7 +37,7 @@ class Utilisateur with _$Utilisateur {
   }
 
   static shrinkedAttributs () {
-    return "id,nom_complet,email,image,telephone,nb_souscription,nb_vente,nb_reservation,ca_bon,created_at_fr,current_credit";
+    return "id,nom_complet,nom,prenom,type_personne_id,email,image,telephone,nb_souscription,nb_vente,nb_reservation,ca_bon,created_at_fr,current_credit";
   }
 
   static String getEndpoint({bool isPagination = true}) {

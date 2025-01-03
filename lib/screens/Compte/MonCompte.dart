@@ -21,6 +21,7 @@ import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
 
 import '../../components/animated_gesture_detector.dart';
+import '../../core/utils/helpers.dart';
 import '../../services/data_bloc/bloc/data_bloc.dart';
 import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 import '../../services/post_api_bloc.dart';
@@ -205,7 +206,7 @@ class _MonCompteState extends State<MonCompte> {
                                       List<Utilisateur> users = state.data;
                                       Utilisateur currentClient = users[0];
                                       return Text(
-                                        "${currentClient.solde} XOF",
+                                        "${Helpers.formatNumber(currentClient.solde)} XOF",
                                         style: const TextStyle(
                                             color: Color(0xff5EAB43),
                                             fontWeight: FontWeight.bold),

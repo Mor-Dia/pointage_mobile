@@ -78,24 +78,20 @@ class PanierBlocBloc extends Bloc<PanierBlocEvent, PanierBlocState> {
     };
 
     try {
-      final response =
-          await getApiData(endPoint, parameters: parameters, isGraphQl: true);
-
+      final response = await getApiData(endPoint, parameters: parameters, isGraphQl: true);
       if (response.statusCode == 200) {
         Map<String, dynamic> responseJsonDecoded = jsonDecode(response.body);
-        var jsonData =
-            responseJsonDecoded['data']['panierspaginated']['data'][0];
-        print(jsonData);
+        Map<String, dynamic> jsonData = {};
+        if(responseJsonDecoded['data']['panierspaginated']['data'] != null && responseJsonDecoded['data']['panierspaginated']['data'].length > 0){
+          jsonData = responseJsonDecoded['data']['panierspaginated']['data'][0];
+        }
         Panier data = Panier.fromJson(jsonData);
         emit(PanierBlocState.loaded(panier: data));
       } else {
-        emit(PanierBlocState.error(
-            message: "Erreur lors de la récupération du panier 1"));
+        emit(const PanierBlocState.error( message: "Erreur lors de la récupération du panier "));
       }
     } catch (e) {
-      print(e);
-      emit(PanierBlocState.error(
-          message: "Erreur lors de la récupération du panier"));
+      emit(const PanierBlocState.error(message: "Erreur lors de la récupération du panier"));
     }
   }
 }
