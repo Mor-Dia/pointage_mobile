@@ -302,7 +302,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
     reservationPostBloc = PostApiBloc();
 
     reserverCours({required Map<String, dynamic> parameters}) {
-      reservationPostBloc.add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
+      reservationPostBloc.add(PostApiMakeCall(endpoint: 'lignecredit', parameters: parameters));
     }
 
     return [
@@ -351,6 +351,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                                 "montant": montant,
                                 "client": user?.id,
                                 "from_site": true,
+                                "typelignecredit" : 2,
                                 "type_paiement": toElement.id,
                               };
                               reserverCours(parameters: parameters);
