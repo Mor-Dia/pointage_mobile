@@ -137,6 +137,12 @@ class ScrollableTabPage extends StatelessWidget {
   const ScrollableTabPage({Key? key, required this.data, this.token})
       : super(key: key);
 
+  updateList(newFilter){
+    print("UPDATE PRATIQUE ");
+    data.add(FetchDataEvent(filter: newFilter));
+  }
+
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -157,6 +163,9 @@ class ScrollableTabPage extends StatelessWidget {
                     width: size.width / (MediaQuery.of(context).size.width > 400 ? 3  : 2) - 25,
                     child: CardPratique(
                       data: toElement,
+                      updateFunction: () => updateList({
+                                      ...{"token": token, 'count': 8}
+                                    })
                     ),
                   ))
                       .toList(),
@@ -171,6 +180,10 @@ class ScrollableTabPage2 extends StatelessWidget {
   final String? token;
   const ScrollableTabPage2({Key? key, required this.data, this.token})
       : super(key: key);
+
+  updateList(newFilter){
+    data.add(FetchDataEvent(filter: newFilter));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,6 +206,7 @@ class ScrollableTabPage2 extends StatelessWidget {
                             width: size.width / (MediaQuery.of(context).size.width > 400 ? 3  : 2) - 25,
                             child: CardProduitFavoris(
                               data: toElement,
+                              updateFunction: () => updateList({"token": token, 'count': 8})
                             ),
                           ))
                       .toList(),

@@ -19,13 +19,16 @@ class _LocalisationContactState extends State<LocalisationContact> {
       const LatLng(14.692, -17.4474); // Coordonnées approximatives de Dakar
 
 
-  final String phoneNumber = "+221774567890"; // Remplace par ton numéro
+  final String phoneNumber = "00221774567890"; // Remplace par ton numéro
 
   // Fonction pour lancer un appel téléphonique
   void _launchCaller(String phone) async {
     final Uri callUri = Uri(scheme: 'tel', path: phone);
-
     // Vérifie si le lancement est possible avant d'essayer
+
+    // if (!await launchUrl(_url)) {
+    //   throw Exception('Could not launch $_url');
+    // }
     if (await canLaunchUrl(callUri)) {
       await launchUrl(callUri);
     } else {

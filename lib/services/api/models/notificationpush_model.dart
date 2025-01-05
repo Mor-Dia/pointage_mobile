@@ -14,6 +14,9 @@ class NotificationPush with _$NotificationPush {
     String? title,
     String? description,
     String? content,
+    @JsonKey(name: "is_read") bool? isRead,
+    @JsonKey(name: "data_type") String? dataType,
+    @JsonKey(name: "data_id")int? dataId,
     @JsonKey(name: "date_emission_fr")String? dateEmissionFr,
   }) = _NotificationPush;
 
@@ -39,7 +42,7 @@ class NotificationPush with _$NotificationPush {
   }
 
   static shrinkedAttributs () {
-    return "id,title,description,content,date_emission_fr";
+    return "id,title,is_read,description,content,date_emission_fr";
   }
 
   static String getEndpoint({bool isPagination = true}) {

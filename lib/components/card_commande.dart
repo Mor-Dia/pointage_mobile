@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/services/api/models/commande_model.dart';
 
 import '../constant.dart';
+import '../core/utils/helpers.dart';
 
 class CardCommande extends StatelessWidget {
   final Commande commande;
@@ -30,7 +31,7 @@ class CardCommande extends StatelessWidget {
                   "N° ${commande.id ?? ''}",
                 ),
                 Text(
-                  "${commande.total ?? ""}${" xof"}",
+                  "${Helpers.formatNumber(commande.total)}XOF",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 )
               ],
@@ -57,7 +58,7 @@ class CardCommande extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 10),
-            Row(
+            const Row(
               children: [
                 // Container(
                 //   height: 30,
@@ -89,24 +90,26 @@ class CardCommande extends StatelessWidget {
                 // const SizedBox(
                 //   width: 10,
                 // ),
-                Container(
-                  height: 30,
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: primaryColor),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text(
-                        'Voir les détails',
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontSize: MediaQuery.of(context).size.width * 0.030,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
+
+
+                // Container(
+                //   height: 30,
+                //   decoration: BoxDecoration(
+                //       border: Border.all(width: 1, color: primaryColor),
+                //       borderRadius: BorderRadius.circular(8)),
+                //   child: Center(
+                //     child: Padding(
+                //       padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                //       child: Text(
+                //         'Voir les détails',
+                //         style: TextStyle(
+                //           color: primaryColor,
+                //           fontSize: MediaQuery.of(context).size.width * 0.030,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // )
               ],
             ),
           ],

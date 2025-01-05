@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> globalFilter = {"count": 5};
   Map<String, dynamic> programmeBlocFilter = {"is_front": true};
   final DateTime date = DateTime.now();
+  bool canBeDisplay = false;
 
   @override
   void initState() {
@@ -163,53 +164,57 @@ class _HomePageState extends State<HomePage> {
           },
           child: ListView(
             children: [
-              const SizedBox(
-                height: spacingConstant,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: spacingConstant, right: spacingConstant),
-                child: Container(
-                  child: Text(
-                    "Votre activité du jour",
-                    style: GoogleFonts.montserrat(
-                        fontSize: MediaQuery.of(context).size.width * 0.045,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: spacingConstant,
-              ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
                 filter: programmeBlocFilter,
                 customWidget: (state) {
                   List<Programme> programmes = state.data;
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        ...programmes
-                            .map((toElement) => Row(
-                                  children: [
-                                    const SizedBox(
-                                      width: spacingConstant,
-                                    ),
-                                    Cardactivite(
-                                        data: toElement,
-                                        color: toElement.displaycoloretat ?? "",
-                                        handlePress: () {
-                                          showBottomSheet(context, toElement);
-                                        })
-                                  ],
-                                ))
-                            .toList(),
-                        const SizedBox(
-                          width: spacingConstant,
+                  if(programmes.isEmpty){
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
+                        child: Text(
+                          "Votre activité du jour",
+                          style: GoogleFonts.montserrat(
+                              fontSize: MediaQuery.of(context).size.width * 0.045,
+                              fontWeight: FontWeight.bold
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(
+                        height: spacingConstant,
+                      ),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ...programmes
+                                .map((toElement) => Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: spacingConstant,
+                                        ),
+                                        Cardactivite(
+                                            data: toElement,
+                                            color: toElement.displaycoloretat ?? "",
+                                            handlePress: () {
+                                              showBottomSheet(context, toElement);
+                                            })
+                                      ],
+                                    ))
+                                .toList(),
+                            const SizedBox(
+                              width: spacingConstant,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),

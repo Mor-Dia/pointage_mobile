@@ -47,11 +47,12 @@ class _ReservationsPageState extends State<ReservationsPage> {
         isPagination: true,
         attributeToGet: Reservation.shrinkedAttributs());
 
-    filter0.addAll({'etat': '1'});
-    filter1.addAll({'etat': '0'});
+    filter0.addAll({'statut': 'en_cours'});
+    filter1.addAll({'statut': 'terminer'});
 
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +140,10 @@ class ScrollableTabPage extends StatelessWidget {
       {Key? key, required this.reservationBloc, this.currentFilter = const {}})
       : super(key: key);
 
+  updateList(newFilter){
+    reservationBloc.add(FetchDataEvent(filter: newFilter));
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -163,6 +168,7 @@ class ScrollableTabPage extends StatelessWidget {
                 ...reservations
                     .map((toElement) => CardRowPlanning2(
                           reservation: toElement,
+                          updateFunction: () => updateList({...currentFilter, "client_id": clientId})
                         ))
                     .toList(),
               ]);
@@ -174,10 +180,6 @@ class ScrollableTabPage extends StatelessWidget {
           return const Center(child: PleaseLoginWidget());
       }
     });
-    //   SingleChildScrollView(
-    //   child: Column(
-    //     children: data.map((toElement) => const CardRowPlanning2()).toList(),
-    //   ),
-    // );
+
   }
 }

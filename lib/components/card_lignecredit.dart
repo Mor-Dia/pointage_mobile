@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yogivida_mobile/screens/Compte/ligne_credit_page.dart';
 
 import '../constant.dart';
+import '../core/utils/helpers.dart';
 import '../services/api/models/ligne_credit_model.dart';
 
 
@@ -26,7 +27,7 @@ class CardLignecredit extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                  "${ligneCredit.solde} XOF / ${ligneCredit.montant} XOF",
+                  "${Helpers.formatNumber(ligneCredit.solde)} XOF / ${Helpers.formatNumber(ligneCredit.montant)} XOF",
                   style: const TextStyle(
                       fontSize: 16,
                       color: primaryColor,

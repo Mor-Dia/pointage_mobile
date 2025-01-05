@@ -1,9 +1,11 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../constant.dart';
 import '../global.dart';
 
 
@@ -34,7 +36,7 @@ class Helpers {
     StringBuffer formattedInteger = StringBuffer();
     for (int i = 0; i < integerPart.length; i++) {
       if (i > 0 && (integerPart.length - i) % 3 == 0) {
-        formattedInteger.write(',');
+        formattedInteger.write(' ');
       }
       formattedInteger.write(integerPart[i]);
     }
@@ -157,6 +159,31 @@ class Helpers {
         print("ON MESSAGE ON BACKGROUND NOTIFICATION ");
       }
     });
+  }
+
+  static Future<String> getBaseUrl() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("from firebase mode debug " + prefs.getString("modeDebug").toString());
+    if (!prefs.containsKey("modeDebug")) {
+      prefs.setString("selectedBase", "prod");
+    }
+    String selectedBase = prefs.getString("selectedBase").toString();
+    CollectionReference linkRef = FirebaseFirestore.instance.collection(selectedBase);
+
+    String? baseUrl;
+    try {
+      dynamic linkDoc = await linkRef.doc("liens").get();
+      baseUrl = linkDoc.data()["baseUrl"];
+      print("link from firebase " + selectedBase.toString() + " " + baseUrl.toString());
+    } catch (exception, stackTrace) {
+      print("NETWORK ERROR WITH CONSOLE B " + exception.toString());
+    }
+
+    if (baseUrl == null) {
+      baseUrl = "${BASE_URL}";
+    }
+
+    return baseUrl;
   }
 
 }
