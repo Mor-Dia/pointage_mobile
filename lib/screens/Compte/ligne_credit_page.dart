@@ -12,6 +12,7 @@ import '../../components/card_lignecredit.dart';
 import '../../components/please_login_widget.dart';
 import '../../components/type_paiement_card.dart';
 import '../../core/models/user_model.dart';
+import '../../core/utils/helpers.dart';
 import '../../services/api/models/ligne_credit_model.dart';
 import '../../services/api/models/type_paiement_model.dart';
 import '../../services/authentication_bloc/authentication_bloc.dart';
@@ -127,7 +128,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                                         Utilisateur currentClient = users[0];
                                         return
                                         Text(
-                                          hide? "*******" : "${currentClient.solde} XOF",
+                                          hide? "*******" : "${Helpers.formatNumber(currentClient.solde)} XOF",
                                           style: const TextStyle(
                                               fontSize: 16,
                                               color: primaryColor,

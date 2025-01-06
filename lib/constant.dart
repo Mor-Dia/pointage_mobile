@@ -5,7 +5,6 @@ const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
 const LOGOUT_ENDPOINT = "deconnexion";
 const REQUEST_PWD_ENDPOINT = "password-reset";
-// const BASE_URL = 'http://192.168.1.12:8001/yogivida_back/public/';
 const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
 // const BASE_URL = 'https://b016-41-85-178-233.ngrok-free.app/yogivida_back/public/';
 const BASE_URL_QGL = '${BASE_URL}graphql?query=';

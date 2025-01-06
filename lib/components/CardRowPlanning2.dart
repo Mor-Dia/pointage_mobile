@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
@@ -6,23 +7,27 @@ import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/helpers.dart';
 
 import '../services/api/models/reservation_model.dart';
+import '../services/post_api_bloc.dart';
+import 'animated_gesture_detector.dart';
 
 class CardRowPlanning2 extends StatefulWidget {
   final Reservation reservation;
-
-  const CardRowPlanning2({super.key, required this.reservation});
+  final Function? updateFunction;
+  const CardRowPlanning2({super.key, required this.reservation, this.updateFunction});
 
   @override
   State<CardRowPlanning2> createState() => _CardRowPlanning2State();
 }
 
 class _CardRowPlanning2State extends State<CardRowPlanning2> {
+  late PostApiBloc cancelReservationPostBloc;
   late Reservation reservation;
   bool enCours = false;
 
   @override
   void initState() {
     reservation = widget.reservation;
+    cancelReservationPostBloc = PostApiBloc();
     checkIfReservationIsPassed();
     super.initState();
   }
@@ -36,6 +41,11 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
         enCours = true;
       });
     }
+  }
+
+  cancelReservation({required Map<String, dynamic> parameters}) {
+    Map<String, dynamic> params = {"etat":1, "commentaire": "", "id": reservation.id, "fichier": ""};
+    cancelReservationPostBloc.add(PostApiMakeCall(endpoint: 'reservation/statut', parameters: params));
   }
 
   @override
@@ -169,9 +179,52 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                   ),
                   Visibility(
                     visible: enCours,
-                    child: ButtonFiled(
-                      text: 'Annuler',
-                      handlerPress: () => {},
+                    child: BlocConsumer(
+                      bloc: cancelReservationPostBloc,
+                      listener: (context, state) {
+                        Color bgColor = Colors.green;
+                        Color textColor = Colors.white;
+                        String message = "";
+                        if (state is PostApiSuccess) {
+                          print("POST API SUCCESS ${state.message}");
+                          message = "${state.message}";
+                          bgColor = Colors.green;
+                          if(widget.updateFunction != null){
+                            widget.updateFunction!();
+                          }
+                        } else if (state is PostApiFailure) {
+                          print("POST API FAILURE ${state.message}");
+                          message = "${state.message}";
+                          bgColor = Colors.red;
+                        }
+                        if(state is PostApiSuccess || state is PostApiFailure){
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "${message}",
+                                style: TextStyle(color: textColor),
+                              ),
+                              backgroundColor: bgColor,
+                            ),
+                          );
+                        }
+                        if (state is PostApiProcessing) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        }
+                      },
+                      builder: (BuildContext context, postBlocState) {
+                        return AnimatedGestureButton(
+                          animate: postBlocState is PostApiProcessing,
+                          child: ButtonFiled(
+                            text: "Annuler",
+                            handlerPress: () {
+                              cancelReservation(parameters: {});
+                            },
+                          )
+
+                        );
+                      },
                     ),
                   )
                 ],

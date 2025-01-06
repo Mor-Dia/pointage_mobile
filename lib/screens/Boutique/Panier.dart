@@ -9,6 +9,8 @@ import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
+import '../../core/utils/helpers.dart';
+
 class PanierPage extends StatefulWidget {
   const PanierPage({super.key});
 
@@ -90,7 +92,7 @@ class _PanierState extends State<PanierPage> {
                       const Spacer(),
                       Text(
                         (state is PanierLoaded)
-                          ? 'TOTAL TTC : ${state.panier.total}'
+                          ? 'TOTAL TTC : ${Helpers.formatNumber(state.panier.total)}'
                           : '0',
                         style: const TextStyle(color: primaryColor,fontWeight: FontWeight.bold,fontSize: titreConstant),
                       ),

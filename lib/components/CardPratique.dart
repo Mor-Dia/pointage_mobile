@@ -16,12 +16,10 @@ import 'animated_gesture_detector.dart';
 
 class CardPratique extends StatefulWidget {
   final Pratique data;
-  final Function()? handlePress;
-  const CardPratique({
-    super.key,
-    required this.data,
-    this.handlePress,
-  });
+  final Function? handlePress;
+  final Function? updateFunction;
+
+  const CardPratique({ super.key, required this.data, this.handlePress, this.updateFunction});
 
   @override
   State<CardPratique> createState() => _CardPratiqueState();
@@ -30,8 +28,8 @@ class CardPratique extends StatefulWidget {
 class _CardPratiqueState extends State<CardPratique> {
   late PostApiBloc favorisPostBloc;
 
-  @override
   bool? liked;
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +53,7 @@ class _CardPratiqueState extends State<CardPratique> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(maxWidth: 300),
+      constraints: const BoxConstraints(maxWidth: 300),
       width: MediaQuery.of(context).size.width * 0.60,
       decoration: BoxDecoration(
           border: Border.all(width: 1, color: primaryColor.withOpacity(.2)),
@@ -94,11 +92,16 @@ class _CardPratiqueState extends State<CardPratique> {
                                   SnackBar(
                                     content: Text(
                                       liked!?  'Ajouter au favoris' : 'Retirer des favoris',
-                                      style: TextStyle(color: Colors.white),
+                                      style: const TextStyle(color: Colors.white),
                                     ),
                                     backgroundColor: Colors.green[400],
                                   ),
                                 );
+                                print(" UPDATE PRATIQUE SHOULD UPDATE SOON ${widget.updateFunction}");
+                                if(widget.updateFunction != null){
+                                  print(" UPDATE PRATIQUE SHOULD UPDATE");
+                                  widget.updateFunction!();
+                                }
                               }
                               if (state is PostApiProcessing) {
                                 ScaffoldMessenger.of(context).hideCurrentSnackBar();

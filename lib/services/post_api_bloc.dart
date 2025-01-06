@@ -33,14 +33,22 @@ class PostApiBloc extends Bloc<PostApiEvent, PostApiState> {
         if(responseJsonDecoded["errors"] != null && responseJsonDecoded["errors"] != "" ) {
           String message = responseJsonDecoded["errors"] == "" ? "Une erreur s'est produite" :  responseJsonDecoded["errors"];
           emit(PostApiFailure(message: message));
-        } else {
-          String message = responseJsonDecoded["errors"] == "" ? "Opération effectuée avec succès" : "";
+        } else if (responseJsonDecoded["errors"] == null || responseJsonDecoded["errors"] == "" ){
+          String message = "Opération effectuée avec succès";
+          emit(PostApiSuccess(message: message));
+        } else if(responseJsonDecoded["data"] == 0) {
+          if(responseJsonDecoded["errors"] == "" || responseJsonDecoded["errors"] == null){
+            String message = "Opération effectuée avec succès";
+            emit(PostApiSuccess(message: message));
+          } else if( responseJsonDecoded["errors"] != null && responseJsonDecoded["errors"] != "" ) {
+            String message = responseJsonDecoded["errors"];
+            emit(PostApiFailure(message: message));
+          }
+        } else if(responseJsonDecoded["data"] == 1){
+          String message = "Opération effectuée avec succès";
           emit(PostApiSuccess(message: message));
         }
-        if(responseJsonDecoded["data"] == 0) {
-          String message = responseJsonDecoded["errors"] == "" ? "Opération effectuée avec succès" : "";
-          emit(PostApiSuccess(message: message));
-        }
+
       } else {
         String message = "Une erreur s'est produite";
         emit(PostApiFailure(message: message));
@@ -49,6 +57,7 @@ class PostApiBloc extends Bloc<PostApiEvent, PostApiState> {
       if (kDebugMode) {
         emit(const PostApiFailure(message: "Une erreur est survenue"));
         print("ERROR WHILE MAKING POST REQUEST $e");
+        print("ERROR WHILE MAKING POST REQUEST STACKTRACE $stacktrace");
       }
     }
   }
