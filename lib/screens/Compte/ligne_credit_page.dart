@@ -266,7 +266,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                       ),
                       BlocBasedWidget<List<TypePaiement>>(
                         customDataBloc: typePaiementPushBloc,
-                        // filter: currentFilter,
+                        filter: const {'showatwebsite': 'true'},
                         useInfiniteScroller: true,
                         customWidget: (state) {
                           List<TypePaiement> typePaiements = state.data;
@@ -300,7 +300,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
     late PostApiBloc reservationPostBloc;
     reservationPostBloc = PostApiBloc();
 
-    reserverCours({required Map<String, dynamic> parameters}) {
+    buyLigneCredit({required Map<String, dynamic> parameters}) {
       reservationPostBloc.add(PostApiMakeCall(endpoint: 'lignecredit', parameters: parameters));
     }
 
@@ -353,7 +353,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                                 "typelignecredit" : 2,
                                 "type_paiement": toElement.id,
                               };
-                              reserverCours(parameters: parameters);
+                              buyLigneCredit(parameters: parameters);
                             },
                             child: TypePaiementCard(typePaiement: toElement)
                         ),
