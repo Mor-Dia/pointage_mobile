@@ -92,6 +92,22 @@ class _PlanningState extends State<Planning> {
     // programmeBloc.add(FetchDataEvent(filter: {'date': currentDate}));
   }
 
+  void cleanFieldAndUpdateList(){
+    designationFilter.clear();
+    setState(() {
+      selectedDate = date;
+      currentFilter = {...currentFilter..remove('nom_pratique')};
+    });
+  }
+
+  void searchWithDesignation(){
+    String text = designationFilter.text;
+    setState(() {
+      selectedDate = date;
+      currentFilter = {...currentFilter..addAll({'nom_pratique': text})};
+    });
+  }
+
   void Filter() {
     setState(() {});
   }
@@ -222,9 +238,48 @@ class _PlanningState extends State<Planning> {
                         text: 'Désignation',
                         icon: 'loupe',
                         error: '',
-                        handleChangeValue: (value) => Filter(),
                       ),
                     ),
+                    SizedBox.square(
+                      child: GestureDetector(
+                        onTap: (){
+                          searchWithDesignation();
+                        },
+                        child: Container(
+                          height: 45,
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          margin: const EdgeInsets.only(left: 2.0),
+                          decoration: BoxDecoration(
+                            color: primaryColor, // Couleur de fond bleu
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: SvgPicture.asset(
+                            color: Colors.white,
+                            'assets/icons/loupe.svg',
+                            fit: BoxFit.scaleDown,
+                            height: spacingConstant,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: designationFilter.text.isNotEmpty,
+                      child: SizedBox.square(
+                        dimension: 50,
+                        child: GestureDetector(
+                          onTap: (){
+                            cleanFieldAndUpdateList();
+                          },
+                          child: const Icon(
+                            Icons.cancel,
+                            size: spacingConstant,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+
+
                     const SizedBox.square(dimension: 2,),
                     // const Spacer(),
                     // // const Text('|'),
@@ -256,20 +311,21 @@ class _PlanningState extends State<Planning> {
                     return const Center(
                         child: const Text('Aucune activité programmée'));
                   }
-                  List<dynamic> dataFiltered = programmes
-                      .where((element) => element
-                      .professeurPratique!.pratique!.designation
-                      .toString()
-                      .toLowerCase()
-                      .startsWith(designationFilter.text.toLowerCase()))
-                      .toList();
-                  if (dataFiltered.isEmpty) {
-                    return const Center(
-                        child: Text('Aucune activité trouvée'));
-                  }
+
+                  // List<dynamic> dataFiltered = programmes
+                  //     .where((element) => element
+                  //     .professeurPratique!.pratique!.designation
+                  //     .toString()
+                  //     .toLowerCase()
+                  //     .startsWith(designationFilter.text.toLowerCase()))
+                  //     .toList();
+                  // if (dataFiltered.isEmpty) {
+                  //   return const Center(
+                  //       child: Text('Aucune activité trouvée'));
+                  // }
                   return Column(
                     children: [
-                      ...dataFiltered
+                      ...programmes
                           .map((toElement) => CardRowPlanning(
                         data: toElement,
                       ))

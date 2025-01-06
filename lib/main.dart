@@ -25,6 +25,7 @@ import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 import 'package:yogivida_mobile/simple_bloc_observer.dart';
 import 'core/global.dart';
 import 'core/models/user_model.dart';
+import 'core/utils/helpers.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -65,14 +66,13 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _userRepository = UserRepository<Utilisateur>(
         factoryFunction: (json) => Utilisateur.fromJson(json));
+    // String baseUrl = await Helpers.getBaseUrl();
     _authenticationRepository = AuthenticationRepository(
         loginUrl: "$BASE_URL$LOGIN_ENDPOINT",
         registrationUrl: "$BASE_URL$LOGIN_ENDPOINT",
         logoutUrl: "$BASE_URL$LOGIN_ENDPOINT",
-        userRepository: _userRepository);
-    askForNotificationPermission();
+        userRepository: _userRepository);    askForNotificationPermission();
   }
-
   askForNotificationPermission() async{
     final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
   }

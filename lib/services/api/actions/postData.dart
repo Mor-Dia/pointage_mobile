@@ -5,8 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/global.dart';
 
+import '../../../core/utils/helpers.dart';
+
 Future<dynamic> postApiData(endPoint, Map<String, dynamic> body) async {
-  String url = BASE_URL;
+  // String url = BASE_URL;
+  String url = await Helpers.getBaseUrl();
   url = "${url}${endPoint}";
 
   Map<String, String>? headers = await getHeaders();

@@ -39,6 +39,7 @@ class _UpdateState extends State<Update> {
   String? currentError;
   int? currentUserId;
   bool gettingUsersInfos = true;
+  bool lockUserInfoRetrieving = false;
   final TextEditingController controlerConfirmationPassword =
       TextEditingController();
   List<Map<String, dynamic>> inputFields = [];
@@ -128,44 +129,66 @@ class _UpdateState extends State<Update> {
       }
     ];
     AuthenticationBloc currentAuthBloc = BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
+    print("UPDATE USER 1");
+    if(!lockUserInfoRetrieving){
+      getUsersInfo();
+    }
     currentAuthBloc.stream.listen((onData){
-      AuthenticationStatus currentStatus = currentAuthBloc.state.status;
-      switch (currentStatus) {
-        case AuthenticationStatus.unknown:
-        case AuthenticationStatus.unauthenticated:
-        case AuthenticationStatus.failure:
-          break;
-        case AuthenticationStatus.authenticated:
-          Utilisateur currentUser = currentAuthBloc.state.user;
-          currentUserId = currentUser.id;
-          utilisateurBloc.add(FetchDataEvent(filter: {"id": currentUserId}));
-          utilisateurBloc.stream.listen((onData){
-            if(onData is DataSuccess){
-              setState(() {
-                gettingUsersInfos = false;
-              });
-              Utilisateur currentUser = onData.data[0];
-              List<Map<String, dynamic>>  tempInputFields = inputFields;
-              for (int i = 0; i < tempInputFields!.length; i++) {
-                String tag = tempInputFields?[i]['tag'];
-                if (tempInputFields?[i]['type'] == "text" || tempInputFields?[i]['type'] == "password") {
-                  tempInputFields![i]['controller'] = renderController(tag, currentUser);
-                } 
-                else if(tempInputFields?[i]['type'] == "select"){
-                  tempInputFields![i]['selected'] = retrieveItem(currentUser.typePersonne);
-                }
-              }
-              setState(() {
-                inputFields = [...tempInputFields];
-              });
-            } else {
-              setState(() {
-                gettingUsersInfos = false;
-              });
-            }
-          });
+      if(!lockUserInfoRetrieving){
+        getUsersInfo();
       }
     });
+  }
+
+  getUsersInfo(){
+    print("UPDATE USER LISTENING 2");
+    setState((){
+      //Pour éviter que la récupération se fasse 2 fois car parfois,
+      // il faut attendre un changement d'état d'authentification, d'autre fois,
+      // il est deja dans l'état Authenticated
+      lockUserInfoRetrieving = true;
+    });
+    AuthenticationBloc currentAuthBloc = BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
+    AuthenticationStatus currentStatus = currentAuthBloc.state.status;
+    switch (currentStatus) {
+      case AuthenticationStatus.unknown:
+      case AuthenticationStatus.unauthenticated:
+      case AuthenticationStatus.failure:
+        print("UPDATE USER LISTENING FAILURE 3");
+
+        break;
+      case AuthenticationStatus.authenticated:
+        print("UPDATE USER LISTENING AUTH 4");
+
+        Utilisateur currentUser = currentAuthBloc.state.user;
+        currentUserId = currentUser.id;
+        utilisateurBloc.add(FetchDataEvent(filter: {"id": currentUserId}));
+        utilisateurBloc.stream.listen((onData){
+          if(onData is DataSuccess){
+            setState(() {
+              gettingUsersInfos = false;
+            });
+            Utilisateur currentUser = onData.data[0];
+            List<Map<String, dynamic>>  tempInputFields = inputFields;
+            for (int i = 0; i < tempInputFields!.length; i++) {
+              String tag = tempInputFields?[i]['tag'];
+              if (tempInputFields?[i]['type'] == "text" || tempInputFields?[i]['type'] == "password") {
+                tempInputFields![i]['controller'] = renderController(tag, currentUser);
+              }
+              else if(tempInputFields?[i]['type'] == "select"){
+                tempInputFields![i]['selected'] = retrieveItem(currentUser.typePersonne);
+              }
+            }
+            setState(() {
+              inputFields = [...tempInputFields];
+            });
+          } else {
+            setState(() {
+              gettingUsersInfos = false;
+            });
+          }
+        });
+    }
   }
 
   void selectGenre(Item value) {
@@ -290,6 +313,7 @@ class _UpdateState extends State<Update> {
     postData.removeWhere((key, value)=>keysToRemove.contains(key));
     postData['phone'] = postData['telephone'];
     postData['nom_complet'] = "${postData['prenom']} ${postData['nom']}";
+    postData['from_mobile'] = true;
     print("POST DATA $postData");
     updateUserPostBloc.add(PostApiMakeCall(endpoint: 'update-user', parameters: postData));
   }

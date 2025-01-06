@@ -306,7 +306,6 @@ class _BoutiqueState extends State<Boutique> {
                       child: Row(
                         children: marques.map((marque) {
                           int index = marques.indexOf(marque);
-
                           return GestureDetector(
                             onTap: () {
                               filtreFamille(index, marque.id);

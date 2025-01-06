@@ -24,6 +24,12 @@ mixin _$NotificationPush {
   String? get title => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   String? get content => throw _privateConstructorUsedError;
+  @JsonKey(name: "is_read")
+  bool? get isRead => throw _privateConstructorUsedError;
+  @JsonKey(name: "data_type")
+  String? get dataType => throw _privateConstructorUsedError;
+  @JsonKey(name: "data_id")
+  int? get dataId => throw _privateConstructorUsedError;
   @JsonKey(name: "date_emission_fr")
   String? get dateEmissionFr => throw _privateConstructorUsedError;
 
@@ -48,6 +54,9 @@ abstract class $NotificationPushCopyWith<$Res> {
       String? title,
       String? description,
       String? content,
+      @JsonKey(name: "is_read") bool? isRead,
+      @JsonKey(name: "data_type") String? dataType,
+      @JsonKey(name: "data_id") int? dataId,
       @JsonKey(name: "date_emission_fr") String? dateEmissionFr});
 }
 
@@ -70,6 +79,9 @@ class _$NotificationPushCopyWithImpl<$Res, $Val extends NotificationPush>
     Object? title = freezed,
     Object? description = freezed,
     Object? content = freezed,
+    Object? isRead = freezed,
+    Object? dataType = freezed,
+    Object? dataId = freezed,
     Object? dateEmissionFr = freezed,
   }) {
     return _then(_value.copyWith(
@@ -89,6 +101,18 @@ class _$NotificationPushCopyWithImpl<$Res, $Val extends NotificationPush>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String?,
+      isRead: freezed == isRead
+          ? _value.isRead
+          : isRead // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      dataType: freezed == dataType
+          ? _value.dataType
+          : dataType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dataId: freezed == dataId
+          ? _value.dataId
+          : dataId // ignore: cast_nullable_to_non_nullable
+              as int?,
       dateEmissionFr: freezed == dateEmissionFr
           ? _value.dateEmissionFr
           : dateEmissionFr // ignore: cast_nullable_to_non_nullable
@@ -110,6 +134,9 @@ abstract class _$$NotificationPushImplCopyWith<$Res>
       String? title,
       String? description,
       String? content,
+      @JsonKey(name: "is_read") bool? isRead,
+      @JsonKey(name: "data_type") String? dataType,
+      @JsonKey(name: "data_id") int? dataId,
       @JsonKey(name: "date_emission_fr") String? dateEmissionFr});
 }
 
@@ -130,6 +157,9 @@ class __$$NotificationPushImplCopyWithImpl<$Res>
     Object? title = freezed,
     Object? description = freezed,
     Object? content = freezed,
+    Object? isRead = freezed,
+    Object? dataType = freezed,
+    Object? dataId = freezed,
     Object? dateEmissionFr = freezed,
   }) {
     return _then(_$NotificationPushImpl(
@@ -149,6 +179,18 @@ class __$$NotificationPushImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String?,
+      isRead: freezed == isRead
+          ? _value.isRead
+          : isRead // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      dataType: freezed == dataType
+          ? _value.dataType
+          : dataType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dataId: freezed == dataId
+          ? _value.dataId
+          : dataId // ignore: cast_nullable_to_non_nullable
+              as int?,
       dateEmissionFr: freezed == dateEmissionFr
           ? _value.dateEmissionFr
           : dateEmissionFr // ignore: cast_nullable_to_non_nullable
@@ -166,6 +208,9 @@ class _$NotificationPushImpl extends _NotificationPush
       this.title,
       this.description,
       this.content,
+      @JsonKey(name: "is_read") this.isRead,
+      @JsonKey(name: "data_type") this.dataType,
+      @JsonKey(name: "data_id") this.dataId,
       @JsonKey(name: "date_emission_fr") this.dateEmissionFr})
       : super._();
 
@@ -181,12 +226,21 @@ class _$NotificationPushImpl extends _NotificationPush
   @override
   final String? content;
   @override
+  @JsonKey(name: "is_read")
+  final bool? isRead;
+  @override
+  @JsonKey(name: "data_type")
+  final String? dataType;
+  @override
+  @JsonKey(name: "data_id")
+  final int? dataId;
+  @override
   @JsonKey(name: "date_emission_fr")
   final String? dateEmissionFr;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NotificationPush(id: $id, title: $title, description: $description, content: $content, dateEmissionFr: $dateEmissionFr)';
+    return 'NotificationPush(id: $id, title: $title, description: $description, content: $content, isRead: $isRead, dataType: $dataType, dataId: $dataId, dateEmissionFr: $dateEmissionFr)';
   }
 
   @override
@@ -198,6 +252,9 @@ class _$NotificationPushImpl extends _NotificationPush
       ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('description', description))
       ..add(DiagnosticsProperty('content', content))
+      ..add(DiagnosticsProperty('isRead', isRead))
+      ..add(DiagnosticsProperty('dataType', dataType))
+      ..add(DiagnosticsProperty('dataId', dataId))
       ..add(DiagnosticsProperty('dateEmissionFr', dateEmissionFr));
   }
 
@@ -211,14 +268,18 @@ class _$NotificationPushImpl extends _NotificationPush
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.content, content) || other.content == content) &&
+            (identical(other.isRead, isRead) || other.isRead == isRead) &&
+            (identical(other.dataType, dataType) ||
+                other.dataType == dataType) &&
+            (identical(other.dataId, dataId) || other.dataId == dataId) &&
             (identical(other.dateEmissionFr, dateEmissionFr) ||
                 other.dateEmissionFr == dateEmissionFr));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, title, description, content, dateEmissionFr);
+  int get hashCode => Object.hash(runtimeType, id, title, description, content,
+      isRead, dataType, dataId, dateEmissionFr);
 
   /// Create a copy of NotificationPush
   /// with the given fields replaced by the non-null parameter values.
@@ -243,6 +304,9 @@ abstract class _NotificationPush extends NotificationPush {
           final String? title,
           final String? description,
           final String? content,
+          @JsonKey(name: "is_read") final bool? isRead,
+          @JsonKey(name: "data_type") final String? dataType,
+          @JsonKey(name: "data_id") final int? dataId,
           @JsonKey(name: "date_emission_fr") final String? dateEmissionFr}) =
       _$NotificationPushImpl;
   const _NotificationPush._() : super._();
@@ -258,6 +322,15 @@ abstract class _NotificationPush extends NotificationPush {
   String? get description;
   @override
   String? get content;
+  @override
+  @JsonKey(name: "is_read")
+  bool? get isRead;
+  @override
+  @JsonKey(name: "data_type")
+  String? get dataType;
+  @override
+  @JsonKey(name: "data_id")
+  int? get dataId;
   @override
   @JsonKey(name: "date_emission_fr")
   String? get dateEmissionFr;

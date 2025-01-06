@@ -3,9 +3,11 @@ import 'package:http/http.dart' as http;
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/global.dart';
 
-Future<dynamic> getApiData(endPoint,
-    {Map<String, dynamic>? parameters, isGraphQl}) async {
-  String url = BASE_URL;
+import '../../../core/utils/helpers.dart';
+
+Future<dynamic> getApiData(endPoint,{Map<String, dynamic>? parameters, isGraphQl}) async {
+  // String url = BASE_URL;
+  String url = await Helpers.getBaseUrl();
   if (isGraphQl != true) {
     url = "${url}/$endPoint";
   } else {

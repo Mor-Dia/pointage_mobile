@@ -470,18 +470,19 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                     bloc: reservationPostBloc,
                     listener: (context, state) {
                       if (state is PostApiSuccess) {
+                        print("MESSAGE RESE ${state.message} ");
                         ScaffoldMessenger.of(parentContext).showSnackBar(
                           SnackBar(
                             content: Text(
                               "${state.message}",
-                              style: TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                             ),
                             backgroundColor: Colors.green[400],
                           ),
                         );
                       }
                       if (state is PostApiFailure) {
-                        print("NEW STATE ${state.message}");
+                        print("MESSAGE RESE ${state.message} ");
                         ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
                         ScaffoldMessenger.of(parentContext).showSnackBar(
                           SnackBar(

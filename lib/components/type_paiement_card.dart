@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../constant.dart';
+import '../core/utils/helpers.dart';
 import '../services/api/models/type_paiement_model.dart';
 
 class TypePaiementCard extends StatelessWidget {
@@ -44,7 +45,7 @@ class TypePaiementCard extends StatelessWidget {
                           color: primaryColor, fontSize: 12)
                   ),
                   Text(
-                      "${typePaiement.soldeDisponible} XOF",
+                      "${Helpers.formatNumber(typePaiement.soldeDisponible)} XOF",
                       style: const TextStyle(
                           color: primaryColor,
                           fontWeight: FontWeight.bold
