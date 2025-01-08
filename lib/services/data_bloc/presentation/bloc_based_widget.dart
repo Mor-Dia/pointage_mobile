@@ -10,12 +10,19 @@ class BlocBasedWidget<T> extends StatefulWidget {
   final DataBloc<T> customDataBloc;
   final Map<String, dynamic>? filter;
   final bool useInfiniteScroller;
+  final Widget? customErrorWidget;
+  final Widget? customPendingWidget;
+  final Widget? customNoDataWidget;
   const BlocBasedWidget(
       {super.key,
       required this.customWidget,
       required this.customDataBloc,
       this.filter,
-      this.useInfiniteScroller = false});
+      this.useInfiniteScroller = false,
+      this.customErrorWidget,
+      this.customPendingWidget,
+      this.customNoDataWidget,
+      });
 
   @override
   State<BlocBasedWidget<T>> createState() => _BlocBasedWidgetState();
@@ -28,6 +35,10 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
   late bool useInfiniteScroller;
   bool loadingNewData = false;
 
+  Widget? customErrorWidget;
+  Widget? customPendingWidget;
+  Widget? customNoDataWidget;
+
   ScrollController scrollerController = ScrollController();
 
   @override
@@ -38,6 +49,9 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
     useInfiniteScroller = widget.useInfiniteScroller;
     customDataBloc.add(FetchDataEvent(filter: filter));
     scrollerController.addListener(getAdditionalData);
+    customNoDataWidget = widget.customErrorWidget;
+    customNoDataWidget = widget.customPendingWidget;
+    customNoDataWidget = widget.customNoDataWidget;
     super.initState();
   }
 
@@ -130,15 +144,15 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
             }
             return customWidget(state);
           }
-          return const Center(
+          return customNoDataWidget ?? const Center(
             child: NoDataWidget(),
           );
         } else if (state is DataFailure) {
-          return const Center(
+          return customErrorWidget ?? const Center(
             child: CustomErrorWidget(),
           );
         } else {
-          return const Center(
+          return  customPendingWidget ??const Center(
             child: CircularProgressIndicator(),
           );
         }

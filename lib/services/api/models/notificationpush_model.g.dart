@@ -14,8 +14,8 @@ _$NotificationPushImpl _$$NotificationPushImplFromJson(
       description: json['description'] as String?,
       content: json['content'] as String?,
       isRead: json['is_read'] as bool?,
-      dataType: json['data_type'] as String?,
-      dataId: (json['data_id'] as num?)?.toInt(),
+      dataType: json['type'] as String?,
+      dataId: (json['element_id'] as num?)?.toInt(),
       dateEmissionFr: json['date_emission_fr'] as String?,
     );
 
@@ -27,7 +27,7 @@ Map<String, dynamic> _$$NotificationPushImplToJson(
       'description': instance.description,
       'content': instance.content,
       'is_read': instance.isRead,
-      'data_type': instance.dataType,
-      'data_id': instance.dataId,
+      'type': instance.dataType,
+      'element_id': instance.dataId,
       'date_emission_fr': instance.dateEmissionFr,
     };

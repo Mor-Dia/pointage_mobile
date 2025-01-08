@@ -145,7 +145,7 @@ class _PlanningState extends State<Planning> {
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const NotificationPushPage())),
+                        builder: (context) => const NotificationPage())),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: <Widget>[

@@ -164,14 +164,16 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
                 customWidget: (state) {
                   List<TypeNotificationPush> tnps = state.data;
                   return
-                    Column(
-                      children:  [
-                        ...tnps
-                          .map((toElement) => CardTypeNotificationPush(
-                            tnp: toElement,
-                            onTNPChecked: () {},
-                          )).toList(),
-                      ]
+                    SingleChildScrollView(
+                      child: Column(
+                          children:  [
+                            ...tnps
+                                .map((toElement) => CardTypeNotificationPush(
+                              tnp: toElement,
+                              onTNPChecked: () {},
+                            )).toList(),
+                          ]
+                      ),
                     );
                 },
               ),

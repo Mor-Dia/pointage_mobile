@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yogivida_mobile/services/api/actions/postData.dart';
 
 import '../../constant.dart';
 import '../global.dart';
@@ -46,7 +47,6 @@ class Helpers {
         ? formattedInteger.toString()
         : '${formattedInteger.toString()}.${decimalPart}';
   }
-
 
   static showSnackBar(BuildContext context, {bool isError = false, String? message}){
     ScaffoldMessenger.of(context).showSnackBar(
@@ -179,11 +179,35 @@ class Helpers {
       print("NETWORK ERROR WITH CONSOLE B " + exception.toString());
     }
 
-    if (baseUrl == null) {
-      baseUrl = "${BASE_URL}";
-    }
+    baseUrl ??= BASE_URL;
 
     return baseUrl;
+    return BASE_URL;
+  }
+
+  static handleNotificationData(
+      BuildContext context, Map<String, dynamic> notificationData) {
+    if (kDebugMode) {
+      //hideprint("NOTIFICATION DATA $notificationData");
+    }
+    if (notificationData["type"] == "pratique") {
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => const LoginPage()));
+    } else if (notificationData["type"] == "reservation") {
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => const LoginPage()));
+    }
+  }
+
+  static setFCMTokenToServer () async {
+    print("SET FCM TOKEN ");
+    FirebaseMessaging fcm = firebaseMessagingInstance();
+    await fcm.setAutoInitEnabled(true);
+    String? fcmToken = await fcm.getToken();
+    if(fcmToken != null){
+      print("SET FCM TOKEN 2");
+      postApiData("setfcmtoken", {"fcm_token": fcmToken});
+    }
   }
 
 }
