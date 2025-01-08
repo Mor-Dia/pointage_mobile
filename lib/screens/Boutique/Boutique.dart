@@ -482,8 +482,7 @@ class _BoutiqueState extends State<Boutique> {
                               List<Produit> produits = state.data;
 
                               if (produits.isEmpty) {
-                                return Center(
-                                    child: Text('Aucun produits trouvés'));
+                                return const Center( child: Text('Aucun produits trouvés'));
                               }
                               return Wrap(
                                 alignment: WrapAlignment.start,
@@ -491,14 +490,7 @@ class _BoutiqueState extends State<Boutique> {
                                 runSpacing: 10,
                                 children: produits
                                     .map((Produit toElement) => SizedBox(
-                                          width: size.width /
-                                                  (MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          400
-                                                      ? 3
-                                                      : 2) -
-                                              25,
+                                          width: size.width / (MediaQuery.of(context).size .width > 400 ? 3 : 2) - 25,
                                           child: CardProduit(
                                             data: toElement,
                                             handlePress: (value) {

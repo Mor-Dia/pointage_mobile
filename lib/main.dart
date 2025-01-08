@@ -1,3 +1,4 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,7 +32,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message");
+  print("Handling a background message ${message.data}");
 }
 
 Future<void> main() async {
@@ -44,14 +45,19 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   Bloc.observer = SimpleBlocObserver();
   await fcm.setAutoInitEnabled(true);
-  fcm.getToken().then((value) {
-    print("FCM TOKEN $value");
-  });
-  runApp(const MyApp());
+  Map<String, dynamic>? notificationData;
+  await FirebaseAppCheck.instance.activate(
+    webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+    androidProvider: AndroidProvider.debug,
+    appleProvider: AppleProvider.appAttest,
+  );
+  Helpers.setFCMTokenToServer();
+  runApp(MyApp(notificationData: notificationData));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final Map<String, dynamic>? notificationData;
+  const MyApp({super.key, this.notificationData});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -71,7 +77,12 @@ class _MyAppState extends State<MyApp> {
         loginUrl: "$BASE_URL$LOGIN_ENDPOINT",
         registrationUrl: "$BASE_URL$LOGIN_ENDPOINT",
         logoutUrl: "$BASE_URL$LOGIN_ENDPOINT",
-        userRepository: _userRepository);    askForNotificationPermission();
+        userRepository: _userRepository);
+    askForNotificationPermission();
+    if (widget.notificationData != null) {
+      //hideprint("HERE IS YOUR NOTIFICATION DATA ${widget.notificationData}");
+      Helpers.handleNotificationData(context, widget.notificationData!);
+    }
   }
   askForNotificationPermission() async{
     final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);

@@ -22,8 +22,8 @@ Future<dynamic> postApiData(endPoint, Map<String, dynamic> body) async {
   }
   var response = await http.post(requestUri, headers: headers, body: bodyJson);
   if (kDebugMode) {
-    // print("API CALL RESPONSE ${response.body}");
-    // print("API CALL RESPONSE HEADERS ${response.headers}");
+    print("SET FCM TOKEN API CALL RESPONSE ${response.body}");
+    print("SET FCM TOKEN API CALL RESPONSE HEADERS ${response.headers}");
   }
 
   return response;

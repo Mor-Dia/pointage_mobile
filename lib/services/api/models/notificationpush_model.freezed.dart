@@ -26,9 +26,9 @@ mixin _$NotificationPush {
   String? get content => throw _privateConstructorUsedError;
   @JsonKey(name: "is_read")
   bool? get isRead => throw _privateConstructorUsedError;
-  @JsonKey(name: "data_type")
+  @JsonKey(name: "type")
   String? get dataType => throw _privateConstructorUsedError;
-  @JsonKey(name: "data_id")
+  @JsonKey(name: "element_id")
   int? get dataId => throw _privateConstructorUsedError;
   @JsonKey(name: "date_emission_fr")
   String? get dateEmissionFr => throw _privateConstructorUsedError;
@@ -55,8 +55,8 @@ abstract class $NotificationPushCopyWith<$Res> {
       String? description,
       String? content,
       @JsonKey(name: "is_read") bool? isRead,
-      @JsonKey(name: "data_type") String? dataType,
-      @JsonKey(name: "data_id") int? dataId,
+      @JsonKey(name: "type") String? dataType,
+      @JsonKey(name: "element_id") int? dataId,
       @JsonKey(name: "date_emission_fr") String? dateEmissionFr});
 }
 
@@ -135,8 +135,8 @@ abstract class _$$NotificationPushImplCopyWith<$Res>
       String? description,
       String? content,
       @JsonKey(name: "is_read") bool? isRead,
-      @JsonKey(name: "data_type") String? dataType,
-      @JsonKey(name: "data_id") int? dataId,
+      @JsonKey(name: "type") String? dataType,
+      @JsonKey(name: "element_id") int? dataId,
       @JsonKey(name: "date_emission_fr") String? dateEmissionFr});
 }
 
@@ -209,8 +209,8 @@ class _$NotificationPushImpl extends _NotificationPush
       this.description,
       this.content,
       @JsonKey(name: "is_read") this.isRead,
-      @JsonKey(name: "data_type") this.dataType,
-      @JsonKey(name: "data_id") this.dataId,
+      @JsonKey(name: "type") this.dataType,
+      @JsonKey(name: "element_id") this.dataId,
       @JsonKey(name: "date_emission_fr") this.dateEmissionFr})
       : super._();
 
@@ -229,10 +229,10 @@ class _$NotificationPushImpl extends _NotificationPush
   @JsonKey(name: "is_read")
   final bool? isRead;
   @override
-  @JsonKey(name: "data_type")
+  @JsonKey(name: "type")
   final String? dataType;
   @override
-  @JsonKey(name: "data_id")
+  @JsonKey(name: "element_id")
   final int? dataId;
   @override
   @JsonKey(name: "date_emission_fr")
@@ -305,8 +305,8 @@ abstract class _NotificationPush extends NotificationPush {
           final String? description,
           final String? content,
           @JsonKey(name: "is_read") final bool? isRead,
-          @JsonKey(name: "data_type") final String? dataType,
-          @JsonKey(name: "data_id") final int? dataId,
+          @JsonKey(name: "type") final String? dataType,
+          @JsonKey(name: "element_id") final int? dataId,
           @JsonKey(name: "date_emission_fr") final String? dateEmissionFr}) =
       _$NotificationPushImpl;
   const _NotificationPush._() : super._();
@@ -326,10 +326,10 @@ abstract class _NotificationPush extends NotificationPush {
   @JsonKey(name: "is_read")
   bool? get isRead;
   @override
-  @JsonKey(name: "data_type")
+  @JsonKey(name: "type")
   String? get dataType;
   @override
-  @JsonKey(name: "data_id")
+  @JsonKey(name: "element_id")
   int? get dataId;
   @override
   @JsonKey(name: "date_emission_fr")

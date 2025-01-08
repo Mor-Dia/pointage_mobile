@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               'Accueil',
               style: GoogleFonts.arimo(
-                color: Color(0xff15274d),
+                color: const Color(0xff15274d),
                 fontSize: MediaQuery.of(context).size.width * 0.055,
                 fontWeight: FontWeight.bold,
               ),
@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const NotificationPushPage())),
+                      builder: (context) => const NotificationPage())),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: <Widget>[
