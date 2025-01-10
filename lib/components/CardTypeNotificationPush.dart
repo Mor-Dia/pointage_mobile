@@ -19,8 +19,8 @@ import 'animated_gesture_detector.dart';
 
 class CardTypeNotificationPush extends StatefulWidget {
   final TypeNotificationPush tnp;
-  final Function onTNPChecked;
-  const CardTypeNotificationPush({super.key, required this.tnp, required this.onTNPChecked});
+  final Function? onTNPChecked;
+  const CardTypeNotificationPush({super.key, required this.tnp, this.onTNPChecked});
 
   @override
   State<CardTypeNotificationPush> createState() => _CardTypeNotificationPushState();
@@ -28,7 +28,7 @@ class CardTypeNotificationPush extends StatefulWidget {
 
 class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
   late TypeNotificationPush? tnp;
-  bool isAllowed = false;
+  bool isAllowed = true;
 
 
   @override
@@ -40,8 +40,13 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
     super.initState();
   }
 
-  onCheckboxChanged(value){
-    widget.onTNPChecked();
+  onCheckboxChanged(value, elementId){
+    setState(() {
+      isAllowed = !isAllowed;
+    });
+    if(widget.onTNPChecked != null){
+      widget.onTNPChecked!(elementId);
+    }
   }
 
   @override
@@ -72,7 +77,7 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
       trailing: Checkbox(
         value: isAllowed,
         onChanged: (value) {
-          onCheckboxChanged(value);
+          onCheckboxChanged(value, tnp?.id);
         }
       )
     );

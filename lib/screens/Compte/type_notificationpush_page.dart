@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +15,9 @@ import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
+import '../../core/models/user_model.dart';
 import '../../services/api/models/type_notificationpush_model.dart';
+import '../../services/authentication_bloc/authentication_bloc.dart';
 import '../../services/post_api_bloc.dart';
 
 class TypeNotificationPushsPage extends StatefulWidget {
@@ -32,7 +37,7 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
   bool hideAppBar = false;
   bool loadingNewData = false;
   bool isApiProcessing = false;
-  // List<int> selectedInt;
+  List<int> selectedTNPIds = [];
 
   ScrollController practiceListController = ScrollController();
 
@@ -54,9 +59,31 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
   }
 
   saveTNPPreferences(){
+    AuthenticationBloc currentAuthBloc = BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
+    AuthenticationStatus currentStatus = currentAuthBloc.state.status;
+    switch (currentStatus) {
+      case AuthenticationStatus.unknown:
+      case AuthenticationStatus.unauthenticated:
+      case AuthenticationStatus.failure:
+        break;
+      case AuthenticationStatus.authenticated:
+        Utilisateur currentUser = currentAuthBloc.state.user;
+        int? currentUserId = currentUser.id;
+        // setState(() {
+        //   isApiProcessing = true;
+        // });
+        Map<String, dynamic>parameters = {"ids": selectedTNPIds, "client_id": currentUserId};
+        saveTNPPostBloc.add(PostApiMakeCall(endpoint: 'settnppreferences', parameters: parameters));
+    }
+
+
+  }
+
+  addTNP(value){
     setState(() {
-      isApiProcessing = true;
+      selectedTNPIds.add(value);
     });
+    print("NEW TNPLIST VAL $selectedTNPIds");
   }
 
   @override
@@ -115,11 +142,11 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
                   if (state is PostApiFailure) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          'Ajouter au favoris',
+                        content: const Text(
+                          'Une erreur est survenue',
                           style: TextStyle(color: Colors.white),
                         ),
-                        backgroundColor: Colors.green[400],
+                        backgroundColor: Colors.red[400],
                       ),
                     );
                   }
@@ -142,43 +169,43 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
       ),
       body: AbsorbPointer(
         absorbing: isApiProcessing,
-        child: Column(
-          children: [
-            Visibility(
-              visible: isApiProcessing,
-              child: Container(
-                color: Colors.black87.withOpacity(0.5),
-                width: double.infinity,
-                height: double.infinity,
-                child: const Center(
-                  child: CircularProgressIndicator(),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Visibility(
+                visible: isApiProcessing,
+                child: Container(
+                  color: Colors.black87.withOpacity(0.5),
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
-              child: BlocBasedWidget<List<TypeNotificationPush>>(
-                customDataBloc: typeNotificationBloc,
-                filter: currentFilter,
-                useInfiniteScroller: true,
-                customWidget: (state) {
-                  List<TypeNotificationPush> tnps = state.data;
-                  return
-                    SingleChildScrollView(
-                      child: Column(
+              Padding(
+                padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
+                child: BlocBasedWidget<List<TypeNotificationPush>>(
+                  customDataBloc: typeNotificationBloc,
+                  filter: currentFilter,
+                  useInfiniteScroller: true,
+                  customWidget: (state) {
+                    List<TypeNotificationPush> tnps = state.data;
+                    return
+                      Column(
                           children:  [
                             ...tnps
                                 .map((toElement) => CardTypeNotificationPush(
                               tnp: toElement,
-                              onTNPChecked: () {},
+                              onTNPChecked: (value) {addTNP(value);},
                             )).toList(),
                           ]
-                      ),
-                    );
-                },
+                      );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
