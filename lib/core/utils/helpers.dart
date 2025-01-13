@@ -181,8 +181,8 @@ class Helpers {
 
     baseUrl ??= BASE_URL;
 
-    // return baseUrl;
-    return BASE_URL;
+    return baseUrl;
+    // return BASE_URL;
   }
 
   static handleNotificationData(
@@ -208,6 +208,21 @@ class Helpers {
       print("SET FCM TOKEN 2");
       postApiData("setfcmtoken", {"fcm_token": fcmToken});
     }
+  }
+
+  static double getGridElementWidth(context, extraSpace) {
+    var number = 2;
+    double currentSize = MediaQuery.of(context).size.width;
+    if(currentSize > 600 && currentSize <= 840){
+      number = 3;
+    } else if (currentSize > 840 && currentSize <= 1200){
+      number = 4;
+    } else if (currentSize > 1200 && currentSize <= 1800){
+      number = 4;
+    } else if (currentSize > 1800){
+      number = 6;
+    }
+    return (currentSize / number) - extraSpace;
   }
 
 }
