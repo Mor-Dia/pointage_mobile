@@ -75,8 +75,6 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
         Map<String, dynamic>parameters = {"ids": selectedTNPIds, "client_id": currentUserId};
         saveTNPPostBloc.add(PostApiMakeCall(endpoint: 'settnppreferences', parameters: parameters));
     }
-
-
   }
 
   addTNP(value){

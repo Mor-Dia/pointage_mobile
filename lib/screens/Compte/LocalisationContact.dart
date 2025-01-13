@@ -5,6 +5,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:yogivida_mobile/services/api/models/preference_model.dart';
+
+import '../../services/data_bloc/bloc/data_bloc.dart';
+import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 
 class LocalisationContact extends StatefulWidget {
   const LocalisationContact({super.key});
@@ -15,20 +19,26 @@ class LocalisationContact extends StatefulWidget {
 
 class _LocalisationContactState extends State<LocalisationContact> {
 
-  final LatLng _center =
-      const LatLng(14.692, -17.4474); // Coordonnées approximatives de Dakar
-
-
+  final LatLng _center = const LatLng(14.692, -17.4474); // Coordonnées approximatives de Dakar
+  late DataBloc<List<Preference>> dataBloc;
+  Map<String, dynamic> globalFilter = {"count": 10};
   final String phoneNumber = "00221774567890"; // Remplace par ton numéro
+
+  @override
+  void initState() {
+    dataBloc = DataBloc<List<Preference>>(
+            (response) => Preference.fromJsonList(response),
+        Preference.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        isPagination: false,
+        attributeToGet: Preference.shrinkedAttributs());
+
+    super.initState();
+  }
 
   // Fonction pour lancer un appel téléphonique
   void _launchCaller(String phone) async {
     final Uri callUri = Uri(scheme: 'tel', path: phone);
-    // Vérifie si le lancement est possible avant d'essayer
-
-    // if (!await launchUrl(_url)) {
-    //   throw Exception('Could not launch $_url');
-    // }
     if (await canLaunchUrl(callUri)) {
       await launchUrl(callUri);
     } else {
@@ -91,62 +101,102 @@ class _LocalisationContactState extends State<LocalisationContact> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('YOGI VIDA',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: spacingConstant,
-                              )),
-                          IntrinsicWidth(
-                              child: ButtonFiled(
-                            text: 'Appeler',
-                            handlerPress: () => {_launchCaller(phoneNumber)},
-                          ))
-                        ]),
-                    const SizedBox(height: 8.0),
-                    const Row(
+                child: BlocBasedWidget<List<Preference>>(
+                  customDataBloc: dataBloc,
+                  filter: {},
+                  useInfiniteScroller: true,
+                  customWidget: (state) {
+                    List<Preference> preferences = state.data;
+                    print("PREFERENCES $preferences");
+                    Preference? numPref = preferences.firstWhere((Preference element) {
+                      return element.parametre == "Contact";
+                    });
+                    Preference? emailPref = preferences.firstWhere((Preference element) => element.parametre == "Email" );
+                    Preference? adressePref = preferences.firstWhere((Preference element) => element.parametre == "Adresse" );
+                    dynamic numTel;
+                    dynamic email;
+                    dynamic adresse;
+                    if(numPref != null){
+                      numTel = numPref.valeurText;
+                    }
+                    if(emailPref != null){
+                      email = emailPref.valeurText;
+                    }
+                    if(adressePref != null){
+                      adresse = adressePref.valeurText;
+                    }
+
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.location_on, color: primaryColor),
-                        SizedBox(width: 8.0),
-                        Expanded(
-                          child: Text(
-                            '137 rue Moussè Diop x rue Jules Ferry',
-                            style: TextStyle(color: primaryColor),
+                        Visibility(
+                          visible: numTel != null,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('YOGI VIDA',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: spacingConstant,
+                                    )),
+                                IntrinsicWidth(
+                                    child: ButtonFiled(
+                                      text: 'Appeler',
+                                      handlerPress: () => {_launchCaller(numTel)},
+                                    ))
+                              ]),
+                        ),
+                        const SizedBox(height: 8.0),
+                        Visibility(
+                          visible: adresse != null,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.location_on, color: primaryColor),
+                              const SizedBox(width: 8.0),
+                              Expanded(
+                                child: Text(
+                                  "$adresse",
+                                  style: const TextStyle(color: primaryColor),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 8.0),
-                    const Row(
-                      children: [
-                        Icon(Icons.phone, color: primaryColor),
-                        SizedBox(width: 8.0),
-                        Text(
-                          '+221 33 822 60 35',
-                          style: TextStyle(color: primaryColor),
+                        const SizedBox(height: 8.0),
+                        Visibility(
+                          visible: numTel != null,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.phone, color: primaryColor),
+                              const SizedBox(width: 8.0),
+                              Text(
+                                '$numTel',
+                                style: const TextStyle(color: primaryColor),
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 8.0),
-                    const Row(
-                      children: [
-                        Icon(Icons.email, color: primaryColor),
-                        SizedBox(width: 8.0),
-                        Text(
-                          'yogivida18@gmail.com',
-                          style: TextStyle(color: primaryColor),
+                        const SizedBox(height: 8.0),
+                        Visibility(
+                          visible: email != null,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.email, color: primaryColor),
+                              const SizedBox(width: 8.0),
+                              Text(
+                                "$email",
+                                style: const TextStyle(color: primaryColor),
+                              ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(height: 16.0),
                       ],
-                    ),
-                    const SizedBox(height: 16.0),
-                  ],
-                ),
+                    );
+                  },
+                )
+
               ),
             ),
           ),
