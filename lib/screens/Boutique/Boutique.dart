@@ -22,6 +22,8 @@ import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
+import '../../core/utils/helpers.dart';
+
 class Boutique extends StatefulWidget {
   const Boutique({super.key});
 
@@ -306,7 +308,6 @@ class _BoutiqueState extends State<Boutique> {
                       child: Row(
                         children: marques.map((marque) {
                           int index = marques.indexOf(marque);
-
                           return GestureDetector(
                             onTap: () {
                               filtreFamille(index, marque.id);
@@ -483,8 +484,7 @@ class _BoutiqueState extends State<Boutique> {
                               List<Produit> produits = state.data;
 
                               if (produits.isEmpty) {
-                                return Center(
-                                    child: Text('Aucun produits trouvés'));
+                                return const Center( child: Text('Aucun produits trouvés'));
                               }
                               return Wrap(
                                 alignment: WrapAlignment.start,
@@ -492,14 +492,7 @@ class _BoutiqueState extends State<Boutique> {
                                 runSpacing: 10,
                                 children: produits
                                     .map((Produit toElement) => SizedBox(
-                                          width: size.width /
-                                                  (MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          400
-                                                      ? 3
-                                                      : 2) -
-                                              25,
+                                          width: Helpers.getGridElementWidth(context, 25),
                                           child: CardProduit(
                                             data: toElement,
                                             handlePress: (value) {

@@ -63,6 +63,7 @@ class _InputfiledState extends State<Inputfiled> {
                       enabled: widget.enable,
                       obscureText: widget.type == "password" ? hide : false,
                       controller: widget.controller,
+                      keyboardType: widget.type == 'number' ? TextInputType.number : TextInputType.text,
                       onChanged: widget.handleChangeValue,
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -128,12 +129,12 @@ class _InputfiledState extends State<Inputfiled> {
                   ),
           ),
         ),
-        widget.error!.isNotEmpty
+        (widget.error != null && widget.error!.isNotEmpty)
             ? Text(
                 widget.error!.toString(),
-                style: TextStyle(color: Colors.red, fontSize: 11),
+                style: const TextStyle(color: Colors.red, fontSize: 11),
               )
-            : SizedBox.shrink()
+            : const SizedBox.shrink()
       ],
     );
   }

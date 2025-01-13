@@ -1,3 +1,4 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,11 +6,13 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:yogivida_mobile/components/ConnectionNotifier.dart';
 import 'package:yogivida_mobile/screens/Boutique/Boutique.dart';
+import 'package:yogivida_mobile/screens/Compte/LocalisationContact.dart';
 import 'package:yogivida_mobile/screens/Compte/MonCompte.dart';
 import 'package:yogivida_mobile/screens/Compte/reservations_page.dart';
 import 'package:yogivida_mobile/screens/Compte/commandes_page.dart';
 import 'package:yogivida_mobile/screens/Compte/Update.dart';
 import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
+import 'package:yogivida_mobile/screens/Planning/Planning.dart';
 import 'package:yogivida_mobile/screens/splash/splash_screen.dart';
 import 'package:yogivida_mobile/services/connection/Connectivity_service.dart'; // Le service de connectivité
 import 'package:yogivida_mobile/components/ConnectionNotifier.dart'; // Le ConnectionNotifier
@@ -23,12 +26,13 @@ import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 import 'package:yogivida_mobile/simple_bloc_observer.dart';
 import 'core/global.dart';
 import 'core/models/user_model.dart';
+import 'core/utils/helpers.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message");
+  print("Handling a background message ${message.data}");
 }
 
 Future<void> main() async {
@@ -41,14 +45,19 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   Bloc.observer = SimpleBlocObserver();
   await fcm.setAutoInitEnabled(true);
-  fcm.getToken().then((value) {
-    print("FCM TOKEN $value");
-  });
-  runApp(const MyApp());
+  Map<String, dynamic>? notificationData;
+  await FirebaseAppCheck.instance.activate(
+    webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+    androidProvider: AndroidProvider.debug,
+    appleProvider: AppleProvider.appAttest,
+  );
+  Helpers.setFCMTokenToServer();
+  runApp(MyApp(notificationData: notificationData));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final Map<String, dynamic>? notificationData;
+  const MyApp({super.key, this.notificationData});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -63,14 +72,18 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _userRepository = UserRepository<Utilisateur>(
         factoryFunction: (json) => Utilisateur.fromJson(json));
+    // String baseUrl = await Helpers.getBaseUrl();
     _authenticationRepository = AuthenticationRepository(
         loginUrl: "$BASE_URL$LOGIN_ENDPOINT",
         registrationUrl: "$BASE_URL$LOGIN_ENDPOINT",
         logoutUrl: "$BASE_URL$LOGIN_ENDPOINT",
         userRepository: _userRepository);
     askForNotificationPermission();
+    if (widget.notificationData != null) {
+      //hideprint("HERE IS YOUR NOTIFICATION DATA ${widget.notificationData}");
+      Helpers.handleNotificationData(context, widget.notificationData!);
+    }
   }
-
   askForNotificationPermission() async{
     final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
   }
@@ -117,7 +130,7 @@ class _MyAppState extends State<MyApp> {
             // '/': (context) => const MonCompte(),
             // '/': (context) => const Update(),
             // '/': (context) => const CommandesPage(),
-            // '/': (context) => const Boutique(),
+            // '/': (context) => const Planning(),
             '/': (context) => const SplashScreen(),
             '/login': (context) => const LoginScreen(),
             '/home': (context) => const HomePage(),

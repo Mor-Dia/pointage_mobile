@@ -20,10 +20,12 @@ import 'animated_gesture_detector.dart';
 class CardProduitFavoris extends StatefulWidget {
   final Produit data;
   final Function(Map<String, dynamic>)? handlePress;
+  final Function? updateFunction;
   const CardProduitFavoris({
     super.key,
     required this.data,
     this.handlePress,
+    this.updateFunction
   });
 
   @override
@@ -130,6 +132,9 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
                               backgroundColor: Colors.green[400],
                             ),
                           );
+                          if(widget.updateFunction != null){
+                            widget.updateFunction!();
+                          }
                         }
                         if (state is PostApiProcessing) {
                            ScaffoldMessenger.of(context).hideCurrentSnackBar();

@@ -6,8 +6,9 @@ sealed class PostApiEvent extends Equatable {
 
 class PostApiMakeCall extends PostApiEvent {
   final String endpoint;
+  final bool? isDeletion;
   final Map<String, dynamic>? parameters;
-  const PostApiMakeCall({required this.endpoint, this.parameters});
+  const PostApiMakeCall({required this.endpoint, this.parameters, this.isDeletion = false});
 
   @override
   List<Object?> get props => [parameters, endpoint];

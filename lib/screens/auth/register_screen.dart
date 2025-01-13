@@ -123,7 +123,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void signUp() async {
     setState(() {
       isLoading = false;
+      currentError = null;
     });
+    bool canSubmit = true;
     Map<String, dynamic> postData = {
       "nom": null,
       "prenom": null,
@@ -145,35 +147,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
         TextEditingController? currentController = currentField['controller'];
         if(currentController != null){
           postData[key] = currentController.text;
+          if(postData[key] == null){
+            canSubmit = false;
+          }
         } else {
           postData['genre'] = selectedGender?.id.toString();
+          if(postData[key] == null){
+            canSubmit = false;
+          }
         }
       }
     }
     if (kDebugMode) {
-      print("input field $postData");
+      print("INPUT field $postData");
+      print("INPUT canSubmit $canSubmit");
     }
 
-    var registrationLink = Uri.parse("$BASE_URL$REGISTRATION_ENDPOINT");
-    await http.post(registrationLink, body: postData).then((Response response) {
-      setState(() {
-        isLoading = false;
+    if(canSubmit){
+      var registrationLink = Uri.parse("$BASE_URL$REGISTRATION_ENDPOINT");
+      await http.post(registrationLink, body: postData).then((Response response) {
+        setState(() {
+          isLoading = false;
+        });
+        var responseBody = jsonDecode(response.body) as Map<String, dynamic>;
+        var isError = false;
+        var message = "";
+        if(responseBody.containsKey("errors") && responseBody['errors'] != null){
+          message = responseBody['errors'];
+          isError = true;
+        } else if (responseBody.containsKey("success") && responseBody['success'] != null){
+          message = responseBody['success'];
+          isError = false;
+        }
+        showNotifyingDialog(context: context, message: message, isError: isError);
+        if (kDebugMode) {
+          print("REGISTRATION RESPONSE ${responseBody}");
+        }
       });
-      var responseBody = jsonDecode(response.body) as Map<String, dynamic>;
-      var isError = false;
-      var message = "";
-      if(responseBody.containsKey("errors") && responseBody['errors'] != null){
-        message = responseBody['errors'];
-        isError = true;
-      } else if (responseBody.containsKey("success") && responseBody['success'] != null){
-        message = responseBody['success'];
-        isError = false;
-      }
-      showNotifyingDialog(context: context, message: message, isError: isError);
-      if (kDebugMode) {
-        print("REGISTRATION RESPONSE ${responseBody}");
-      }
-    });
+    } else {
+      setState(() {
+        currentError = "Veuillez renseigner tous les champs";
+      });
+    }
   }
 
 
@@ -207,26 +222,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SizedBox(
                           height: MediaQuery.of(context).size.height *
                               0.1), // Espacement pour centrer verticalement
-
-                      Column(
-                          children: inputFields!.map((field) {
-                        return Column(
-                          children: [
-                            Inputfiled(
-                              type: field['type'],
-                              text: field['text'],
-                              icon: field['icon'],
-                              controller: field['controller'],
-                              selectedValue: selectedGender,
-                              items: field['items'],
-                              handleAction: (value) => selectGenre(value!),
-                              error: field[
-                                  'error'], // L'erreur est vide au départ
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: Visibility(
+                          visible: currentError != null,
+                          child: Center(
+                            child: Text(
+                              "$currentError",
+                              style: const TextStyle(
+                                color: Colors.red,
+                              ),
                             ),
-                            const SizedBox(height: 30),
-                          ],
-                        );
-                      }).toList()),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        children: inputFields.map((field) {
+                          return Column(
+                            children: [
+                              Inputfiled(
+                                type: field['type'],
+                                text: field['text'],
+                                icon: field['icon'],
+                                controller: field['controller'],
+                                selectedValue: selectedGender,
+                                items: field['items'],
+                                handleAction: (value) => selectGenre(value!),
+                                error: field[
+                                    'error'], // L'erreur est vide au départ
+                              ),
+                              const SizedBox(height: 30),
+                            ],
+                          );
+                        }).toList()),
                       SizedBox(
                           height: MediaQuery.of(context).size.height *
                               0.1), // Espacement en bas pour mieux centrer

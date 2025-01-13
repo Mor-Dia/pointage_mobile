@@ -35,10 +35,10 @@ class Salle with _$Salle {
   }
 
   static shrinkedAttributs () {
-    return "id,favoris,designation,image,description,description_en,type_pratique_id,type_pratique{id,designation}";
+    return "id,designation";
   }
 
   static String getEndpoint({bool isPagination = true}) {
-    return isPagination ? "pratiquespaginated" : "pratiques";
+    return isPagination ? "sallespaginated" : "salles";
   }
 }

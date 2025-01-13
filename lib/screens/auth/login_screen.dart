@@ -19,6 +19,7 @@ import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 
 import '../../core/global.dart';
+import '../../core/utils/helpers.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -175,12 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
             if (kDebugMode) {
               print("AUTH STATE AUTHENTICATED ${state.status}");
             }
-            FirebaseMessaging fcm = firebaseMessagingInstance();
-            await fcm.setAutoInitEnabled(true);
-            fcm.getToken().then((value) {
-              print("FCM TOKEN $value");
-            //   ENVOYER LE TOKEN DANS LA DB
-            });
+
+            Helpers.setFCMTokenToServer();
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (BuildContext context) => const Mainhome(), ),

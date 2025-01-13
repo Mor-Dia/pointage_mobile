@@ -164,15 +164,15 @@ class _CardProduitState extends State<CardProduit> {
                   case AuthenticationStatus.unknown:
                   case AuthenticationStatus.unauthenticated:
                   case AuthenticationStatus.failure:
-                    return const Center(child: PleaseLoginWidget());
+                    return const Center(child: SizedBox.shrink());
                 }
               })
             ],
           ),
           const SizedBox(height: 5),
           Text(
-            textAlign: TextAlign.start,
             widget.data.prixSiteWebFr.toString(),
+            textAlign: TextAlign.start,
             style: GoogleFonts.arimo(
                 fontSize: textConstant, fontWeight: FontWeight.bold),
           ),

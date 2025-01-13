@@ -8,8 +8,11 @@ import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/services/api/models/programme_model.dart';
+import 'package:yogivida_mobile/services/api/models/salle_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
+
+import '../../services/api/models/notificationpush_model.dart';
 
 class Planning extends StatefulWidget {
   const Planning({super.key});
@@ -19,12 +22,16 @@ class Planning extends StatefulWidget {
 }
 
 class _PlanningState extends State<Planning> {
-  String? selectedValue;
+  var selectedValue;
+  Map<String, dynamic> currentFilter = {};
   late DataBloc<List<Programme>> programmeBloc;
+  late DataBloc<List<Salle>> salleBloc;
   final List<String> options = [];
   TextEditingController designationFilter = TextEditingController();
-
-  final DateTime date = new DateTime.now();
+  late DataBloc<List<NotificationPush>> notificationPushBloc;
+  DateTime selectedDate = DateTime.now();
+  final DateTime date = DateTime.now();
+  List<Salle?> studioList = [];
 
   @override
   void initState() {
@@ -35,29 +42,87 @@ class _PlanningState extends State<Planning> {
         isPagination: true,
         attributeToGet: Programme.shrinkedAttributs());
 
-    programmeBloc.add(FetchDataEvent(
-        filter: {'date': '${date.year}-${date.month}-${date.day}'}));
+    salleBloc = DataBloc<List<Salle>>(
+            (response) => Salle.fromJsonList(response),
+        Salle.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        isPagination: false,
+        attributeToGet: Salle.shrinkedAttributs());
+
+    notificationPushBloc = DataBloc<List<NotificationPush>>(
+        (response) => NotificationPush.fromJsonList(response),
+        NotificationPush.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: NotificationPush.shrinkedAttributs());
+
+    initFilter();
     super.initState();
   }
 
+  // extractStudiosOptions(List<Salle> salles){
+  //   List<Salle?> tempStudioList = [];
+  //   tempStudioList = programmes.map((toElement){
+  //     return toElement;
+  //   }).toList();
+  //   setState(() {
+  //     studioList = tempStudioList;
+  //   });
+  // }
+
+  initFilter(){
+    currentFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+  }
+  // List<Salle?> studioList = extractStudiosOptions(programmes);
+
+  selectStudio(dynamic newValue){
+    print("SELECTION FF $newValue");
+    setState(() {
+      currentFilter = {...currentFilter, ...{'salle_id': newValue}};
+    });
+  }
+
+  void changeDate(DateTime date) {
+    setState(() {
+      selectedDate = date;
+      currentFilter = {'date': "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"};
+    });
+    // var currentDate = '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}';
+
+    // programmeBloc.add(FetchDataEvent(filter: {'date': currentDate}));
+  }
+
+  void cleanFieldAndUpdateList(){
+    designationFilter.clear();
+    setState(() {
+      selectedDate = date;
+      currentFilter = {...currentFilter..remove('nom_pratique')};
+    });
+  }
+
+  void searchWithDesignation(){
+    String text = designationFilter.text;
+    setState(() {
+      selectedDate = date;
+      currentFilter = {...currentFilter..addAll({'nom_pratique': text})};
+    });
+  }
+
+  void Filter() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    designationFilter.dispose();
+    super.dispose();
+  }
+
+  
   @override
   Widget build(BuildContext context) {
-    void ChangeDate(DateTime date) {
-      var currentDate = '${date.year}-${date.month}-${date.day}';
-      programmeBloc.add(FetchDataEvent(filter: {'date': currentDate}));
-    }
-
-    void Filter() {
-      setState(() {});
-    }
-
-    void dispose() {
-      // Clean up the controller when the widget is removed from the
-      // widget tree.
-      designationFilter.dispose();
-      super.dispose();
-    }
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
@@ -80,7 +145,7 @@ class _PlanningState extends State<Planning> {
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const NotificationPushPage())),
+                        builder: (context) => const NotificationPage())),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: <Widget>[
@@ -100,38 +165,45 @@ class _PlanningState extends State<Planning> {
                       ),
                     ),
                     Positioned(
-                      right: -5,
+                      right: 0,
                       top: -5,
                       child: Container(
                         width: spacingConstant,
                         height: spacingConstant,
                         padding: const EdgeInsets.all(2),
                         decoration: BoxDecoration(
-                            color: primaryColor,
+                            color: Colors.red,
                             borderRadius: BorderRadius.circular(10),
-                            border:
-                                Border.all(width: 1.5, color: Colors.white)),
-                        constraints: const BoxConstraints(
-                          minWidth: spacingConstant,
-                          minHeight: spacingConstant,
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              '8', // Remplacez '3' par le nombre de notifications dynamiquement
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                            border: Border.all(width: 1, color: Colors.white)),
+                        // constraints: const BoxConstraints(
+                        //   minWidth: spacingConstant,
+                        //   minHeight: spacingConstant,
+                        // ),
+                        child: Center(
+                          child: BlocBasedWidget<List<NotificationPush>>(
+                            customDataBloc: notificationPushBloc,
+                            useInfiniteScroller: true,
+                            customWidget: (
+                              state,
+                            ) {
+                              Map<String, dynamic> metadata = state.metadata;
+                              dynamic totalNotifs = metadata['total'];
+                              print("NOTIF TOTAL ${totalNotifs}");
+                              return Text(
+                                "${totalNotifs}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  // overflow: TextOverflow.ellipsis,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              );
+                            },
+                          ),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -146,16 +218,19 @@ class _PlanningState extends State<Planning> {
                 height: spacingConstant,
               ),
               HorizontalCalendar(
-                handleDate: (date) => ChangeDate(date),
+                selectedDate: selectedDate,
+                handleDate: (date) => changeDate(date),
               ),
               const SizedBox(
                 height: spacingConstant,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
+                padding:
+                const EdgeInsets.symmetric(horizontal: spacingConstant),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
+                    Flexible(
                       flex: 1,
                       child: Inputfiled(
                         controller: designationFilter,
@@ -163,100 +238,106 @@ class _PlanningState extends State<Planning> {
                         text: 'Désignation',
                         icon: 'loupe',
                         error: '',
-                        handleChangeValue: (value) => Filter(),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    const Text('|'),
-                    const SizedBox(width: 10),
-                    Container(
-                      height: 45,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      decoration: BoxDecoration(
-                        color: primaryColor, // Couleur de fond bleu
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset("assets/icons/home2.svg",
-                              height: 15, color: Colors.white),
-                          const SizedBox(
-                              width:
-                                  10.0), // Espace entre l'icône et le DropdownButton
-                          DropdownButton(
-                            dropdownColor: primaryColor, // Couleur du dropdown
-                            value: selectedValue,
-                            hint: const Text(
-                              'Studio',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            style: const TextStyle(
-                                color: Colors.white), // Couleur du texte
-                            icon: Padding(
-                              padding: const EdgeInsets.only(left: 10.0),
-                              child: SvgPicture.asset(
-                                'assets/icons/arrow_b.svg',
-                                color: Colors.white,
-                              ),
-                            ),
-                            underline:
-                                const SizedBox(), // Supprime la ligne par défaut
-                            items: options.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,
-                                    style:
-                                        const TextStyle(color: Colors.white)),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedValue = newValue;
-                              });
-                            },
+                    SizedBox.square(
+                      child: GestureDetector(
+                        onTap: (){
+                          searchWithDesignation();
+                        },
+                        child: Container(
+                          height: 45,
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          margin: const EdgeInsets.only(left: 2.0),
+                          decoration: BoxDecoration(
+                            color: primaryColor, // Couleur de fond bleu
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                        ],
+                          child: SvgPicture.asset(
+                            color: Colors.white,
+                            'assets/icons/loupe.svg',
+                            fit: BoxFit.scaleDown,
+                            height: spacingConstant,
+                          ),
+                        ),
                       ),
-                    )
+                    ),
+                    Visibility(
+                      visible: designationFilter.text.isNotEmpty,
+                      child: SizedBox.square(
+                        dimension: 50,
+                        child: GestureDetector(
+                          onTap: (){
+                            cleanFieldAndUpdateList();
+                          },
+                          child: const Icon(
+                            Icons.cancel,
+                            size: spacingConstant,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+
+
+                    const SizedBox.square(dimension: 2,),
+                    // const Spacer(),
+                    // // const Text('|'),
+                    // const Spacer(),
+                    Flexible(
+                      flex: 1,
+                      child: BlocBasedWidget<List<Salle>>(
+                        customDataBloc: salleBloc,
+                        customWidget: (state) {
+                          List<Salle> salles = state.data;
+                          return StudioSelect(studioList: salles, onSelect: selectStudio,);
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: spacingConstant,
               ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
+                filter: {...currentFilter},
                 customWidget: (state) {
                   List<Programme> programmes = state.data;
                   Map<String, dynamic>? metadata = state.metadata;
-                  bool canLoadNewData = state.canLoadNewData;
-
+                  // extractStudiosOptions(programmes);
                   if (programmes.isEmpty) {
-                    return Center(child: Text('Aucune activitées programmées'));
+                    return const Center(
+                        child: const Text('Aucune activité programmée'));
                   }
-                  List<dynamic> dataFiltered = programmes
-                      .where((element) => element
-                          .professeurPratique!.pratique!.designation
-                          .toString()
-                          .toLowerCase()
-                          .startsWith(designationFilter.text.toLowerCase()))
-                      .toList();
-                  if (dataFiltered.isEmpty) {
-                    return Center(child: Text('Aucune activitées trouvées'));
-                  }
+
+                  // List<dynamic> dataFiltered = programmes
+                  //     .where((element) => element
+                  //     .professeurPratique!.pratique!.designation
+                  //     .toString()
+                  //     .toLowerCase()
+                  //     .startsWith(designationFilter.text.toLowerCase()))
+                  //     .toList();
+                  // if (dataFiltered.isEmpty) {
+                  //   return const Center(
+                  //       child: Text('Aucune activité trouvée'));
+                  // }
                   return Column(
                     children: [
-                      ...dataFiltered
+                      ...programmes
                           .map((toElement) => CardRowPlanning(
-                                data: toElement,
-                              ))
+                        data: toElement,
+                      ))
                           .toList(),
                     ],
                   );
                 },
               ),
+              const SizedBox(
+                height: spacingConstant,
+              ),
+
             ],
           ),
         ));
@@ -265,7 +346,8 @@ class _PlanningState extends State<Planning> {
 
 class HorizontalCalendar extends StatefulWidget {
   final Function(DateTime date)? handleDate;
-  const HorizontalCalendar({super.key, this.handleDate});
+  final DateTime? selectedDate;
+  const HorizontalCalendar({super.key, this.handleDate, this.selectedDate});
 
   @override
   _HorizontalCalendarState createState() => _HorizontalCalendarState();
@@ -280,6 +362,9 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
     super.initState();
     // Générer la liste des jours de la semaine courante
     weekDays = _generateWeekDays();
+    if(widget.selectedDate != null ){
+      selectedDate = DateTime.now();
+    }
   }
 
   // Fonction pour générer les jours restants de la semaine courante
@@ -302,7 +387,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
           padding: const EdgeInsets.only(bottom: spacingConstant),
           child: Text(
             DateFormat.yMMM('fr_FR').format(DateTime.now()).toCapitalized,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: titreConstant,
               color: primaryColor,
             ),
@@ -331,7 +416,8 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                 child: Container(
                   width: 60,
                   margin: index == 0
-                      ? const EdgeInsets.only(right: spacingConstant, left: spacingConstant)
+                      ? const EdgeInsets.only(
+                          right: spacingConstant, left: spacingConstant)
                       : const EdgeInsets.only(right: spacingConstant),
                   decoration: BoxDecoration(
                     color: isSelected ? const Color(0xffA8923B) : Colors.white,
@@ -368,6 +454,87 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+class StudioSelect extends StatefulWidget {
+  final List<Salle?> studioList;
+  final Function? onSelect;
+  const StudioSelect({super.key, required this.studioList, this.onSelect});
+
+  @override
+  State<StudioSelect> createState() => _StudioSelectState();
+}
+
+class _StudioSelectState extends State<StudioSelect> {
+  List<Salle?> studioList = [];
+  Function? onSelect;
+  dynamic selectedValue;
+
+  @override
+  void initState() {
+    studioList = widget.studioList;
+    onSelect = widget.onSelect;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 45,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: primaryColor, // Couleur de fond bleu
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+              "assets/icons/home2.svg",
+              height: 15, color: Colors.white
+          ),
+          const SizedBox(width: 5.0), // Espace entre l'icône et le DropdownButton
+          DropdownButton(
+            dropdownColor: primaryColor, // Couleur du dropdown
+            value: selectedValue,
+            hint: const Text(
+              'Studio',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold
+              ),
+            ),
+            style: const TextStyle(color: Colors.white), // Couleur du texte
+            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+            underline: const SizedBox(), // Supprime la ligne par défaut
+            items: [
+              ...studioList.map((Salle? salle) {
+                return DropdownMenuItem(
+                  value: salle?.id,
+                  child: Text(
+                      "${salle?.designation}",
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white)),
+                );
+              }).toList(),
+
+            ],
+            onChanged: (newValue) {
+              print("SELECTION $newValue ${onSelect != null}");
+              setState((){
+                selectedValue = newValue;
+              });
+              if(onSelect != null){
+                onSelect!(newValue);
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }

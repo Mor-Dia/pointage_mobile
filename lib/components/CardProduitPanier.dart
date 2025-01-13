@@ -11,6 +11,8 @@ import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
+import '../core/utils/helpers.dart';
+
 class CardProduitPanier extends StatefulWidget {
   final PanierPProduit data;
   final Function()? handlePress;
@@ -50,7 +52,8 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
   }
 
   void addToPanier(PanierPProduit arg, int sentqte) async {
-    int newQte = qte + sentqte;
+    int currentQte = arg.qte??0;
+    int newQte = currentQte + sentqte;
 
     if (sentqte == 0) {
       newQte = 0;
@@ -138,7 +141,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                         ),
                         Text(
                           textAlign: TextAlign.start,
-                          (widget.data.produit!.prix.toString() + 'xof')
+                          ('${Helpers.formatNumber(widget.data.produit!.prix)}xof')
                               .toUpperCase(),
                           style: GoogleFonts.arimo(
                               fontSize:

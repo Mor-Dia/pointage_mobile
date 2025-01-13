@@ -5,8 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/global.dart';
 
+import '../../../core/utils/helpers.dart';
+
 Future<dynamic> postApiData(endPoint, Map<String, dynamic> body) async {
-  String url = BASE_URL;
+  // String url = BASE_URL;
+  String url = await Helpers.getBaseUrl();
   url = "${url}${endPoint}";
 
   Map<String, String>? headers = await getHeaders();
@@ -19,8 +22,8 @@ Future<dynamic> postApiData(endPoint, Map<String, dynamic> body) async {
   }
   var response = await http.post(requestUri, headers: headers, body: bodyJson);
   if (kDebugMode) {
-    // print("API CALL RESPONSE ${response.body}");
-    // print("API CALL RESPONSE HEADERS ${response.headers}");
+    print("SET FCM TOKEN API CALL RESPONSE ${response.body}");
+    print("SET FCM TOKEN API CALL RESPONSE HEADERS ${response.headers}");
   }
 
   return response;

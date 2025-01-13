@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+const REGISTRATION_ENDPOINT = "inscription";
+const LOGIN_ENDPOINT = "connexion";
+const LOGOUT_ENDPOINT = "deconnexion";
+const REQUEST_PWD_ENDPOINT = "password-reset";
+
+const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
+// const BASE_URL = 'https://fa9c-137-255-29-98.ngrok-free.app/yogivida_back/public/';
+// const BASE_URL = 'https://b016-41-85-178-233.ngrok-free.app/yogivida_back/public/';
+const BASE_URL_QGL = '${BASE_URL}graphql?query=';
+
 const Color primaryColor = Color(0xff15274D);
 const Color greyColor = Color(0xffD9D9D9);
 const Color greyColorL = Color(0xffF1F1F1);
@@ -10,10 +20,10 @@ const Color successColor = Color(0xff37BC9B);
 const Color dangerColor = Color(0xffDA4453);
 const Color warningColor = Color(0xffF6BB42);
 
-const double titreConstant= 20;
-const double textConstant= 18;
-const double textminConstant= 12;
-const double spacingConstant= 20;
+const double titreConstant = 20;
+const double textConstant = 18;
+const double textminConstant = 12;
+const double spacingConstant = 20;
 
 double responsiveSize(BuildContext context, double baseSize) {
   double screenWidth = MediaQuery.of(context).size.width;
@@ -36,14 +46,6 @@ Color getDisplayColor(className) {
 }
 
 const padding_constant = spacingConstant;
-const REGISTRATION_ENDPOINT = "inscription";
-const LOGIN_ENDPOINT = "connexion";
-const LOGOUT_ENDPOINT = "deconnexion";
-const REQUEST_PWD_ENDPOINT = "password-reset";
-const BASE_URL = 'https://0c58-41-214-3-207.ngrok-free.app/yogivida_back/public/';
-// const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
-// const BASE_URL = 'http://localhost/yogivida_back/public/'; //NE TOUCHE PAS A CA ULYSSE !!!!!!!!!
-const BASE_URL_QGL = '${BASE_URL}graphql?query=';
 
 class UserClass {
   final dynamic data;
