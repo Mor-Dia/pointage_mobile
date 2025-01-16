@@ -32,10 +32,10 @@ class _PratiquesPageState extends State<PratiquesPage> {
   @override
   void initState() {
     currentFilter.addAll({...initialFilter});
-    if(widget.constantFilter != null){
+    if (widget.constantFilter != null) {
       currentFilter.addAll({...?widget.constantFilter});
     }
-    hideAppBar = widget.hideAppBar??false;
+    hideAppBar = widget.hideAppBar ?? false;
     practiceBloc = DataBloc<List<Pratique>>(
         (response) => Pratique.fromJsonList(response),
         Pratique.getEndpoint(isPagination: true),
@@ -44,7 +44,6 @@ class _PratiquesPageState extends State<PratiquesPage> {
         attributeToGet: Pratique.shrinkedAttributs());
     super.initState();
   }
-
 
   // getAdditionalData(){
   //   if (kDebugMode) {
@@ -77,6 +76,7 @@ class _PratiquesPageState extends State<PratiquesPage> {
     // practiceListController.removeListener(listener);
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -89,7 +89,8 @@ class _PratiquesPageState extends State<PratiquesPage> {
             backgroundColor: const Color(0xffffffff),
             elevation: 0,
             leading: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
               child: Container(
                 decoration: BoxDecoration(
                     color: greyColorL, borderRadius: BorderRadius.circular(10)),
@@ -119,35 +120,33 @@ class _PratiquesPageState extends State<PratiquesPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
+        padding: const EdgeInsets.only(
+            left: spacingConstant, right: spacingConstant),
         child: BlocBasedWidget<List<Pratique>>(
           customDataBloc: practiceBloc,
           filter: currentFilter,
           useInfiniteScroller: true,
           customWidget: (state) {
             List<Pratique> pratiques = state.data;
-            return
-              Column(
-                  children:  [
-                    const SizedBox(
-                      height: spacingConstant,
-                    ),
-                    Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: [
-                          ...pratiques
-                              .map((toElement) => SizedBox(
-                              width: size.width / (MediaQuery.of(context).size.width > 400 ? 3:2) - 25,
-                              child: CardPratique(
-                                data: toElement,
-                                handlePress: () {},
-                              )))
-                              .toList(),
-                        ]
-                    ),
-                  ]
-              );
+            return Column(children: [
+              const SizedBox(
+                height: spacingConstant,
+              ),
+              Wrap(spacing: 10, runSpacing: 10, children: [
+                ...pratiques
+                    .map((toElement) => SizedBox(
+                        width: size.width /
+                                (MediaQuery.of(context).size.width > 400
+                                    ? 2
+                                    : 2) -
+                            25,
+                        child: CardPratique(
+                          data: toElement,
+                          handlePress: () {},
+                        )))
+                    .toList(),
+              ]),
+            ]);
           },
         ),
       ),

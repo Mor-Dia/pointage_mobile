@@ -53,7 +53,6 @@ class _ReservationsPageState extends State<ReservationsPage> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -140,7 +139,7 @@ class ScrollableTabPage extends StatelessWidget {
       {Key? key, required this.reservationBloc, this.currentFilter = const {}})
       : super(key: key);
 
-  updateList(newFilter){
+  updateList(newFilter) {
     reservationBloc.add(FetchDataEvent(filter: newFilter));
   }
 
@@ -161,15 +160,25 @@ class ScrollableTabPage extends StatelessWidget {
             useInfiniteScroller: true,
             customWidget: (state) {
               List<Reservation> reservations = state.data;
+
+              if (reservations.isEmpty) {
+                return Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: const Center(
+                    child: Text("Aucune réservation n'est disponible"),
+                  ),
+                );
+              }
+
               return Column(children: [
                 const SizedBox(
                   height: spacingConstant,
                 ),
                 ...reservations
                     .map((toElement) => CardRowPlanning2(
-                          reservation: toElement,
-                          updateFunction: () => updateList({...currentFilter, "client_id": clientId})
-                        ))
+                        reservation: toElement,
+                        updateFunction: () => updateList(
+                            {...currentFilter, "client_id": clientId})))
                     .toList(),
               ]);
             },
@@ -180,6 +189,5 @@ class ScrollableTabPage extends StatelessWidget {
           return const Center(child: PleaseLoginWidget());
       }
     });
-
   }
 }

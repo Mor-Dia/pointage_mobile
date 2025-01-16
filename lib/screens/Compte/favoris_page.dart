@@ -46,88 +46,91 @@ class _FavorisState extends State<FavorisPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
-      child:
-      BlocBuilder<AuthenticationBloc<Utilisateur>,
-          AuthenticationState<Utilisateur>>(
-          builder: (context, authState) {
-            AuthenticationStatus currentStatus = authState.status;
-            Utilisateur? user = authState.user;
-            String? token = user?.token;
-            switch (currentStatus) {
-              case AuthenticationStatus.unknown:
-              case AuthenticationStatus.unauthenticated:
-              case AuthenticationStatus.failure:
-                return const Center(child: SizedBox.shrink());
+        length: 2,
+        child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+            AuthenticationState<Utilisateur>>(builder: (context, authState) {
+          AuthenticationStatus currentStatus = authState.status;
+          Utilisateur? user = authState.user;
+          String? token = user?.token;
+          switch (currentStatus) {
+            case AuthenticationStatus.unknown:
+            case AuthenticationStatus.unauthenticated:
+            case AuthenticationStatus.failure:
+              return const Center(child: SizedBox.shrink());
 
-              case AuthenticationStatus.authenticated:
-                return Scaffold(
-                  appBar: AppBar(
-                    backgroundColor: const Color(0xffffffff),
-                    elevation: 0,
-                    leading: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: greyColorL, borderRadius: BorderRadius.circular(10)),
-                        child: IconButton(
-                          icon: SvgPicture.asset('assets/icons/back.svg'),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
+            case AuthenticationStatus.authenticated:
+              return Scaffold(
+                appBar: AppBar(
+                  backgroundColor: const Color(0xffffffff),
+                  elevation: 0,
+                  leading: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: greyColorL,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: IconButton(
+                        icon: SvgPicture.asset('assets/icons/back.svg'),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
-                    iconTheme: const IconThemeData(
-                      color: Colors.black, //change your color here
-                    ),
-                    toolbarHeight: 60,
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Mes Favoris',
-                          style: GoogleFonts.arimo(
-                            color: primaryColor,
-                            fontSize: titreConstant,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    bottom: TabBar(
-                      indicator: UnderlineTabIndicator(
-                        borderSide: const BorderSide(
+                  ),
+                  iconTheme: const IconThemeData(
+                    color: Colors.black, //change your color here
+                  ),
+                  toolbarHeight: 60,
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Mes Favoris',
+                        style: GoogleFonts.arimo(
                           color: primaryColor,
-                          width: 1.0, // Épaisseur du trait sous l'onglet actif
+                          fontSize: titreConstant,
+                          fontWeight: FontWeight.bold,
                         ),
-                        insets: EdgeInsets.symmetric(
-                            horizontal: MediaQuery.of(context).size.width * 0.30),
-                        // 0.25 sur chaque côté pour que le trait fasse 50% de la largeur de l'onglet
                       ),
-                      indicatorColor: primaryColor,
-                      indicatorWeight: 1.0, // Épaisseur du trait sous l'onglet actif
-                      indicatorSize:
-                      TabBarIndicatorSize.label, // Le trait prend la largeur du texte
-                      labelColor: primaryColor, // Couleur du texte actif
-                      unselectedLabelColor: greyColor, // Couleur du texte inactif
-                      tabs: const [
-                        Tab(text: 'Pratiques'),
-                        Tab(text: 'Boutique'),
-                      ],
-                    ),
+                    ],
                   ),
-                  body: Container(
-                    color: Colors.white,
-                    child: TabBarView(
-                      children: [
-                        PratiquesPage(hideAppBar: true, constantFilter: {"token": token},),
-                        ScrollableTabPage2(data: favorisBloc, token: token)
-                      ],
+                  bottom: TabBar(
+                    indicator: UnderlineTabIndicator(
+                      borderSide: const BorderSide(
+                        color: primaryColor,
+                        width: 1.0, // Épaisseur du trait sous l'onglet actif
+                      ),
+                      insets: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.30),
+                      // 0.25 sur chaque côté pour que le trait fasse 50% de la largeur de l'onglet
                     ),
+                    indicatorColor: primaryColor,
+                    indicatorWeight:
+                        1.0, // Épaisseur du trait sous l'onglet actif
+                    indicatorSize: TabBarIndicatorSize
+                        .label, // Le trait prend la largeur du texte
+                    labelColor: primaryColor, // Couleur du texte actif
+                    unselectedLabelColor: greyColor, // Couleur du texte inactif
+                    tabs: const [
+                      Tab(text: 'Pratiques'),
+                      Tab(text: 'Boutique'),
+                    ],
                   ),
-                );
-            }
-          })
-    );
+                ),
+                body: Container(
+                  color: Colors.white,
+                  child: TabBarView(
+                    children: [
+                      PratiquesPage(
+                        hideAppBar: true,
+                        constantFilter: {"token": token},
+                      ),
+                      ScrollableTabPage2(data: favorisBloc, token: token)
+                    ],
+                  ),
+                ),
+              );
+          }
+        }));
   }
 }
 
@@ -137,11 +140,10 @@ class ScrollableTabPage extends StatelessWidget {
   const ScrollableTabPage({Key? key, required this.data, this.token})
       : super(key: key);
 
-  updateList(newFilter){
+  updateList(newFilter) {
     print("UPDATE PRATIQUE ");
     data.add(FetchDataEvent(filter: newFilter));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -160,14 +162,17 @@ class ScrollableTabPage extends StatelessWidget {
                   runSpacing: 10,
                   children: pratiques
                       .map((Pratique toElement) => SizedBox(
-                    width: size.width / (MediaQuery.of(context).size.width > 400 ? 3  : 2) - 25,
-                    child: CardPratique(
-                      data: toElement,
-                      updateFunction: () => updateList({
+                            width: size.width /
+                                    (MediaQuery.of(context).size.width > 400
+                                        ? 2
+                                        : 2) -
+                                25,
+                            child: CardPratique(
+                                data: toElement,
+                                updateFunction: () => updateList({
                                       ...{"token": token, 'count': 8}
-                                    })
-                    ),
-                  ))
+                                    })),
+                          ))
                       .toList(),
                 )),
           );
@@ -181,7 +186,7 @@ class ScrollableTabPage2 extends StatelessWidget {
   const ScrollableTabPage2({Key? key, required this.data, this.token})
       : super(key: key);
 
-  updateList(newFilter){
+  updateList(newFilter) {
     data.add(FetchDataEvent(filter: newFilter));
   }
 
@@ -203,11 +208,15 @@ class ScrollableTabPage2 extends StatelessWidget {
                   runSpacing: 10,
                   children: produits
                       .map((Produit toElement) => SizedBox(
-                            width: size.width / (MediaQuery.of(context).size.width > 400 ? 3  : 2) - 25,
+                            width: size.width /
+                                    (MediaQuery.of(context).size.width > 400
+                                        ? 2
+                                        : 2) -
+                                25,
                             child: CardProduitFavoris(
-                              data: toElement,
-                              updateFunction: () => updateList({"token": token, 'count': 8})
-                            ),
+                                data: toElement,
+                                updateFunction: () =>
+                                    updateList({"token": token, 'count': 8})),
                           ))
                       .toList(),
                 )),

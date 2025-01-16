@@ -18,8 +18,12 @@ class LocalisationContact extends StatefulWidget {
 }
 
 class _LocalisationContactState extends State<LocalisationContact> {
-
-  final LatLng _center = const LatLng(14.692, -17.4474); // Coordonnées approximatives de Dakar
+  final LatLng _yogivida =
+      const LatLng(14.692, -17.4474); // Coordonnées approximatives de Dakar
+  final LatLng _center = const LatLng(14.666975928704844,
+      -17.43435979326502); // Coordonnées approximatives de Dakar
+  final LatLng _center_2 = const LatLng(14.677245788373606,
+      -17.434475128246397); // Coordonnées approximatives de Dakar
   late DataBloc<List<Preference>> dataBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
   final String phoneNumber = "00221774567890"; // Remplace par ton numéro
@@ -27,7 +31,7 @@ class _LocalisationContactState extends State<LocalisationContact> {
   @override
   void initState() {
     dataBloc = DataBloc<List<Preference>>(
-            (response) => Preference.fromJsonList(response),
+        (response) => Preference.fromJsonList(response),
         Preference.getEndpoint(isPagination: false),
         isGraphQl: true,
         isPagination: false,
@@ -49,8 +53,7 @@ class _LocalisationContactState extends State<LocalisationContact> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:
-      Stack(
+      body: Stack(
         children: [
           FlutterMap(
             options: MapOptions(
@@ -65,10 +68,27 @@ class _LocalisationContactState extends State<LocalisationContact> {
                 markers: [
                   Marker(
                     point: _center,
-                    width: 80,
-                    height: 80,
+                    width: 70,
+                    height: 70,
                     rotate: true,
-                    child: const Icon(Icons.pin_drop, color: Colors.red, size: 70),
+                    child:
+                        const Icon(Icons.pin_drop, color: Colors.red, size: 55),
+                  ),
+                  Marker(
+                    point: _center_2,
+                    width: 70,
+                    height: 70,
+                    rotate: true,
+                    child:
+                        const Icon(Icons.pin_drop, color: Colors.red, size: 55),
+                  ),
+                  Marker(
+                    point: _yogivida,
+                    width: 70,
+                    height: 70,
+                    rotate: true,
+                    child:
+                        const Icon(Icons.pin_drop, color: Colors.red, size: 55),
                   ),
                 ],
               ),
@@ -100,104 +120,108 @@ class _LocalisationContactState extends State<LocalisationContact> {
                 borderRadius: BorderRadius.circular(15.0),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: BlocBasedWidget<List<Preference>>(
-                  customDataBloc: dataBloc,
-                  filter: {},
-                  useInfiniteScroller: true,
-                  customWidget: (state) {
-                    List<Preference> preferences = state.data;
-                    print("PREFERENCES $preferences");
-                    Preference? numPref = preferences.firstWhere((Preference element) {
-                      return element.parametre == "Contact";
-                    });
-                    Preference? emailPref = preferences.firstWhere((Preference element) => element.parametre == "Email" );
-                    Preference? adressePref = preferences.firstWhere((Preference element) => element.parametre == "Adresse" );
-                    dynamic numTel;
-                    dynamic email;
-                    dynamic adresse;
-                    if(numPref != null){
-                      numTel = numPref.valeurText;
-                    }
-                    if(emailPref != null){
-                      email = emailPref.valeurText;
-                    }
-                    if(adressePref != null){
-                      adresse = adressePref.valeurText;
-                    }
+                  padding: const EdgeInsets.all(16.0),
+                  child: BlocBasedWidget<List<Preference>>(
+                    customDataBloc: dataBloc,
+                    filter: {},
+                    useInfiniteScroller: true,
+                    customWidget: (state) {
+                      List<Preference> preferences = state.data;
+                      print("PREFERENCES $preferences");
+                      Preference? numPref =
+                          preferences.firstWhere((Preference element) {
+                        return element.parametre == "Contact";
+                      });
+                      Preference? emailPref = preferences.firstWhere(
+                          (Preference element) => element.parametre == "Email");
+                      Preference? adressePref = preferences.firstWhere(
+                          (Preference element) =>
+                              element.parametre == "Adresse");
+                      dynamic numTel;
+                      dynamic email;
+                      dynamic adresse;
+                      if (numPref != null) {
+                        numTel = numPref.valeurText;
+                      }
+                      if (emailPref != null) {
+                        email = emailPref.valeurText;
+                      }
+                      if (adressePref != null) {
+                        adresse = adressePref.valeurText;
+                      }
 
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Visibility(
-                          visible: numTel != null,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Visibility(
+                            visible: numTel != null,
+                            child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('YOGI VIDA',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: spacingConstant,
+                                      )),
+                                  IntrinsicWidth(
+                                      child: ButtonFiled(
+                                    text: 'Appeler',
+                                    handlerPress: () => {_launchCaller(numTel)},
+                                  ))
+                                ]),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Visibility(
+                            visible: adresse != null,
+                            child: Row(
                               children: [
-                                const Text('YOGI VIDA',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: spacingConstant,
-                                    )),
-                                IntrinsicWidth(
-                                    child: ButtonFiled(
-                                      text: 'Appeler',
-                                      handlerPress: () => {_launchCaller(numTel)},
-                                    ))
-                              ]),
-                        ),
-                        const SizedBox(height: 8.0),
-                        Visibility(
-                          visible: adresse != null,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.location_on, color: primaryColor),
-                              const SizedBox(width: 8.0),
-                              Expanded(
-                                child: Text(
-                                  "$adresse",
+                                const Icon(Icons.location_on,
+                                    color: primaryColor),
+                                const SizedBox(width: 8.0),
+                                Expanded(
+                                  child: Text(
+                                    "$adresse",
+                                    style: const TextStyle(color: primaryColor),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Visibility(
+                            visible: numTel != null,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.phone, color: primaryColor),
+                                const SizedBox(width: 8.0),
+                                Text(
+                                  '$numTel',
                                   style: const TextStyle(color: primaryColor),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8.0),
-                        Visibility(
-                          visible: numTel != null,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.phone, color: primaryColor),
-                              const SizedBox(width: 8.0),
-                              Text(
-                                '$numTel',
-                                style: const TextStyle(color: primaryColor),
-                              ),
-                            ],
+                          const SizedBox(height: 8.0),
+                          Visibility(
+                            visible: email != null,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.email, color: primaryColor),
+                                const SizedBox(width: 8.0),
+                                Text(
+                                  "$email",
+                                  style: const TextStyle(color: primaryColor),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8.0),
-                        Visibility(
-                          visible: email != null,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.email, color: primaryColor),
-                              const SizedBox(width: 8.0),
-                              Text(
-                                "$email",
-                                style: const TextStyle(color: primaryColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 16.0),
-                      ],
-                    );
-                  },
-                )
-
-              ),
+                          const SizedBox(height: 16.0),
+                        ],
+                      );
+                    },
+                  )),
             ),
           ),
         ],
