@@ -20,31 +20,32 @@ import 'animated_gesture_detector.dart';
 class CardTypeNotificationPush extends StatefulWidget {
   final TypeNotificationPush tnp;
   final Function? onTNPChecked;
-  const CardTypeNotificationPush({super.key, required this.tnp, this.onTNPChecked});
+  const CardTypeNotificationPush(
+      {super.key, required this.tnp, this.onTNPChecked});
 
   @override
-  State<CardTypeNotificationPush> createState() => _CardTypeNotificationPushState();
+  State<CardTypeNotificationPush> createState() =>
+      _CardTypeNotificationPushState();
 }
 
 class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
   late TypeNotificationPush? tnp;
   bool isAllowed = true;
 
-
   @override
   void initState() {
     tnp = widget.tnp;
-    if(tnp != null){
-      isAllowed = tnp?.isAllowed??false;
+    if (tnp != null) {
+      isAllowed = tnp?.isAllowed ?? false;
     }
     super.initState();
   }
 
-  onCheckboxChanged(value, elementId){
+  onCheckboxChanged(value, elementId) {
     setState(() {
       isAllowed = !isAllowed;
     });
-    if(widget.onTNPChecked != null){
+    if (widget.onTNPChecked != null) {
       widget.onTNPChecked!(elementId);
     }
   }
@@ -52,35 +53,33 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      isThreeLine: true,
-      contentPadding: const EdgeInsets.all(8.0),
-      title: Text(
-        "${tnp?.designation??''}",
-        softWrap: true,
-        maxLines: 2,
-        style: const TextStyle(
-          overflow: TextOverflow.ellipsis,
-          fontSize: 12,
-          fontWeight: FontWeight.w900,
+        isThreeLine: true,
+        contentPadding: const EdgeInsets.all(8.0),
+        title: Text(
+          "${tnp?.designation ?? ''}",
+          softWrap: true,
+          maxLines: 2,
+          style: const TextStyle(
+            overflow: TextOverflow.ellipsis,
+            fontSize: 12,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-      ),
-      subtitle: Text(
-        "${tnp?.description ?? ''}",
-        maxLines: 3,
-        style: const TextStyle(
-          color: Colors.grey,
-          overflow: TextOverflow.ellipsis,
-          fontSize: 10,
-          fontStyle: FontStyle.italic,
+        subtitle: Text(
+          "${tnp?.description ?? ''}",
+          maxLines: 3,
+          style: const TextStyle(
+            color: Colors.grey,
+            overflow: TextOverflow.ellipsis,
+            fontSize: 10,
+            fontStyle: FontStyle.italic,
+          ),
         ),
-      ),
-      trailing: Checkbox(
-        value: isAllowed,
-        onChanged: (value) {
-          onCheckboxChanged(value, tnp?.id);
-        }
-      )
-    );
+        trailing: Checkbox(
+            value: isAllowed,
+            onChanged: (value) {
+              onCheckboxChanged(value, tnp?.id);
+            }));
   }
 
   Future<dynamic> showBottomSheet(BuildContext context, Programme programme) {
@@ -104,7 +103,8 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                       width: 50,
                       decoration: const BoxDecoration(
                           color: greyColor,
-                          borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(spacingConstant))),
                     ),
                   ),
                   const SizedBox(
@@ -138,11 +138,13 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                       ),
                       Text(
                         "${programme.heureDebut}",
-                        style: const TextStyle(color: Color(0xff838282), fontSize: 12),
+                        style: const TextStyle(
+                            color: Color(0xff838282), fontSize: 12),
                       ),
                       Text(
                         " - ${programme.heureFin}",
-                        style: const TextStyle(color: Color(0xff838282), fontSize: 12),
+                        style: const TextStyle(
+                            color: Color(0xff838282), fontSize: 12),
                       )
                     ],
                   ),
@@ -176,7 +178,8 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                                 const Text(
                                   "Durée",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "${programme.duration}",
@@ -187,7 +190,9 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                             )
                           ],
                         ),
-                        const SizedBox.square(dimension: 10,),
+                        const SizedBox.square(
+                          dimension: 10,
+                        ),
                         Row(
                           children: [
                             Container(
@@ -210,7 +215,8 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                                 const Text(
                                   "Professeur",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "${programme.professeurPratique?.professeur?.user?.name.toString().toCapitalized}",
@@ -221,7 +227,9 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                             )
                           ],
                         ),
-                        const SizedBox.square(dimension: 10,),
+                        const SizedBox.square(
+                          dimension: 10,
+                        ),
                         Row(
                           children: [
                             Container(
@@ -244,7 +252,8 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                                 const Text(
                                   "Salle",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "${programme.sallePratique?.salle?.designation.toString().toCapitalized}",
@@ -268,7 +277,8 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
                       child: ButtonFiled(
                         text: 'Réserver',
-                        handlerPress: () => ShowBottomSheetPayment(context, programme),
+                        handlerPress: () =>
+                            ShowBottomSheetPayment(context, programme),
                       ),
                     ),
                   )
@@ -279,13 +289,16 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
         });
   }
 
-  Future<dynamic> ShowBottomSheetPayment(BuildContext context, Programme programme, {Function? customFunction}) {
-    DataBloc<List<TypePaiement>> typePaiementPushBloc = DataBloc<List<TypePaiement>>(
+  Future<dynamic> ShowBottomSheetPayment(
+      BuildContext context, Programme programme,
+      {Function? customFunction}) {
+    DataBloc<List<TypePaiement>> typePaiementPushBloc =
+        DataBloc<List<TypePaiement>>(
             (response) => TypePaiement.fromJsonList(response),
-        TypePaiement.getEndpoint(isPagination: false),
-        isGraphQl: true,
-        isPagination: false,
-        attributeToGet: TypePaiement.shrinkedAttributs());
+            TypePaiement.getEndpoint(isPagination: false),
+            isGraphQl: true,
+            isPagination: false,
+            attributeToGet: TypePaiement.shrinkedAttributs());
 
     return showModalBottomSheet(
         context: context,
@@ -296,7 +309,8 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
               decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(spacingConstant), topRight: Radius.circular(spacingConstant))),
+                      topLeft: Radius.circular(spacingConstant),
+                      topRight: Radius.circular(spacingConstant))),
               child: Padding(
                 padding: const EdgeInsets.all(spacingConstant),
                 child: SingleChildScrollView(
@@ -309,7 +323,8 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                           width: 50,
                           decoration: const BoxDecoration(
                               color: greyColor,
-                              borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(spacingConstant))),
                         ),
                       ),
                       const SizedBox(
@@ -330,21 +345,15 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                         useInfiniteScroller: true,
                         customWidget: (state) {
                           List<TypePaiement> typePaiements = state.data;
-                          return
-                            Column(
-                                children:  [
-                                  const SizedBox(
-                                    height: spacingConstant,
-                                  ),
-                                  Wrap(
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: [
-                                        ...buildTypePaiementList(currentContext, typePaiements, programme),
-                                      ]
-                                  ),
-                                ]
-                            );
+                          return Column(children: [
+                            const SizedBox(
+                              height: spacingConstant,
+                            ),
+                            Wrap(spacing: 10, runSpacing: 10, children: [
+                              ...buildTypePaiementList(
+                                  currentContext, typePaiements, programme),
+                            ]),
+                          ]);
                         },
                       )
                     ],
@@ -356,75 +365,75 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
         });
   }
 
-  List<Widget> buildTypePaiementList(BuildContext parentContext, List<TypePaiement> typePaiements, Programme programme){
+  List<Widget> buildTypePaiementList(BuildContext parentContext,
+      List<TypePaiement> typePaiements, Programme programme) {
     late PostApiBloc reservationPostBloc;
     reservationPostBloc = PostApiBloc();
 
     reserverCours({required Map<String, dynamic> parameters}) {
-      reservationPostBloc.add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
+      reservationPostBloc.add(
+          PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
     }
 
     return [
       ...typePaiements.map((toElement) {
         return BlocBuilder<AuthenticationBloc<Utilisateur>,
-            AuthenticationState<Utilisateur>>(
-            builder: (context, authState) {
-              AuthenticationStatus currentStatus = authState.status;
-              Utilisateur? user = authState.user;
-              switch (currentStatus) {
-                case AuthenticationStatus.authenticated:
-                  return BlocConsumer(
-                    bloc: reservationPostBloc,
-                    listener: (context, state) {
-                      if (state is PostApiSuccess) {
-                        ScaffoldMessenger.of(parentContext).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "${state.message}",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            backgroundColor: Colors.green[400],
-                          ),
-                        );
-                      }
-                      if (state is PostApiFailure) {
-                        print("NEW STATE ${state.message}");
-                        ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(parentContext).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "${state.message}",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    },
-                    builder: (BuildContext context, postBlocState) {
-                      return AnimatedGestureButton(
-                        animate: postBlocState is PostApiProcessing,
-                        child: GestureDetector(
-                            onTap: (){
-                              Map<String, dynamic> parameters = {
-                                "programme": programme.id,
-                                "client": user?.id,
-                                "from_site": true,
-                                "mode_paiement_id": toElement.id,
-                              };
-                              reserverCours(parameters: parameters);
-                            },
-                            child: TypePaiementCard(typePaiement: toElement)
+            AuthenticationState<Utilisateur>>(builder: (context, authState) {
+          AuthenticationStatus currentStatus = authState.status;
+          Utilisateur? user = authState.user;
+          switch (currentStatus) {
+            case AuthenticationStatus.authenticated:
+              return BlocConsumer(
+                bloc: reservationPostBloc,
+                listener: (context, state) {
+                  if (state is PostApiSuccess) {
+                    ScaffoldMessenger.of(parentContext).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${state.message}",
+                          style: TextStyle(color: Colors.white),
                         ),
-                      );
-                    },
+                        backgroundColor: Colors.green[400],
+                      ),
+                    );
+                  }
+                  if (state is PostApiFailure) {
+                    print("NEW STATE ${state.message}");
+                    ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(parentContext).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${state.message}",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                builder: (BuildContext context, postBlocState) {
+                  return AnimatedGestureButton(
+                    animate: postBlocState is PostApiProcessing,
+                    child: GestureDetector(
+                        onTap: () {
+                          Map<String, dynamic> parameters = {
+                            "programme": programme.id,
+                            "client": user?.id,
+                            "from_site": true,
+                            "mode_paiement_id": toElement.id,
+                          };
+                          reserverCours(parameters: parameters);
+                        },
+                        child: TypePaiementCard(typePaiement: toElement)),
                   );
-                case AuthenticationStatus.unknown:
-                case AuthenticationStatus.unauthenticated:
-                case AuthenticationStatus.failure:
-                  return const SizedBox();
-              }
-            });
+                },
+              );
+            case AuthenticationStatus.unknown:
+            case AuthenticationStatus.unauthenticated:
+            case AuthenticationStatus.failure:
+              return const SizedBox();
+          }
+        });
       }).toList(),
     ];
   }
