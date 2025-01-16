@@ -19,7 +19,8 @@ class CardPratique extends StatefulWidget {
   final Function? handlePress;
   final Function? updateFunction;
 
-  const CardPratique({ super.key, required this.data, this.handlePress, this.updateFunction});
+  const CardPratique(
+      {super.key, required this.data, this.handlePress, this.updateFunction});
 
   @override
   State<CardPratique> createState() => _CardPratiqueState();
@@ -37,18 +38,16 @@ class _CardPratiqueState extends State<CardPratique> {
     liked = widget.data.favoris;
   }
 
-
   likePratique({required Map<String, dynamic> parameters}) {
-    favorisPostBloc
-        .add(PostApiMakeCall(endpoint: 'pratique_favoris', parameters: parameters));
+    favorisPostBloc.add(
+        PostApiMakeCall(endpoint: 'pratique_favoris', parameters: parameters));
   }
 
-  changeStateFavoris(){
+  changeStateFavoris() {
     setState(() {
       liked = !liked!;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -72,84 +71,87 @@ class _CardPratiqueState extends State<CardPratique> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.arimo(
-                        fontSize:textConstant,
-                        fontWeight: FontWeight.bold),
+                        fontSize: textConstant, fontWeight: FontWeight.bold),
                   ),
                 ),
                 BlocBuilder<AuthenticationBloc<Utilisateur>,
-                    AuthenticationState<Utilisateur>>(
+                        AuthenticationState<Utilisateur>>(
                     builder: (context, authState) {
-                      AuthenticationStatus currentStatus = authState.status;
-                      Utilisateur? user = authState.user;
-                      switch (currentStatus) {
-                        case AuthenticationStatus.authenticated:
-                          return BlocConsumer(
-                            bloc: favorisPostBloc,
-                            listener: (context, state) {
-                              if (state is PostApiSuccess) {
-                                changeStateFavoris();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      liked!?  'Ajouter au favoris' : 'Retirer des favoris',
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                    backgroundColor: Colors.green[400],
-                                  ),
-                                );
-                                print(" UPDATE PRATIQUE SHOULD UPDATE SOON ${widget.updateFunction}");
-                                if(widget.updateFunction != null){
-                                  print(" UPDATE PRATIQUE SHOULD UPDATE");
-                                  widget.updateFunction!();
-                                }
-                              }
-                              if (state is PostApiProcessing) {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                              }
-                            },
-                            builder: (BuildContext context, postBlocState) {
-                              return AnimatedGestureButton(
-                                animate: postBlocState is PostApiProcessing,
-                                child: GestureDetector(
-                                  child: !liked!
-                                      ? const Icon(
-                                    Icons.favorite_outline,
-                                    size: 25,
-                                  )
-                                      : const Icon(
-                                    Icons.favorite,
-                                    color: Color(0xffFF0000),
-                                    size: 25,
-                                  ),
-                                  onTap: () {
-                                    Map<String, dynamic> parameters = {
-                                      "token": user?.token ?? "",
-                                      "pratique_id": widget.data.id,
-                                      "etat": liked,
-                                    };
-                                    likePratique(parameters: parameters);
-                                  },
+                  AuthenticationStatus currentStatus = authState.status;
+                  Utilisateur? user = authState.user;
+                  switch (currentStatus) {
+                    case AuthenticationStatus.authenticated:
+                      return BlocConsumer(
+                        bloc: favorisPostBloc,
+                        listener: (context, state) {
+                          if (state is PostApiSuccess) {
+                            changeStateFavoris();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  liked!
+                                      ? 'Ajouter au favoris'
+                                      : 'Retirer des favoris',
+                                  style: const TextStyle(color: Colors.white),
                                 ),
-                              );
-                            },
+                                backgroundColor: Colors.green[400],
+                              ),
+                            );
+                            print(
+                                " UPDATE PRATIQUE SHOULD UPDATE SOON ${widget.updateFunction}");
+                            if (widget.updateFunction != null) {
+                              print(" UPDATE PRATIQUE SHOULD UPDATE");
+                              widget.updateFunction!();
+                            }
+                          }
+                          if (state is PostApiProcessing) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          }
+                        },
+                        builder: (BuildContext context, postBlocState) {
+                          return AnimatedGestureButton(
+                            animate: postBlocState is PostApiProcessing,
+                            child: GestureDetector(
+                              child: !liked!
+                                  ? const Icon(
+                                      Icons.favorite_outline,
+                                      size: 25,
+                                    )
+                                  : const Icon(
+                                      Icons.favorite,
+                                      color: Color(0xffFF0000),
+                                      size: 25,
+                                    ),
+                              onTap: () {
+                                Map<String, dynamic> parameters = {
+                                  "token": user?.token ?? "",
+                                  "pratique_id": widget.data.id,
+                                  "etat": liked,
+                                };
+                                likePratique(parameters: parameters);
+                              },
+                            ),
                           );
-                        case AuthenticationStatus.unknown:
-                        case AuthenticationStatus.unauthenticated:
-                        case AuthenticationStatus.failure:
-                          return const Center(child: SizedBox.shrink());
-                      }
-                    })
+                        },
+                      );
+                    case AuthenticationStatus.unknown:
+                    case AuthenticationStatus.unauthenticated:
+                    case AuthenticationStatus.failure:
+                      return const Center(child: SizedBox.shrink());
+                  }
+                })
               ],
             ),
             const SizedBox(height: 10),
             SizedBox(
               height: 100,
               child: Container(
-                clipBehavior: Clip.antiAlias,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(8)),
-                child: CustomCachedNetworkImage(imageUrl: widget.data.image ?? '', fallBackAsset: 'assets/images/pratique_fallback.png')
-              ),
+                  clipBehavior: Clip.antiAlias,
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                  child: CustomCachedNetworkImage(
+                      imageUrl: widget.data.image ?? '',
+                      fallBackAsset: 'assets/images/pratique_fallback.png')),
             ),
           ],
         ),

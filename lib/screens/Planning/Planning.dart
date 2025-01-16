@@ -1,3 +1,4 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,12 @@ import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
 import '../../services/api/models/notificationpush_model.dart';
+
+import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../core/models/user_model.dart';
+import '../../services/authentication_bloc/authentication_bloc.dart';
 
 class Planning extends StatefulWidget {
   const Planning({super.key});
@@ -43,7 +50,7 @@ class _PlanningState extends State<Planning> {
         attributeToGet: Programme.shrinkedAttributs());
 
     salleBloc = DataBloc<List<Salle>>(
-            (response) => Salle.fromJsonList(response),
+        (response) => Salle.fromJsonList(response),
         Salle.getEndpoint(isPagination: false),
         isGraphQl: true,
         isPagination: false,
@@ -70,29 +77,34 @@ class _PlanningState extends State<Planning> {
   //   });
   // }
 
-  initFilter(){
+  initFilter() {
     currentFilter = {'date': '${date.year}-${date.month}-${date.day}'};
   }
   // List<Salle?> studioList = extractStudiosOptions(programmes);
 
-  selectStudio(dynamic newValue){
+  selectStudio(dynamic newValue) {
     print("SELECTION FF $newValue");
     setState(() {
-      currentFilter = {...currentFilter, ...{'salle_id': newValue}};
+      currentFilter = {
+        ...currentFilter,
+        ...{'salle_id': newValue}
+      };
     });
   }
 
   void changeDate(DateTime date) {
     setState(() {
       selectedDate = date;
-      currentFilter = {'date': "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"};
+      currentFilter = {
+        'date': "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"
+      };
     });
     // var currentDate = '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}';
 
     // programmeBloc.add(FetchDataEvent(filter: {'date': currentDate}));
   }
 
-  void cleanFieldAndUpdateList(){
+  void cleanFieldAndUpdateList() {
     designationFilter.clear();
     setState(() {
       selectedDate = date;
@@ -100,11 +112,13 @@ class _PlanningState extends State<Planning> {
     });
   }
 
-  void searchWithDesignation(){
+  void searchWithDesignation() {
     String text = designationFilter.text;
     setState(() {
       selectedDate = date;
-      currentFilter = {...currentFilter..addAll({'nom_pratique': text})};
+      currentFilter = {
+        ...currentFilter..addAll({'nom_pratique': text})
+      };
     });
   }
 
@@ -120,7 +134,6 @@ class _PlanningState extends State<Planning> {
     super.dispose();
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -180,30 +193,82 @@ class _PlanningState extends State<Planning> {
                         //   minHeight: spacingConstant,
                         // ),
                         child: Center(
-                          child: BlocBasedWidget<List<NotificationPush>>(
-                            customDataBloc: notificationPushBloc,
-                            useInfiniteScroller: true,
-                            customWidget: (
-                              state,
-                            ) {
-                              Map<String, dynamic> metadata = state.metadata;
-                              dynamic totalNotifs = metadata['total'];
-                              print("NOTIF TOTAL ${totalNotifs}");
-                              return Text(
-                                "${totalNotifs}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  // overflow: TextOverflow.ellipsis,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              );
+                          child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                              AuthenticationState<Utilisateur>>(
+                            builder: (context, authState) {
+                              // Vérifiez si l'utilisateur est authentifié
+                              if (authState.status ==
+                                  AuthenticationStatus.authenticated) {
+                                // Utilisateur connecté
+                                Utilisateur? user = authState.user;
+                                print("Utilisateur connecté papa");
+                                final userId = user?.id;
+
+                                return BlocBasedWidget<List<NotificationPush>>(
+                                  customDataBloc: notificationPushBloc,
+                                  // filter: globalFilter, // Optionnel si nécessaire
+                                  filter: {
+                                    "client_id": userId, // Filtrage par user_id
+                                    "count": 100,
+                                    "is_read": false,
+                                  },
+                                  useInfiniteScroller: true,
+                                  customWidget: (state) {
+                                    Map<String, dynamic> metadata =
+                                        state.metadata;
+                                    dynamic totalNotifs = metadata['total'];
+                                    return Text(
+                                      "${totalNotifs}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    );
+                                  },
+                                );
+                              } else {
+                                // Utilisateur non authentifié
+                                return const Text(
+                                  "0",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                );
+                              }
                             },
                           ),
                         ),
+
+                        // child: BlocBasedWidget<List<NotificationPush>>(
+                        //   customDataBloc: notificationPushBloc,
+                        //   // filter: globalFilter,
+                        //   useInfiniteScroller: true,
+                        //   customWidget: (
+                        //     state,
+                        //   ) {
+                        //     Map<String, dynamic> metadata = state.metadata;
+                        //     dynamic totalNotifs = metadata['total'];
+                        //     // dynamic totalNotifs = 0;
+                        //     print("NOTIF TOTAL ${totalNotifs}");
+                        //     return Text(
+                        //       "${totalNotifs}",
+                        //       style: const TextStyle(
+                        //         color: Colors.white,
+                        //         // overflow: TextOverflow.ellipsis,
+                        //         fontSize: 10,
+                        //         fontWeight: FontWeight.bold,
+                        //       ),
+                        //       textAlign: TextAlign.center,
+                        //     );
+                        //   },
+                        // ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -226,7 +291,7 @@ class _PlanningState extends State<Planning> {
               ),
               Padding(
                 padding:
-                const EdgeInsets.symmetric(horizontal: spacingConstant),
+                    const EdgeInsets.symmetric(horizontal: spacingConstant),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -242,7 +307,7 @@ class _PlanningState extends State<Planning> {
                     ),
                     SizedBox.square(
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           searchWithDesignation();
                         },
                         child: Container(
@@ -267,7 +332,7 @@ class _PlanningState extends State<Planning> {
                       child: SizedBox.square(
                         dimension: 50,
                         child: GestureDetector(
-                          onTap: (){
+                          onTap: () {
                             cleanFieldAndUpdateList();
                           },
                           child: const Icon(
@@ -279,8 +344,9 @@ class _PlanningState extends State<Planning> {
                       ),
                     ),
 
-
-                    const SizedBox.square(dimension: 2,),
+                    const SizedBox.square(
+                      dimension: 2,
+                    ),
                     // const Spacer(),
                     // // const Text('|'),
                     // const Spacer(),
@@ -290,7 +356,10 @@ class _PlanningState extends State<Planning> {
                         customDataBloc: salleBloc,
                         customWidget: (state) {
                           List<Salle> salles = state.data;
-                          return StudioSelect(studioList: salles, onSelect: selectStudio,);
+                          return StudioSelect(
+                            studioList: salles,
+                            onSelect: selectStudio,
+                          );
                         },
                       ),
                     ),
@@ -327,8 +396,8 @@ class _PlanningState extends State<Planning> {
                     children: [
                       ...programmes
                           .map((toElement) => CardRowPlanning(
-                        data: toElement,
-                      ))
+                                data: toElement,
+                              ))
                           .toList(),
                     ],
                   );
@@ -337,7 +406,6 @@ class _PlanningState extends State<Planning> {
               const SizedBox(
                 height: spacingConstant,
               ),
-
             ],
           ),
         ));
@@ -362,7 +430,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
     super.initState();
     // Générer la liste des jours de la semaine courante
     weekDays = _generateWeekDays();
-    if(widget.selectedDate != null ){
+    if (widget.selectedDate != null) {
       selectedDate = DateTime.now();
     }
   }
@@ -458,7 +526,6 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
   }
 }
 
-
 class StudioSelect extends StatefulWidget {
   final List<Salle?> studioList;
   final Function? onSelect;
@@ -492,43 +559,41 @@ class _StudioSelectState extends State<StudioSelect> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-              "assets/icons/home2.svg",
-              height: 15, color: Colors.white
-          ),
-          const SizedBox(width: 5.0), // Espace entre l'icône et le DropdownButton
+          SvgPicture.asset("assets/icons/home2.svg",
+              height: 15, color: Colors.white),
+          const SizedBox(
+              width: 5.0), // Espace entre l'icône et le DropdownButton
           DropdownButton(
             dropdownColor: primaryColor, // Couleur du dropdown
             value: selectedValue,
             hint: const Text(
               'Studio',
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-              ),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             style: const TextStyle(color: Colors.white), // Couleur du texte
-            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+            icon: const Icon(
+              Icons.keyboard_arrow_down,
+              color: Colors.white,
+            ),
             underline: const SizedBox(), // Supprime la ligne par défaut
             items: [
               ...studioList.map((Salle? salle) {
                 return DropdownMenuItem(
                   value: salle?.id,
-                  child: Text(
-                      "${salle?.designation}",
+                  child: Text("${salle?.designation}",
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Colors.white)),
                 );
               }).toList(),
-
             ],
             onChanged: (newValue) {
               print("SELECTION $newValue ${onSelect != null}");
-              setState((){
+              setState(() {
                 selectedValue = newValue;
               });
-              if(onSelect != null){
+              if (onSelect != null) {
                 onSelect!(newValue);
               }
             },

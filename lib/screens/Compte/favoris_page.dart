@@ -140,7 +140,7 @@ class ScrollableTabPage extends StatelessWidget {
   const ScrollableTabPage({Key? key, required this.data, this.token})
       : super(key: key);
 
-  updateList(newFilter) {
+  updateListPratique(newFilter) {
     print("UPDATE PRATIQUE ");
     data.add(FetchDataEvent(filter: newFilter));
   }
@@ -169,7 +169,7 @@ class ScrollableTabPage extends StatelessWidget {
                                 25,
                             child: CardPratique(
                                 data: toElement,
-                                updateFunction: () => updateList({
+                                updateFunction: () => updateListPratique({
                                       ...{"token": token, 'count': 8}
                                     })),
                           ))
