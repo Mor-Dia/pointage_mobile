@@ -249,10 +249,11 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                         height: spacingConstant,
                       ),
                       Inputfiled(
-                        type: 'number',
+                        type: 'text',
                         text: "Montant",
                         controller: montantController,
-                        error: currentError, // L'erreur est vide au départ
+                        error: '', // L'erreur est vide au départ
+                        // error: currentError, // L'erreur est vide au départ
                       ),
                       const SizedBox(
                         height: spacingConstant,
@@ -301,6 +302,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
     reservationPostBloc = PostApiBloc();
 
     buyLigneCredit({required Map<String, dynamic> parameters}) {
+      print("BUY LIGNE CREDIT  ${parameters.toString()}");
       reservationPostBloc.add(
           PostApiMakeCall(endpoint: 'lignecredit', parameters: parameters));
     }
@@ -347,7 +349,8 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                     child: GestureDetector(
                         onTap: () {
                           Map<String, dynamic> parameters = {
-                            "montant": montant,
+                            "montant": montantController.text,
+                            // "montant": montant,
                             "client": user?.id,
                             "from_site": true,
                             "typelignecredit": 2,

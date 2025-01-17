@@ -342,6 +342,7 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                       BlocBasedWidget<List<TypePaiement>>(
                         customDataBloc: typePaiementPushBloc,
                         // filter: currentFilter,
+                        filter: const {'showatwebsite': 'true'},
                         useInfiniteScroller: true,
                         customWidget: (state) {
                           List<TypePaiement> typePaiements = state.data;
