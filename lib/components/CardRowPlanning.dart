@@ -485,6 +485,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                 listener: (context, state) {
                   if (state is PostApiSuccess) {
                     print("MESSAGE RESE ${state.message} ");
+                    //Navigator.of(parentContext).pop();
                     ScaffoldMessenger.of(parentContext).showSnackBar(
                       SnackBar(
                         content: Text(

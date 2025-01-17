@@ -319,6 +319,9 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                 bloc: reservationPostBloc,
                 listener: (context, state) {
                   if (state is PostApiSuccess) {
+                    // fermer l'element apres success
+                    Navigator.of(parentContext).pop();
+
                     ScaffoldMessenger.of(parentContext).showSnackBar(
                       SnackBar(
                         content: Text(

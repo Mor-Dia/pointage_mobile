@@ -640,6 +640,7 @@ List<Widget> buildTypePaiementList(BuildContext parentContext,
   reserverCours({required Map<String, dynamic> parameters}) {
     reservationPostBloc
         .add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
+    // Navigator.pop(context);
   }
 
   return [
@@ -666,6 +667,7 @@ List<Widget> buildTypePaiementList(BuildContext parentContext,
                 }
                 if (state is PostApiFailure) {
                   print("NEW STATE ${state.message}");
+                  // Navigator.of(parentContext).pop();
                   ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
                   ScaffoldMessenger.of(parentContext).showSnackBar(
                     SnackBar(
