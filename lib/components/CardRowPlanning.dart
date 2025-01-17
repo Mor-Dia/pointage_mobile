@@ -54,6 +54,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
               Row(
                 children: [
                   Expanded(
+                    flex: 2,
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -121,7 +122,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                       color: const Color(0xFF838282),
                                     ),
                                     const SizedBox(
-                                      width: 5,
+                                      width: 10,
                                     ),
                                     Text(
                                       widget.data.heureFin.toString(),
@@ -137,15 +138,19 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                 Row(
                                   children: [
                                     SvgPicture.asset(
-                                      "assets/icons/loc.svg",
-                                      color: const Color(0xFF838282),
+                                      "",
+                                      // "assets/icons/loc.svg",
+                                      // color: const Color(0xFF838282),
+                                      color: const Color.fromARGB(
+                                          255, 255, 255, 255),
                                     ),
                                     const SizedBox(
                                       width: 5,
                                     ),
                                     const Expanded(
                                       child: Text(
-                                        'Dakar plateau',
+                                        '',
+                                        // 'Dakar plateau',
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             color: Color(0xff838282),
