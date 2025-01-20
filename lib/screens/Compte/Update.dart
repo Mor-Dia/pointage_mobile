@@ -59,7 +59,7 @@ class _UpdateState extends State<Update> {
     super.initState();
     updateUserPostBloc = PostApiBloc();
     utilisateurBloc = DataBloc<List<Utilisateur>>(
-            (response) => Utilisateur.fromJsonList(response),
+        (response) => Utilisateur.fromJsonList(response),
         Utilisateur.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
@@ -67,7 +67,7 @@ class _UpdateState extends State<Update> {
     fillFields();
   }
 
-  fillFields(){
+  fillFields() {
     inputFields = [
       {
         'type': 'text',
@@ -128,27 +128,29 @@ class _UpdateState extends State<Update> {
         'error': ''
       }
     ];
-    AuthenticationBloc currentAuthBloc = BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
+    AuthenticationBloc currentAuthBloc =
+        BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
     print("UPDATE USER 1");
-    if(!lockUserInfoRetrieving){
+    if (!lockUserInfoRetrieving) {
       getUsersInfo();
     }
-    currentAuthBloc.stream.listen((onData){
-      if(!lockUserInfoRetrieving){
+    currentAuthBloc.stream.listen((onData) {
+      if (!lockUserInfoRetrieving) {
         getUsersInfo();
       }
     });
   }
 
-  getUsersInfo(){
+  getUsersInfo() {
     print("UPDATE USER LISTENING 2");
-    setState((){
+    setState(() {
       //Pour éviter que la récupération se fasse 2 fois car parfois,
       // il faut attendre un changement d'état d'authentification, d'autre fois,
       // il est deja dans l'état Authenticated
       lockUserInfoRetrieving = true;
     });
-    AuthenticationBloc currentAuthBloc = BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
+    AuthenticationBloc currentAuthBloc =
+        BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
     AuthenticationStatus currentStatus = currentAuthBloc.state.status;
     switch (currentStatus) {
       case AuthenticationStatus.unknown:
@@ -163,20 +165,22 @@ class _UpdateState extends State<Update> {
         Utilisateur currentUser = currentAuthBloc.state.user;
         currentUserId = currentUser.id;
         utilisateurBloc.add(FetchDataEvent(filter: {"id": currentUserId}));
-        utilisateurBloc.stream.listen((onData){
-          if(onData is DataSuccess){
+        utilisateurBloc.stream.listen((onData) {
+          if (onData is DataSuccess) {
             setState(() {
               gettingUsersInfos = false;
             });
             Utilisateur currentUser = onData.data[0];
-            List<Map<String, dynamic>>  tempInputFields = inputFields;
+            List<Map<String, dynamic>> tempInputFields = inputFields;
             for (int i = 0; i < tempInputFields!.length; i++) {
               String tag = tempInputFields?[i]['tag'];
-              if (tempInputFields?[i]['type'] == "text" || tempInputFields?[i]['type'] == "password") {
-                tempInputFields![i]['controller'] = renderController(tag, currentUser);
-              }
-              else if(tempInputFields?[i]['type'] == "select"){
-                tempInputFields![i]['selected'] = retrieveItem(currentUser.typePersonne);
+              if (tempInputFields?[i]['type'] == "text" ||
+                  tempInputFields?[i]['type'] == "password") {
+                tempInputFields![i]['controller'] =
+                    renderController(tag, currentUser);
+              } else if (tempInputFields?[i]['type'] == "select") {
+                tempInputFields![i]['selected'] =
+                    retrieveItem(currentUser.typePersonne);
               }
             }
             setState(() {
@@ -205,8 +209,8 @@ class _UpdateState extends State<Update> {
     });
   }
 
-  Item? retrieveItem(elementId){
-    if(elementId != null){
+  Item? retrieveItem(elementId) {
+    if (elementId != null) {
       return items.firstWhere((elmt) => elmt.id == elementId);
     }
   }
@@ -219,9 +223,10 @@ class _UpdateState extends State<Update> {
     super.dispose();
   }
 
-  TextEditingController renderController(String tag, Utilisateur currentClient) {
+  TextEditingController renderController(
+      String tag, Utilisateur currentClient) {
     Map<String, dynamic> currentClientJson = currentClient.toJson();
-    if(currentClientJson[tag] != null){
+    if (currentClientJson[tag] != null) {
       print("HETS TAG VAL ${currentClientJson[tag]}");
       return TextEditingController(text: currentClientJson[tag]);
     }
@@ -290,37 +295,42 @@ class _UpdateState extends State<Update> {
       "confirmpassword": null,
       "genre": null,
     };
-    if(inputFields.isNotEmpty){
-      for(String key in postData.keys){
+    if (inputFields.isNotEmpty) {
+      for (String key in postData.keys) {
         print("HOLD $inputFields");
-        dynamic currentField = inputFields.firstWhere((element) {
-          if(element['tag'] != null){
-            return element['tag'] == key;
-          }
-          return false;
-        },  orElse: () => {}, );
+        dynamic currentField = inputFields.firstWhere(
+          (element) {
+            if (element['tag'] != null) {
+              return element['tag'] == key;
+            }
+            return false;
+          },
+          orElse: () => {},
+        );
         TextEditingController? currentController = currentField['controller'];
-        if(currentController != null){
+        if (currentController != null) {
           postData[key] = currentController.text;
         } else {
           postData['genre'] = selectedGender?.id.toString();
         }
-        if(postData[key] == "" || postData[key] == null){
+        if (postData[key] == "" || postData[key] == null) {
           keysToRemove.add(key);
         }
       }
     }
-    postData.removeWhere((key, value)=>keysToRemove.contains(key));
+    postData.removeWhere((key, value) => keysToRemove.contains(key));
     postData['phone'] = postData['telephone'];
     postData['nom_complet'] = "${postData['prenom']} ${postData['nom']}";
     postData['from_mobile'] = true;
     print("POST DATA $postData");
-    updateUserPostBloc.add(PostApiMakeCall(endpoint: 'update-user', parameters: postData));
+    updateUserPostBloc
+        .add(PostApiMakeCall(endpoint: 'update-user', parameters: postData));
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+    return BlocBuilder<AuthenticationBloc<Utilisateur>,
+        AuthenticationState<Utilisateur>>(
       builder: (context, authState) {
         AuthenticationStatus currentStatus = authState.status;
         Utilisateur? currentUser = authState.user;
@@ -338,10 +348,11 @@ class _UpdateState extends State<Update> {
                 elevation: 0,
                 leading: Padding(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                        color: greyColorL, borderRadius: BorderRadius.circular(10)),
+                        color: greyColorL,
+                        borderRadius: BorderRadius.circular(10)),
                     child: IconButton(
                       icon: SvgPicture.asset('assets/icons/back.svg'),
                       onPressed: () => Navigator.of(context).pop(),
@@ -367,7 +378,8 @@ class _UpdateState extends State<Update> {
                 ),
               ),
               body: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: spacingConstant),
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -392,27 +404,27 @@ class _UpdateState extends State<Update> {
                         ),
                       ),
                       Visibility(
-                        visible: !gettingUsersInfos,
-                        child: Column(
-                            children: inputFields.map((field) {
-                              return Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Inputfiled(
-                                    type: field['type'],
-                                    text: field['text'],
-                                    icon: field['icon'],
-                                    controller: field['controller'],
-                                    selectedValue: field['selectedValue'],
-                                    items: field['items'],
-                                    handleAction: (value) => selectGenre(value!),
-                                    error: field['error'], // L'erreur est vide au départ
-                                  ),
-                                  const SizedBox(height: 30),
-                                ],
-                              );
-                            }).toList())
-                      ),
+                          visible: !gettingUsersInfos,
+                          child: Column(
+                              children: inputFields.map((field) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Inputfiled(
+                                  type: field['type'],
+                                  text: field['text'],
+                                  icon: field['icon'],
+                                  controller: field['controller'],
+                                  selectedValue: field['selectedValue'],
+                                  items: field['items'],
+                                  handleAction: (value) => selectGenre(value!),
+                                  error: field[
+                                      'error'], // L'erreur est vide au départ
+                                ),
+                                const SizedBox(height: 30),
+                              ],
+                            );
+                          }).toList())),
                       Column(
                         children: [
                           const SizedBox(height: 30),
@@ -420,31 +432,37 @@ class _UpdateState extends State<Update> {
                             bloc: updateUserPostBloc,
                             listener: (context, state) {
                               if (state is PostApiSuccess) {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                Navigator.of(context).pop();
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
                                       "${state.message}",
-                                      style: const TextStyle(color: Colors.white),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     ),
                                     backgroundColor: Colors.green[400],
                                   ),
                                 );
                               }
                               if (state is PostApiFailure) {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
                                       "${state.message}",
-                                      style: const TextStyle(color: Colors.white),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     ),
                                     backgroundColor: Colors.red,
                                   ),
                                 );
                               }
                               if (state is PostApiProcessing) {
-                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
                               }
                             },
                             builder: (BuildContext context, postBlocState) {

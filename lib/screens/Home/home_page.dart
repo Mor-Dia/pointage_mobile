@@ -38,9 +38,9 @@ class _HomePageState extends State<HomePage> {
   late DataBloc<List<Programme>> programmeBloc;
   late DataBloc<List<NotificationPush>> notificationPushBloc;
   Map<String, dynamic> globalFilter = {"count": 5};
-  Map<String, dynamic> programmeBlocFilter = {"is_front": true};
   final DateTime date = DateTime.now();
   bool canBeDisplay = false;
+  Map<String, dynamic> programmeBlocFilter = {"is_front": true};
 
   @override
   void initState() {
@@ -63,7 +63,13 @@ class _HomePageState extends State<HomePage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: NotificationPush.shrinkedAttributs());
+
+    initFilter();
     super.initState();
+  }
+
+  initFilter() {
+    programmeBlocFilter = {'date': '${date.year}-${date.month}-${date.day}'};
   }
 
   @override
@@ -210,7 +216,7 @@ class _HomePageState extends State<HomePage> {
         color: Colors.white,
         child: RefreshIndicator(
           onRefresh: () async {
-            programmeBloc.add(RefreshDataEvent());
+            programmeBloc.add(RefreshDataEvent(filter: programmeBlocFilter));
             practiceBloc.add(RefreshDataEvent());
             await Future.delayed(const Duration(seconds: 2));
           },
@@ -328,7 +334,9 @@ class _HomePageState extends State<HomePage> {
                                     CardPratique(
                                       data: toElement,
                                       handlePress: () {},
-                                      afterLike: () {print("HELLO");},
+                                      afterLike: () {
+                                        print("HELLO");
+                                      },
                                     )
                                   ],
                                 ))

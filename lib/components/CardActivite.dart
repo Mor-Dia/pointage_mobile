@@ -18,9 +18,23 @@ class Cardactivite extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int displayColor = 0xffFF0000;
-    if (color == "success") {
+    // print("ici color" + this.color.toString());
+    if (this.color == "success") {
       displayColor = 0xff28A745;
     }
+    if (this.color == "danger") {
+      displayColor = 0xffDC3545;
+    }
+    if (this.color == "warning") {
+      displayColor = 0xffFFC107;
+    } else {
+      displayColor = 0xff28A745;
+    }
+
+    print("ici color => " +
+        this.color.toString() +
+        "alors => " +
+        displayColor.toString());
 
     return Container(
       constraints: BoxConstraints(maxWidth: 300),
@@ -43,8 +57,7 @@ class Cardactivite extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.arimo(
-                  fontWeight: FontWeight.bold,
-                  fontSize: textConstant),
+                  fontWeight: FontWeight.bold, fontSize: textConstant),
             ),
             const SizedBox(height: 5),
             Row(
