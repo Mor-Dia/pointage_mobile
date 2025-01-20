@@ -45,35 +45,14 @@ class _PratiquesPageState extends State<PratiquesPage> {
     super.initState();
   }
 
-  // getAdditionalData(){
-  //   if (kDebugMode) {
-  //     print("SCROLLING OFFSET: ${practiceListController.offset}, POSITION MAXCSROLL ${practiceListController.position.maxScrollExtent}, MAXSCROLL MINUS: ${practiceListController.position.maxScrollExtent-50}");
-  //   }
-  //   if (practiceListController.offset >= practiceListController.position.maxScrollExtent-50 &&
-  //       !practiceListController.position.outOfRange) {
-  //     print("SCROLLING ${practiceBloc.state is DataSuccess<List<Pratique>>}");
-  //     if(practiceBloc.state is DataSuccess<List<Pratique>>){
-  //       int currentPage = 1;
-  //       Map<String, dynamic>? metadata = (practiceBloc.state as DataSuccess<List<Pratique>>).metadata;
-  //       bool canLoadNewData = (practiceBloc.state as DataSuccess<List<Pratique>>).canLoadNewData;
-  //       if(canLoadNewData){
-  //         if(metadata != null && metadata.containsKey("page")){
-  //           currentPage = metadata['page'];
-  //         }
-  //         setState((){
-  //           loadingNewData = true;
-  //         });
-  //         practiceBloc.add(FetchDataEvent(filter: {...currentFilter, ...{"page": currentPage+1} },));
-  //       }
-  //     }
-  //   }
-  //   // practiceBloc.stream.listen(onData)
-  // }
+  updateListPratique(newFilter) {
+    print("UPDATE PRATIQUE ");
+    practiceBloc.add(FetchDataEvent(filter: newFilter));
+  }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    // practiceListController.removeListener(listener);
     super.dispose();
   }
 
@@ -143,6 +122,7 @@ class _PratiquesPageState extends State<PratiquesPage> {
                         child: CardPratique(
                           data: toElement,
                           handlePress: () {},
+                          afterLike: () {updateListPratique(currentFilter);},
                         )))
                     .toList(),
               ]),

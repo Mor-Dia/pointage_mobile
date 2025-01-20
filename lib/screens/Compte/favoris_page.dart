@@ -20,6 +20,7 @@ import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
 import '../../core/models/user_model.dart';
+import '../../core/utils/helpers.dart';
 import '../../services/authentication_bloc/authentication_bloc.dart';
 
 class FavorisPage extends StatefulWidget {
@@ -134,52 +135,6 @@ class _FavorisState extends State<FavorisPage> {
   }
 }
 
-class ScrollableTabPage extends StatelessWidget {
-  final DataBloc<List<Pratique>> data;
-  final String? token;
-  const ScrollableTabPage({Key? key, required this.data, this.token})
-      : super(key: key);
-
-  updateListPratique(newFilter) {
-    print("UPDATE PRATIQUE ");
-    data.add(FetchDataEvent(filter: newFilter));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return BlocBasedWidget<List<Pratique>>(
-        customDataBloc: data,
-        filter: {"token": token, 'count': 8},
-        customWidget: (state) {
-          List<Pratique> pratiques = state.data;
-          return SingleChildScrollView(
-            child: Padding(
-                padding: const EdgeInsets.all(spacingConstant),
-                child: Wrap(
-                  alignment: WrapAlignment.start,
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: pratiques
-                      .map((Pratique toElement) => SizedBox(
-                            width: size.width /
-                                    (MediaQuery.of(context).size.width > 400
-                                        ? 2
-                                        : 2) -
-                                25,
-                            child: CardPratique(
-                                data: toElement,
-                                updateFunction: () => updateListPratique({
-                                      ...{"token": token, 'count': 8}
-                                    })),
-                          ))
-                      .toList(),
-                )),
-          );
-        });
-  }
-}
-
 class ScrollableTabPage2 extends StatelessWidget {
   final DataBloc<List<Produit>> data;
   final String? token;
@@ -208,16 +163,12 @@ class ScrollableTabPage2 extends StatelessWidget {
                   runSpacing: 10,
                   children: produits
                       .map((Produit toElement) => SizedBox(
-                            width: size.width /
-                                    (MediaQuery.of(context).size.width > 400
-                                        ? 2
-                                        : 2) -
-                                25,
-                            child: CardProduitFavoris(
-                                data: toElement,
-                                updateFunction: () =>
-                                    updateList({"token": token, 'count': 8})),
-                          ))
+                        width: Helpers.getGridElementWidth(context, 25),
+                        child: CardProduitFavoris(
+                                    data: toElement,
+                                    updateFunction: () =>
+                                        updateList({"token": token, 'count': 8})),
+                              ))
                       .toList(),
                 )),
           );

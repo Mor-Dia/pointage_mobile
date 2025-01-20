@@ -45,6 +45,7 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
     super.initState();
     favorisPostBloc = PostApiBloc();
     liked = widget.data.favoris;
+
   }
 
   likeProduct({required Map<String, dynamic> parameters}) {

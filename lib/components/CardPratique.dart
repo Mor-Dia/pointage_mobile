@@ -1,13 +1,12 @@
 import 'package:authentication_repository/authentication_repository.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 
 import '../core/models/user_model.dart';
 import '../services/authentication_bloc/authentication_bloc.dart';
@@ -16,31 +15,39 @@ import 'animated_gesture_detector.dart';
 
 class CardPratique extends StatefulWidget {
   final Pratique data;
+  final Function afterLike;
   final Function? handlePress;
-  final Function? updateFunction;
+  final Map<String, dynamic>? filter;
 
-  const CardPratique(
-      {super.key, required this.data, this.handlePress, this.updateFunction});
+  const CardPratique({super.key, this.filter, required this.data, required this.afterLike, this.handlePress,});
 
   @override
   State<CardPratique> createState() => _CardPratiqueState();
 }
 
 class _CardPratiqueState extends State<CardPratique> {
-  late PostApiBloc favorisPostBloc;
 
+  late PostApiBloc favorisPostBloc;
+  DataBloc? parentDataBloc;
   bool? liked;
+  Function? afterLike;
 
   @override
   void initState() {
-    super.initState();
     favorisPostBloc = PostApiBloc();
     liked = widget.data.favoris;
+    afterLike = widget.afterLike;
+    // initParentDataBloc();
+    super.initState();
   }
 
   likePratique({required Map<String, dynamic> parameters}) {
     favorisPostBloc.add(
         PostApiMakeCall(endpoint: 'pratique_favoris', parameters: parameters));
+  }
+
+  initParentDataBloc(){
+    parentDataBloc = BlocProvider.of<DataBloc<List<Pratique>>>(context);
   }
 
   changeStateFavoris() {
@@ -75,71 +82,68 @@ class _CardPratiqueState extends State<CardPratique> {
                   ),
                 ),
                 BlocBuilder<AuthenticationBloc<Utilisateur>,
-                        AuthenticationState<Utilisateur>>(
+                    AuthenticationState<Utilisateur>>(
                     builder: (context, authState) {
-                  AuthenticationStatus currentStatus = authState.status;
-                  Utilisateur? user = authState.user;
-                  switch (currentStatus) {
-                    case AuthenticationStatus.authenticated:
-                      return BlocConsumer(
-                        bloc: favorisPostBloc,
-                        listener: (context, state) {
-                          if (state is PostApiSuccess) {
-                            changeStateFavoris();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  liked!
-                                      ? 'Ajouter au favoris'
-                                      : 'Retirer des favoris',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                backgroundColor: Colors.green[400],
-                              ),
-                            );
-                            print(
-                                " UPDATE PRATIQUE SHOULD UPDATE SOON ${widget.updateFunction}");
-                            if (widget.updateFunction != null) {
-                              print(" UPDATE PRATIQUE SHOULD UPDATE");
-                              widget.updateFunction!();
-                            }
-                          }
-                          if (state is PostApiProcessing) {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          }
-                        },
-                        builder: (BuildContext context, postBlocState) {
-                          return AnimatedGestureButton(
-                            animate: postBlocState is PostApiProcessing,
-                            child: GestureDetector(
-                              child: !liked!
-                                  ? const Icon(
-                                      Icons.favorite_outline,
-                                      size: 25,
-                                    )
-                                  : const Icon(
-                                      Icons.favorite,
-                                      color: Color(0xffFF0000),
-                                      size: 25,
+                      AuthenticationStatus currentStatus = authState.status;
+                      Utilisateur? user = authState.user;
+                      switch (currentStatus) {
+                        case AuthenticationStatus.authenticated:
+                          return BlocConsumer(
+                            bloc: favorisPostBloc,
+                            listener: (context, state) {
+                              if (state is PostApiSuccess) {
+                                changeStateFavoris();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      liked!
+                                          ? 'Ajouter au favoris'
+                                          : 'Retirer des favoris',
+                                      style: const TextStyle(color: Colors.white),
                                     ),
-                              onTap: () {
-                                Map<String, dynamic> parameters = {
-                                  "token": user?.token ?? "",
-                                  "pratique_id": widget.data.id,
-                                  "etat": liked,
-                                };
-                                likePratique(parameters: parameters);
-                              },
-                            ),
+                                    backgroundColor: Colors.green[400],
+                                  ),
+                                );
+                                if(afterLike != null){
+                                  afterLike!();
+                                }
+                              }
+                              if (state is PostApiProcessing) {
+                                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                              }
+                            },
+                            builder: (BuildContext context, postBlocState) {
+                              return AnimatedGestureButton(
+                                animate: postBlocState is PostApiProcessing,
+                                child: GestureDetector(
+                                  child: !liked!
+                                      ? const Icon(
+                                    Icons.favorite_outline,
+                                    size: 25,
+                                  )
+                                      : const Icon(
+                                    Icons.favorite,
+                                    color: Color(0xffFF0000),
+                                    size: 25,
+                                  ),
+                                  onTap: () {
+                                    Map<String, dynamic> parameters = {
+                                      "token": user?.token ?? "",
+                                      "pratique_id": widget.data.id,
+                                      "etat": liked,
+                                    };
+                                    likePratique(parameters: parameters);
+                                  },
+                                ),
+                              );
+                            },
                           );
-                        },
-                      );
-                    case AuthenticationStatus.unknown:
-                    case AuthenticationStatus.unauthenticated:
-                    case AuthenticationStatus.failure:
-                      return const Center(child: SizedBox.shrink());
-                  }
-                })
+                        case AuthenticationStatus.unknown:
+                        case AuthenticationStatus.unauthenticated:
+                        case AuthenticationStatus.failure:
+                          return const Center(child: SizedBox.shrink());
+                      }
+                    })
               ],
             ),
             const SizedBox(height: 10),
@@ -148,7 +152,7 @@ class _CardPratiqueState extends State<CardPratique> {
               child: Container(
                   clipBehavior: Clip.antiAlias,
                   decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                  BoxDecoration(borderRadius: BorderRadius.circular(8)),
                   child: CustomCachedNetworkImage(
                       imageUrl: widget.data.image ?? '',
                       fallBackAsset: 'assets/images/pratique_fallback.png')),
@@ -159,3 +163,4 @@ class _CardPratiqueState extends State<CardPratique> {
     );
   }
 }
+
