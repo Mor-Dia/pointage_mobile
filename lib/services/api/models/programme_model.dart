@@ -16,6 +16,7 @@ class Programme with _$Programme {
     String? duration,
     @JsonKey(name: "file_attente") bool? fileAttente,
     @JsonKey(name: "file_attente_display") String? fileAttenteDisplay,
+    @JsonKey(name: "file_attente_color") String? fileAttenteColor,
     @JsonKey(name: "heure_debut") String? heureDebut,
     @JsonKey(name: "heure_fin") String? heureFin,
     @JsonKey(name: "professeur_pratique")
@@ -48,7 +49,7 @@ class Programme with _$Programme {
   }
 
   static shrinkedAttributs() {
-    return "id,file_attente,file_attente_display,duration,date_fr,heure_debut,heure_fin,etat,salle_pratique{id,salle{id,designation}},professeur_pratique{id,professeur{id,user{name}},pratique{id,designation}},displayetat,displaycoloretat";
+    return "id,file_attente,file_attente_color,file_attente_display,duration,date_fr,heure_debut,heure_fin,etat,salle_pratique{id,salle{id,designation}},professeur_pratique{id,professeur{id,user{name}},pratique{id,designation}},displayetat,displaycoloretat";
   }
 
   static String getEndpoint({bool isPagination = true}) {

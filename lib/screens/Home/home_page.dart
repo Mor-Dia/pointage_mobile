@@ -260,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         Cardactivite(
                                             data: toElement,
-                                            color: toElement.displaycoloretat ??
+                                            color: toElement.fileAttenteColor ??
                                                 "",
                                             handlePress: () {
                                               showBottomSheet(

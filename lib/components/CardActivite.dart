@@ -19,16 +19,10 @@ class Cardactivite extends StatelessWidget {
   Widget build(BuildContext context) {
     int displayColor = 0xffFF0000;
     // print("ici color" + this.color.toString());
-    if (this.color == "success") {
+    if (color == "success") {
       displayColor = 0xff28A745;
-    }
-    if (this.color == "danger") {
-      displayColor = 0xffDC3545;
-    }
-    if (this.color == "warning") {
-      displayColor = 0xffFFC107;
     } else {
-      displayColor = 0xff28A745;
+      displayColor = 0xffDC3545;
     }
 
     print("ici color => " +

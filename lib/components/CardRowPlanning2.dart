@@ -13,7 +13,8 @@ import 'animated_gesture_detector.dart';
 class CardRowPlanning2 extends StatefulWidget {
   final Reservation reservation;
   final Function? updateFunction;
-  const CardRowPlanning2({super.key, required this.reservation, this.updateFunction});
+  const CardRowPlanning2(
+      {super.key, required this.reservation, this.updateFunction});
 
   @override
   State<CardRowPlanning2> createState() => _CardRowPlanning2State();
@@ -32,11 +33,14 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
     super.initState();
   }
 
-  checkIfReservationIsPassed(){
+  checkIfReservationIsPassed() {
     DateTime currentDate = DateTime.now();
-    String reservationDateTimeString = "${reservation.programme?.dateFr} ${reservation.programme?.heureDebut}";
-    DateTime reservationDateTime = DateFormat("dd/MM/yyyy hh:mm").parse(reservationDateTimeString);
-    if(currentDate.isBefore(reservationDateTime)){
+    // String reservationDateTimeString = "${reservation.programme?.dateFr} ${reservation.programme?.heureDebut}";
+    String reservationDateTimeString =
+        "${reservation.programme?.dateFr} ${reservation.programme?.heureFin}";
+    DateTime reservationDateTime =
+        DateFormat("dd/MM/yyyy hh:mm").parse(reservationDateTimeString);
+    if (currentDate.isBefore(reservationDateTime)) {
       setState(() {
         enCours = true;
       });
@@ -44,8 +48,14 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
   }
 
   cancelReservation({required Map<String, dynamic> parameters}) {
-    Map<String, dynamic> params = {"etat":1, "commentaire": "", "id": reservation.id, "fichier": ""};
-    cancelReservationPostBloc.add(PostApiMakeCall(endpoint: 'reservation/statut', parameters: params));
+    Map<String, dynamic> params = {
+      "etat": 1,
+      "commentaire": "",
+      "id": reservation.id,
+      "fichier": ""
+    };
+    cancelReservationPostBloc.add(
+        PostApiMakeCall(endpoint: 'reservation/statut', parameters: params));
   }
 
   @override
@@ -61,7 +71,9 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                Helpers.firstLetterCapitalize(reservation.programme?.professeurPratique?.pratique?.designation ?? ""),
+                Helpers.firstLetterCapitalize(reservation
+                        .programme?.professeurPratique?.pratique?.designation ??
+                    ""),
                 style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -105,7 +117,9 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                             width: 5,
                           ),
                           Text(
-                            reservation.programme?.professeurPratique?.professeur?.user?.name ?? "",
+                            reservation.programme?.professeurPratique
+                                    ?.professeur?.user?.name ??
+                                "",
                             style: const TextStyle(
                                 color: Color(0xff838282), fontSize: 10),
                           )
@@ -143,7 +157,9 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                             width: 5,
                           ),
                           Text(
-                            reservation.programme?.sallePratique?.salle?.designation ?? "",
+                            reservation.programme?.sallePratique?.salle
+                                    ?.designation ??
+                                "",
                             style: const TextStyle(
                                 color: Color(0xff838282), fontSize: 10),
                           )
@@ -158,19 +174,20 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        reservation.programme?.dateFr?? "",
+                        reservation.programme?.dateFr ?? "",
                         style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: Color(0xff838282)),
                       ),
                       Text(
-                        enCours? "En cours " : "Passé",
+                        enCours ? "En cours " : "Passé",
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: enCours? const Color(0xff5EAB43) : Colors.black38
-                        ),
+                            color: enCours
+                                ? const Color(0xff5EAB43)
+                                : Colors.black38),
                       )
                     ],
                   ),
@@ -189,7 +206,7 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                           print("POST API SUCCESS ${state.message}");
                           message = "${state.message}";
                           bgColor = Colors.green;
-                          if(widget.updateFunction != null){
+                          if (widget.updateFunction != null) {
                             widget.updateFunction!();
                           }
                         } else if (state is PostApiFailure) {
@@ -197,7 +214,8 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                           message = "${state.message}";
                           bgColor = Colors.red;
                         }
-                        if(state is PostApiSuccess || state is PostApiFailure){
+                        if (state is PostApiSuccess ||
+                            state is PostApiFailure) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -215,15 +233,13 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                       },
                       builder: (BuildContext context, postBlocState) {
                         return AnimatedGestureButton(
-                          animate: postBlocState is PostApiProcessing,
-                          child: ButtonFiled(
-                            text: "Annuler",
-                            handlerPress: () {
-                              cancelReservation(parameters: {});
-                            },
-                          )
-
-                        );
+                            animate: postBlocState is PostApiProcessing,
+                            child: ButtonFiled(
+                              text: "Annuler",
+                              handlerPress: () {
+                                cancelReservation(parameters: {});
+                              },
+                            ));
                       },
                     ),
                   )
