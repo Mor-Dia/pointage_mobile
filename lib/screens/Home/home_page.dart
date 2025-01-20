@@ -41,6 +41,10 @@ class _HomePageState extends State<HomePage> {
   final DateTime date = DateTime.now();
   bool canBeDisplay = false;
   Map<String, dynamic> programmeBlocFilter = {"is_front": true};
+  Map<String, dynamic> notificationPushBlocFilter = {
+    "count": 100,
+    "is_read": false
+  };
 
   @override
   void initState() {
@@ -65,11 +69,38 @@ class _HomePageState extends State<HomePage> {
         attributeToGet: NotificationPush.shrinkedAttributs());
 
     initFilter();
+    initNotif();
     super.initState();
   }
 
   initFilter() {
     programmeBlocFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+  }
+
+  initNotif() {
+    int? currentUserId;
+
+    AuthenticationBloc currentAuthBloc =
+        BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
+    AuthenticationStatus currentStatus = currentAuthBloc.state.status;
+    switch (currentStatus) {
+      case AuthenticationStatus.unknown:
+      case AuthenticationStatus.unauthenticated:
+      case AuthenticationStatus.failure:
+        print("UPDATE USER LISTENING FAILURE 3");
+
+        break;
+      case AuthenticationStatus.authenticated:
+        print("UPDATE USER LISTENING AUTH 4");
+
+        Utilisateur currentUser = currentAuthBloc.state.user;
+        currentUserId = currentUser.id;
+        notificationPushBlocFilter = {
+          "client_id": currentUserId,
+        };
+        notificationPushBloc
+            .add(RefreshDataEvent(filter: notificationPushBlocFilter));
+    }
   }
 
   @override
