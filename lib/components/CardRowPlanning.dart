@@ -138,24 +138,32 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                 Row(
                                   children: [
                                     SvgPicture.asset(
-                                      "",
-                                      // "assets/icons/loc.svg",
-                                      // color: const Color(0xFF838282),
-                                      color: const Color.fromARGB(
-                                          255, 255, 255, 255),
+                                      // "",
+                                      "assets/icons/loc.svg",
+                                      color: const Color(0xFF838282),
+                                      // color: const Color.fromARGB(
+                                      // 255, 255, 255, 255),
                                     ),
                                     const SizedBox(
                                       width: 5,
                                     ),
-                                    const Expanded(
+                                    Expanded(
                                       child: Text(
-                                        '',
                                         // 'Dakar plateau',
+                                        widget.data.sallePratique!.salle!
+                                            .designation
+                                            .toString(),
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             color: Color(0xff838282),
                                             fontSize: textminConstant),
                                       ),
+                                      //   Text(
+                                      //   widget.data.heureFin.toString(),
+                                      //   style: const TextStyle(
+                                      //       color: Color(0xff838282),
+                                      //       fontSize: textminConstant),
+                                      // )
                                     )
                                   ],
                                 )
