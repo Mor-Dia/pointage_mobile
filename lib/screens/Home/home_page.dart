@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
+import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
@@ -253,6 +254,29 @@ class _HomePageState extends State<HomePage> {
           },
           child: ListView(
             children: [
+              const SizedBox(
+                height: spacingConstant,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: spacingConstant, right: spacingConstant),
+                child: Text(
+                  "Évènement à venir...",
+                  style: GoogleFonts.montserrat(
+                      fontSize: MediaQuery.of(context).size.width * 0.045,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(
+                height: spacingConstant,
+              ),
+              CustomCachedNetworkImage(
+                imageUrl: "assets/images/home.png",
+                fallBackAsset: "assets/images/home.png",
+              ),
+              const SizedBox(
+                height: spacingConstant,
+              ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
                 filter: programmeBlocFilter,
