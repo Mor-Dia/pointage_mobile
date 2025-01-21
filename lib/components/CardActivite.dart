@@ -99,7 +99,7 @@ class Cardactivite extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text('Reservé',
+                            Text('Réserver',
                                 style: GoogleFonts.arimo(
                                     fontSize: 12, fontWeight: FontWeight.bold)),
                             SizedBox(

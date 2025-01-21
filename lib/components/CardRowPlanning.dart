@@ -177,7 +177,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                   ),
                   Expanded(
                       child: ButtonFiled(
-                    text: 'Reserver',
+                    text: 'Réserver',
                     handlerPress: () {
                       showBottomSheet(context, widget.data);
                     },
