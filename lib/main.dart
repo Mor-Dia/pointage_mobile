@@ -120,7 +120,8 @@ class _MyAppState extends State<MyApp> {
           ),
         ],
         child: MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Yogivida',
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             primarySwatch: Colors.blueGrey,
           ),
