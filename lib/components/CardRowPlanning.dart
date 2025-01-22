@@ -413,7 +413,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
         context: context,
         builder: (BuildContext currentContext) {
           return Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
             body: Container(
               decoration: const BoxDecoration(
                   color: Colors.white,

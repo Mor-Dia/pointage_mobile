@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +14,8 @@ import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
+import 'package:yogivida_mobile/services/api/models/banniere_model.dart';
+import 'package:yogivida_mobile/services/api/models/type_pratique_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
@@ -27,6 +30,8 @@ import '../../services/api/models/type_paiement_model.dart';
 import '../../services/authentication_bloc/authentication_bloc.dart';
 import '../../services/post_api_bloc.dart';
 
+import 'dart:ui' as ui;
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -36,16 +41,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
+  late DataBloc<List<TypePratique>> typePracticeBloc;
+  late DataBloc<List<Banniere>> banniereBloc;
   late DataBloc<List<Programme>> programmeBloc;
   late DataBloc<List<NotificationPush>> notificationPushBloc;
   Map<String, dynamic> globalFilter = {"count": 5};
   final DateTime date = DateTime.now();
   bool canBeDisplay = false;
   Map<String, dynamic> programmeBlocFilter = {"is_front": true};
+  Map<String, dynamic> typePracticeBlocFilter = {"showatwebsite": "true"};
+  Map<String, dynamic> practiceBlocFilter = {};
+  Map<String, dynamic> banniereBlocFilter = {};
+  // Map<String, dynamic> banniereBlocFilter = {"active": true};
   Map<String, dynamic> notificationPushBlocFilter = {
     "count": 100,
     "is_read": false
   };
+
+  int selectedTypePratiqueIndex = 0;
 
   @override
   void initState() {
@@ -69,6 +82,20 @@ class _HomePageState extends State<HomePage> {
         isPagination: true,
         attributeToGet: NotificationPush.shrinkedAttributs());
 
+    banniereBloc = DataBloc<List<Banniere>>(
+        (response) => Banniere.fromJsonList(response),
+        Banniere.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: Banniere.shrinkedAttributs());
+
+    typePracticeBloc = DataBloc<List<TypePratique>>(
+        (response) => TypePratique.fromJsonList(response),
+        TypePratique.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: TypePratique.shrinkedAttributs());
+
     initFilter();
     initNotif();
     super.initState();
@@ -76,6 +103,21 @@ class _HomePageState extends State<HomePage> {
 
   initFilter() {
     programmeBlocFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+  }
+
+  void filtreTypePratique(index, type_pratique_id) {
+    setState(() {
+      selectedTypePratiqueIndex = index;
+      print("type_pratique_id $type_pratique_id");
+      if (type_pratique_id == null) {
+        practiceBlocFilter = {
+          ...practiceBlocFilter..remove('type_pratique_id')
+        };
+      }
+      practiceBlocFilter = {
+        ...practiceBlocFilter..addAll({'type_pratique_id': type_pratique_id})
+      };
+    });
   }
 
   initNotif() {
@@ -250,6 +292,7 @@ class _HomePageState extends State<HomePage> {
           onRefresh: () async {
             programmeBloc.add(RefreshDataEvent(filter: programmeBlocFilter));
             practiceBloc.add(RefreshDataEvent());
+            banniereBloc.add(RefreshDataEvent(filter: banniereBlocFilter));
             await Future.delayed(const Duration(seconds: 2));
           },
           child: ListView(
@@ -257,22 +300,80 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: spacingConstant,
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: spacingConstant, right: spacingConstant),
-                child: Text(
-                  "Évènement à venir...",
-                  style: GoogleFonts.montserrat(
-                      fontSize: MediaQuery.of(context).size.width * 0.045,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(
-                height: spacingConstant,
-              ),
-              CustomCachedNetworkImage(
-                imageUrl: "assets/images/home.png",
-                fallBackAsset: "assets/images/home.png",
+              BlocBasedWidget<List<Banniere>>(
+                customDataBloc: banniereBloc,
+                filter: banniereBlocFilter,
+                customWidget: (state) {
+                  List<Banniere> bannieres = state.data;
+
+                  if (bannieres.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  print("bannieres =>> ${bannieres}");
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: spacingConstant, right: spacingConstant),
+                        child: Text(
+                          "Évènement à venir...",
+                          style: GoogleFonts.montserrat(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.045,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: spacingConstant,
+                      ),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ...bannieres
+                                .map((toElement) => Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: spacingConstant,
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .80,
+                                          height: 200,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                          child: CustomCachedNetworkImage(
+                                            imageUrl: toElement.image ?? '',
+                                            fallBackAsset:
+                                                'assets/images/pratique_fallback.png',
+                                          ),
+                                        ),
+                                        // CustomCachedNetworkImage(
+                                        //     imageUrl: toElement.image ?? '',
+                                        //     fallBackAsset:
+                                        //         'assets/images/home.png'),
+                                      ],
+                                    ))
+                                .toList(),
+                            const SizedBox(
+                              width: spacingConstant,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: spacingConstant,
+                      ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(
                 height: spacingConstant,
@@ -337,6 +438,170 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: spacingConstant,
               ),
+              BlocBasedWidget<List<TypePratique>>(
+                  customDataBloc: typePracticeBloc,
+                  filter: typePracticeBlocFilter,
+                  customWidget: (state) {
+                    List<TypePratique> typepratiques = [];
+                    typepratiques = typepratiques
+                      ..add(TypePratique(id: null, designation: "Tous"));
+                    typepratiques = typepratiques..addAll(state.data);
+                    print("state.data => ${state.data}");
+                    const SizedBox(
+                      height: spacingConstant,
+                    );
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: spacingConstant),
+                          ...typepratiques.map((toElement) {
+                            int index = typepratiques
+                                .indexOf(toElement); // obtenir l'index actuel
+                            bool isSelected = selectedTypePratiqueIndex ==
+                                index; // vérifier si l'élément est sélectionné
+
+                            return Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    // Appeler ta fonction filtreTypePratique avec l'index et le ID
+                                    filtreTypePratique(index, toElement.id);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? primaryColor
+                                          : Colors.transparent, // badge color
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : primaryColor, // bordure colorée, dépend de la sélection
+                                        width: 1, // largeur de la bordure
+                                      ),
+                                    ),
+                                    child: Text(
+                                      toElement.designation
+                                              .toString()
+                                              .toCapitalized ??
+                                          "",
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors
+                                                .black, // texte blanc si sélectionné
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: spacingConstant / 2),
+                              ],
+                            );
+                          }).toList(),
+                          const SizedBox(width: spacingConstant),
+                        ],
+                      ),
+                    );
+
+                    return Container(
+                      color: Colors.black,
+                      child: ListView(
+                        children: [
+                          const SizedBox(
+                            height: spacingConstant,
+                          ),
+                          SingleChildScrollView(
+                            scrollDirection: Axis
+                                .horizontal, // Permet le défilement horizontal
+                            child: Row(
+                              children: typepratiques.map((typepratice) {
+                                int index = typepratiques.indexOf(typepratice);
+                                print(
+                                    "typepratiques typepratice ici =>> ${typepratice.designation} index =>> $index");
+                                return GestureDetector(
+                                  onTap: () {
+                                    filtreTypePratique(index, typepratice.id);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal:
+                                            16.0), // Ajoute de l'espace entre les éléments
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize
+                                          .min, // Prend juste l'espace nécessaire
+                                      children: [
+                                        Text(
+                                          typepratice.designation
+                                                  .toString()
+                                                  .toCapitalized +
+                                              "papa thiam test",
+                                          style: TextStyle(
+                                            color: selectedTypePratiqueIndex ==
+                                                    index
+                                                ? primaryColor
+                                                : const Color.fromARGB(
+                                                    255,
+                                                    184,
+                                                    59,
+                                                    59), // Texte bleu pour la famille active
+                                            fontWeight: selectedTypePratiqueIndex ==
+                                                    index
+                                                ? FontWeight.bold
+                                                : FontWeight
+                                                    .normal, // Texte en gras pour la famille active
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                            height:
+                                                4.0), // Espace entre le texte et la ligne soulignée
+                                        if (selectedTypePratiqueIndex == index)
+                                          LayoutBuilder(
+                                            builder: (context, constraints) {
+                                              // Utilise un LayoutBuilder pour obtenir la taille du texte
+                                              final textPainter = TextPainter(
+                                                text: TextSpan(
+                                                  text: typepratice.designation
+                                                          .toString()
+                                                          .toCapitalized +
+                                                      "papa thiam test 01",
+                                                  style: const TextStyle(
+                                                    fontSize: 14.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                // textDirection: ui.TextDirection.ltr, // Correction ici
+                                              );
+                                              textPainter.layout();
+                                              return Container(
+                                                height:
+                                                    1.0, // Hauteur de la ligne de soulignement
+                                                width: textPainter
+                                                    .width, // Largeur égale à celle du texte
+                                                color:
+                                                    primaryColor, // Ligne bleue sous la famille active
+                                              );
+                                            },
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: spacingConstant,
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+              const SizedBox(
+                height: spacingConstant,
+              ),
               Padding(
                 padding: const EdgeInsets.only(
                     left: spacingConstant, right: spacingConstant),
@@ -371,7 +636,7 @@ class _HomePageState extends State<HomePage> {
               ),
               BlocBasedWidget<List<Pratique>>(
                 customDataBloc: practiceBloc,
-                // filter: globalFilter,
+                filter: practiceBlocFilter,
                 customWidget: (state) {
                   List<Pratique> pratiques = state.data;
                   Map<String, dynamic>? metadata = state.metadata;
@@ -634,7 +899,7 @@ Future<dynamic> ShowBottomSheetPayment(
       context: context,
       builder: (BuildContext currentContext) {
         return Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           body: Container(
             decoration: const BoxDecoration(
                 color: Colors.white,

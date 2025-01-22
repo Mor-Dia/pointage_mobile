@@ -22,7 +22,9 @@ import '../../core/models/user_model.dart';
 import '../../services/authentication_bloc/authentication_bloc.dart';
 
 class Planning extends StatefulWidget {
-  const Planning({super.key});
+  final int id;
+
+  Planning({Key? key, required this.id}) : super(key: key);
 
   @override
   State<Planning> createState() => _PlanningState();
@@ -39,6 +41,7 @@ class _PlanningState extends State<Planning> {
   DateTime selectedDate = DateTime.now();
   final DateTime date = DateTime.now();
   List<Salle?> studioList = [];
+  // int id = 0;
 
   @override
   void initState() {
@@ -67,20 +70,16 @@ class _PlanningState extends State<Planning> {
     super.initState();
   }
 
-  // extractStudiosOptions(List<Salle> salles){
-  //   List<Salle?> tempStudioList = [];
-  //   tempStudioList = programmes.map((toElement){
-  //     return toElement;
-  //   }).toList();
-  //   setState(() {
-  //     studioList = tempStudioList;
-  //   });
-  // }
-
   initFilter() {
+    print("INIT FILTER papa" + widget.id.toString());
     currentFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+    if (widget.id != 0) {
+      currentFilter = {
+        ...currentFilter,
+        'pratique_id': int.parse(widget.id.toString()),
+      };
+    }
   }
-  // List<Salle?> studioList = extractStudiosOptions(programmes);
 
   selectStudio(dynamic newValue) {
     print("SELECTION FF $newValue");
@@ -579,12 +578,26 @@ class _StudioSelectState extends State<StudioSelect> {
             ),
             underline: const SizedBox(), // Supprime la ligne par défaut
             items: [
-              ...studioList.map((Salle? salle) {
+              // ...studioList.map((Salle? salle) {
+              //   return DropdownMenuItem(
+              //     value: salle?.id,
+              //     child: Text("${salle?.designation}",
+              //         overflow: TextOverflow.ellipsis,
+              //         style: const TextStyle(color: Colors.white)),
+              //   );
+              // }).toList(),
+              ...[
+                {"id": 1, "designation": "Studio YV 1"},
+                {"id": 2, "designation": "Studio YV 2"},
+              ].map((toElement) {
                 return DropdownMenuItem(
-                  value: salle?.id,
-                  child: Text("${salle?.designation}",
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white)),
+                  value:
+                      toElement['id'], // accédez à l'id comme clé dans la map
+                  child: Text(
+                    "${toElement['designation']}", // accédez à la désignation comme clé dans la map
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 );
               }).toList(),
             ],
