@@ -88,6 +88,12 @@ class _PlanningState extends State<Planning> {
         ...currentFilter,
         ...{'salle_id': newValue}
       };
+      if (widget.id != 0) {
+        currentFilter = {
+          ...currentFilter,
+          'pratique_id': int.parse(widget.id.toString()),
+        };
+      }
     });
   }
 
@@ -97,6 +103,12 @@ class _PlanningState extends State<Planning> {
       currentFilter = {
         'date': "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"
       };
+      if (widget.id != 0) {
+        currentFilter = {
+          ...currentFilter,
+          'pratique_id': int.parse(widget.id.toString()),
+        };
+      }
     });
     // var currentDate = '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}';
 
@@ -108,6 +120,12 @@ class _PlanningState extends State<Planning> {
     setState(() {
       selectedDate = date;
       currentFilter = {...currentFilter..remove('nom_pratique')};
+      if (widget.id != 0) {
+        currentFilter = {
+          ...currentFilter,
+          'pratique_id': int.parse(widget.id.toString()),
+        };
+      }
     });
   }
 
@@ -118,6 +136,12 @@ class _PlanningState extends State<Planning> {
       currentFilter = {
         ...currentFilter..addAll({'nom_pratique': text})
       };
+      if (widget.id != 0) {
+        currentFilter = {
+          ...currentFilter,
+          'pratique_id': int.parse(widget.id.toString()),
+        };
+      }
     });
   }
 
