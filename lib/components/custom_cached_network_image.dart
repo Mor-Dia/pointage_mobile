@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class CustomCachedNetworkImage extends StatelessWidget {
   final String imageUrl;
   final String? fallBackAsset;
-  const CustomCachedNetworkImage({super.key, required this.imageUrl, this.fallBackAsset});
+  const CustomCachedNetworkImage(
+      {super.key, required this.imageUrl, this.fallBackAsset});
 
   @override
   Widget build(BuildContext context) {
@@ -20,16 +21,16 @@ class CustomCachedNetworkImage extends StatelessWidget {
           image: DecorationImage(
             image: imageProvider,
             fit: BoxFit.cover,
-            colorFilter: const ColorFilter.mode(
-              Colors.red,
-              BlendMode.colorBurn,
-            ),
+            // colorFilter: const ColorFilter.mode(
+            //   Colors.red,
+            //   BlendMode.colorBurn,
+            // ),
           ),
         ),
       ),
-      errorWidget: (context, url, error){
-        if(fallBackAsset != null){
-          return Image.asset(fallBackAsset ?? "" );
+      errorWidget: (context, url, error) {
+        if (fallBackAsset != null) {
+          return Image.asset(fallBackAsset ?? "");
         }
         return const Icon(Icons.error);
       },
