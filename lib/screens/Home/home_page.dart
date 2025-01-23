@@ -50,9 +50,9 @@ class _HomePageState extends State<HomePage> {
   bool canBeDisplay = false;
   Map<String, dynamic> programmeBlocFilter = {"is_front": true};
   Map<String, dynamic> typePracticeBlocFilter = {"showatwebsite": "true"};
-  Map<String, dynamic> practiceBlocFilter = {};
-  Map<String, dynamic> banniereBlocFilter = {};
-  // Map<String, dynamic> banniereBlocFilter = {"active": true};
+  Map<String, dynamic> practiceBlocFilter = {"showatwebsite": true};
+  // Map<String, dynamic> banniereBlocFilter = {};
+  Map<String, dynamic> banniereBlocFilter = {"statut": "true"};
   Map<String, dynamic> notificationPushBlocFilter = {
     "count": 100,
     "is_read": false
@@ -343,7 +343,8 @@ class _HomePageState extends State<HomePage> {
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              .80,
+                                              .70,
+                                          // width: double.infinity,
                                           height: 200,
                                           clipBehavior: Clip.antiAlias,
                                           decoration: BoxDecoration(
@@ -352,7 +353,7 @@ class _HomePageState extends State<HomePage> {
                                           child: CustomCachedNetworkImage(
                                             imageUrl: toElement.image ?? '',
                                             fallBackAsset:
-                                                'assets/images/pratique_fallback.png',
+                                                'assets/images/home.png',
                                           ),
                                         ),
                                         // CustomCachedNetworkImage(
@@ -502,99 +503,6 @@ class _HomePageState extends State<HomePage> {
                             );
                           }).toList(),
                           const SizedBox(width: spacingConstant),
-                        ],
-                      ),
-                    );
-
-                    return Container(
-                      color: Colors.black,
-                      child: ListView(
-                        children: [
-                          const SizedBox(
-                            height: spacingConstant,
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis
-                                .horizontal, // Permet le défilement horizontal
-                            child: Row(
-                              children: typepratiques.map((typepratice) {
-                                int index = typepratiques.indexOf(typepratice);
-                                print(
-                                    "typepratiques typepratice ici =>> ${typepratice.designation} index =>> $index");
-                                return GestureDetector(
-                                  onTap: () {
-                                    filtreTypePratique(index, typepratice.id);
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal:
-                                            16.0), // Ajoute de l'espace entre les éléments
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize
-                                          .min, // Prend juste l'espace nécessaire
-                                      children: [
-                                        Text(
-                                          typepratice.designation
-                                                  .toString()
-                                                  .toCapitalized +
-                                              "papa thiam test",
-                                          style: TextStyle(
-                                            color: selectedTypePratiqueIndex ==
-                                                    index
-                                                ? primaryColor
-                                                : const Color.fromARGB(
-                                                    255,
-                                                    184,
-                                                    59,
-                                                    59), // Texte bleu pour la famille active
-                                            fontWeight: selectedTypePratiqueIndex ==
-                                                    index
-                                                ? FontWeight.bold
-                                                : FontWeight
-                                                    .normal, // Texte en gras pour la famille active
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                            height:
-                                                4.0), // Espace entre le texte et la ligne soulignée
-                                        if (selectedTypePratiqueIndex == index)
-                                          LayoutBuilder(
-                                            builder: (context, constraints) {
-                                              // Utilise un LayoutBuilder pour obtenir la taille du texte
-                                              final textPainter = TextPainter(
-                                                text: TextSpan(
-                                                  text: typepratice.designation
-                                                          .toString()
-                                                          .toCapitalized +
-                                                      "papa thiam test 01",
-                                                  style: const TextStyle(
-                                                    fontSize: 14.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                // textDirection: ui.TextDirection.ltr, // Correction ici
-                                              );
-                                              textPainter.layout();
-                                              return Container(
-                                                height:
-                                                    1.0, // Hauteur de la ligne de soulignement
-                                                width: textPainter
-                                                    .width, // Largeur égale à celle du texte
-                                                color:
-                                                    primaryColor, // Ligne bleue sous la famille active
-                                              );
-                                            },
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: spacingConstant,
-                          ),
                         ],
                       ),
                     );
