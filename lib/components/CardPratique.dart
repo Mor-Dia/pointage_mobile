@@ -76,7 +76,8 @@ class _CardPratiqueState extends State<CardPratique> {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Expanded(
                   child: Text(
@@ -232,8 +233,10 @@ Future<dynamic> ShowBottomSheetPratique(BuildContext context, Pratique pratique,
       context: context,
       builder: (BuildContext currentContext) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           body: Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            // height: 200,
             decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(

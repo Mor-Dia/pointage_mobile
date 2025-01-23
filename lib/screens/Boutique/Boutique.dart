@@ -184,7 +184,8 @@ class _BoutiqueState extends State<Boutique> {
                 false, // Empêche l'affichage du bouton back
             toolbarHeight: 60,
             title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
                   "Boutique",
@@ -238,7 +239,6 @@ class _BoutiqueState extends State<Boutique> {
                         if (state is PanierLoaded) {
                           _panier = state.panier.panierProduit;
                         }
-                       
                       }, builder: (context, state) {
                         return Positioned(
                           right: -5,
@@ -484,7 +484,8 @@ class _BoutiqueState extends State<Boutique> {
                               List<Produit> produits = state.data;
 
                               if (produits.isEmpty) {
-                                return const Center( child: Text('Aucun produits trouvés'));
+                                return const Center(
+                                    child: Text('Aucun produits trouvés'));
                               }
                               return Wrap(
                                 alignment: WrapAlignment.start,
@@ -492,7 +493,8 @@ class _BoutiqueState extends State<Boutique> {
                                 runSpacing: 10,
                                 children: produits
                                     .map((Produit toElement) => SizedBox(
-                                          width: Helpers.getGridElementWidth(context, 25),
+                                          width: Helpers.getGridElementWidth(
+                                              context, 25),
                                           child: CardProduit(
                                             data: toElement,
                                             handlePress: (value) {

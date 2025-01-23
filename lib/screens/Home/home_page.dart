@@ -318,7 +318,7 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.only(
                             left: spacingConstant, right: spacingConstant),
                         child: Text(
-                          "Évènement à venir...",
+                          "Évènement(s) à venir...",
                           style: GoogleFonts.montserrat(
                               fontSize:
                                   MediaQuery.of(context).size.width * 0.045,
@@ -807,8 +807,9 @@ Future<dynamic> ShowBottomSheetPayment(
       context: context,
       builder: (BuildContext currentContext) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           body: Container(
+            height: MediaQuery.of(context).size.height * 0.8,
             decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
