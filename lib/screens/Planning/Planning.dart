@@ -10,6 +10,7 @@ import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 import 'package:yogivida_mobile/services/api/models/salle_model.dart';
+import 'package:yogivida_mobile/services/api/models/studio_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
@@ -35,13 +36,15 @@ class _PlanningState extends State<Planning> {
   Map<String, dynamic> currentFilter = {};
   late DataBloc<List<Programme>> programmeBloc;
   late DataBloc<List<Salle>> salleBloc;
+  late DataBloc<List<Studio>> studioBloc;
   final List<String> options = [];
   TextEditingController designationFilter = TextEditingController();
   late DataBloc<List<NotificationPush>> notificationPushBloc;
   DateTime selectedDate = DateTime.now();
   final DateTime date = DateTime.now();
-  List<Salle?> studioList = [];
   // int id = 0;
+  // List<Salle?> studioList = [];
+  List<Studio?> studioList = [];
 
   @override
   void initState() {
@@ -58,6 +61,13 @@ class _PlanningState extends State<Planning> {
         isGraphQl: true,
         isPagination: false,
         attributeToGet: Salle.shrinkedAttributs());
+
+    studioBloc = DataBloc<List<Studio>>(
+        (response) => Studio.fromJsonList(response),
+        Studio.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        isPagination: false,
+        attributeToGet: Studio.shrinkedAttributs());
 
     notificationPushBloc = DataBloc<List<NotificationPush>>(
         (response) => NotificationPush.fromJsonList(response),
@@ -86,7 +96,8 @@ class _PlanningState extends State<Planning> {
     setState(() {
       currentFilter = {
         ...currentFilter,
-        ...{'salle_id': newValue}
+        ...{'studio_id': newValue}
+        // ...{'salle_id': newValue}
       };
       if (widget.id != 0) {
         currentFilter = {
@@ -373,14 +384,33 @@ class _PlanningState extends State<Planning> {
                     // const Spacer(),
                     // // const Text('|'),
                     // const Spacer(),
+                    // Flexible(
+                    //   flex: 1,
+                    //   child: BlocBasedWidget<List<Salle>>(
+                    //     customDataBloc: salleBloc,
+                    //     customWidget: (state) {
+                    //       List<Salle> salles = state.data;
+                    //       return StudioSelect(
+                    //         studioList: salles,
+                    //         onSelect: selectStudio,
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
                     Flexible(
                       flex: 1,
-                      child: BlocBasedWidget<List<Salle>>(
-                        customDataBloc: salleBloc,
+                      child: BlocBasedWidget<List<Studio>>(
+                        customDataBloc: studioBloc,
+                        // filter: currentFilter,
                         customWidget: (state) {
-                          List<Salle> salles = state.data;
+                          List<Studio> studios = [];
+                          studios = studios
+                            ..add(Studio(id: null, designation: "Studios"));
+                          studios = studios..addAll(state.data);
+
+                          print("STUDIOS ${studios}");
                           return StudioSelect(
-                            studioList: salles,
+                            studioList: studios,
                             onSelect: selectStudio,
                           );
                         },
@@ -550,7 +580,8 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
 }
 
 class StudioSelect extends StatefulWidget {
-  final List<Salle?> studioList;
+  // final List<Salle?> studioList;
+  final List<Studio?> studioList;
   final Function? onSelect;
   const StudioSelect({super.key, required this.studioList, this.onSelect});
 
@@ -559,7 +590,8 @@ class StudioSelect extends StatefulWidget {
 }
 
 class _StudioSelectState extends State<StudioSelect> {
-  List<Salle?> studioList = [];
+  // List<Salle?> studioList = [];
+  List<Studio?> studioList = [];
   Function? onSelect;
   dynamic selectedValue;
 
@@ -602,28 +634,24 @@ class _StudioSelectState extends State<StudioSelect> {
             ),
             underline: const SizedBox(), // Supprime la ligne par défaut
             items: [
-              // ...studioList.map((Salle? salle) {
-              //   return DropdownMenuItem(
-              //     value: salle?.id,
-              //     child: Text("${salle?.designation}",
-              //         overflow: TextOverflow.ellipsis,
-              //         style: const TextStyle(color: Colors.white)),
-              //   );
-              // }).toList(),
-              ...[
-                {"id": 1, "designation": "Studio YV 1"},
-                {"id": 2, "designation": "Studio YV 2"},
-              ].map((toElement) {
+              ...studioList.map((Studio? studio) {
                 return DropdownMenuItem(
-                  value:
-                      toElement['id'], // accédez à l'id comme clé dans la map
-                  child: Text(
-                    "${toElement['designation']}", // accédez à la désignation comme clé dans la map
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  value: studio?.id,
+                  child: Text("${studio?.designation}",
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white)),
                 );
               }).toList(),
+              // ...studioList.map((Studio? toElement) {
+              //   return DropdownMenuItem(
+              //     value: toElement?.id, // accédez à l'id comme clé dans la map
+              //     child: Text(
+              //       "${toElement?.designation}", // accédez à la désignation comme clé dans la map
+              //       overflow: TextOverflow.ellipsis,
+              //       style: const TextStyle(color: Colors.white),
+              //     ),
+              //   );
+              // }).toList(),
             ],
             onChanged: (newValue) {
               print("SELECTION $newValue ${onSelect != null}");

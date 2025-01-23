@@ -118,7 +118,7 @@ class _$PanierStartedImpl
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'PanierBlocEvent.started'));
+    properties..add(DiagnosticsProperty('type', 'PanierBlocEvent.started'));
   }
 
   @override
@@ -653,7 +653,7 @@ class _$PanierInitialImpl
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'PanierBlocState.initial'));
+    properties..add(DiagnosticsProperty('type', 'PanierBlocState.initial'));
   }
 
   @override
@@ -784,7 +784,7 @@ class _$PanierLoadingImpl
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'PanierBlocState.loading'));
+    properties..add(DiagnosticsProperty('type', 'PanierBlocState.loading'));
   }
 
   @override
