@@ -37,6 +37,8 @@ class _PlanningState extends State<Planning> {
   late DataBloc<List<Programme>> programmeBloc;
   late DataBloc<List<Salle>> salleBloc;
   late DataBloc<List<Studio>> studioBloc;
+  Map<String, dynamic> studioBlocFilter = {"showatwebsite": "true"};
+
   final List<String> options = [];
   TextEditingController designationFilter = TextEditingController();
   late DataBloc<List<NotificationPush>> notificationPushBloc;
@@ -174,8 +176,9 @@ class _PlanningState extends State<Planning> {
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
           elevation: 0,
-          automaticallyImplyLeading:
-              false, // Empêche l'affichage du bouton back
+          automaticallyImplyLeading: widget.id == 0
+              ? false
+              : true, // Empêche l'affichage du bouton back
           toolbarHeight: 60,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -401,7 +404,7 @@ class _PlanningState extends State<Planning> {
                       flex: 1,
                       child: BlocBasedWidget<List<Studio>>(
                         customDataBloc: studioBloc,
-                        // filter: currentFilter,
+                        filter: studioBlocFilter,
                         customWidget: (state) {
                           List<Studio> studios = [];
                           studios = studios
@@ -433,18 +436,6 @@ class _PlanningState extends State<Planning> {
                     return const Center(
                         child: const Text('Aucune activité programmée'));
                   }
-
-                  // List<dynamic> dataFiltered = programmes
-                  //     .where((element) => element
-                  //     .professeurPratique!.pratique!.designation
-                  //     .toString()
-                  //     .toLowerCase()
-                  //     .startsWith(designationFilter.text.toLowerCase()))
-                  //     .toList();
-                  // if (dataFiltered.isEmpty) {
-                  //   return const Center(
-                  //       child: Text('Aucune activité trouvée'));
-                  // }
                   return Column(
                     children: [
                       ...programmes

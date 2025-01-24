@@ -171,16 +171,6 @@ class _CardPratiqueState extends State<CardPratique> {
                 ),
               ),
             ),
-            // SizedBox(
-            //   height: 100,
-            //   child: Container(
-            //       clipBehavior: Clip.antiAlias,
-            //       decoration:
-            //           BoxDecoration(borderRadius: BorderRadius.circular(8)),
-            //       child: CustomCachedNetworkImage(
-            //           imageUrl: widget.data.image ?? '',
-            //           fallBackAsset: 'assets/images/pratique_fallback.png')),
-            // ),
             const SizedBox(height: 10),
             GestureDetector(
               onTap: () {

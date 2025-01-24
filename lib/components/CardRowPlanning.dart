@@ -176,12 +176,24 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                     width: spacingConstant,
                   ),
                   Expanded(
-                      child: ButtonFiled(
-                    text: 'Réserver',
-                    handlerPress: () {
-                      showBottomSheet(context, widget.data);
-                    },
-                  ))
+                    child: widget.data.fileAttente.toString() ==
+                            'true' // Comparaison en fonction de ton type de `fileAttente`
+                        ? ButtonFiled(
+                            text: 'Réserver',
+                            handlerPress: () {
+                              showBottomSheet(
+                                  context,
+                                  widget
+                                      .data); // Action pour afficher le BottomSheet
+                            },
+                          )
+                        : ButtonFiled(
+                            text:
+                                'Plein', // Si fileAttente n'est pas 'Disponible', afficher "Plein"
+                            handlerPress: () {}, // Pas d'action
+                            color: Colors.grey, // Couleur grise pour "Plein"
+                          ),
+                  ),
                 ],
               )
             ],
@@ -384,11 +396,21 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                     child: Container(
                       constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
-                      child: ButtonFiled(
-                        text: 'Réserver',
-                        handlerPress: () =>
-                            ShowBottomSheetPayment(context, programme),
-                      ),
+                      child: widget.data.fileAttente.toString() == 'true'
+                          ?
+                          // Si l'état fileAttente est vrai, afficher le bouton "Réserver"
+                          ButtonFiled(
+                              text: 'Réserver',
+                              handlerPress: () =>
+                                  ShowBottomSheetPayment(context, programme),
+                            )
+                          :
+                          // Sinon, afficher un bouton gris avec "Plein"
+                          ButtonFiled(
+                              text: 'Plein',
+                              handlerPress: () {}, // Aucun action ici
+                              color: Colors.grey,
+                            ),
                     ),
                   )
                 ],

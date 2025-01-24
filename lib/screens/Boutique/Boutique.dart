@@ -143,6 +143,9 @@ class _BoutiqueState extends State<Boutique> {
     arg['token'] = token;
     arg['client_id'] = userId;
 
+    // arg['token'] = int.tryParse(userId ?? '0') ?? 0;
+    // arg['client_id'] = int.tryParse(userId ?? '0') ?? 0;
+
     context
         .read<PanierBlocBloc>()
         .add(PanierBlocEvent.postPanier(body: arg, token: token ?? ''));
@@ -184,8 +187,7 @@ class _BoutiqueState extends State<Boutique> {
                 false, // Empêche l'affichage du bouton back
             toolbarHeight: 60,
             title: Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   "Boutique",

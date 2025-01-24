@@ -772,18 +772,27 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     height: spacingConstant,
                   ),
-                  // Spacer(flex: 1),
                   Center(
                     child: Container(
                       constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
-                      child: ButtonFiled(
-                        text: 'Réserver',
-                        handlerPress: () =>
-                            ShowBottomSheetPayment(context, programme),
-                      ),
+                      child: programme.fileAttente.toString() == 'true'
+                          ?
+                          // Si l'état fileAttente est vrai, afficher le bouton "Réserver"
+                          ButtonFiled(
+                              text: 'Réserver',
+                              handlerPress: () =>
+                                  ShowBottomSheetPayment(context, programme),
+                            )
+                          :
+                          // Sinon, afficher un bouton gris avec "Plein"
+                          ButtonFiled(
+                              text: 'Plein',
+                              handlerPress: () {}, // Aucun action ici
+                              color: Colors.grey,
+                            ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

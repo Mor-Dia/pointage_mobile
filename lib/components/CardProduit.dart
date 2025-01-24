@@ -5,12 +5,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
+import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/utils/Capitalized.dart';
+import 'package:yogivida_mobile/screens/Boutique/Boutique.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/produit_model.dart';
 import 'package:yogivida_mobile/services/api/models/taille_model.dart';
+import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/post_api_bloc.dart';
 
 import '../core/models/user_model.dart';
@@ -50,7 +54,7 @@ class _CardProduitState extends State<CardProduit> {
         .add(PostApiMakeCall(endpoint: 'favoris', parameters: parameters));
   }
 
-  changeStateFavoris(){
+  changeStateFavoris() {
     setState(() {
       liked = !liked!;
     });
@@ -69,28 +73,33 @@ class _CardProduitState extends State<CardProduit> {
           Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-            child: Container(
-              height: 100,
-              child: CachedNetworkImage(
-                progressIndicatorBuilder: (context, url, progress) => Center(
-                  child: CircularProgressIndicator(
-                    value: progress.progress,
-                  ),
-                ),
-                imageUrl: widget.data.image ?? '',
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
+            child: GestureDetector(
+              onTap: () {
+                // Action à effectuer lors du clic sur l'image
+                print('Image cliquée' + widget.data.image.toString());
+                ShowBottomSheetBoutique(
+                    context, widget.data, widget.handlePress);
+                // Tu peux ici naviguer, afficher un bottom sheet, ou toute autre action.
+              },
+              child: Container(
+                height: 100,
+                child: CachedNetworkImage(
+                  progressIndicatorBuilder: (context, url, progress) => Center(
+                    child: CircularProgressIndicator(
+                      value: progress.progress,
                     ),
                   ),
+                  imageUrl: widget.data.image ?? '',
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                // placeholder: (context, url) => const CircleAvatar(
-                //   backgroundColor: Colors.amber,
-                //   radius: 150,
-                // )
               ),
             ),
           ),
@@ -101,11 +110,17 @@ class _CardProduitState extends State<CardProduit> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(
-                child: Text(
-                  '${(widget.data.designation ?? "").toUpperCase()}',
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.arimo(
-                    fontSize: textConstant,
+                child: GestureDetector(
+                  onTap: () {
+                    ShowBottomSheetBoutique(
+                        context, widget.data, widget.handlePress);
+                  },
+                  child: Text(
+                    '${(widget.data.designation ?? "").toUpperCase()}',
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.arimo(
+                      fontSize: textConstant,
+                    ),
                   ),
                 ),
               ),
@@ -121,10 +136,12 @@ class _CardProduitState extends State<CardProduit> {
                       listener: (context, state) {
                         if (state is PostApiSuccess) {
                           changeStateFavoris();
-                           ScaffoldMessenger.of(context).showSnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                              liked!?  'Ajouter au favoris' : 'Retirer des favoris',
+                                liked!
+                                    ? 'Ajouter au favoris'
+                                    : 'Retirer des favoris',
                                 style: TextStyle(color: Colors.white),
                               ),
                               backgroundColor: Colors.green[400],
@@ -132,7 +149,7 @@ class _CardProduitState extends State<CardProduit> {
                           );
                         }
                         if (state is PostApiProcessing) {
-                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         }
                       },
                       builder: (BuildContext context, postBlocState) {
@@ -238,13 +255,13 @@ class _CardProduitState extends State<CardProduit> {
             child: Row(
               children: widget.data.produitTailles?.map((Taille toElement) {
                     int index = widget.data.produitTailles!.indexOf(toElement);
-                    selectedTaille = toElement;
+                    // selectedTaille = toElement;
                     return Row(
                       children: [
                         GestureDetector(
                           onTap: () {
                             setState(() {
-                              print(toElement);
+                              print("toElement taille ici $toElement");
                               indexOfSelectedTaille = index;
                               selectedTaille = toElement;
                             });
@@ -281,14 +298,31 @@ class _CardProduitState extends State<CardProduit> {
           const SizedBox(height: 10),
           GestureDetector(
             onTap: () {
-              if (widget.handlePress != null) {
-                widget.handlePress!({
-                  'client_id': null,
-                  'produit_id': widget.data.id,
-                  'quantite': qte,
-                  'taille_id': selectedTaille?.taille_id,
-                  'token': null
-                });
+              print("taille selectedTaille: $selectedTaille");
+
+              var authBloc = context.read<AuthenticationBloc<Utilisateur>>();
+              Utilisateur? user = authBloc.state.user;
+
+              // Vérifie si l'utilisateur est connecté
+              if (user != null) {
+                print(widget.data);
+                String? token = user.token;
+                int tailleId = widget.data.produitTailles?.first.taille_id ?? 0;
+                print("Utilisateur papa $tailleId");
+
+                if (widget.handlePress != null) {
+                  widget.handlePress!({
+                    'client_id': null,
+                    'produit_id': widget.data.id,
+                    'quantite': qte,
+                    'taille_id': selectedTaille != null
+                        ? selectedTaille?.taille_id
+                        : widget.data.produitTailles?.first.taille_id ?? 0,
+                    'token': token, // Passer le token de l'utilisateur
+                  });
+                }
+              } else {
+                print("Utilisateur non connecté 22");
               }
             },
             child: Container(
@@ -330,3 +364,266 @@ class _CardProduitState extends State<CardProduit> {
     );
   }
 }
+
+Future<dynamic> ShowBottomSheetBoutique(
+  BuildContext context,
+  Produit produit,
+  handlePress, {
+  Function? customFunction,
+}) {
+  DataBloc<List<Produit>> produitBloc = DataBloc<List<Produit>>(
+      (response) => Produit.fromJsonList(response),
+      Produit.getEndpoint(isPagination: false),
+      isGraphQl: true,
+      isPagination: false,
+      attributeToGet: Produit.shrinkedAttributs());
+
+  return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext currentContext) {
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(spacingConstant),
+                    topRight: Radius.circular(spacingConstant))),
+            child: Padding(
+              padding: const EdgeInsets.all(spacingConstant),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 2,
+                        width: 50,
+                        decoration: const BoxDecoration(
+                            color: greyColor,
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(spacingConstant))),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: spacingConstant,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 25,
+                      height: 150,
+                      clipBehavior: Clip.antiAlias,
+                      decoration:
+                          BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                      child: CustomCachedNetworkImage(
+                        imageUrl: produit.image ?? '',
+                        fallBackAsset: 'assets/images/pratique_fallback.png',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: spacingConstant,
+                    ),
+                    Text(
+                      produit.designation.toString().toCapitalized ?? '',
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 17),
+                    ),
+                    const SizedBox(height: spacingConstant / 2),
+                    Text(
+                        produit.description != null
+                            ? produit.description.toString()
+                            : '',
+                        style: GoogleFonts.arimo(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
+                        )),
+                    const SizedBox(
+                      height: spacingConstant,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        var authBloc =
+                            context.read<AuthenticationBloc<Utilisateur>>();
+                        Utilisateur? user = authBloc.state.user;
+
+                        if (user != null) {
+                          int id = produit.id ?? 0;
+                          print(produit);
+
+                          String? token = user.token;
+                          int tailleId =
+                              produit.produitTailles?.first.taille_id ?? 0;
+                          print("Utilisateur papa $tailleId");
+
+                          if (handlePress != null) {
+                            handlePress!({
+                              'client_id': null,
+                              'produit_id': produit.id,
+                              'quantite': 1,
+                              'taille_id':
+                                  tailleId, // Ou récupérer la taille si elle est sélectionnée
+                              'token':
+                                  token, // Passer le token de l'utilisateur
+                            });
+                          }
+                        } else {
+                          print("Utilisateur non connecté 22");
+                        }
+                      },
+                      child: Container(
+                        height: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: primaryColor,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  'Ajouter au panier',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.arimo(
+                                    color: Colors.white,
+                                    fontSize: textminConstant,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      });
+}
+
+// Future<dynamic> ShowBottomSheetBoutique(
+//     BuildContext context, Produit produit, handlePress,
+//     {Function? customFunction}) {
+//   DataBloc<List<Produit>> produitBloc = DataBloc<List<Produit>>(
+//       (response) => Produit.fromJsonList(response),
+//       Produit.getEndpoint(isPagination: false),
+//       isGraphQl: true,
+//       isPagination: false,
+//       attributeToGet: Produit.shrinkedAttributs());
+
+//   return showModalBottomSheet(
+//       context: context,
+//       builder: (BuildContext currentContext) {
+//         return Scaffold(
+//           backgroundColor: Colors.transparent,
+//           body: Container(
+//             height: MediaQuery.of(context).size.height * 0.8,
+//             // height: 200,
+//             decoration: const BoxDecoration(
+//                 color: Colors.white,
+//                 borderRadius: BorderRadius.only(
+//                     topLeft: Radius.circular(spacingConstant),
+//                     topRight: Radius.circular(spacingConstant))),
+//             child: Padding(
+//               padding: const EdgeInsets.all(spacingConstant),
+//               child: SingleChildScrollView(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Center(
+//                       child: Container(
+//                         height: 2,
+//                         width: 50,
+//                         decoration: const BoxDecoration(
+//                             color: greyColor,
+//                             borderRadius: BorderRadius.all(
+//                                 Radius.circular(spacingConstant))),
+//                       ),
+//                     ),
+//                     const SizedBox(
+//                       height: spacingConstant,
+//                     ),
+//                     Container(
+//                       width: MediaQuery.of(context).size.width * 25,
+//                       height: 150,
+//                       clipBehavior: Clip.antiAlias,
+//                       decoration:
+//                           BoxDecoration(borderRadius: BorderRadius.circular(8)),
+//                       child: CustomCachedNetworkImage(
+//                         imageUrl: produit.image ?? '',
+//                         fallBackAsset: 'assets/images/pratique_fallback.png',
+//                       ),
+//                     ),
+//                     const SizedBox(
+//                       height: spacingConstant,
+//                     ),
+//                     Text(
+//                       produit.designation.toString(),
+//                       style: const TextStyle(
+//                           fontWeight: FontWeight.bold, fontSize: 17),
+//                     ),
+//                     const SizedBox(height: spacingConstant / 2),
+//                     Text(produit.description.toString(),
+//                         style: GoogleFonts.arimo(
+//                           fontSize: 14,
+//                           color: Colors.black,
+//                           fontWeight: FontWeight.w400,
+//                         )),
+//                     const SizedBox(
+//                       height: spacingConstant,
+//                     ),
+//                     GestureDetector(
+//                       onTap: () {
+//                         int id = produit.id ?? 0;
+//                         print(produit);
+
+//                         if (handlePress != null) {
+//                           handlePress!({
+//                             'client_id': null,
+//                             'produit_id': produit.id,
+//                             'quantite': 1,
+//                             // 'taille_id': selectedTaille?.taille_id,
+//                             'taille_id': 11,
+//                             'token': null
+//                           });
+//                         }
+//                       },
+//                       child: Container(
+//                         height: 30,
+//                         decoration: BoxDecoration(
+//                           borderRadius: BorderRadius.circular(10),
+//                           color: primaryColor,
+//                         ),
+//                         child: Padding(
+//                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//                           child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Flexible(
+//                                 child: Text(
+//                                   'Ajouter au panier',
+//                                   overflow: TextOverflow.ellipsis,
+//                                   style: GoogleFonts.arimo(
+//                                     color: Colors.white,
+//                                     fontSize: textminConstant,
+//                                   ),
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ),
+//         );
+//       });
+// }
