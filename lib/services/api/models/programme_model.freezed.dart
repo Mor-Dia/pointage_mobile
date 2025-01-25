@@ -30,6 +30,8 @@ mixin _$Programme {
   bool? get fileAttente => throw _privateConstructorUsedError;
   @JsonKey(name: "file_attente_display")
   String? get fileAttenteDisplay => throw _privateConstructorUsedError;
+  @JsonKey(name: "file_attente_color")
+  String? get fileAttenteColor => throw _privateConstructorUsedError;
   @JsonKey(name: "heure_debut")
   String? get heureDebut => throw _privateConstructorUsedError;
   @JsonKey(name: "heure_fin")
@@ -63,6 +65,7 @@ abstract class $ProgrammeCopyWith<$Res> {
       String? duration,
       @JsonKey(name: "file_attente") bool? fileAttente,
       @JsonKey(name: "file_attente_display") String? fileAttenteDisplay,
+      @JsonKey(name: "file_attente_color") String? fileAttenteColor,
       @JsonKey(name: "heure_debut") String? heureDebut,
       @JsonKey(name: "heure_fin") String? heureFin,
       @JsonKey(name: "professeur_pratique")
@@ -95,6 +98,7 @@ class _$ProgrammeCopyWithImpl<$Res, $Val extends Programme>
     Object? duration = freezed,
     Object? fileAttente = freezed,
     Object? fileAttenteDisplay = freezed,
+    Object? fileAttenteColor = freezed,
     Object? heureDebut = freezed,
     Object? heureFin = freezed,
     Object? professeurPratique = freezed,
@@ -128,6 +132,10 @@ class _$ProgrammeCopyWithImpl<$Res, $Val extends Programme>
       fileAttenteDisplay: freezed == fileAttenteDisplay
           ? _value.fileAttenteDisplay
           : fileAttenteDisplay // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fileAttenteColor: freezed == fileAttenteColor
+          ? _value.fileAttenteColor
+          : fileAttenteColor // ignore: cast_nullable_to_non_nullable
               as String?,
       heureDebut: freezed == heureDebut
           ? _value.heureDebut
@@ -194,6 +202,7 @@ abstract class _$$ProgrammeImplCopyWith<$Res>
       String? duration,
       @JsonKey(name: "file_attente") bool? fileAttente,
       @JsonKey(name: "file_attente_display") String? fileAttenteDisplay,
+      @JsonKey(name: "file_attente_color") String? fileAttenteColor,
       @JsonKey(name: "heure_debut") String? heureDebut,
       @JsonKey(name: "heure_fin") String? heureFin,
       @JsonKey(name: "professeur_pratique")
@@ -226,6 +235,7 @@ class __$$ProgrammeImplCopyWithImpl<$Res>
     Object? duration = freezed,
     Object? fileAttente = freezed,
     Object? fileAttenteDisplay = freezed,
+    Object? fileAttenteColor = freezed,
     Object? heureDebut = freezed,
     Object? heureFin = freezed,
     Object? professeurPratique = freezed,
@@ -260,6 +270,10 @@ class __$$ProgrammeImplCopyWithImpl<$Res>
           ? _value.fileAttenteDisplay
           : fileAttenteDisplay // ignore: cast_nullable_to_non_nullable
               as String?,
+      fileAttenteColor: freezed == fileAttenteColor
+          ? _value.fileAttenteColor
+          : fileAttenteColor // ignore: cast_nullable_to_non_nullable
+              as String?,
       heureDebut: freezed == heureDebut
           ? _value.heureDebut
           : heureDebut // ignore: cast_nullable_to_non_nullable
@@ -291,6 +305,7 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
       this.duration,
       @JsonKey(name: "file_attente") this.fileAttente,
       @JsonKey(name: "file_attente_display") this.fileAttenteDisplay,
+      @JsonKey(name: "file_attente_color") this.fileAttenteColor,
       @JsonKey(name: "heure_debut") this.heureDebut,
       @JsonKey(name: "heure_fin") this.heureFin,
       @JsonKey(name: "professeur_pratique") this.professeurPratique,
@@ -318,6 +333,9 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
   @JsonKey(name: "file_attente_display")
   final String? fileAttenteDisplay;
   @override
+  @JsonKey(name: "file_attente_color")
+  final String? fileAttenteColor;
+  @override
   @JsonKey(name: "heure_debut")
   final String? heureDebut;
   @override
@@ -332,7 +350,7 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Programme(id: $id, displaycoloretat: $displaycoloretat, displayetat: $displayetat, dateFr: $dateFr, duration: $duration, fileAttente: $fileAttente, fileAttenteDisplay: $fileAttenteDisplay, heureDebut: $heureDebut, heureFin: $heureFin, professeurPratique: $professeurPratique, sallePratique: $sallePratique)';
+    return 'Programme(id: $id, displaycoloretat: $displaycoloretat, displayetat: $displayetat, dateFr: $dateFr, duration: $duration, fileAttente: $fileAttente, fileAttenteDisplay: $fileAttenteDisplay, fileAttenteColor: $fileAttenteColor, heureDebut: $heureDebut, heureFin: $heureFin, professeurPratique: $professeurPratique, sallePratique: $sallePratique)';
   }
 
   @override
@@ -347,6 +365,7 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('duration', duration))
       ..add(DiagnosticsProperty('fileAttente', fileAttente))
       ..add(DiagnosticsProperty('fileAttenteDisplay', fileAttenteDisplay))
+      ..add(DiagnosticsProperty('fileAttenteColor', fileAttenteColor))
       ..add(DiagnosticsProperty('heureDebut', heureDebut))
       ..add(DiagnosticsProperty('heureFin', heureFin))
       ..add(DiagnosticsProperty('professeurPratique', professeurPratique))
@@ -370,6 +389,8 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
                 other.fileAttente == fileAttente) &&
             (identical(other.fileAttenteDisplay, fileAttenteDisplay) ||
                 other.fileAttenteDisplay == fileAttenteDisplay) &&
+            (identical(other.fileAttenteColor, fileAttenteColor) ||
+                other.fileAttenteColor == fileAttenteColor) &&
             (identical(other.heureDebut, heureDebut) ||
                 other.heureDebut == heureDebut) &&
             (identical(other.heureFin, heureFin) ||
@@ -391,6 +412,7 @@ class _$ProgrammeImpl extends _Programme with DiagnosticableTreeMixin {
       duration,
       fileAttente,
       fileAttenteDisplay,
+      fileAttenteColor,
       heureDebut,
       heureFin,
       professeurPratique,
@@ -421,6 +443,7 @@ abstract class _Programme extends Programme {
       final String? duration,
       @JsonKey(name: "file_attente") final bool? fileAttente,
       @JsonKey(name: "file_attente_display") final String? fileAttenteDisplay,
+      @JsonKey(name: "file_attente_color") final String? fileAttenteColor,
       @JsonKey(name: "heure_debut") final String? heureDebut,
       @JsonKey(name: "heure_fin") final String? heureFin,
       @JsonKey(name: "professeur_pratique")
@@ -449,6 +472,9 @@ abstract class _Programme extends Programme {
   @override
   @JsonKey(name: "file_attente_display")
   String? get fileAttenteDisplay;
+  @override
+  @JsonKey(name: "file_attente_color")
+  String? get fileAttenteColor;
   @override
   @JsonKey(name: "heure_debut")
   String? get heureDebut;

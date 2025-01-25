@@ -1,3 +1,4 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,13 +10,22 @@ import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 import 'package:yogivida_mobile/services/api/models/salle_model.dart';
+import 'package:yogivida_mobile/services/api/models/studio_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
 import '../../services/api/models/notificationpush_model.dart';
 
+import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../core/models/user_model.dart';
+import '../../services/authentication_bloc/authentication_bloc.dart';
+
 class Planning extends StatefulWidget {
-  const Planning({super.key});
+  final int id;
+
+  Planning({Key? key, required this.id}) : super(key: key);
 
   @override
   State<Planning> createState() => _PlanningState();
@@ -26,12 +36,17 @@ class _PlanningState extends State<Planning> {
   Map<String, dynamic> currentFilter = {};
   late DataBloc<List<Programme>> programmeBloc;
   late DataBloc<List<Salle>> salleBloc;
+  late DataBloc<List<Studio>> studioBloc;
+  Map<String, dynamic> studioBlocFilter = {"showatwebsite": "true"};
+
   final List<String> options = [];
   TextEditingController designationFilter = TextEditingController();
   late DataBloc<List<NotificationPush>> notificationPushBloc;
   DateTime selectedDate = DateTime.now();
   final DateTime date = DateTime.now();
-  List<Salle?> studioList = [];
+  // int id = 0;
+  // List<Salle?> studioList = [];
+  List<Studio?> studioList = [];
 
   @override
   void initState() {
@@ -43,11 +58,18 @@ class _PlanningState extends State<Planning> {
         attributeToGet: Programme.shrinkedAttributs());
 
     salleBloc = DataBloc<List<Salle>>(
-            (response) => Salle.fromJsonList(response),
+        (response) => Salle.fromJsonList(response),
         Salle.getEndpoint(isPagination: false),
         isGraphQl: true,
         isPagination: false,
         attributeToGet: Salle.shrinkedAttributs());
+
+    studioBloc = DataBloc<List<Studio>>(
+        (response) => Studio.fromJsonList(response),
+        Studio.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        isPagination: false,
+        attributeToGet: Studio.shrinkedAttributs());
 
     notificationPushBloc = DataBloc<List<NotificationPush>>(
         (response) => NotificationPush.fromJsonList(response),
@@ -60,51 +82,79 @@ class _PlanningState extends State<Planning> {
     super.initState();
   }
 
-  // extractStudiosOptions(List<Salle> salles){
-  //   List<Salle?> tempStudioList = [];
-  //   tempStudioList = programmes.map((toElement){
-  //     return toElement;
-  //   }).toList();
-  //   setState(() {
-  //     studioList = tempStudioList;
-  //   });
-  // }
-
-  initFilter(){
+  initFilter() {
+    print("INIT FILTER papa" + widget.id.toString());
     currentFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+    if (widget.id != 0) {
+      currentFilter = {
+        ...currentFilter,
+        'pratique_id': int.parse(widget.id.toString()),
+      };
+    }
   }
-  // List<Salle?> studioList = extractStudiosOptions(programmes);
 
-  selectStudio(dynamic newValue){
+  selectStudio(dynamic newValue) {
     print("SELECTION FF $newValue");
     setState(() {
-      currentFilter = {...currentFilter, ...{'salle_id': newValue}};
+      currentFilter = {
+        ...currentFilter,
+        ...{'studio_id': newValue}
+        // ...{'salle_id': newValue}
+      };
+      if (widget.id != 0) {
+        currentFilter = {
+          ...currentFilter,
+          'pratique_id': int.parse(widget.id.toString()),
+        };
+      }
     });
   }
 
   void changeDate(DateTime date) {
     setState(() {
       selectedDate = date;
-      currentFilter = {'date': "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"};
+      currentFilter = {
+        'date': "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"
+      };
+      if (widget.id != 0) {
+        currentFilter = {
+          ...currentFilter,
+          'pratique_id': int.parse(widget.id.toString()),
+        };
+      }
     });
     // var currentDate = '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}';
 
     // programmeBloc.add(FetchDataEvent(filter: {'date': currentDate}));
   }
 
-  void cleanFieldAndUpdateList(){
+  void cleanFieldAndUpdateList() {
     designationFilter.clear();
     setState(() {
       selectedDate = date;
       currentFilter = {...currentFilter..remove('nom_pratique')};
+      if (widget.id != 0) {
+        currentFilter = {
+          ...currentFilter,
+          'pratique_id': int.parse(widget.id.toString()),
+        };
+      }
     });
   }
 
-  void searchWithDesignation(){
+  void searchWithDesignation() {
     String text = designationFilter.text;
     setState(() {
       selectedDate = date;
-      currentFilter = {...currentFilter..addAll({'nom_pratique': text})};
+      currentFilter = {
+        ...currentFilter..addAll({'nom_pratique': text})
+      };
+      if (widget.id != 0) {
+        currentFilter = {
+          ...currentFilter,
+          'pratique_id': int.parse(widget.id.toString()),
+        };
+      }
     });
   }
 
@@ -120,15 +170,15 @@ class _PlanningState extends State<Planning> {
     super.dispose();
   }
 
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
           elevation: 0,
-          automaticallyImplyLeading:
-              false, // Empêche l'affichage du bouton back
+          automaticallyImplyLeading: widget.id == 0
+              ? false
+              : true, // Empêche l'affichage du bouton back
           toolbarHeight: 60,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -180,30 +230,82 @@ class _PlanningState extends State<Planning> {
                         //   minHeight: spacingConstant,
                         // ),
                         child: Center(
-                          child: BlocBasedWidget<List<NotificationPush>>(
-                            customDataBloc: notificationPushBloc,
-                            useInfiniteScroller: true,
-                            customWidget: (
-                              state,
-                            ) {
-                              Map<String, dynamic> metadata = state.metadata;
-                              dynamic totalNotifs = metadata['total'];
-                              print("NOTIF TOTAL ${totalNotifs}");
-                              return Text(
-                                "${totalNotifs}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  // overflow: TextOverflow.ellipsis,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              );
+                          child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                              AuthenticationState<Utilisateur>>(
+                            builder: (context, authState) {
+                              // Vérifiez si l'utilisateur est authentifié
+                              if (authState.status ==
+                                  AuthenticationStatus.authenticated) {
+                                // Utilisateur connecté
+                                Utilisateur? user = authState.user;
+                                print("Utilisateur connecté papa");
+                                final userId = user?.id;
+
+                                return BlocBasedWidget<List<NotificationPush>>(
+                                  customDataBloc: notificationPushBloc,
+                                  // filter: globalFilter, // Optionnel si nécessaire
+                                  filter: {
+                                    "client_id": userId, // Filtrage par user_id
+                                    "count": 100,
+                                    "is_read": false,
+                                  },
+                                  useInfiniteScroller: true,
+                                  customWidget: (state) {
+                                    Map<String, dynamic> metadata =
+                                        state.metadata;
+                                    dynamic totalNotifs = metadata['total'];
+                                    return Text(
+                                      "${totalNotifs}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    );
+                                  },
+                                );
+                              } else {
+                                // Utilisateur non authentifié
+                                return const Text(
+                                  "0",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                );
+                              }
                             },
                           ),
                         ),
+
+                        // child: BlocBasedWidget<List<NotificationPush>>(
+                        //   customDataBloc: notificationPushBloc,
+                        //   // filter: globalFilter,
+                        //   useInfiniteScroller: true,
+                        //   customWidget: (
+                        //     state,
+                        //   ) {
+                        //     Map<String, dynamic> metadata = state.metadata;
+                        //     dynamic totalNotifs = metadata['total'];
+                        //     // dynamic totalNotifs = 0;
+                        //     print("NOTIF TOTAL ${totalNotifs}");
+                        //     return Text(
+                        //       "${totalNotifs}",
+                        //       style: const TextStyle(
+                        //         color: Colors.white,
+                        //         // overflow: TextOverflow.ellipsis,
+                        //         fontSize: 10,
+                        //         fontWeight: FontWeight.bold,
+                        //       ),
+                        //       textAlign: TextAlign.center,
+                        //     );
+                        //   },
+                        // ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -226,7 +328,7 @@ class _PlanningState extends State<Planning> {
               ),
               Padding(
                 padding:
-                const EdgeInsets.symmetric(horizontal: spacingConstant),
+                    const EdgeInsets.symmetric(horizontal: spacingConstant),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -242,7 +344,7 @@ class _PlanningState extends State<Planning> {
                     ),
                     SizedBox.square(
                       child: GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           searchWithDesignation();
                         },
                         child: Container(
@@ -267,7 +369,7 @@ class _PlanningState extends State<Planning> {
                       child: SizedBox.square(
                         dimension: 50,
                         child: GestureDetector(
-                          onTap: (){
+                          onTap: () {
                             cleanFieldAndUpdateList();
                           },
                           child: const Icon(
@@ -279,18 +381,41 @@ class _PlanningState extends State<Planning> {
                       ),
                     ),
 
-
-                    const SizedBox.square(dimension: 2,),
+                    const SizedBox.square(
+                      dimension: 2,
+                    ),
                     // const Spacer(),
                     // // const Text('|'),
                     // const Spacer(),
+                    // Flexible(
+                    //   flex: 1,
+                    //   child: BlocBasedWidget<List<Salle>>(
+                    //     customDataBloc: salleBloc,
+                    //     customWidget: (state) {
+                    //       List<Salle> salles = state.data;
+                    //       return StudioSelect(
+                    //         studioList: salles,
+                    //         onSelect: selectStudio,
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
                     Flexible(
                       flex: 1,
-                      child: BlocBasedWidget<List<Salle>>(
-                        customDataBloc: salleBloc,
+                      child: BlocBasedWidget<List<Studio>>(
+                        customDataBloc: studioBloc,
+                        filter: studioBlocFilter,
                         customWidget: (state) {
-                          List<Salle> salles = state.data;
-                          return StudioSelect(studioList: salles, onSelect: selectStudio,);
+                          List<Studio> studios = [];
+                          studios = studios
+                            ..add(Studio(id: null, designation: "Studios"));
+                          studios = studios..addAll(state.data);
+
+                          print("STUDIOS ${studios}");
+                          return StudioSelect(
+                            studioList: studios,
+                            onSelect: selectStudio,
+                          );
                         },
                       ),
                     ),
@@ -311,24 +436,12 @@ class _PlanningState extends State<Planning> {
                     return const Center(
                         child: const Text('Aucune activité programmée'));
                   }
-
-                  // List<dynamic> dataFiltered = programmes
-                  //     .where((element) => element
-                  //     .professeurPratique!.pratique!.designation
-                  //     .toString()
-                  //     .toLowerCase()
-                  //     .startsWith(designationFilter.text.toLowerCase()))
-                  //     .toList();
-                  // if (dataFiltered.isEmpty) {
-                  //   return const Center(
-                  //       child: Text('Aucune activité trouvée'));
-                  // }
                   return Column(
                     children: [
                       ...programmes
                           .map((toElement) => CardRowPlanning(
-                        data: toElement,
-                      ))
+                                data: toElement,
+                              ))
                           .toList(),
                     ],
                   );
@@ -337,7 +450,6 @@ class _PlanningState extends State<Planning> {
               const SizedBox(
                 height: spacingConstant,
               ),
-
             ],
           ),
         ));
@@ -362,7 +474,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
     super.initState();
     // Générer la liste des jours de la semaine courante
     weekDays = _generateWeekDays();
-    if(widget.selectedDate != null ){
+    if (widget.selectedDate != null) {
       selectedDate = DateTime.now();
     }
   }
@@ -458,9 +570,9 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
   }
 }
 
-
 class StudioSelect extends StatefulWidget {
-  final List<Salle?> studioList;
+  // final List<Salle?> studioList;
+  final List<Studio?> studioList;
   final Function? onSelect;
   const StudioSelect({super.key, required this.studioList, this.onSelect});
 
@@ -469,7 +581,8 @@ class StudioSelect extends StatefulWidget {
 }
 
 class _StudioSelectState extends State<StudioSelect> {
-  List<Salle?> studioList = [];
+  // List<Salle?> studioList = [];
+  List<Studio?> studioList = [];
   Function? onSelect;
   dynamic selectedValue;
 
@@ -492,43 +605,51 @@ class _StudioSelectState extends State<StudioSelect> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-              "assets/icons/home2.svg",
-              height: 15, color: Colors.white
-          ),
-          const SizedBox(width: 5.0), // Espace entre l'icône et le DropdownButton
+          SvgPicture.asset("assets/icons/home2.svg",
+              height: 15, color: Colors.white),
+          const SizedBox(
+              width: 5.0), // Espace entre l'icône et le DropdownButton
           DropdownButton(
             dropdownColor: primaryColor, // Couleur du dropdown
             value: selectedValue,
             hint: const Text(
               'Studio',
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold
-              ),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             style: const TextStyle(color: Colors.white), // Couleur du texte
-            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white,),
+            icon: const Icon(
+              Icons.keyboard_arrow_down,
+              color: Colors.white,
+            ),
             underline: const SizedBox(), // Supprime la ligne par défaut
             items: [
-              ...studioList.map((Salle? salle) {
+              ...studioList.map((Studio? studio) {
                 return DropdownMenuItem(
-                  value: salle?.id,
-                  child: Text(
-                      "${salle?.designation}",
+                  value: studio?.id,
+                  child: Text("${studio?.designation}",
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: Colors.white)),
                 );
               }).toList(),
-
+              // ...studioList.map((Studio? toElement) {
+              //   return DropdownMenuItem(
+              //     value: toElement?.id, // accédez à l'id comme clé dans la map
+              //     child: Text(
+              //       "${toElement?.designation}", // accédez à la désignation comme clé dans la map
+              //       overflow: TextOverflow.ellipsis,
+              //       style: const TextStyle(color: Colors.white),
+              //     ),
+              //   );
+              // }).toList(),
             ],
             onChanged: (newValue) {
               print("SELECTION $newValue ${onSelect != null}");
-              setState((){
+              setState(() {
                 selectedValue = newValue;
               });
-              if(onSelect != null){
+              if (onSelect != null) {
                 onSelect!(newValue);
               }
             },

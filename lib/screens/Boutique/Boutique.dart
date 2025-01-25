@@ -141,7 +141,11 @@ class _BoutiqueState extends State<Boutique> {
 
   void addToPanier(Map<String, dynamic> arg) async {
     arg['token'] = token;
-    arg['client_id'] = userId;
+    // arg['client_id'] = userId;
+    // arg['client_id'] = 11;
+
+    // arg['token'] = int.tryParse(userId ?? '0') ?? 0;
+    // arg['client_id'] = int.tryParse(userId ?? '0') ?? 0;
 
     context
         .read<PanierBlocBloc>()
@@ -238,7 +242,6 @@ class _BoutiqueState extends State<Boutique> {
                         if (state is PanierLoaded) {
                           _panier = state.panier.panierProduit;
                         }
-                       
                       }, builder: (context, state) {
                         return Positioned(
                           right: -5,
@@ -484,7 +487,8 @@ class _BoutiqueState extends State<Boutique> {
                               List<Produit> produits = state.data;
 
                               if (produits.isEmpty) {
-                                return const Center( child: Text('Aucun produits trouvés'));
+                                return const Center(
+                                    child: Text('Aucun produits trouvés'));
                               }
                               return Wrap(
                                 alignment: WrapAlignment.start,
@@ -492,7 +496,8 @@ class _BoutiqueState extends State<Boutique> {
                                 runSpacing: 10,
                                 children: produits
                                     .map((Produit toElement) => SizedBox(
-                                          width: Helpers.getGridElementWidth(context, 25),
+                                          width: Helpers.getGridElementWidth(
+                                              context, 25),
                                           child: CardProduit(
                                             data: toElement,
                                             handlePress: (value) {

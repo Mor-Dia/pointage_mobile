@@ -11,7 +11,7 @@ showNotifyingDialog({required BuildContext context, String? message, bool isErro
       //   }
       // });
       return Dialog(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         alignment: Alignment.topCenter,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),

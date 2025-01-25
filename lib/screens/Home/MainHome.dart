@@ -21,7 +21,7 @@ class _MainhomeState extends State<Mainhome> {
   // Liste des pages à afficher dans l'IndexedStack
   final List<Widget> _pages = [
     const HomePage(),
-    const Planning(),
+    Planning(id: 0),
     const Boutique(),
     const MonCompte(),
   ];
@@ -167,7 +167,6 @@ class _MainhomeState extends State<Mainhome> {
               ),
             ),
           ],
-        )
-    );
+        ));
   }
 }

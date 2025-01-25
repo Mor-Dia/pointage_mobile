@@ -16,24 +16,23 @@ class NotificationPush with _$NotificationPush {
     String? content,
     @JsonKey(name: "is_read") bool? isRead,
     @JsonKey(name: "type") String? dataType,
-    @JsonKey(name: "element_id")int? dataId,
-    @JsonKey(name: "date_emission_fr")String? dateEmissionFr,
+    @JsonKey(name: "element_id") int? dataId,
+    @JsonKey(name: "date_emission_fr") String? dateEmissionFr,
   }) = _NotificationPush;
 
-  factory NotificationPush.fromJson(Map<String, dynamic> json)  => _$NotificationPushFromJson(json);
+  factory NotificationPush.fromJson(Map<String, dynamic> json) =>
+      _$NotificationPushFromJson(json);
 
-  static fromJsonList(List <dynamic>json){
+  static fromJsonList(List<dynamic> json) {
     List<NotificationPush> data = [];
-    try{
-      if (kDebugMode) {
-      }
+    try {
+      if (kDebugMode) {}
 
       for (var result in json) {
         data.add(NotificationPush.fromJson(result as Map<String, dynamic>));
       }
-      if (kDebugMode) {
-      }
-    } catch(error, stacktrace){
+      if (kDebugMode) {}
+    } catch (error, stacktrace) {
       if (kDebugMode) {
         print("ERROR WHILE TRANSFORMING $error $stacktrace");
       }
@@ -41,7 +40,7 @@ class NotificationPush with _$NotificationPush {
     return data;
   }
 
-  static shrinkedAttributs () {
+  static shrinkedAttributs() {
     return "id,title,is_read,element_id,type,description,content,date_emission_fr";
   }
 

@@ -18,9 +18,17 @@ class Cardactivite extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int displayColor = 0xffFF0000;
+    // print("ici color" + this.color.toString());
     if (color == "success") {
       displayColor = 0xff28A745;
+    } else {
+      displayColor = 0xffDC3545;
     }
+
+    print("ici color => " +
+        this.color.toString() +
+        "alors => " +
+        displayColor.toString());
 
     return Container(
       constraints: BoxConstraints(maxWidth: 300),
@@ -43,8 +51,7 @@ class Cardactivite extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.arimo(
-                  fontWeight: FontWeight.bold,
-                  fontSize: textConstant),
+                  fontWeight: FontWeight.bold, fontSize: textConstant),
             ),
             const SizedBox(height: 5),
             Row(
@@ -92,7 +99,10 @@ class Cardactivite extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text('Reservé',
+                            Text(
+                                data.fileAttente.toString() == 'true'
+                                    ? 'Réserver'
+                                    : 'Plein',
                                 style: GoogleFonts.arimo(
                                     fontSize: 12, fontWeight: FontWeight.bold)),
                             SizedBox(

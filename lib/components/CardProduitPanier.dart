@@ -6,9 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
 import '../core/utils/helpers.dart';
@@ -52,15 +54,19 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
   }
 
   void addToPanier(PanierPProduit arg, int sentqte) async {
-    int currentQte = arg.qte??0;
+    int currentQte = arg.qte ?? 0;
     int newQte = currentQte + sentqte;
 
     if (sentqte == 0) {
       newQte = 0;
     }
 
+    var authBloc = context.read<AuthenticationBloc<Utilisateur>>();
+    Utilisateur? user = authBloc.state.user;
+
     Map<String, dynamic> newArg = {
-      'client_id': userId,
+      // 'client_id': userId,
+      'client_id': user?.id ?? 0,
       'produit_id': newQte == 0 ? widget.data.id : widget.data.produit?.id,
       'quantite': newQte,
       'taille_id': 1,
@@ -131,8 +137,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                                 .toUpperCase(),
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.arimo(
-                              fontSize:
-                                  textConstant,
+                              fontSize: textConstant,
                             ),
                           ),
                         ),
@@ -144,8 +149,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                           ('${Helpers.formatNumber(widget.data.produit!.prix)}xof')
                               .toUpperCase(),
                           style: GoogleFonts.arimo(
-                              fontSize:
-                                  textConstant,
+                              fontSize: textConstant,
                               fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -167,7 +171,8 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                                 width: 30,
                                 decoration: BoxDecoration(
                                     color: greyColor,
-                                    borderRadius: BorderRadius.circular(spacingConstant)),
+                                    borderRadius:
+                                        BorderRadius.circular(spacingConstant)),
                                 child: const Center(
                                   child: Text(
                                     '-',
@@ -190,7 +195,8 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                                 width: 30,
                                 decoration: BoxDecoration(
                                     color: greyColor,
-                                    borderRadius: BorderRadius.circular(spacingConstant)),
+                                    borderRadius:
+                                        BorderRadius.circular(spacingConstant)),
                                 child: const Center(
                                   child: Text(
                                     '+',

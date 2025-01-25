@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,11 +8,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
+import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
+import 'package:yogivida_mobile/services/api/models/banniere_model.dart';
+import 'package:yogivida_mobile/services/api/models/type_pratique_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
@@ -26,6 +30,8 @@ import '../../services/api/models/type_paiement_model.dart';
 import '../../services/authentication_bloc/authentication_bloc.dart';
 import '../../services/post_api_bloc.dart';
 
+import 'dart:ui' as ui;
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -35,12 +41,24 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late DataBloc<List<Pratique>> practiceBloc;
+  late DataBloc<List<TypePratique>> typePracticeBloc;
+  late DataBloc<List<Banniere>> banniereBloc;
   late DataBloc<List<Programme>> programmeBloc;
   late DataBloc<List<NotificationPush>> notificationPushBloc;
   Map<String, dynamic> globalFilter = {"count": 5};
-  Map<String, dynamic> programmeBlocFilter = {"is_front": true};
   final DateTime date = DateTime.now();
   bool canBeDisplay = false;
+  Map<String, dynamic> programmeBlocFilter = {"is_front": true};
+  Map<String, dynamic> typePracticeBlocFilter = {"showatwebsite": "true"};
+  Map<String, dynamic> practiceBlocFilter = {"showatwebsite": true};
+  // Map<String, dynamic> banniereBlocFilter = {};
+  Map<String, dynamic> banniereBlocFilter = {"statut": "true"};
+  Map<String, dynamic> notificationPushBlocFilter = {
+    "count": 100,
+    "is_read": false
+  };
+
+  int selectedTypePratiqueIndex = 0;
 
   @override
   void initState() {
@@ -63,7 +81,69 @@ class _HomePageState extends State<HomePage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: NotificationPush.shrinkedAttributs());
+
+    banniereBloc = DataBloc<List<Banniere>>(
+        (response) => Banniere.fromJsonList(response),
+        Banniere.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: Banniere.shrinkedAttributs());
+
+    typePracticeBloc = DataBloc<List<TypePratique>>(
+        (response) => TypePratique.fromJsonList(response),
+        TypePratique.getEndpoint(isPagination: true),
+        isGraphQl: true,
+        isPagination: true,
+        attributeToGet: TypePratique.shrinkedAttributs());
+
+    initFilter();
+    initNotif();
     super.initState();
+  }
+
+  initFilter() {
+    programmeBlocFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+  }
+
+  void filtreTypePratique(index, type_pratique_id) {
+    setState(() {
+      selectedTypePratiqueIndex = index;
+      print("type_pratique_id $type_pratique_id");
+      if (type_pratique_id == null) {
+        practiceBlocFilter = {
+          ...practiceBlocFilter..remove('type_pratique_id')
+        };
+      }
+      practiceBlocFilter = {
+        ...practiceBlocFilter..addAll({'type_pratique_id': type_pratique_id})
+      };
+    });
+  }
+
+  initNotif() {
+    int? currentUserId;
+
+    AuthenticationBloc currentAuthBloc =
+        BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
+    AuthenticationStatus currentStatus = currentAuthBloc.state.status;
+    switch (currentStatus) {
+      case AuthenticationStatus.unknown:
+      case AuthenticationStatus.unauthenticated:
+      case AuthenticationStatus.failure:
+        print("UPDATE USER LISTENING FAILURE 3");
+
+        break;
+      case AuthenticationStatus.authenticated:
+        print("UPDATE USER LISTENING AUTH 4");
+
+        Utilisateur currentUser = currentAuthBloc.state.user;
+        currentUserId = currentUser.id;
+        notificationPushBlocFilter = {
+          "client_id": currentUserId,
+        };
+        notificationPushBloc
+            .add(RefreshDataEvent(filter: notificationPushBlocFilter));
+    }
   }
 
   @override
@@ -124,30 +204,82 @@ class _HomePageState extends State<HomePage> {
                       //   minHeight: spacingConstant,
                       // ),
                       child: Center(
-                        child: BlocBasedWidget<List<NotificationPush>>(
-                          customDataBloc: notificationPushBloc,
-                          useInfiniteScroller: true,
-                          customWidget: (
-                            state,
-                          ) {
-                            Map<String, dynamic> metadata = state.metadata;
-                            dynamic totalNotifs = metadata['total'];
-                            print("NOTIF TOTAL ${totalNotifs}");
-                            return Text(
-                              "${totalNotifs}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                // overflow: TextOverflow.ellipsis,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            );
+                        child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                            AuthenticationState<Utilisateur>>(
+                          builder: (context, authState) {
+                            // Vérifiez si l'utilisateur est authentifié
+                            if (authState.status ==
+                                AuthenticationStatus.authenticated) {
+                              // Utilisateur connecté
+                              Utilisateur? user = authState.user;
+                              print("Utilisateur connecté papa");
+                              final userId = user?.id;
+
+                              return BlocBasedWidget<List<NotificationPush>>(
+                                customDataBloc: notificationPushBloc,
+                                // filter: globalFilter, // Optionnel si nécessaire
+                                filter: {
+                                  "client_id": userId, // Filtrage par user_id
+                                  "count": 100,
+                                  "is_read": false,
+                                },
+                                useInfiniteScroller: true,
+                                customWidget: (state) {
+                                  Map<String, dynamic> metadata =
+                                      state.metadata;
+                                  dynamic totalNotifs = metadata['total'];
+                                  return Text(
+                                    "${totalNotifs}",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  );
+                                },
+                              );
+                            } else {
+                              // Utilisateur non authentifié
+                              return const Text(
+                                "0",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              );
+                            }
                           },
                         ),
                       ),
+
+                      // child: BlocBasedWidget<List<NotificationPush>>(
+                      //   customDataBloc: notificationPushBloc,
+                      //   // filter: globalFilter,
+                      //   useInfiniteScroller: true,
+                      //   customWidget: (
+                      //     state,
+                      //   ) {
+                      //     Map<String, dynamic> metadata = state.metadata;
+                      //     dynamic totalNotifs = metadata['total'];
+                      //     // dynamic totalNotifs = 0;
+                      //     print("NOTIF TOTAL ${totalNotifs}");
+                      //     return Text(
+                      //       "${totalNotifs}",
+                      //       style: const TextStyle(
+                      //         color: Colors.white,
+                      //         // overflow: TextOverflow.ellipsis,
+                      //         fontSize: 10,
+                      //         fontWeight: FontWeight.bold,
+                      //       ),
+                      //       textAlign: TextAlign.center,
+                      //     );
+                      //   },
+                      // ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -158,31 +290,115 @@ class _HomePageState extends State<HomePage> {
         color: Colors.white,
         child: RefreshIndicator(
           onRefresh: () async {
-            programmeBloc.add(RefreshDataEvent());
+            programmeBloc.add(RefreshDataEvent(filter: programmeBlocFilter));
             practiceBloc.add(RefreshDataEvent());
+            banniereBloc.add(RefreshDataEvent(filter: banniereBlocFilter));
             await Future.delayed(const Duration(seconds: 2));
           },
           child: ListView(
             children: [
+              const SizedBox(
+                height: spacingConstant,
+              ),
+              BlocBasedWidget<List<Banniere>>(
+                customDataBloc: banniereBloc,
+                filter: banniereBlocFilter,
+                customWidget: (state) {
+                  List<Banniere> bannieres = state.data;
+
+                  if (bannieres.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+
+                  print("bannieres =>> ${bannieres}");
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: spacingConstant, right: spacingConstant),
+                        child: Text(
+                          "Évènement(s) à venir...",
+                          style: GoogleFonts.montserrat(
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.045,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: spacingConstant,
+                      ),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ...bannieres
+                                .map((toElement) => Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: spacingConstant,
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .70,
+                                          // width: double.infinity,
+                                          height: 200,
+                                          clipBehavior: Clip.antiAlias,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8)),
+                                          child: CustomCachedNetworkImage(
+                                            imageUrl: toElement.image ?? '',
+                                            fallBackAsset:
+                                                'assets/images/home.png',
+                                          ),
+                                        ),
+                                        // CustomCachedNetworkImage(
+                                        //     imageUrl: toElement.image ?? '',
+                                        //     fallBackAsset:
+                                        //         'assets/images/home.png'),
+                                      ],
+                                    ))
+                                .toList(),
+                            const SizedBox(
+                              width: spacingConstant,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: spacingConstant,
+                      ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(
+                height: spacingConstant,
+              ),
               BlocBasedWidget<List<Programme>>(
                 customDataBloc: programmeBloc,
                 filter: programmeBlocFilter,
                 customWidget: (state) {
                   List<Programme> programmes = state.data;
-                  if(programmes.isEmpty){
+                  if (programmes.isEmpty) {
                     return const SizedBox.shrink();
                   }
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
+                        padding: const EdgeInsets.only(
+                            left: spacingConstant, right: spacingConstant),
                         child: Text(
                           "Votre activité du jour",
                           style: GoogleFonts.montserrat(
-                              fontSize: MediaQuery.of(context).size.width * 0.045,
-                              fontWeight: FontWeight.bold
-                          ),
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.045,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(
@@ -201,9 +417,11 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         Cardactivite(
                                             data: toElement,
-                                            color: toElement.displaycoloretat ?? "",
+                                            color: toElement.fileAttenteColor ??
+                                                "",
                                             handlePress: () {
-                                              showBottomSheet(context, toElement);
+                                              showBottomSheet(
+                                                  context, toElement);
                                             })
                                       ],
                                     ))
@@ -218,6 +436,77 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
+              const SizedBox(
+                height: spacingConstant,
+              ),
+              BlocBasedWidget<List<TypePratique>>(
+                  customDataBloc: typePracticeBloc,
+                  filter: typePracticeBlocFilter,
+                  customWidget: (state) {
+                    List<TypePratique> typepratiques = [];
+                    typepratiques = typepratiques
+                      ..add(TypePratique(id: null, designation: "Tous"));
+                    typepratiques = typepratiques..addAll(state.data);
+                    print("state.data => ${state.data}");
+                    const SizedBox(
+                      height: spacingConstant,
+                    );
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          const SizedBox(width: spacingConstant),
+                          ...typepratiques.map((toElement) {
+                            int index = typepratiques
+                                .indexOf(toElement); // obtenir l'index actuel
+                            bool isSelected = selectedTypePratiqueIndex ==
+                                index; // vérifier si l'élément est sélectionné
+
+                            return Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    // Appeler ta fonction filtreTypePratique avec l'index et le ID
+                                    filtreTypePratique(index, toElement.id);
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 16),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? primaryColor
+                                          : Colors.transparent, // badge color
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : primaryColor, // bordure colorée, dépend de la sélection
+                                        width: 1, // largeur de la bordure
+                                      ),
+                                    ),
+                                    child: Text(
+                                      toElement.designation
+                                              .toString()
+                                              .toCapitalized ??
+                                          "",
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors
+                                                .black, // texte blanc si sélectionné
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: spacingConstant / 2),
+                              ],
+                            );
+                          }).toList(),
+                          const SizedBox(width: spacingConstant),
+                        ],
+                      ),
+                    );
+                  }),
               const SizedBox(
                 height: spacingConstant,
               ),
@@ -255,7 +544,7 @@ class _HomePageState extends State<HomePage> {
               ),
               BlocBasedWidget<List<Pratique>>(
                 customDataBloc: practiceBloc,
-                // filter: globalFilter,
+                filter: practiceBlocFilter,
                 customWidget: (state) {
                   List<Pratique> pratiques = state.data;
                   Map<String, dynamic>? metadata = state.metadata;
@@ -273,6 +562,9 @@ class _HomePageState extends State<HomePage> {
                                     CardPratique(
                                       data: toElement,
                                       handlePress: () {},
+                                      afterLike: () {
+                                        print("HELLO");
+                                      },
                                     )
                                   ],
                                 ))
@@ -480,18 +772,26 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(
                     height: spacingConstant,
                   ),
-                  // Spacer(flex: 1),
                   Center(
                     child: Container(
                       constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
-                      child: ButtonFiled(
-                        text: 'Réserver',
-                        handlerPress: () =>
-                            ShowBottomSheetPayment(context, programme),
-                      ),
+                      child: programme.fileAttente.toString() == 'true'
+                          ?
+                          ButtonFiled(
+                              text: 'Réserver',
+                              handlerPress: () =>
+                                  ShowBottomSheetPayment(context, programme),
+                            )
+                          :
+                          // Sinon, afficher un bouton gris avec "Plein"
+                          ButtonFiled(
+                              text: 'Plein',
+                              handlerPress: () {}, // Aucun action ici
+                              color: Colors.grey,
+                            ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -517,6 +817,7 @@ Future<dynamic> ShowBottomSheetPayment(
         return Scaffold(
           backgroundColor: Colors.transparent,
           body: Container(
+            height: MediaQuery.of(context).size.height * 0.8,
             decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -553,6 +854,7 @@ Future<dynamic> ShowBottomSheetPayment(
                     BlocBasedWidget<List<TypePaiement>>(
                       customDataBloc: typePaiementPushBloc,
                       // filter: currentFilter,
+                      filter: const {'showatwebsite': 'true'},
                       useInfiniteScroller: true,
                       customWidget: (state) {
                         List<TypePaiement> typePaiements = state.data;
@@ -584,6 +886,7 @@ List<Widget> buildTypePaiementList(BuildContext parentContext,
   reserverCours({required Map<String, dynamic> parameters}) {
     reservationPostBloc
         .add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
+    // Navigator.pop(context);
   }
 
   return [
@@ -610,6 +913,7 @@ List<Widget> buildTypePaiementList(BuildContext parentContext,
                 }
                 if (state is PostApiFailure) {
                   print("NEW STATE ${state.message}");
+                  // Navigator.of(parentContext).pop();
                   ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
                   ScaffoldMessenger.of(parentContext).showSnackBar(
                     SnackBar(

@@ -20,7 +20,6 @@ import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 import '../../services/post_api_bloc.dart';
 
 class _LigneCreditPageState extends State<LigneCreditPage> {
-
   late DataBloc<List<LigneCredit>> lcBloc;
   late DataBloc<List<Utilisateur>> utilisateurBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
@@ -31,14 +30,14 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
   @override
   void initState() {
     lcBloc = DataBloc<List<LigneCredit>>(
-            (response) => LigneCredit.fromJsonList(response),
+        (response) => LigneCredit.fromJsonList(response),
         LigneCredit.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
         attributeToGet: LigneCredit.shrinkedAttributs());
 
     utilisateurBloc = DataBloc<List<Utilisateur>>(
-            (response) => Utilisateur.fromJsonList(response),
+        (response) => Utilisateur.fromJsonList(response),
         Utilisateur.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
@@ -47,7 +46,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
     super.initState();
   }
 
-  hideAndShowBalance(){
+  hideAndShowBalance() {
     setState(() {
       hide = !hide;
     });
@@ -99,63 +98,64 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: greyColor),
                     borderRadius: BorderRadius.circular(8)),
-                child: BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+                child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                        AuthenticationState<Utilisateur>>(
                     builder: (context, authState) {
-                      AuthenticationStatus currentStatus = authState.status;
-                      Utilisateur? currentUser = authState.user;
-                      switch(currentStatus){
-                        case AuthenticationStatus.authenticated:
-                          return Padding(
-                            padding:
-                            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  AuthenticationStatus currentStatus = authState.status;
+                  Utilisateur? currentUser = authState.user;
+                  switch (currentStatus) {
+                    case AuthenticationStatus.authenticated:
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                        'Solde',
-                                        style: TextStyle(fontSize: 13, color: primaryColor)
-                                    ),
-                                    BlocBasedWidget<List<Utilisateur>>(
-                                      customDataBloc: utilisateurBloc,
-                                      filter: {"id": currentUser?.id},
-                                      customWidget: (state) {
-                                        List<Utilisateur> users = state.data;
-                                        Utilisateur currentClient = users[0];
-                                        return
-                                        Text(
-                                          hide? "*******" : "${currentClient.solde} XOF",
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              color: primaryColor,
-                                              fontWeight: FontWeight.bold
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  ],
-                                ),
-                                IconButton(
-                                  onPressed: hideAndShowBalance,
-                                  icon: Icon(
-                                    hide ? Icons.visibility_off : Icons.remove_red_eye,
-                                    size: spacingConstant,
-                                    color: const Color(0xff15274d),
-                                  ),
-                                ),
+                                const Text('Solde',
+                                    style: TextStyle(
+                                        fontSize: 13, color: primaryColor)),
+                                BlocBasedWidget<List<Utilisateur>>(
+                                  customDataBloc: utilisateurBloc,
+                                  filter: {"id": currentUser?.id},
+                                  customWidget: (state) {
+                                    List<Utilisateur> users = state.data;
+                                    Utilisateur currentClient = users[0];
+                                    return Text(
+                                      hide
+                                          ? "*******"
+                                          : "${currentClient.solde} XOF",
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.bold),
+                                    );
+                                  },
+                                )
                               ],
                             ),
-                          );
-                        case AuthenticationStatus.unknown:
-                        case AuthenticationStatus.unauthenticated:
-                        case AuthenticationStatus.failure:
-                          return const Center(child: PleaseLoginWidget());
-                      }
-                    }
-                ),
+                            IconButton(
+                              onPressed: hideAndShowBalance,
+                              icon: Icon(
+                                hide
+                                    ? Icons.visibility_off
+                                    : Icons.remove_red_eye,
+                                size: spacingConstant,
+                                color: const Color(0xff15274d),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    case AuthenticationStatus.unknown:
+                    case AuthenticationStatus.unauthenticated:
+                    case AuthenticationStatus.failure:
+                      return const Center(child: PleaseLoginWidget());
+                  }
+                }),
               ),
             ),
             const SizedBox(
@@ -163,71 +163,96 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
-              child: ButtonFiled(
-                text: 'Approvisionner le compte',
-                handlerPress: () => {ShowBottomSheetPayment(context)},
+              child: GestureDetector(
+                onTap: () => ShowBottomSheetPayment(context),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(8.0), // Coins arrondis
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Approvisionner le compte',
+                      style: TextStyle(
+                        color: Colors.white, // Couleur du texte
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
+
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
+            //   child: ButtonFiled(
+            //     text: 'Approvisionner le compte',
+            //     handlerPress: () => {ShowBottomSheetPayment(context)},
+            //   ),
+            // ),
             const SizedBox(
               height: spacingConstant,
             ),
-            Expanded(
-              child: BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
-                  builder: (context, authState) {
-                    AuthenticationStatus currentStatus = authState.status;
-                    int? clientId = authState.user?.id;
-                    switch(currentStatus){
-                      case AuthenticationStatus.authenticated:
-                        return BlocBasedWidget<List<LigneCredit>>(
-                          customDataBloc: lcBloc,
-                          filter: {...globalFilter, "client_id":clientId  },
-                          useInfiniteScroller: true,
-                          customWidget: (state) {
-                            List<LigneCredit> lcs = state.data;
-                            return Column(
-                                children:  [
-                                  const SizedBox(
-                                    height: spacingConstant,
-                                  ),
-                                  ...lcs
-                                      .map((toElement) => CardLignecredit(ligneCredit: toElement,))
-                                      .toList(),
-                                ]
-                            );
-                          },
-                        );
-                      case AuthenticationStatus.unknown:
-                      case AuthenticationStatus.unauthenticated:
-                      case AuthenticationStatus.failure:
-                        return const Center(child: PleaseLoginWidget());
-                    }
-                  }
-              )
-            )
+            Expanded(child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                    AuthenticationState<Utilisateur>>(
+                builder: (context, authState) {
+              AuthenticationStatus currentStatus = authState.status;
+              int? clientId = authState.user?.id;
+              switch (currentStatus) {
+                case AuthenticationStatus.authenticated:
+                  return BlocBasedWidget<List<LigneCredit>>(
+                    customDataBloc: lcBloc,
+                    filter: {...globalFilter, "client_id": clientId},
+                    useInfiniteScroller: true,
+                    customWidget: (state) {
+                      List<LigneCredit> lcs = state.data;
+                      return Column(children: [
+                        const SizedBox(
+                          height: spacingConstant,
+                        ),
+                        ...lcs
+                            .map((toElement) => CardLignecredit(
+                                  ligneCredit: toElement,
+                                ))
+                            .toList(),
+                      ]);
+                    },
+                  );
+                case AuthenticationStatus.unknown:
+                case AuthenticationStatus.unauthenticated:
+                case AuthenticationStatus.failure:
+                  return const Center(child: PleaseLoginWidget());
+              }
+            }))
           ],
         ),
       ),
     );
   }
 
-  Future<dynamic> ShowBottomSheetPayment(BuildContext context, {Function? customFunction}) {
-    DataBloc<List<TypePaiement>> typePaiementPushBloc = DataBloc<List<TypePaiement>>(
+  Future<dynamic> ShowBottomSheetPayment(BuildContext context,
+      {Function? customFunction}) {
+    print("ShowBottomSheetPayment");
+    DataBloc<List<TypePaiement>> typePaiementPushBloc =
+        DataBloc<List<TypePaiement>>(
             (response) => TypePaiement.fromJsonList(response),
-        TypePaiement.getEndpoint(isPagination: false),
-        isGraphQl: true,
-        isPagination: false,
-        attributeToGet: TypePaiement.shrinkedAttributs());
+            TypePaiement.getEndpoint(isPagination: false),
+            isGraphQl: true,
+            isPagination: false,
+            attributeToGet: TypePaiement.shrinkedAttributs());
 
     return showModalBottomSheet(
         context: context,
         builder: (BuildContext currentContext) {
           return Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
             body: Container(
               decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(spacingConstant), topRight: Radius.circular(spacingConstant))),
+                      topLeft: Radius.circular(spacingConstant),
+                      topRight: Radius.circular(spacingConstant))),
               child: Padding(
                 padding: const EdgeInsets.all(spacingConstant),
                 child: SingleChildScrollView(
@@ -240,17 +265,19 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                           width: 50,
                           decoration: const BoxDecoration(
                               color: greyColor,
-                              borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(spacingConstant))),
                         ),
                       ),
                       const SizedBox(
                         height: spacingConstant,
                       ),
                       Inputfiled(
-                        type: 'number',
+                        type: 'text',
                         text: "Montant",
                         controller: montantController,
-                        error: currentError, // L'erreur est vide au départ
+                        error: '', // L'erreur est vide au départ
+                        // error: currentError, // L'erreur est vide au départ
                       ),
                       const SizedBox(
                         height: spacingConstant,
@@ -266,25 +293,22 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                       ),
                       BlocBasedWidget<List<TypePaiement>>(
                         customDataBloc: typePaiementPushBloc,
-                        filter: const {'showatwebsite': 'true'},
+                        filter: const {
+                          'showatwebsite': 'true',
+                          'showatwebsiteNotLC': 'true'
+                        },
                         useInfiniteScroller: true,
                         customWidget: (state) {
                           List<TypePaiement> typePaiements = state.data;
-                          return
-                            Column(
-                                children:  [
-                                  const SizedBox(
-                                    height: spacingConstant,
-                                  ),
-                                  Wrap(
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: [
-                                        ...buildTypePaiementList(currentContext, typePaiements, montantController.text),
-                                      ]
-                                  ),
-                                ]
-                            );
+                          return Column(children: [
+                            const SizedBox(
+                              height: spacingConstant,
+                            ),
+                            Wrap(spacing: 10, runSpacing: 10, children: [
+                              ...buildTypePaiementList(currentContext,
+                                  typePaiements, montantController.text),
+                            ]),
+                          ]);
                         },
                       )
                     ],
@@ -296,76 +320,81 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
         });
   }
 
-  List<Widget> buildTypePaiementList(BuildContext parentContext, List<TypePaiement> typePaiements, montant){
+  List<Widget> buildTypePaiementList(
+      BuildContext parentContext, List<TypePaiement> typePaiements, montant) {
     late PostApiBloc reservationPostBloc;
     reservationPostBloc = PostApiBloc();
 
     buyLigneCredit({required Map<String, dynamic> parameters}) {
-      reservationPostBloc.add(PostApiMakeCall(endpoint: 'lignecredit', parameters: parameters));
+      print("BUY LIGNE CREDIT  ${parameters.toString()}");
+      reservationPostBloc.add(
+          PostApiMakeCall(endpoint: 'lignecredit', parameters: parameters));
     }
 
     return [
       ...typePaiements.map((toElement) {
         return BlocBuilder<AuthenticationBloc<Utilisateur>,
-            AuthenticationState<Utilisateur>>(
-            builder: (context, authState) {
-              AuthenticationStatus currentStatus = authState.status;
-              Utilisateur? user = authState.user;
-              switch (currentStatus) {
-                case AuthenticationStatus.authenticated:
-                  return BlocConsumer(
-                    bloc: reservationPostBloc,
-                    listener: (context, state) {
-                      if (state is PostApiSuccess) {
-                        ScaffoldMessenger.of(parentContext).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "${state.message}",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            backgroundColor: Colors.green[400],
-                          ),
-                        );
-                      }
-                      if (state is PostApiFailure) {
-                        print("NEW STATE ${state.message}");
-                        ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(parentContext).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "${state.message}",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    },
-                    builder: (BuildContext context, postBlocState) {
-                      return AnimatedGestureButton(
-                        animate: postBlocState is PostApiProcessing,
-                        child: GestureDetector(
-                            onTap: (){
-                              Map<String, dynamic> parameters = {
-                                "montant": montant,
-                                "client": user?.id,
-                                "from_site": true,
-                                "typelignecredit" : 2,
-                                "type_paiement": toElement.id,
-                              };
-                              buyLigneCredit(parameters: parameters);
-                            },
-                            child: TypePaiementCard(typePaiement: toElement)
+            AuthenticationState<Utilisateur>>(builder: (context, authState) {
+          AuthenticationStatus currentStatus = authState.status;
+          Utilisateur? user = authState.user;
+          switch (currentStatus) {
+            case AuthenticationStatus.authenticated:
+              return BlocConsumer(
+                bloc: reservationPostBloc,
+                listener: (context, state) {
+                  if (state is PostApiSuccess) {
+                    // fermer l'element apres success
+                    Navigator.of(parentContext).pop();
+
+                    ScaffoldMessenger.of(parentContext).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${state.message}",
+                          style: TextStyle(color: Colors.white),
                         ),
-                      );
-                    },
+                        backgroundColor: Colors.green[400],
+                      ),
+                    );
+                  }
+                  if (state is PostApiFailure) {
+                    print("NEW STATE ${state.message}");
+                    ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(parentContext).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${state.message}",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                builder: (BuildContext context, postBlocState) {
+                  return AnimatedGestureButton(
+                    animate: postBlocState is PostApiProcessing,
+                    child: GestureDetector(
+                        onTap: () {
+                          Map<String, dynamic> parameters = {
+                            "montant": montantController.text,
+                            // "montant": montant,
+                            "client": user?.id,
+                            "from_site": true,
+                            "typelignecredit": 2,
+                            "type_paiement": toElement.id,
+                          };
+                          buyLigneCredit(parameters: parameters);
+                        },
+                        child: TypePaiementCard(typePaiement: toElement)),
                   );
-                case AuthenticationStatus.unknown:
-                case AuthenticationStatus.unauthenticated:
-                case AuthenticationStatus.failure:
-                  return const SizedBox();
-              }
-            });
+                },
+              );
+            case AuthenticationStatus.unknown:
+            case AuthenticationStatus.unauthenticated:
+            case AuthenticationStatus.failure:
+              return const SizedBox();
+          }
+        });
       }).toList(),
     ];
   }

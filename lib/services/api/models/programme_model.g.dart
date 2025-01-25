@@ -15,6 +15,7 @@ _$ProgrammeImpl _$$ProgrammeImplFromJson(Map<String, dynamic> json) =>
       duration: json['duration'] as String?,
       fileAttente: json['file_attente'] as bool?,
       fileAttenteDisplay: json['file_attente_display'] as String?,
+      fileAttenteColor: json['file_attente_color'] as String?,
       heureDebut: json['heure_debut'] as String?,
       heureFin: json['heure_fin'] as String?,
       professeurPratique: json['professeur_pratique'] == null
@@ -36,6 +37,7 @@ Map<String, dynamic> _$$ProgrammeImplToJson(_$ProgrammeImpl instance) =>
       'duration': instance.duration,
       'file_attente': instance.fileAttente,
       'file_attente_display': instance.fileAttenteDisplay,
+      'file_attente_color': instance.fileAttenteColor,
       'heure_debut': instance.heureDebut,
       'heure_fin': instance.heureFin,
       'professeur_pratique': instance.professeurPratique,

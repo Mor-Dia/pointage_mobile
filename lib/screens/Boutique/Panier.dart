@@ -24,6 +24,7 @@ class _PanierState extends State<PanierPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
           elevation: 0,
@@ -64,6 +65,25 @@ class _PanierState extends State<PanierPage> {
                   if (state is PanierLoaded) {
                     _panier = state.panier.panierProduit;
                   }
+
+                  if (_panier == null || _panier!.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 20.0),
+                      child: Center(
+                        // Centre le texte horizontalement
+                        child: Text(
+                          'Votre panier est vide.',
+                          style: GoogleFonts.arimo(
+                            color: primaryColor,
+                            fontSize: titreConstant,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  }
+
                   return Column(
                     children: [
                       Stack(children: [
@@ -90,18 +110,27 @@ class _PanierState extends State<PanierPage> {
                             : const SizedBox.shrink()
                       ]),
                       const Spacer(),
-                      Text(
-                        (state is PanierLoaded)
-                          ? 'TOTAL TTC : ${Helpers.formatNumber(state.panier.total)}'
-                          : '0',
-                        style: const TextStyle(color: primaryColor,fontWeight: FontWeight.bold,fontSize: titreConstant),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
-                        child: ButtonFiled(text: 'FINALISER LA COMMANDE', handlerPress: () {
-                          
-                        },),
-                      ),
+                      if ((state is PanierLoaded) &&
+                          state.panier.total != 0) ...[
+                        Text(
+                          'TOTAL TTC : ${Helpers.formatNumber(state.panier.total)}',
+                          style: const TextStyle(
+                            color: primaryColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: titreConstant,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: spacingConstant),
+                          child: ButtonFiled(
+                            text: 'FINALISER LA COMMANDE',
+                            handlerPress: () {
+                              // Logique du bouton pour finaliser la commande
+                            },
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 40)
                     ],
                   );

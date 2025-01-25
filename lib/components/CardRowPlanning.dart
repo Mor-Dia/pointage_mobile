@@ -54,6 +54,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
               Row(
                 children: [
                   Expanded(
+                    flex: 2,
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -73,7 +74,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                     Text(
                                       widget.data.heureDebut.toString(),
                                       style: const TextStyle(
-                                          color: Color(0xff838282), fontSize: textminConstant),
+                                          color: Color(0xff838282),
+                                          fontSize: textminConstant),
                                     )
                                   ],
                                 ),
@@ -120,12 +122,13 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                       color: const Color(0xFF838282),
                                     ),
                                     const SizedBox(
-                                      width: 5,
+                                      width: 10,
                                     ),
                                     Text(
                                       widget.data.heureFin.toString(),
                                       style: const TextStyle(
-                                          color: Color(0xff838282), fontSize: textminConstant),
+                                          color: Color(0xff838282),
+                                          fontSize: textminConstant),
                                     )
                                   ],
                                 ),
@@ -135,20 +138,32 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                 Row(
                                   children: [
                                     SvgPicture.asset(
+                                      // "",
                                       "assets/icons/loc.svg",
                                       color: const Color(0xFF838282),
+                                      // color: const Color.fromARGB(
+                                      // 255, 255, 255, 255),
                                     ),
                                     const SizedBox(
                                       width: 5,
                                     ),
-                                    const Expanded(
+                                    Expanded(
                                       child: Text(
-                                        'Dakar plateau',
+                                        // 'Dakar plateau',
+                                        widget.data.sallePratique!.salle!
+                                            .designation
+                                            .toString(),
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             color: Color(0xff838282),
                                             fontSize: textminConstant),
                                       ),
+                                      //   Text(
+                                      //   widget.data.heureFin.toString(),
+                                      //   style: const TextStyle(
+                                      //       color: Color(0xff838282),
+                                      //       fontSize: textminConstant),
+                                      // )
                                     )
                                   ],
                                 )
@@ -161,12 +176,24 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                     width: spacingConstant,
                   ),
                   Expanded(
-                      child: ButtonFiled(
-                    text: 'Reserver',
-                    handlerPress: () {
-                      showBottomSheet(context, widget.data);
-                    },
-                  ))
+                    child: widget.data.fileAttente.toString() ==
+                            'true' // Comparaison en fonction de ton type de `fileAttente`
+                        ? ButtonFiled(
+                            text: 'Réserver',
+                            handlerPress: () {
+                              showBottomSheet(
+                                  context,
+                                  widget
+                                      .data); // Action pour afficher le BottomSheet
+                            },
+                          )
+                        : ButtonFiled(
+                            text:
+                                'Plein', // Si fileAttente n'est pas 'Disponible', afficher "Plein"
+                            handlerPress: () {}, // Pas d'action
+                            color: Colors.grey, // Couleur grise pour "Plein"
+                          ),
+                  ),
                 ],
               )
             ],
@@ -197,7 +224,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                       width: 50,
                       decoration: const BoxDecoration(
                           color: greyColor,
-                          borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
+                          borderRadius: BorderRadius.all(
+                              Radius.circular(spacingConstant))),
                     ),
                   ),
                   const SizedBox(
@@ -231,11 +259,13 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                       ),
                       Text(
                         "${programme.heureDebut}",
-                        style: const TextStyle(color: Color(0xff838282), fontSize: 12),
+                        style: const TextStyle(
+                            color: Color(0xff838282), fontSize: 12),
                       ),
                       Text(
                         " - ${programme.heureFin}",
-                        style: const TextStyle(color: Color(0xff838282), fontSize: 12),
+                        style: const TextStyle(
+                            color: Color(0xff838282), fontSize: 12),
                       )
                     ],
                   ),
@@ -269,7 +299,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                 const Text(
                                   "Durée",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "${programme.duration}",
@@ -280,7 +311,9 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                             )
                           ],
                         ),
-                        const SizedBox.square(dimension: 10,),
+                        const SizedBox.square(
+                          dimension: 10,
+                        ),
                         Row(
                           children: [
                             Container(
@@ -303,7 +336,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                 const Text(
                                   "Professeur",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "${programme.professeurPratique?.professeur?.user?.name.toString().toCapitalized}",
@@ -314,7 +348,9 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                             )
                           ],
                         ),
-                        const SizedBox.square(dimension: 10,),
+                        const SizedBox.square(
+                          dimension: 10,
+                        ),
                         Row(
                           children: [
                             Container(
@@ -337,7 +373,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                 const Text(
                                   "Salle",
                                   style: TextStyle(
-                                      fontSize: 12, fontWeight: FontWeight.bold),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 Text(
                                   "${programme.sallePratique?.salle?.designation.toString().toCapitalized}",
@@ -359,10 +396,21 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                     child: Container(
                       constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
-                      child: ButtonFiled(
-                        text: 'Réserver',
-                        handlerPress: () => ShowBottomSheetPayment(context, programme),
-                      ),
+                      child: widget.data.fileAttente.toString() == 'true'
+                          ?
+                          // Si l'état fileAttente est vrai, afficher le bouton "Réserver"
+                          ButtonFiled(
+                              text: 'Réserver',
+                              handlerPress: () =>
+                                  ShowBottomSheetPayment(context, programme),
+                            )
+                          :
+                          // Sinon, afficher un bouton gris avec "Plein"
+                          ButtonFiled(
+                              text: 'Plein',
+                              handlerPress: () {}, // Aucun action ici
+                              color: Colors.grey,
+                            ),
                     ),
                   )
                 ],
@@ -372,24 +420,28 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
         });
   }
 
-  Future<dynamic> ShowBottomSheetPayment(BuildContext context, Programme programme, {Function? customFunction}) {
-    DataBloc<List<TypePaiement>> typePaiementPushBloc = DataBloc<List<TypePaiement>>(
+  Future<dynamic> ShowBottomSheetPayment(
+      BuildContext context, Programme programme,
+      {Function? customFunction}) {
+    DataBloc<List<TypePaiement>> typePaiementPushBloc =
+        DataBloc<List<TypePaiement>>(
             (response) => TypePaiement.fromJsonList(response),
-        TypePaiement.getEndpoint(isPagination: false),
-        isGraphQl: true,
-        isPagination: false,
-        attributeToGet: TypePaiement.shrinkedAttributs());
+            TypePaiement.getEndpoint(isPagination: false),
+            isGraphQl: true,
+            isPagination: false,
+            attributeToGet: TypePaiement.shrinkedAttributs());
 
     return showModalBottomSheet(
         context: context,
         builder: (BuildContext currentContext) {
           return Scaffold(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
             body: Container(
               decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(spacingConstant), topRight: Radius.circular(spacingConstant))),
+                      topLeft: Radius.circular(spacingConstant),
+                      topRight: Radius.circular(spacingConstant))),
               child: Padding(
                 padding: const EdgeInsets.all(spacingConstant),
                 child: SingleChildScrollView(
@@ -402,7 +454,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                           width: 50,
                           decoration: const BoxDecoration(
                               color: greyColor,
-                              borderRadius: BorderRadius.all(Radius.circular(spacingConstant))),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(spacingConstant))),
                         ),
                       ),
                       const SizedBox(
@@ -420,24 +473,19 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                       BlocBasedWidget<List<TypePaiement>>(
                         customDataBloc: typePaiementPushBloc,
                         // filter: currentFilter,
+                        filter: const {'showatwebsite': 'true'},
                         useInfiniteScroller: true,
                         customWidget: (state) {
                           List<TypePaiement> typePaiements = state.data;
-                          return
-                            Column(
-                                children:  [
-                                  const SizedBox(
-                                    height: spacingConstant,
-                                  ),
-                                  Wrap(
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: [
-                                        ...buildTypePaiementList(currentContext, typePaiements, programme),
-                                      ]
-                                  ),
-                                ]
-                            );
+                          return Column(children: [
+                            const SizedBox(
+                              height: spacingConstant,
+                            ),
+                            Wrap(spacing: 10, runSpacing: 10, children: [
+                              ...buildTypePaiementList(
+                                  currentContext, typePaiements, programme),
+                            ]),
+                          ]);
                         },
                       )
                     ],
@@ -449,76 +497,77 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
         });
   }
 
-  List<Widget> buildTypePaiementList(BuildContext parentContext, List<TypePaiement> typePaiements, Programme programme){
+  List<Widget> buildTypePaiementList(BuildContext parentContext,
+      List<TypePaiement> typePaiements, Programme programme) {
     late PostApiBloc reservationPostBloc;
     reservationPostBloc = PostApiBloc();
 
     reserverCours({required Map<String, dynamic> parameters}) {
-      reservationPostBloc.add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
+      reservationPostBloc.add(
+          PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
     }
 
     return [
       ...typePaiements.map((toElement) {
         return BlocBuilder<AuthenticationBloc<Utilisateur>,
-            AuthenticationState<Utilisateur>>(
-            builder: (context, authState) {
-              AuthenticationStatus currentStatus = authState.status;
-              Utilisateur? user = authState.user;
-              switch (currentStatus) {
-                case AuthenticationStatus.authenticated:
-                  return BlocConsumer(
-                    bloc: reservationPostBloc,
-                    listener: (context, state) {
-                      if (state is PostApiSuccess) {
-                        print("MESSAGE RESE ${state.message} ");
-                        ScaffoldMessenger.of(parentContext).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "${state.message}",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            backgroundColor: Colors.green[400],
-                          ),
-                        );
-                      }
-                      if (state is PostApiFailure) {
-                        print("MESSAGE RESE ${state.message} ");
-                        ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                        ScaffoldMessenger.of(parentContext).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "${state.message}",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                    },
-                    builder: (BuildContext context, postBlocState) {
-                      return AnimatedGestureButton(
-                        animate: postBlocState is PostApiProcessing,
-                        child: GestureDetector(
-                            onTap: (){
-                              Map<String, dynamic> parameters = {
-                                "programme": programme.id,
-                                "client": user?.id,
-                                "from_site": true,
-                                "mode_paiement_id": toElement.id,
-                              };
-                              reserverCours(parameters: parameters);
-                            },
-                            child: TypePaiementCard(typePaiement: toElement)
+            AuthenticationState<Utilisateur>>(builder: (context, authState) {
+          AuthenticationStatus currentStatus = authState.status;
+          Utilisateur? user = authState.user;
+          switch (currentStatus) {
+            case AuthenticationStatus.authenticated:
+              return BlocConsumer(
+                bloc: reservationPostBloc,
+                listener: (context, state) {
+                  if (state is PostApiSuccess) {
+                    print("MESSAGE RESE ${state.message} ");
+                    //Navigator.of(parentContext).pop();
+                    ScaffoldMessenger.of(parentContext).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${state.message}",
+                          style: const TextStyle(color: Colors.white),
                         ),
-                      );
-                    },
+                        backgroundColor: Colors.green[400],
+                      ),
+                    );
+                  }
+                  if (state is PostApiFailure) {
+                    print("MESSAGE RESE ${state.message} ");
+                    ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(parentContext).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${state.message}",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                builder: (BuildContext context, postBlocState) {
+                  return AnimatedGestureButton(
+                    animate: postBlocState is PostApiProcessing,
+                    child: GestureDetector(
+                        onTap: () {
+                          Map<String, dynamic> parameters = {
+                            "programme": programme.id,
+                            "client": user?.id,
+                            "from_site": true,
+                            "mode_paiement_id": toElement.id,
+                          };
+                          reserverCours(parameters: parameters);
+                        },
+                        child: TypePaiementCard(typePaiement: toElement)),
                   );
-                case AuthenticationStatus.unknown:
-                case AuthenticationStatus.unauthenticated:
-                case AuthenticationStatus.failure:
-                  return const SizedBox();
-              }
-            });
+                },
+              );
+            case AuthenticationStatus.unknown:
+            case AuthenticationStatus.unauthenticated:
+            case AuthenticationStatus.failure:
+              return const SizedBox();
+          }
+        });
       }).toList(),
     ];
   }

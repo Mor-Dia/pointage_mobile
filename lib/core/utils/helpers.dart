@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -9,11 +8,9 @@ import 'package:yogivida_mobile/services/api/actions/postData.dart';
 import '../../constant.dart';
 import '../global.dart';
 
-
 class Helpers {
-
-  static String firstLetterCapitalize(String? text){
-    if(text == null || text == ""){
+  static String firstLetterCapitalize(String? text) {
+    if (text == null || text == "") {
       return "";
     } else {
       return "${text[0].toUpperCase()}${text.substring(1)}";
@@ -48,24 +45,27 @@ class Helpers {
         : '${formattedInteger.toString()}.${decimalPart}';
   }
 
-  static showSnackBar(BuildContext context, {bool isError = false, String? message}){
+  static showSnackBar(BuildContext context,
+      {bool isError = false, String? message}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          message??"",
+          message ?? "",
           style: TextStyle(
             color: isError ? Colors.white : Colors.black,
           ),
         ),
-        backgroundColor: isError ? Colors.red : Theme.of(context).colorScheme.primaryContainer,
+        backgroundColor: isError
+            ? Colors.red
+            : Theme.of(context).colorScheme.primaryContainer,
       ),
     );
   }
 
-  static saveDataInSharedPreferences(String key, dynamic data) async{
+  static saveDataInSharedPreferences(String key, dynamic data) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    try{
-      switch(data.runtimeType){
+    try {
+      switch (data.runtimeType) {
         case String:
           if (kDebugMode) {
             print("SAVING STRING DATA $data");
@@ -91,17 +91,17 @@ class Helpers {
         print("SAVING NONE DATA $data");
       }
       return true;
-    } catch(e){
+    } catch (e) {
       return false;
     }
   }
 
-  static removeDataFromSharedPreferences(String key) async{
+  static removeDataFromSharedPreferences(String key) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    try{
+    try {
       await prefs.remove(key);
       return true;
-    } catch(e){
+    } catch (e) {
       return false;
     }
   }
@@ -111,8 +111,8 @@ class Helpers {
     if (kDebugMode) {
       print("DATA TYPE TO RETRIEVE $dataType");
     }
-    try{
-      switch(dataType){
+    try {
+      switch (dataType) {
         case "String":
           return prefs.getString(key);
         case "bool":
@@ -124,11 +124,10 @@ class Helpers {
         default:
           return prefs.getString(key);
       }
-    } catch(e){
-      return ;
+    } catch (e) {
+      return;
     }
   }
-
 
   static initFcm() async {
     FirebaseMessaging fcm = firebaseMessagingInstance();
@@ -163,18 +162,23 @@ class Helpers {
 
   static Future<String> getBaseUrl() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    print("from firebase mode debug " + prefs.getString("modeDebug").toString());
+    print(
+        "from firebase mode debug " + prefs.getString("modeDebug").toString());
     if (!prefs.containsKey("modeDebug")) {
       prefs.setString("selectedBase", "prod");
     }
     String selectedBase = prefs.getString("selectedBase").toString();
-    CollectionReference linkRef = FirebaseFirestore.instance.collection(selectedBase);
+    CollectionReference linkRef =
+        FirebaseFirestore.instance.collection(selectedBase);
 
     String? baseUrl;
     try {
       dynamic linkDoc = await linkRef.doc("liens").get();
       baseUrl = linkDoc.data()["baseUrl"];
-      print("link from firebase " + selectedBase.toString() + " " + baseUrl.toString());
+      print("link from firebase " +
+          selectedBase.toString() +
+          " " +
+          baseUrl.toString());
     } catch (exception, stackTrace) {
       print("NETWORK ERROR WITH CONSOLE B " + exception.toString());
     }
@@ -199,30 +203,29 @@ class Helpers {
     }
   }
 
-  static setFCMTokenToServer () async {
+  static setFCMTokenToServer() async {
     print("SET FCM TOKEN ");
-    FirebaseMessaging fcm = firebaseMessagingInstance();
-    await fcm.setAutoInitEnabled(true);
-    String? fcmToken = await fcm.getToken();
-    if(fcmToken != null){
-      print("SET FCM TOKEN 2");
-      postApiData("setfcmtoken", {"fcm_token": fcmToken});
-    }
+    // FirebaseMessaging fcm = firebaseMessagingInstance();
+    // await fcm.setAutoInitEnabled(true);
+    // String? fcmToken = await fcm.getToken();
+    // if(fcmToken != null){
+    //   print("SET FCM TOKEN 2");
+    //   postApiData("setfcmtoken", {"fcm_token": fcmToken});
+    // }
   }
 
   static double getGridElementWidth(context, extraSpace) {
     var number = 2;
     double currentSize = MediaQuery.of(context).size.width;
-    if(currentSize > 600 && currentSize <= 840){
+    if (currentSize > 600 && currentSize <= 840) {
       number = 3;
-    } else if (currentSize > 840 && currentSize <= 1200){
+    } else if (currentSize > 840 && currentSize <= 1200) {
       number = 4;
-    } else if (currentSize > 1200 && currentSize <= 1800){
+    } else if (currentSize > 1200 && currentSize <= 1800) {
       number = 4;
-    } else if (currentSize > 1800){
+    } else if (currentSize > 1800) {
       number = 6;
     }
     return (currentSize / number) - extraSpace;
   }
-
 }

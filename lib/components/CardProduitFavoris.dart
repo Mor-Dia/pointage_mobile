@@ -21,12 +21,8 @@ class CardProduitFavoris extends StatefulWidget {
   final Produit data;
   final Function(Map<String, dynamic>)? handlePress;
   final Function? updateFunction;
-  const CardProduitFavoris({
-    super.key,
-    required this.data,
-    this.handlePress,
-    this.updateFunction
-  });
+  const CardProduitFavoris(
+      {super.key, required this.data, this.handlePress, this.updateFunction});
 
   @override
   State<CardProduitFavoris> createState() => _CardProduitFavorisState();
@@ -52,7 +48,7 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
         .add(PostApiMakeCall(endpoint: 'favoris', parameters: parameters));
   }
 
-  changeStateFavoris(){
+  changeStateFavoris() {
     setState(() {
       liked = !liked!;
     });
@@ -123,21 +119,23 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
                       listener: (context, state) {
                         if (state is PostApiSuccess) {
                           changeStateFavoris();
-                           ScaffoldMessenger.of(context).showSnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                              liked!?  'Ajouter au favoris' : 'Retirer des favoris',
+                                liked!
+                                    ? 'Ajouter au favoris'
+                                    : 'Retirer des favoris',
                                 style: TextStyle(color: Colors.white),
                               ),
                               backgroundColor: Colors.green[400],
                             ),
                           );
-                          if(widget.updateFunction != null){
+                          if (widget.updateFunction != null) {
                             widget.updateFunction!();
                           }
                         }
                         if (state is PostApiProcessing) {
-                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
                         }
                       },
                       builder: (BuildContext context, postBlocState) {
@@ -243,7 +241,7 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
             child: Row(
               children: widget.data.produitTailles?.map((Taille toElement) {
                     int index = widget.data.produitTailles!.indexOf(toElement);
-                    selectedTaille = toElement;
+                    // selectedTaille = toElement;
                     return Row(
                       children: [
                         GestureDetector(
@@ -285,15 +283,47 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
           ),
           const SizedBox(height: 10),
           GestureDetector(
+            // onTap: () {
+            //   print(
+            //       "ici le widget handlePress ${widget.handlePress} -- ${widget.data}");
+            //   if (widget.handlePress != null) {
+            //     widget.handlePress!({
+            //       'client_id': null,
+            //       'produit_id': widget.data.id,
+            //       'quantite': qte,
+            //       'taille_id': selectedTaille != null
+            //           ? selectedTaille?.taille_id
+            //           : widget.data.produitTailles?.first.taille_id ?? 0,
+            //       'token': null
+            //     });
+            //   }
+            // },
             onTap: () {
-              if (widget.handlePress != null) {
-                widget.handlePress!({
-                  'client_id': null,
-                  'produit_id': widget.data.id,
-                  'quantite': qte,
-                  'taille_id': selectedTaille?.taille_id,
-                  'token': null
-                });
+              print("taille selectedTaille: $selectedTaille");
+
+              var authBloc = context.read<AuthenticationBloc<Utilisateur>>();
+              Utilisateur? user = authBloc.state.user;
+
+              // Vérifie si l'utilisateur est connecté
+              if (user != null) {
+                print(widget.data);
+                String? token = user.token;
+                int? client_id = user.id;
+                int tailleId = widget.data.produitTailles?.first.taille_id ?? 0;
+                print("Utilisateur papa $tailleId $token");
+                if (widget.handlePress != null) {
+                  widget.handlePress!({
+                    'client_id': client_id,
+                    'produit_id': widget.data.id,
+                    'quantite': qte,
+                    'taille_id': selectedTaille != null
+                        ? selectedTaille?.taille_id
+                        : widget.data.produitTailles?.first.taille_id ?? 0,
+                    'token': token, // Passer le token de l'utilisateur
+                  });
+                }
+              } else {
+                print("Utilisateur non connecté 22");
               }
             },
             child: Container(

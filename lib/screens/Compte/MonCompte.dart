@@ -34,7 +34,6 @@ class MonCompte extends StatefulWidget {
 }
 
 class _MonCompteState extends State<MonCompte> {
-
   late DataBloc<List<Utilisateur>> utilisateurBloc;
   late PostApiBloc accountDeletionPostBloc;
 
@@ -43,7 +42,7 @@ class _MonCompteState extends State<MonCompte> {
   void initState() {
     accountDeletionPostBloc = PostApiBloc();
     utilisateurBloc = DataBloc<List<Utilisateur>>(
-            (response) => Utilisateur.fromJsonList(response),
+        (response) => Utilisateur.fromJsonList(response),
         Utilisateur.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
@@ -53,7 +52,8 @@ class _MonCompteState extends State<MonCompte> {
   }
 
   Future logout() async {
-    AuthenticationRepository authenticationRepository = RepositoryProvider.of<AuthenticationRepository>(context);
+    AuthenticationRepository authenticationRepository =
+        RepositoryProvider.of<AuthenticationRepository>(context);
     await authenticationRepository.logOut().then((value) {
       if (kDebugMode) {
         print("USER LOGGED OUT");
@@ -66,7 +66,8 @@ class _MonCompteState extends State<MonCompte> {
   }
 
   deleteAccount() {
-    AuthenticationBloc currentAuthBloc = BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
+    AuthenticationBloc currentAuthBloc =
+        BlocProvider.of<AuthenticationBloc<Utilisateur>>(context);
     AuthenticationStatus currentStatus = currentAuthBloc.state.status;
     switch (currentStatus) {
       case AuthenticationStatus.unknown:
@@ -77,17 +78,18 @@ class _MonCompteState extends State<MonCompte> {
         Utilisateur currentUser = currentAuthBloc.state.user;
         int? currentUserId = currentUser.id;
         String endpoint = "clientfrontdel/${currentUserId}";
-        accountDeletionPostBloc.add(PostApiMakeCall(endpoint: endpoint, parameters: {}, isDeletion: true));
+        accountDeletionPostBloc.add(PostApiMakeCall(
+            endpoint: endpoint, parameters: {}, isDeletion: true));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return BlocConsumer<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+    return BlocConsumer<AuthenticationBloc<Utilisateur>,
+        AuthenticationState<Utilisateur>>(
       listener: (context, state) {
         AuthenticationStatus currentStatus = state.status;
-        switch(currentStatus){
+        switch (currentStatus) {
           case AuthenticationStatus.authenticated:
             break;
           case AuthenticationStatus.unknown:
@@ -98,22 +100,23 @@ class _MonCompteState extends State<MonCompte> {
             }
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
-                    (route) => false
-            );
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const LoginScreen(),
+                ),
+                (route) => false);
         }
       },
       builder: (context, state) {
         AuthenticationStatus currentStatus = state.status;
         Utilisateur? currentUser = state.user;
-        switch(currentStatus){
+        switch (currentStatus) {
           case AuthenticationStatus.authenticated:
             return Scaffold(
               appBar: AppBar(
                 backgroundColor: const Color(0xffffffff),
                 elevation: 0,
                 automaticallyImplyLeading:
-                false, // Empêche l'affichage du bouton back
+                    false, // Empêche l'affichage du bouton back
                 toolbarHeight: 60,
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -130,8 +133,10 @@ class _MonCompteState extends State<MonCompte> {
                       clipBehavior: Clip.none,
                       children: <Widget>[
                         GestureDetector(
-                          onTap: () => Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => const Update())),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Update())),
                           child: Container(
                             height: 50,
                             width: 45,
@@ -174,7 +179,8 @@ class _MonCompteState extends State<MonCompte> {
                   ),
                   const SizedBox(height: spacingConstant),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: spacingConstant),
                     child: Row(
                       children: [
                         Expanded(
@@ -183,7 +189,8 @@ class _MonCompteState extends State<MonCompte> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const LigneCreditPage()),
+                                    builder: (context) =>
+                                        const LigneCreditPage()),
                               )
                             },
                             child: Container(
@@ -236,7 +243,8 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant, vertical: spacingConstant),
+                                horizontal: spacingConstant,
+                                vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset("assets/icons/historique.svg"),
@@ -262,7 +270,8 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant, vertical: spacingConstant),
+                                horizontal: spacingConstant,
+                                vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -291,7 +300,8 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant, vertical: spacingConstant),
+                                horizontal: spacingConstant,
+                                vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -312,18 +322,20 @@ class _MonCompteState extends State<MonCompte> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const TypeNotificationPushsPage()),
+                              builder: (context) =>
+                                  const TypeNotificationPushsPage()),
                         ),
                         child: Container(
                           decoration: const BoxDecoration(
-                            border: Border(top: BorderSide(width: 1, color: greyColor))
-                          ),
+                              border: Border(
+                                  top: BorderSide(width: 1, color: greyColor))),
                           child: const Padding(
                             padding: EdgeInsets.symmetric(
-                                horizontal: spacingConstant, vertical: spacingConstant),
+                                horizontal: spacingConstant,
+                                vertical: spacingConstant),
                             child: Row(
                               children: [
-                                Icon(Icons.settings),
+                                Icon(Icons.settings, color: primaryColor),
                                 SizedBox(width: 10),
                                 Text(
                                   "Paramètres de notification",
@@ -338,7 +350,8 @@ class _MonCompteState extends State<MonCompte> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const LocalisationContact()),
+                              builder: (context) =>
+                                  const LocalisationContact()),
                         ),
                         child: Container(
                           decoration: const BoxDecoration(
@@ -346,7 +359,8 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant, vertical: spacingConstant),
+                                horizontal: spacingConstant,
+                                vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -371,7 +385,8 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant, vertical: spacingConstant),
+                                horizontal: spacingConstant,
+                                vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -401,7 +416,8 @@ class _MonCompteState extends State<MonCompte> {
                                   top: BorderSide(width: 1, color: greyColor))),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant, vertical: spacingConstant),
+                                horizontal: spacingConstant,
+                                vertical: spacingConstant),
                             child: Row(
                               children: [
                                 SvgPicture.asset(
@@ -411,8 +427,8 @@ class _MonCompteState extends State<MonCompte> {
                                 const SizedBox(width: 10),
                                 const Text(
                                   "Supprimer le compte",
-                                  style:
-                                  TextStyle(fontSize: 16, color: Colors.red),
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.red),
                                 )
                               ],
                             ),
@@ -433,8 +449,7 @@ class _MonCompteState extends State<MonCompte> {
     );
   }
 
-
-  showAccountDeletionDialog(BuildContext context){
+  showAccountDeletionDialog(BuildContext context) {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -449,19 +464,17 @@ class _MonCompteState extends State<MonCompte> {
                     'Suppression de votre compte',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      color: Colors.red,
-                      fontSize: 20
-                    ),
+                        fontWeight: FontWeight.w900,
+                        color: Colors.red,
+                        fontSize: 20),
                   ),
                   const SizedBox.square(dimension: 20),
                   const Center(
                       child: Text(
-                        'Etes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(),
-                      )
-                  ),
+                    'Etes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(),
+                  )),
                   const SizedBox.square(dimension: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -494,17 +507,18 @@ class _MonCompteState extends State<MonCompte> {
                             child: GestureDetector(
                               child: TextButton(
                                 style: const ButtonStyle(
-                                    backgroundColor: WidgetStatePropertyAll<Color>(Colors.transparent),
-                                    side: WidgetStatePropertyAll<BorderSide>(BorderSide(color: Colors.red, width: 1))
-                                ),
+                                    backgroundColor:
+                                        WidgetStatePropertyAll<Color>(
+                                            Colors.transparent),
+                                    side: WidgetStatePropertyAll<BorderSide>(
+                                        BorderSide(
+                                            color: Colors.red, width: 1))),
                                 onPressed: () {
                                   deleteAccount();
                                 },
                                 child: const Text(
                                   'OUI',
-                                  style: TextStyle(
-                                      color: primaryColor
-                                  ),
+                                  style: TextStyle(color: primaryColor),
                                 ),
                               ),
                             ),
@@ -514,16 +528,14 @@ class _MonCompteState extends State<MonCompte> {
                       const SizedBox.square(dimension: 20),
                       TextButton(
                         style: const ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll<Color>(primaryColor)
-                        ),
+                            backgroundColor:
+                                WidgetStatePropertyAll<Color>(primaryColor)),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
                         child: const Text(
                           'NON',
-                          style: TextStyle(
-                            color: Colors.white
-                          ),
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
                     ],
