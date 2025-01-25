@@ -163,11 +163,34 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
-              child: ButtonFiled(
-                text: 'Approvisionner le compte',
-                handlerPress: () => {ShowBottomSheetPayment(context)},
+              child: GestureDetector(
+                onTap: () => ShowBottomSheetPayment(context),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(8.0), // Coins arrondis
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Approvisionner le compte',
+                      style: TextStyle(
+                        color: Colors.white, // Couleur du texte
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
+
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
+            //   child: ButtonFiled(
+            //     text: 'Approvisionner le compte',
+            //     handlerPress: () => {ShowBottomSheetPayment(context)},
+            //   ),
+            // ),
             const SizedBox(
               height: spacingConstant,
             ),
@@ -210,6 +233,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
 
   Future<dynamic> ShowBottomSheetPayment(BuildContext context,
       {Function? customFunction}) {
+    print("ShowBottomSheetPayment");
     DataBloc<List<TypePaiement>> typePaiementPushBloc =
         DataBloc<List<TypePaiement>>(
             (response) => TypePaiement.fromJsonList(response),

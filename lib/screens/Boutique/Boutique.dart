@@ -141,7 +141,8 @@ class _BoutiqueState extends State<Boutique> {
 
   void addToPanier(Map<String, dynamic> arg) async {
     arg['token'] = token;
-    arg['client_id'] = userId;
+    // arg['client_id'] = userId;
+    // arg['client_id'] = 11;
 
     // arg['token'] = int.tryParse(userId ?? '0') ?? 0;
     // arg['client_id'] = int.tryParse(userId ?? '0') ?? 0;

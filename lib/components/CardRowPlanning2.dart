@@ -236,6 +236,7 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                             animate: postBlocState is PostApiProcessing,
                             child: ButtonFiled(
                               text: "Annuler",
+                              color: Colors.red,
                               handlerPress: () {
                                 cancelReservation(parameters: {});
                               },

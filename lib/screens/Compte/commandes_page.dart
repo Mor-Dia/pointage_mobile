@@ -21,14 +21,13 @@ class CommandesPage extends StatefulWidget {
 }
 
 class _CommandesPageState extends State<CommandesPage> {
-
   late DataBloc<List<Commande>> commandeBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
 
   @override
   void initState() {
     commandeBloc = DataBloc<List<Commande>>(
-            (response) => Commande.fromJsonList(response),
+        (response) => Commande.fromJsonList(response),
         Commande.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
@@ -40,6 +39,7 @@ class _CommandesPageState extends State<CommandesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xffffffff),
         elevation: 0,
@@ -73,40 +73,56 @@ class _CommandesPageState extends State<CommandesPage> {
         ),
       ),
       body: Container(
-        color: Colors.white,
-        child: BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
-            builder: (context, authState) {
-              AuthenticationStatus currentStatus = authState.status;
-              int? clientId = authState.user?.id;
-              switch(currentStatus){
-                case AuthenticationStatus.authenticated:
-                  return BlocBasedWidget<List<Commande>>(
-                    customDataBloc: commandeBloc,
-                    filter: {...globalFilter, "client_id":clientId  },
-                    useInfiniteScroller: true,
-                    customWidget: (state) {
-                      List<Commande> commandes = state.data;
-                      return Column(
-                          children:  [
-                            const SizedBox(
-                              height: spacingConstant,
+          color: Colors.white,
+          child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+              AuthenticationState<Utilisateur>>(builder: (context, authState) {
+            AuthenticationStatus currentStatus = authState.status;
+            int? clientId = authState.user?.id;
+            switch (currentStatus) {
+              case AuthenticationStatus.authenticated:
+                return BlocBasedWidget<List<Commande>>(
+                  customDataBloc: commandeBloc,
+                  filter: {...globalFilter, "client_id": clientId},
+                  useInfiniteScroller: true,
+                  customWidget: (state) {
+                    List<Commande> commandes = state.data;
+
+                    if (commandes == null || commandes.isEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Center(
+                          // Centre le texte horizontalement
+                          child: Text(
+                            "Vous n'avez aucune commande",
+                            style: GoogleFonts.arimo(
+                              color: primaryColor,
+                              fontSize: titreConstant,
+                              fontWeight: FontWeight.bold,
                             ),
-                            ...commandes
-                                .map((toElement) => CardCommande(commande: toElement,))
-                                .toList(),
-                          ]
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       );
-                    },
-                  );
-                case AuthenticationStatus.unknown:
-                case AuthenticationStatus.unauthenticated:
-                case AuthenticationStatus.failure:
-                  return const Center(child: PleaseLoginWidget());
-              }
+                    }
+
+                    return Column(children: [
+                      const SizedBox(
+                        height: spacingConstant,
+                      ),
+                      ...commandes
+                          .map((toElement) => CardCommande(
+                                commande: toElement,
+                              ))
+                          .toList(),
+                    ]);
+                  },
+                );
+              case AuthenticationStatus.unknown:
+              case AuthenticationStatus.unauthenticated:
+              case AuthenticationStatus.failure:
+                return const Center(child: PleaseLoginWidget());
             }
-        )
-      ),
+          })),
     );
   }
 }
-

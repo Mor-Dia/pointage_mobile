@@ -16,19 +16,20 @@ class Utilisateur with _$Utilisateur {
     String? nom_complet,
     String? telephone,
     dynamic ca_souscription,
-    @JsonKey(name: "current_credit")dynamic solde,
-    @JsonKey(name: "type_personne_id")int? typePersonne,
+    @JsonKey(name: "current_credit") dynamic solde,
+    @JsonKey(name: "type_personne_id") int? typePersonne,
   }) = _Utilisateur;
 
-  factory Utilisateur.fromJson(Map<String, dynamic> json)  => _$UtilisateurFromJson(json);
+  factory Utilisateur.fromJson(Map<String, dynamic> json) =>
+      _$UtilisateurFromJson(json);
 
-  static fromJsonList(List <dynamic>json){
+  static fromJsonList(List<dynamic> json) {
     List<Utilisateur> data = [];
-    try{
+    try {
       for (var result in json) {
         data.add(Utilisateur.fromJson(result as Map<String, dynamic>));
       }
-    } catch(error, stacktrace){
+    } catch (error, stacktrace) {
       if (kDebugMode) {
         print("ERROR WHILE TRANSFORMING $error $stacktrace");
       }
@@ -36,12 +37,11 @@ class Utilisateur with _$Utilisateur {
     return data;
   }
 
-  static shrinkedAttributs () {
+  static shrinkedAttributs() {
     return "id,nom_complet,nom,prenom,type_personne_id,email,image,telephone,nb_souscription,nb_vente,nb_reservation,ca_bon,created_at_fr,current_credit";
   }
 
   static String getEndpoint({bool isPagination = true}) {
     return isPagination ? "clientspaginated" : "clients";
   }
-
 }

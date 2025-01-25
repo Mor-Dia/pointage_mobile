@@ -18,6 +18,7 @@ import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/produit_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
+import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
 import '../../core/models/user_model.dart';
 import '../../core/utils/helpers.dart';
@@ -145,6 +146,15 @@ class ScrollableTabPage2 extends StatelessWidget {
     data.add(FetchDataEvent(filter: newFilter));
   }
 
+  void addToPanier(BuildContext context, Map<String, dynamic> arg) async {
+    arg['token'] = token;
+    // arg['client_id'] = null;
+
+    context
+        .read<PanierBlocBloc>()
+        .add(PanierBlocEvent.postPanier(body: arg, token: token ?? ''));
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -163,12 +173,17 @@ class ScrollableTabPage2 extends StatelessWidget {
                   runSpacing: 10,
                   children: produits
                       .map((Produit toElement) => SizedBox(
-                        width: Helpers.getGridElementWidth(context, 25),
-                        child: CardProduitFavoris(
-                                    data: toElement,
-                                    updateFunction: () =>
-                                        updateList({"token": token, 'count': 8})),
-                              ))
+                            width: Helpers.getGridElementWidth(context, 25),
+                            child: CardProduitFavoris(
+                                data: toElement,
+                                handlePress: (value) {
+                                  toElement.currentQuantity! >= 1
+                                      ? addToPanier(context, value)
+                                      : null;
+                                },
+                                updateFunction: () =>
+                                    updateList({"token": token, 'count': 8})),
+                          ))
                       .toList(),
                 )),
           );

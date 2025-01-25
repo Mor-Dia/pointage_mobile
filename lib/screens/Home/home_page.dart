@@ -778,7 +778,6 @@ class _HomePageState extends State<HomePage> {
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
                       child: programme.fileAttente.toString() == 'true'
                           ?
-                          // Si l'état fileAttente est vrai, afficher le bouton "Réserver"
                           ButtonFiled(
                               text: 'Réserver',
                               handlerPress: () =>
