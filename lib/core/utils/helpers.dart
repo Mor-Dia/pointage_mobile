@@ -19,11 +19,12 @@ class Helpers {
 
   static String formatNumber(dynamic number) {
     if (number is! int && number is! double) {
-      throw ArgumentError('Input must be an int or double.');
+      // throw ArgumentError('Input must be an int or double.');
     }
 
     // Convert the number to a string
-    String numberString = number.toStringAsFixed(number is double ? 2 : 0);
+    String numberString = number.toString();
+    // String numberString = number.toStringAsFixed(number is double ? 2 : 0);
 
     // Split into integer and decimal parts
     List<String> parts = numberString.split('.');

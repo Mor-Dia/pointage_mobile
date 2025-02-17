@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
@@ -45,6 +46,16 @@ Color getDisplayColor(className) {
 }
 
 const padding_constant = spacingConstant;
+
+// Fonction pour ouvrir le lien
+void _openLink(String link) async {
+  final Uri url = Uri.parse(link);
+  if (await canLaunchUrl(url)) {
+    await launch(url.toString());
+  } else {
+    print("Could not launch the link: $link");
+  }
+}
 
 class UserClass {
   final dynamic data;

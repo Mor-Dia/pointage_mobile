@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
@@ -777,8 +778,7 @@ class _HomePageState extends State<HomePage> {
                       constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
                       child: programme.fileAttente.toString() == 'true'
-                          ?
-                          ButtonFiled(
+                          ? ButtonFiled(
                               text: 'Réserver',
                               handlerPress: () =>
                                   ShowBottomSheetPayment(context, programme),
@@ -895,11 +895,14 @@ List<Widget> buildTypePaiementList(BuildContext parentContext,
           AuthenticationState<Utilisateur>>(builder: (context, authState) {
         AuthenticationStatus currentStatus = authState.status;
         Utilisateur? user = authState.user;
+
         switch (currentStatus) {
           case AuthenticationStatus.authenticated:
             return BlocConsumer(
               bloc: reservationPostBloc,
               listener: (context, state) {
+                print("NEW STATE retour ici ${context} ${state.toString()}");
+
                 if (state is PostApiSuccess) {
                   ScaffoldMessenger.of(parentContext).showSnackBar(
                     SnackBar(
@@ -910,6 +913,10 @@ List<Widget> buildTypePaiementList(BuildContext parentContext,
                       backgroundColor: Colors.green[400],
                     ),
                   );
+                  // Vérifier si l'URL est présente dans le state et l'ouvrir
+                  // if (state['link'] != null && state['link'].isNotEmpty) {
+                  //   _openLink(state.link);
+                  // }
                 }
                 if (state is PostApiFailure) {
                   print("NEW STATE ${state.message}");
