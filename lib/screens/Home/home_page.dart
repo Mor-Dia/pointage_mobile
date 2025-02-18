@@ -307,72 +307,65 @@ class _HomePageState extends State<HomePage> {
                 customWidget: (state) {
                   List<Banniere> bannieres = state.data;
 
-                  if (bannieres.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
+                  if (bannieres.isEmpty) return const SizedBox.shrink();
 
-                  print("bannieres =>> ${bannieres}");
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: spacingConstant, right: spacingConstant),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: spacingConstant),
                         child: Text(
                           "Évènement(s) à venir...",
                           style: GoogleFonts.montserrat(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.045,
-                              fontWeight: FontWeight.bold),
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        height: spacingConstant,
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ...bannieres
-                                .map((toElement) => Row(
-                                      children: [
-                                        const SizedBox(
-                                          width: spacingConstant,
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .70,
-                                          // width: double.infinity,
-                                          height: 200,
-                                          clipBehavior: Clip.antiAlias,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          child: CustomCachedNetworkImage(
-                                            imageUrl: toElement.image ?? '',
-                                            fallBackAsset:
-                                                'assets/images/home.png',
-                                          ),
-                                        ),
-                                        // CustomCachedNetworkImage(
-                                        //     imageUrl: toElement.image ?? '',
-                                        //     fallBackAsset:
-                                        //         'assets/images/home.png'),
-                                      ],
-                                    ))
-                                .toList(),
-                            const SizedBox(
-                              width: spacingConstant,
+                      const SizedBox(height: spacingConstant),
+
+                      bannieres.length == 1
+                          ? Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal:
+                                      spacingConstant), // Ajout du padding
+                              width: double.infinity,
+                              height: 200,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: CustomCachedNetworkImage(
+                                imageUrl: bannieres[0].image ?? '',
+                                // fallBackAsset: 'assets/images/home.png',
+                                // fit: BoxFit.cover,
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (var toElement in bannieres) ...[
+                                    const SizedBox(width: spacingConstant),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .70,
+                                      height: 200,
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      child: CustomCachedNetworkImage(
+                                        imageUrl: toElement.image ?? '',
+                                        // fallBackAsset: 'assets/images/home.png',
+                                      ),
+                                    ),
+                                  ],
+                                  const SizedBox(width: spacingConstant),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        width: spacingConstant,
-                      ),
+                      const SizedBox(height: spacingConstant),
                     ],
                   );
                 },
