@@ -28,6 +28,9 @@ class CardRowPlanning extends StatefulWidget {
 class _CardRowPlanningState extends State<CardRowPlanning> {
   @override
   Widget build(BuildContext context) {
+    Utilisateur? user =
+        context.read<AuthenticationBloc<Utilisateur>>().state.user;
+
     return Container(
       decoration: const BoxDecoration(
           border: Border(top: BorderSide(width: 1, color: greyColor))),
@@ -181,6 +184,20 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                         ? ButtonFiled(
                             text: 'Réserver',
                             handlerPress: () {
+                              if (user == null) {
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Veuillez vous connecter !",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return; // Arrêter l'exécution si l'utilisateur n'est pas connecté
+                              }
                               showBottomSheet(
                                   context,
                                   widget

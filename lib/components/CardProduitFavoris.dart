@@ -283,21 +283,6 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
           ),
           const SizedBox(height: 10),
           GestureDetector(
-            // onTap: () {
-            //   print(
-            //       "ici le widget handlePress ${widget.handlePress} -- ${widget.data}");
-            //   if (widget.handlePress != null) {
-            //     widget.handlePress!({
-            //       'client_id': null,
-            //       'produit_id': widget.data.id,
-            //       'quantite': qte,
-            //       'taille_id': selectedTaille != null
-            //           ? selectedTaille?.taille_id
-            //           : widget.data.produitTailles?.first.taille_id ?? 0,
-            //       'token': null
-            //     });
-            //   }
-            // },
             onTap: () {
               print("taille selectedTaille: $selectedTaille");
 
@@ -324,6 +309,16 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
                 }
               } else {
                 print("Utilisateur non connecté 22");
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Veuillez vous connectez !",
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: primaryColor,
+                  ),
+                );
               }
             },
             child: Container(

@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print("DATA TO SUBMIT $isFormValid ");
     }
 
-    if(isFormValid){
+    if (isFormValid) {
       List keys = ['login', 'password'];
 
       Map<String, dynamic> data = {}; // Crée un Map vide
@@ -130,19 +130,20 @@ class _LoginScreenState extends State<LoginScreen> {
         print("DATA TO SUBMIT $data ");
       }
 
-      AuthenticationRepository authenticationRepository = RepositoryProvider.of<AuthenticationRepository>(context);
+      AuthenticationRepository authenticationRepository =
+          RepositoryProvider.of<AuthenticationRepository>(context);
       await authenticationRepository.logIn(data).then((value) {
         setState(() {
           isLoading = false;
         });
-        if(value['status'] == 0) {
+        if (value['status'] == 0) {
           if (kDebugMode) {
             print("ERRORSSS ${value['errors']}");
           }
           setState(() {
-            currentErrorMessage = value['errors']??"";
+            currentErrorMessage = value['errors'] ?? "";
           });
-        } else if(value['status'] == 1) {
+        } else if (value['status'] == 1) {
           setState(() {
             currentErrorMessage = "";
           });
@@ -160,18 +161,16 @@ class _LoginScreenState extends State<LoginScreen> {
           currentErrorMessage = "Une erreur est survenue";
         });
       });
-
-      
     }
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return BlocConsumer<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+    return BlocConsumer<AuthenticationBloc<Utilisateur>,
+        AuthenticationState<Utilisateur>>(
       listener: (context, state) async {
         AuthenticationStatus currentStatus = state.status;
-        switch(currentStatus){
+        switch (currentStatus) {
           case AuthenticationStatus.authenticated:
             if (kDebugMode) {
               print("AUTH STATE AUTHENTICATED ${state.status}");
@@ -180,9 +179,10 @@ class _LoginScreenState extends State<LoginScreen> {
             Helpers.setFCMTokenToServer();
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (BuildContext context) => const Mainhome(), ),
-                    (route) => false
-            );
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const Mainhome(),
+                ),
+                (route) => false);
             break;
           case AuthenticationStatus.unknown:
           case AuthenticationStatus.unauthenticated:
@@ -204,8 +204,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment
-                              .center, // Centrer verticalement
+                          mainAxisAlignment:
+                              MainAxisAlignment.center, // Centrer verticalement
                           crossAxisAlignment:
                               CrossAxisAlignment.start, // Aligner à gauche
                           children: [
@@ -268,7 +268,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Row(
                                       children: [
                                         Visibility(
-                                          visible: currentErrorMessage != null && currentErrorMessage != null,
+                                          visible:
+                                              currentErrorMessage != null &&
+                                                  currentErrorMessage != null,
                                           child: const Icon(
                                             Icons.info,
                                             color: Colors.red,
@@ -283,8 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           style: const TextStyle(
                                               color: Colors.red,
                                               fontSize: 12,
-                                              fontWeight:
-                                              FontWeight.bold),
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ],
                                     ),
@@ -302,9 +303,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onTap: () {
                                     Navigator.pushAndRemoveUntil(
                                         context,
-                                        MaterialPageRoute(builder: (BuildContext context) => const RequestPasswordScreen(), ),
-                                            (route) => false
-                                    );
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              const RequestPasswordScreen(),
+                                        ),
+                                        (route) => false);
                                   },
                                   child: Text(
                                     'Mot de passe oublier ?',
@@ -357,6 +360,38 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               child: Text(
                                 'Inscrivez-vous !',
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.030,
+                                  color: const Color(0xff15274d),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Visiter sans compte ',
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.030,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Mainhome()),
+                                )
+                              },
+                              child: Text(
+                                "l'application !",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,

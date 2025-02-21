@@ -1,3 +1,4 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,9 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
+import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
+import 'package:yogivida_mobile/components/please_login_widget.dart';
 
 import '../../core/utils/helpers.dart';
 
@@ -23,6 +27,9 @@ class _PanierState extends State<PanierPage> {
 
   @override
   Widget build(BuildContext context) {
+    var authBloc = context.read<AuthenticationBloc<Utilisateur>>();
+    Utilisateur? user = authBloc.state.user;
+
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -62,6 +69,10 @@ class _PanierState extends State<PanierPage> {
             child: BlocConsumer<PanierBlocBloc, PanierBlocState>(
                 listener: (context, state) {},
                 builder: (context, state) {
+                  if (user == null) {
+                    return const PleaseLoginWidget();
+                  }
+
                   if (state is PanierLoaded) {
                     _panier = state.panier.panierProduit;
                   }
