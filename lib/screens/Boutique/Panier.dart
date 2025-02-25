@@ -8,10 +8,13 @@ import 'package:yogivida_mobile/components/CardProduitPanier.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
+import 'package:yogivida_mobile/services/api/models/panier_model.dart';
+import 'package:yogivida_mobile/services/api/models/type_paiement_model.dart';
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 import 'package:yogivida_mobile/components/please_login_widget.dart';
+import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 
 import '../../core/utils/helpers.dart';
 
@@ -131,20 +134,191 @@ class _PanierState extends State<PanierPage> {
                             fontSize: titreConstant,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: spacingConstant),
-                          child: ButtonFiled(
-                            text: 'FINALISER LA COMMANDE',
-                            handlerPress: () {
-                              // Logique du bouton pour finaliser la commande
-                            },
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(
+                        //       horizontal: spacingConstant),
+                        //   child: ButtonFiled(
+                        //     text: 'FINALISER LA COMMANDE',
+                        //     handlerPress: () {
+                        //       // Logique du bouton pour finaliser la commande
+                        //       ShowBottomSheetCommande(context, state.panier);
+                        //     },
+                        //   ),
+                        // ),
                       ],
                       const SizedBox(height: 40)
                     ],
                   );
                 })));
   }
+}
+
+Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
+  // Controllers pour les champs de saisie
+  TextEditingController prenomController =
+      // TextEditingController(text: panier.client.prenom);
+      TextEditingController(text: "panier.client.prenom");
+  TextEditingController nomController =
+      TextEditingController(text: "panier.client.nom");
+  TextEditingController adresseController =
+      TextEditingController(text: "panier.client.adresse");
+
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true, // Permet d'éviter le débordement clavier
+    builder: (BuildContext context) {
+      DataBloc<List<TypePaiement>> typePaiementPushBloc =
+          DataBloc<List<TypePaiement>>(
+              (response) => TypePaiement.fromJsonList(response),
+              TypePaiement.getEndpoint(isPagination: false),
+              isGraphQl: true,
+              isPagination: false,
+              attributeToGet: TypePaiement.shrinkedAttributs());
+
+      return Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom, // Gère le clavier
+        ),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(spacingConstant),
+              topRight: Radius.circular(spacingConstant),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(spacingConstant),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // S'ajuste au contenu
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Indicateur de swipe pour fermer
+                Center(
+                  child: Container(
+                    height: 2,
+                    width: 50,
+                    decoration: const BoxDecoration(
+                      color: greyColor,
+                      borderRadius:
+                          BorderRadius.all(Radius.circular(spacingConstant)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: spacingConstant),
+
+                const Text(
+                  "Finaliser la commande",
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                ),
+                const SizedBox(height: spacingConstant),
+
+                // ✅ Informations du client
+                const Text("Informations du client",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextFormField(
+                      controller: prenomController,
+                      decoration: const InputDecoration(labelText: "Prénom"),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    TextFormField(
+                      controller: nomController,
+                      decoration: const InputDecoration(labelText: "Nom"),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                TextFormField(
+                  controller: adresseController,
+                  decoration: const InputDecoration(labelText: "Adresse"),
+                ),
+                const Divider(height: spacingConstant),
+
+                // ✅ Sélection de la zone de livraison
+                const Text("Zone de livraison",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                // DropdownButton<String>(
+                //   value: "panier.zoneLivraison",
+                //   onChanged: (newValue) {
+                //     print(newValue);
+                //     // panier.zoneLivraison = newValue!;
+                //   },
+                //   items: [
+                //     "Zone 1",
+                //     "Zone 2",
+                //     "Zone 3"
+                //   ] // Remplace par tes vraies zones
+                //       .map<DropdownMenuItem<String>>((String value) {
+                //     return DropdownMenuItem<String>(
+                //       value: value,
+                //       child: Text(value),
+                //     );
+                //   }).toList(),
+                // ),
+                const Divider(height: spacingConstant),
+
+                // ✅ Type de paiement
+                const Text("Type de paiement",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+
+                BlocBasedWidget<List<TypePaiement>>(
+                  customDataBloc: typePaiementPushBloc,
+                  filter: const {'showatwebsite': 'true'},
+                  useInfiniteScroller: true,
+                  customWidget: (state) {
+                    List<TypePaiement> typePaiements = state.data;
+                    print("typePaiements $typePaiements");
+                    return Column(
+                      children: typePaiements.map((paiement) {
+                        return RadioListTile<TypePaiement>(
+                          title: Text(paiement?.designation.toString() ?? ""),
+                          value: paiement,
+                          groupValue: paiement,
+                          onChanged: (TypePaiement? newPaiement) {
+                            // panier.typePaiement = newPaiement!;
+                            print(newPaiement);
+                          },
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: spacingConstant),
+
+                // ✅ Bouton de finalisation
+                Center(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.50,
+                    ),
+                    child: ButtonFiled(
+                      text: 'Finaliser la commande',
+                      handlerPress: () {
+                        // Mettre à jour les valeurs avant validation
+                        // panier.client.prenom = prenomController.text;
+                        // panier.client.nom = nomController.text;
+                        // panier.client.adresse = adresseController.text;
+
+                        // Logique pour valider la commande
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: spacingConstant),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
