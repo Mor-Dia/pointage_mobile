@@ -2,6 +2,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
@@ -519,6 +520,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
     late PostApiBloc reservationPostBloc;
     reservationPostBloc = PostApiBloc();
 
+    dynamic currentElt;
+
     reserverCours({required Map<String, dynamic> parameters}) {
       reservationPostBloc.add(
           PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
@@ -535,9 +538,13 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
               return BlocConsumer(
                 bloc: reservationPostBloc,
                 listener: (context, state) {
-                  if (state is PostApiSuccess) {
-                    print("MESSAGE RESE ${state.message} ");
+                  if(currentElt == toElement.id){
+                    if (state is PostApiSuccess) {
+                    print("MESSAGE RESE ${state} ");
                     //Navigator.of(parentContext).pop();
+                    if(state.data != null && state.data["url"] != null){
+                      launchUrl(Uri.parse(state.data["url"].toString()));
+                    } else{
                     ScaffoldMessenger.of(parentContext).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -547,6 +554,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                         backgroundColor: Colors.green[400],
                       ),
                     );
+                    }
                   }
                   if (state is PostApiFailure) {
                     print("MESSAGE RESE ${state.message} ");
@@ -561,12 +569,14 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                       ),
                     );
                   }
+                  }
                 },
                 builder: (BuildContext context, postBlocState) {
                   return AnimatedGestureButton(
-                    animate: postBlocState is PostApiProcessing,
+                    animate:currentElt == toElement.id && postBlocState is PostApiProcessing,
                     child: GestureDetector(
                         onTap: () {
+                          currentElt = toElement.id;
                           Map<String, dynamic> parameters = {
                             "programme": programme.id,
                             "client": user?.id,

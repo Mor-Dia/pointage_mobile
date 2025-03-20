@@ -39,12 +39,12 @@ class PostApiBloc extends Bloc<PostApiEvent, PostApiState> {
         } else if (responseJsonDecoded["errors"] == null ||
             responseJsonDecoded["errors"] == "") {
           String message = "Opération effectuée avec succès";
-          emit(PostApiSuccess(message: message));
+          emit(PostApiSuccess(message: message, data:responseJsonDecoded));
         } else if (responseJsonDecoded["data"] == 0) {
           if (responseJsonDecoded["errors"] == "" ||
               responseJsonDecoded["errors"] == null) {
             String message = "Opération effectuée avec succès";
-            emit(PostApiSuccess(message: message));
+            emit(PostApiSuccess(message: message, data:responseJsonDecoded));
           } else if (responseJsonDecoded["errors"] != null &&
               responseJsonDecoded["errors"] != "") {
             String message = responseJsonDecoded["errors"];
@@ -52,7 +52,7 @@ class PostApiBloc extends Bloc<PostApiEvent, PostApiState> {
           }
         } else if (responseJsonDecoded["data"] == 1) {
           String message = "Opération effectuée avec succès";
-          emit(PostApiSuccess(message: message));
+          emit(PostApiSuccess(message: message, data:responseJsonDecoded));
         }
       } else {
         String message = "Une erreur s'est produite";

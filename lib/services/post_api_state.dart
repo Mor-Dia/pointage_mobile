@@ -18,10 +18,11 @@ final class PostApiProcessing extends PostApiState {
 
 final class PostApiSuccess extends PostApiState {
   final String? message;
+  final dynamic data;
 
-  const PostApiSuccess({this.message});
+  const PostApiSuccess({this.message,this.data});
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message,data];
 }
 
 final class PostApiFailure extends PostApiState {
