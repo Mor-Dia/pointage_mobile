@@ -321,6 +321,17 @@ class _CardProduitState extends State<CardProduit> {
                 }
               } else {
                 print("Utilisateur non connecté 22");
+
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Veuillez vous connectez !",
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: primaryColor,
+                  ),
+                );
               }
             },
             child: Container(
@@ -468,6 +479,16 @@ Future<dynamic> ShowBottomSheetBoutique(
                           }
                         } else {
                           print("Utilisateur non connecté 22");
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Veuillez vous connectez !",
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              backgroundColor: primaryColor,
+                            ),
+                          );
                         }
                       },
                       child: Container(

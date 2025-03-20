@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
@@ -148,6 +149,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Utilisateur? user =
+        context.read<AuthenticationBloc<Utilisateur>>().state.user;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xffffffff),
@@ -165,124 +169,125 @@ class _HomePageState extends State<HomePage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            GestureDetector(
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const NotificationPage())),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: <Widget>[
-                  Container(
-                    height: 50,
-                    width: 45,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: const Color(0xff15274d),
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset(
-                        'assets/icons/bell.svg',
-                        width: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 0,
-                    top: -5,
-                    child: Container(
-                      width: spacingConstant,
-                      height: spacingConstant,
-                      padding: const EdgeInsets.all(2),
+            if (user != null)
+              GestureDetector(
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const NotificationPage())),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    Container(
+                      height: 50,
+                      width: 45,
                       decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(width: 1, color: Colors.white)),
-                      // constraints: const BoxConstraints(
-                      //   minWidth: spacingConstant,
-                      //   minHeight: spacingConstant,
-                      // ),
+                        borderRadius: BorderRadius.circular(15),
+                        color: const Color(0xff15274d),
+                      ),
                       child: Center(
-                        child: BlocBuilder<AuthenticationBloc<Utilisateur>,
-                            AuthenticationState<Utilisateur>>(
-                          builder: (context, authState) {
-                            // Vérifiez si l'utilisateur est authentifié
-                            if (authState.status ==
-                                AuthenticationStatus.authenticated) {
-                              // Utilisateur connecté
-                              Utilisateur? user = authState.user;
-                              print("Utilisateur connecté papa");
-                              final userId = user?.id;
-
-                              return BlocBasedWidget<List<NotificationPush>>(
-                                customDataBloc: notificationPushBloc,
-                                // filter: globalFilter, // Optionnel si nécessaire
-                                filter: {
-                                  "client_id": userId, // Filtrage par user_id
-                                  "count": 100,
-                                  "is_read": false,
-                                },
-                                useInfiniteScroller: true,
-                                customWidget: (state) {
-                                  Map<String, dynamic> metadata =
-                                      state.metadata;
-                                  dynamic totalNotifs = metadata['total'];
-                                  return Text(
-                                    "${totalNotifs}",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  );
-                                },
-                              );
-                            } else {
-                              // Utilisateur non authentifié
-                              return const Text(
-                                "0",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              );
-                            }
-                          },
+                        child: SvgPicture.asset(
+                          'assets/icons/bell.svg',
+                          width: 18,
+                          color: Colors.white,
                         ),
                       ),
-
-                      // child: BlocBasedWidget<List<NotificationPush>>(
-                      //   customDataBloc: notificationPushBloc,
-                      //   // filter: globalFilter,
-                      //   useInfiniteScroller: true,
-                      //   customWidget: (
-                      //     state,
-                      //   ) {
-                      //     Map<String, dynamic> metadata = state.metadata;
-                      //     dynamic totalNotifs = metadata['total'];
-                      //     // dynamic totalNotifs = 0;
-                      //     print("NOTIF TOTAL ${totalNotifs}");
-                      //     return Text(
-                      //       "${totalNotifs}",
-                      //       style: const TextStyle(
-                      //         color: Colors.white,
-                      //         // overflow: TextOverflow.ellipsis,
-                      //         fontSize: 10,
-                      //         fontWeight: FontWeight.bold,
-                      //       ),
-                      //       textAlign: TextAlign.center,
-                      //     );
-                      //   },
-                      // ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      right: 0,
+                      top: -5,
+                      child: Container(
+                        width: spacingConstant,
+                        height: spacingConstant,
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(width: 1, color: Colors.white)),
+                        // constraints: const BoxConstraints(
+                        //   minWidth: spacingConstant,
+                        //   minHeight: spacingConstant,
+                        // ),
+                        child: Center(
+                          child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                              AuthenticationState<Utilisateur>>(
+                            builder: (context, authState) {
+                              // Vérifiez si l'utilisateur est authentifié
+                              if (authState.status ==
+                                  AuthenticationStatus.authenticated) {
+                                // Utilisateur connecté
+                                Utilisateur? user = authState.user;
+                                print("Utilisateur connecté papa");
+                                final userId = user?.id;
+
+                                return BlocBasedWidget<List<NotificationPush>>(
+                                  customDataBloc: notificationPushBloc,
+                                  // filter: globalFilter, // Optionnel si nécessaire
+                                  filter: {
+                                    "client_id": userId, // Filtrage par user_id
+                                    "count": 100,
+                                    "is_read": false,
+                                  },
+                                  useInfiniteScroller: true,
+                                  customWidget: (state) {
+                                    Map<String, dynamic> metadata =
+                                        state.metadata;
+                                    dynamic totalNotifs = metadata['total'];
+                                    return Text(
+                                      "${totalNotifs}",
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    );
+                                  },
+                                );
+                              } else {
+                                // Utilisateur non authentifié
+                                return const Text(
+                                  "0",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+
+                        // child: BlocBasedWidget<List<NotificationPush>>(
+                        //   customDataBloc: notificationPushBloc,
+                        //   // filter: globalFilter,
+                        //   useInfiniteScroller: true,
+                        //   customWidget: (
+                        //     state,
+                        //   ) {
+                        //     Map<String, dynamic> metadata = state.metadata;
+                        //     dynamic totalNotifs = metadata['total'];
+                        //     // dynamic totalNotifs = 0;
+                        //     print("NOTIF TOTAL ${totalNotifs}");
+                        //     return Text(
+                        //       "${totalNotifs}",
+                        //       style: const TextStyle(
+                        //         color: Colors.white,
+                        //         // overflow: TextOverflow.ellipsis,
+                        //         fontSize: 10,
+                        //         fontWeight: FontWeight.bold,
+                        //       ),
+                        //       textAlign: TextAlign.center,
+                        //     );
+                        //   },
+                        // ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
@@ -306,72 +311,64 @@ class _HomePageState extends State<HomePage> {
                 customWidget: (state) {
                   List<Banniere> bannieres = state.data;
 
-                  if (bannieres.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
+                  if (bannieres.isEmpty) return const SizedBox.shrink();
 
-                  print("bannieres =>> ${bannieres}");
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(
-                            left: spacingConstant, right: spacingConstant),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: spacingConstant),
                         child: Text(
                           "Évènement(s) à venir...",
                           style: GoogleFonts.montserrat(
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.045,
-                              fontWeight: FontWeight.bold),
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        height: spacingConstant,
-                      ),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            ...bannieres
-                                .map((toElement) => Row(
-                                      children: [
-                                        const SizedBox(
-                                          width: spacingConstant,
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .70,
-                                          // width: double.infinity,
-                                          height: 200,
-                                          clipBehavior: Clip.antiAlias,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          child: CustomCachedNetworkImage(
-                                            imageUrl: toElement.image ?? '',
-                                            fallBackAsset:
-                                                'assets/images/home.png',
-                                          ),
-                                        ),
-                                        // CustomCachedNetworkImage(
-                                        //     imageUrl: toElement.image ?? '',
-                                        //     fallBackAsset:
-                                        //         'assets/images/home.png'),
-                                      ],
-                                    ))
-                                .toList(),
-                            const SizedBox(
-                              width: spacingConstant,
+                      const SizedBox(height: spacingConstant),
+                      bannieres.length == 1
+                          ? Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal:
+                                      spacingConstant), // Ajout du padding
+                              width: double.infinity,
+                              height: 200,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: CustomCachedNetworkImage(
+                                imageUrl: bannieres[0].image ?? '',
+                                // fallBackAsset: 'assets/images/home.png',
+                                // fit: BoxFit.cover,
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  for (var toElement in bannieres) ...[
+                                    const SizedBox(width: spacingConstant),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .70,
+                                      height: 200,
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      child: CustomCachedNetworkImage(
+                                        imageUrl: toElement.image ?? '',
+                                        // fallBackAsset: 'assets/images/home.png',
+                                      ),
+                                    ),
+                                  ],
+                                  const SizedBox(width: spacingConstant),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(
-                        width: spacingConstant,
-                      ),
+                      const SizedBox(height: spacingConstant),
                     ],
                   );
                 },
@@ -420,6 +417,23 @@ class _HomePageState extends State<HomePage> {
                                             color: toElement.fileAttenteColor ??
                                                 "",
                                             handlePress: () {
+                                              if (user == null) {
+                                                ScaffoldMessenger.of(context)
+                                                    .hideCurrentSnackBar();
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                      "Veuillez vous connecter !",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                                return; // Arrêter l'exécution si l'utilisateur n'est pas connecté
+                                              }
+
                                               showBottomSheet(
                                                   context, toElement);
                                             })
@@ -777,8 +791,7 @@ class _HomePageState extends State<HomePage> {
                       constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * 0.50),
                       child: programme.fileAttente.toString() == 'true'
-                          ?
-                          ButtonFiled(
+                          ? ButtonFiled(
                               text: 'Réserver',
                               handlerPress: () =>
                                   ShowBottomSheetPayment(context, programme),
@@ -895,11 +908,14 @@ List<Widget> buildTypePaiementList(BuildContext parentContext,
           AuthenticationState<Utilisateur>>(builder: (context, authState) {
         AuthenticationStatus currentStatus = authState.status;
         Utilisateur? user = authState.user;
+
         switch (currentStatus) {
           case AuthenticationStatus.authenticated:
             return BlocConsumer(
               bloc: reservationPostBloc,
               listener: (context, state) {
+                print("NEW STATE retour ici ${context} ${state.toString()}");
+
                 if (state is PostApiSuccess) {
                   ScaffoldMessenger.of(parentContext).showSnackBar(
                     SnackBar(
@@ -910,6 +926,10 @@ List<Widget> buildTypePaiementList(BuildContext parentContext,
                       backgroundColor: Colors.green[400],
                     ),
                   );
+                  // Vérifier si l'URL est présente dans le state et l'ouvrir
+                  // if (state['link'] != null && state['link'].isNotEmpty) {
+                  //   _openLink(state.link);
+                  // }
                 }
                 if (state is PostApiFailure) {
                   print("NEW STATE ${state.message}");

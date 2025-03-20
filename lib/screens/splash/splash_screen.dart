@@ -21,37 +21,41 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
-      listener: (context, state){
+    return BlocListener<AuthenticationBloc<Utilisateur>,
+        AuthenticationState<Utilisateur>>(
+      listener: (context, state) {
         AuthenticationStatus currentStatus = state.status;
-        switch(currentStatus){
+        switch (currentStatus) {
           case AuthenticationStatus.authenticated:
             if (kDebugMode) {
               print("AUTH STATE AUTHENTICATED ${state.status}");
             }
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (BuildContext context) => const Mainhome(), ),
-                    (route) => false
-            );
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const Mainhome(),
+                ),
+                (route) => false);
           case AuthenticationStatus.unknown:
           case AuthenticationStatus.unauthenticated:
           case AuthenticationStatus.failure:
             Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (BuildContext context) => const LoginScreen(), ),
-                    (route) => false
-            );
+                MaterialPageRoute(
+                  // builder: (BuildContext context) => const LoginScreen(),
+                    builder: (BuildContext context) => const Mainhome(),
+
+                ),
+                (route) => false);
         }
       },
       child: Scaffold(
         body: Container(
           color: primaryColor,
           child: Center(
-            child: SvgPicture.asset('assets/images/logos/logo.svg'),
+            child: SvgPicture.asset('assets/images/logos/logo-splash.svg'),
           ),
         ),
       ),

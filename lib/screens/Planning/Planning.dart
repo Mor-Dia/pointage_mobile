@@ -172,6 +172,9 @@ class _PlanningState extends State<Planning> {
 
   @override
   Widget build(BuildContext context) {
+    Utilisateur? user =
+        context.read<AuthenticationBloc<Utilisateur>>().state.user;
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xffffffff),
@@ -191,124 +194,104 @@ class _PlanningState extends State<Planning> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              GestureDetector(
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const NotificationPage())),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: <Widget>[
-                    Container(
-                      height: 50,
-                      width: 45,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: const Color(0xff15274d),
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/icons/bell.svg',
-                          width: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      top: -5,
-                      child: Container(
-                        width: spacingConstant,
-                        height: spacingConstant,
-                        padding: const EdgeInsets.all(2),
+              if (user != null)
+                GestureDetector(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const NotificationPage())),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      Container(
+                        height: 50,
+                        width: 45,
                         decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(width: 1, color: Colors.white)),
-                        // constraints: const BoxConstraints(
-                        //   minWidth: spacingConstant,
-                        //   minHeight: spacingConstant,
-                        // ),
+                          borderRadius: BorderRadius.circular(15),
+                          color: const Color(0xff15274d),
+                        ),
                         child: Center(
-                          child: BlocBuilder<AuthenticationBloc<Utilisateur>,
-                              AuthenticationState<Utilisateur>>(
-                            builder: (context, authState) {
-                              // Vérifiez si l'utilisateur est authentifié
-                              if (authState.status ==
-                                  AuthenticationStatus.authenticated) {
-                                // Utilisateur connecté
-                                Utilisateur? user = authState.user;
-                                print("Utilisateur connecté papa");
-                                final userId = user?.id;
-
-                                return BlocBasedWidget<List<NotificationPush>>(
-                                  customDataBloc: notificationPushBloc,
-                                  // filter: globalFilter, // Optionnel si nécessaire
-                                  filter: {
-                                    "client_id": userId, // Filtrage par user_id
-                                    "count": 100,
-                                    "is_read": false,
-                                  },
-                                  useInfiniteScroller: true,
-                                  customWidget: (state) {
-                                    Map<String, dynamic> metadata =
-                                        state.metadata;
-                                    dynamic totalNotifs = metadata['total'];
-                                    return Text(
-                                      "${totalNotifs}",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    );
-                                  },
-                                );
-                              } else {
-                                // Utilisateur non authentifié
-                                return const Text(
-                                  "0",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                );
-                              }
-                            },
+                          child: SvgPicture.asset(
+                            'assets/icons/bell.svg',
+                            width: 18,
+                            color: Colors.white,
                           ),
                         ),
-
-                        // child: BlocBasedWidget<List<NotificationPush>>(
-                        //   customDataBloc: notificationPushBloc,
-                        //   // filter: globalFilter,
-                        //   useInfiniteScroller: true,
-                        //   customWidget: (
-                        //     state,
-                        //   ) {
-                        //     Map<String, dynamic> metadata = state.metadata;
-                        //     dynamic totalNotifs = metadata['total'];
-                        //     // dynamic totalNotifs = 0;
-                        //     print("NOTIF TOTAL ${totalNotifs}");
-                        //     return Text(
-                        //       "${totalNotifs}",
-                        //       style: const TextStyle(
-                        //         color: Colors.white,
-                        //         // overflow: TextOverflow.ellipsis,
-                        //         fontSize: 10,
-                        //         fontWeight: FontWeight.bold,
-                        //       ),
-                        //       textAlign: TextAlign.center,
-                        //     );
-                        //   },
-                        // ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        right: 0,
+                        top: -5,
+                        child: Container(
+                          width: spacingConstant,
+                          height: spacingConstant,
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
+                              border:
+                                  Border.all(width: 1, color: Colors.white)),
+                          // constraints: const BoxConstraints(
+                          //   minWidth: spacingConstant,
+                          //   minHeight: spacingConstant,
+                          // ),
+                          child: Center(
+                            child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                                AuthenticationState<Utilisateur>>(
+                              builder: (context, authState) {
+                                // Vérifiez si l'utilisateur est authentifié
+                                if (authState.status ==
+                                    AuthenticationStatus.authenticated) {
+                                  // Utilisateur connecté
+                                  Utilisateur? user = authState.user;
+                                  print("Utilisateur connecté papa");
+                                  final userId = user?.id;
+
+                                  return BlocBasedWidget<
+                                      List<NotificationPush>>(
+                                    customDataBloc: notificationPushBloc,
+                                    // filter: globalFilter, // Optionnel si nécessaire
+                                    filter: {
+                                      "client_id":
+                                          userId, // Filtrage par user_id
+                                      "count": 100,
+                                      "is_read": false,
+                                    },
+                                    useInfiniteScroller: true,
+                                    customWidget: (state) {
+                                      Map<String, dynamic> metadata =
+                                          state.metadata;
+                                      dynamic totalNotifs = metadata['total'];
+                                      return Text(
+                                        "${totalNotifs}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  // Utilisateur non authentifié
+                                  return const Text(
+                                    "0",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
         ),

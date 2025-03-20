@@ -9,6 +9,7 @@ import 'package:yogivida_mobile/components/CardProduit.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/screens/Boutique/Panier.dart';
 import 'package:yogivida_mobile/services/api/models/famille_model.dart';
@@ -18,6 +19,7 @@ import 'dart:ui' as ui;
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/produit_model.dart';
+import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
@@ -55,7 +57,13 @@ class _BoutiqueState extends State<Boutique> {
       token = prefs.getString('token');
       userId = prefs.getString('user_id');
     });
-    context.read<PanierBlocBloc>().add(PanierBlocEvent.refresh(token: token!));
+    if (token == null) {
+      context.read<PanierBlocBloc>().add(PanierBlocEvent.refresh(token: ''));
+    } else {
+      context
+          .read<PanierBlocBloc>()
+          .add(PanierBlocEvent.refresh(token: token!));
+    }
   }
 
   @override
@@ -180,6 +188,9 @@ class _BoutiqueState extends State<Boutique> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
+    var authBloc = context.read<AuthenticationBloc<Utilisateur>>();
+    Utilisateur? user = authBloc.state.user;
+
     return Scaffold(
         appBar: AppBar(
             backgroundColor: const Color(0xffffffff),
@@ -198,97 +209,98 @@ class _BoutiqueState extends State<Boutique> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PanierPage())),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: <Widget>[
-                      Container(
-                        height: 50,
-                        width: 45,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: secondColor,
-                        ),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/icons/cadit.svg',
-                            width: 18,
-                            color: Colors.white,
+                if (user != null)
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PanierPage())),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: <Widget>[
+                        Container(
+                          height: 50,
+                          width: 45,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            color: secondColor,
+                          ),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              'assets/icons/cadit.svg',
+                              width: 18,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
-                      BlocConsumer<PanierBlocBloc, PanierBlocState>(
-                          listener: (context, state) {
-                        if (state is PanierError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.message)),
-                          );
-                        }
-                        if (state is PanierSuccess) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                state.message,
-                                style: TextStyle(color: Colors.white),
+                        BlocConsumer<PanierBlocBloc, PanierBlocState>(
+                            listener: (context, state) {
+                          if (state is PanierError) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(state.message)),
+                            );
+                          }
+                          if (state is PanierSuccess) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  state.message,
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                backgroundColor: Colors.green[400],
                               ),
-                              backgroundColor: Colors.green[400],
+                            );
+                          }
+                          if (state is PanierLoaded) {
+                            _panier = state.panier.panierProduit;
+                          }
+                        }, builder: (context, state) {
+                          return Positioned(
+                            right: -5,
+                            top: -5,
+                            child: Container(
+                              width: 25,
+                              height: 25,
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                  color: secondColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      width: 1.5, color: Colors.white)),
+                              constraints: const BoxConstraints(
+                                minWidth: spacingConstant,
+                                minHeight: spacingConstant,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  (state is PanierLoading)
+                                      ? Container(
+                                          width: 10,
+                                          height: 10,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : Text(
+                                          (_panier?.length ?? 0).toString(),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                ],
+                              ),
                             ),
                           );
-                        }
-                        if (state is PanierLoaded) {
-                          _panier = state.panier.panierProduit;
-                        }
-                      }, builder: (context, state) {
-                        return Positioned(
-                          right: -5,
-                          top: -5,
-                          child: Container(
-                            width: 25,
-                            height: 25,
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                                color: secondColor,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    width: 1.5, color: Colors.white)),
-                            constraints: const BoxConstraints(
-                              minWidth: spacingConstant,
-                              minHeight: spacingConstant,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                (state is PanierLoading)
-                                    ? Container(
-                                        width: 10,
-                                        height: 10,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: Colors.white,
-                                        ),
-                                      )
-                                    : Text(
-                                        (_panier?.length ?? 0).toString(),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                              ],
-                            ),
-                          ),
-                        );
-                      })
-                    ],
+                        })
+                      ],
+                    ),
                   ),
-                ),
               ],
             )),
         body: BlocBasedWidget<List<Famille>>(
