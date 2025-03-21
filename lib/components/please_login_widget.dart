@@ -13,12 +13,13 @@ class PleaseLoginWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const SizedBox(height: 50),
+        const SizedBox(height: 20),
         SizedBox.square(
           // dimension: 300,
           child: Lottie.asset(
             'assets/animations/pleaselogin.json',
             repeat: false,
+            height: 150,
             reverse: false,
             animate: true,
           ),
