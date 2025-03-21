@@ -220,7 +220,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
       ),
     );
   }
-
+dynamic currentElt;
   Future<dynamic> showBottomSheet(BuildContext context, Programme programme) {
     return showModalBottomSheet(
         context: context,
@@ -520,7 +520,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
     late PostApiBloc reservationPostBloc;
     reservationPostBloc = PostApiBloc();
 
-    dynamic currentElt;
+  
+    // print("HOHOHGL ${currentElt}");
 
     reserverCours({required Map<String, dynamic> parameters}) {
       reservationPostBloc.add(
@@ -538,9 +539,10 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
               return BlocConsumer(
                 bloc: reservationPostBloc,
                 listener: (context, state) {
+                   print("MESSAGE RESE ${currentElt} ");
                   if(currentElt == toElement.id){
                     if (state is PostApiSuccess) {
-                    print("MESSAGE RESE ${state} ");
+                   
                     //Navigator.of(parentContext).pop();
                     if(state.data != null && state.data["url"] != null){
                       launchUrl(Uri.parse(state.data["url"].toString()));
@@ -576,7 +578,11 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                     animate:currentElt == toElement.id && postBlocState is PostApiProcessing,
                     child: GestureDetector(
                         onTap: () {
-                          currentElt = toElement.id;
+                          setState(() {
+                            currentElt = null;
+                            currentElt = toElement.id;
+                            print(currentElt);
+                          });
                           Map<String, dynamic> parameters = {
                             "programme": programme.id,
                             "client": user?.id,

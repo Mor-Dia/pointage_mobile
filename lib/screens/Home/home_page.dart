@@ -58,6 +58,7 @@ class _HomePageState extends State<HomePage> {
     "count": 100,
     "is_read": false
   };
+  dynamic currentElt;
 
   int selectedTypePratiqueIndex = 0;
 
@@ -811,9 +812,8 @@ class _HomePageState extends State<HomePage> {
           );
         });
   }
-}
 
-Future<dynamic> ShowBottomSheetPayment(
+  Future<dynamic> ShowBottomSheetPayment(
     BuildContext context, Programme programme,
     {Function? customFunction}) {
   DataBloc<List<TypePaiement>> typePaiementPushBloc =
@@ -890,85 +890,95 @@ Future<dynamic> ShowBottomSheetPayment(
         );
       });
 }
+    List<Widget> buildTypePaiementList(BuildContext parentContext,
+      List<TypePaiement> typePaiements, Programme programme) {
+    late PostApiBloc reservationPostBloc;
+    reservationPostBloc = PostApiBloc();
 
-List<Widget> buildTypePaiementList(BuildContext parentContext,
-    List<TypePaiement> typePaiements, Programme programme) {
-  late PostApiBloc reservationPostBloc;
-  reservationPostBloc = PostApiBloc();
+  
+    // print("HOHOHGL ${currentElt}");
 
-  reserverCours({required Map<String, dynamic> parameters}) {
-    reservationPostBloc
-        .add(PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
-    // Navigator.pop(context);
+    reserverCours({required Map<String, dynamic> parameters}) {
+      reservationPostBloc.add(
+          PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
+    }
+
+    return [
+      ...typePaiements.map((toElement) {
+        return BlocBuilder<AuthenticationBloc<Utilisateur>,
+            AuthenticationState<Utilisateur>>(builder: (context, authState) {
+          AuthenticationStatus currentStatus = authState.status;
+          Utilisateur? user = authState.user;
+          switch (currentStatus) {
+            case AuthenticationStatus.authenticated:
+              return BlocConsumer(
+                bloc: reservationPostBloc,
+                listener: (context, state) {
+                   print("MESSAGE RESE ${currentElt} ");
+                  if(currentElt == toElement.id){
+                    if (state is PostApiSuccess) {
+                   
+                    //Navigator.of(parentContext).pop();
+                    if(state.data != null && state.data["url"] != null){
+                      launchUrl(Uri.parse(state.data["url"].toString()));
+                    } else{
+                    ScaffoldMessenger.of(parentContext).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${state.message}",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.green[400],
+                      ),
+                    );
+                    }
+                  }
+                  if (state is PostApiFailure) {
+                    print("MESSAGE RESE ${state.message} ");
+                    ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(parentContext).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${state.message}",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                  }
+                },
+                builder: (BuildContext context, postBlocState) {
+                  return AnimatedGestureButton(
+                    animate:currentElt == toElement.id && postBlocState is PostApiProcessing,
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentElt = null;
+                            currentElt = toElement.id;
+                            print(currentElt);
+                          });
+                          Map<String, dynamic> parameters = {
+                            "programme": programme.id,
+                            "client": user?.id,
+                            "from_site": true,
+                            "mode_paiement_id": toElement.id,
+                          };
+                          reserverCours(parameters: parameters);
+                        },
+                        child: TypePaiementCard(typePaiement: toElement)),
+                  );
+                },
+              );
+            case AuthenticationStatus.unknown:
+            case AuthenticationStatus.unauthenticated:
+            case AuthenticationStatus.failure:
+              return const SizedBox();
+          }
+        });
+      }).toList(),
+    ];
   }
-
-  return [
-    ...typePaiements.map((toElement) {
-      return BlocBuilder<AuthenticationBloc<Utilisateur>,
-          AuthenticationState<Utilisateur>>(builder: (context, authState) {
-        AuthenticationStatus currentStatus = authState.status;
-        Utilisateur? user = authState.user;
-
-        switch (currentStatus) {
-          case AuthenticationStatus.authenticated:
-            return BlocConsumer(
-              bloc: reservationPostBloc,
-              listener: (context, state) {
-                print("NEW STATE retour ici ${context} ${state.toString()}");
-
-                if (state is PostApiSuccess) {
-                  ScaffoldMessenger.of(parentContext).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        "${state.message}",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      backgroundColor: Colors.green[400],
-                    ),
-                  );
-                  // Vérifier si l'URL est présente dans le state et l'ouvrir
-                  // if (state['link'] != null && state['link'].isNotEmpty) {
-                  //   _openLink(state.link);
-                  // }
-                }
-                if (state is PostApiFailure) {
-                  print("NEW STATE ${state.message}");
-                  // Navigator.of(parentContext).pop();
-                  ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                  ScaffoldMessenger.of(parentContext).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        "${state.message}",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
-              builder: (BuildContext context, postBlocState) {
-                return AnimatedGestureButton(
-                  animate: postBlocState is PostApiProcessing,
-                  child: GestureDetector(
-                      onTap: () {
-                        Map<String, dynamic> parameters = {
-                          "programme": programme.id,
-                          "client": user?.id,
-                          "from_site": true,
-                          "mode_paiement_id": toElement.id,
-                        };
-                        reserverCours(parameters: parameters);
-                      },
-                      child: TypePaiementCard(typePaiement: toElement)),
-                );
-              },
-            );
-          case AuthenticationStatus.unknown:
-          case AuthenticationStatus.unauthenticated:
-          case AuthenticationStatus.failure:
-            return const SizedBox();
-        }
-      });
-    }).toList(),
-  ];
 }
+
+
