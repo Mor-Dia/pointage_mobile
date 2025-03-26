@@ -26,6 +26,8 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
   bool hide = false;
   TextEditingController montantController = TextEditingController();
   String? currentError;
+  dynamic currentElt;
+
 
   @override
   void initState() {
@@ -322,12 +324,12 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
 
   List<Widget> buildTypePaiementList(
       BuildContext parentContext, List<TypePaiement> typePaiements, montant) {
-    late PostApiBloc reservationPostBloc;
-    reservationPostBloc = PostApiBloc();
+    late PostApiBloc lcPostBloc;
+    lcPostBloc = PostApiBloc();
 
     buyLigneCredit({required Map<String, dynamic> parameters}) {
       print("BUY LIGNE CREDIT  ${parameters.toString()}");
-      reservationPostBloc.add(
+      lcPostBloc.add(
           PostApiMakeCall(endpoint: 'lignecredit', parameters: parameters));
     }
 
@@ -340,8 +342,10 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
           switch (currentStatus) {
             case AuthenticationStatus.authenticated:
               return BlocConsumer(
-                bloc: reservationPostBloc,
+                bloc: lcPostBloc,
                 listener: (context, state) {
+                  if(currentElt == toElement.id){
+
                   if (state is PostApiSuccess) {
                     // fermer l'element apres success
                     Navigator.of(parentContext).pop();
@@ -369,17 +373,23 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                       ),
                     );
                   }
+                  }
                 },
                 builder: (BuildContext context, postBlocState) {
                   return AnimatedGestureButton(
-                    animate: postBlocState is PostApiProcessing,
+                    animate: currentElt == toElement.id && postBlocState is PostApiProcessing,
                     child: GestureDetector(
                         onTap: () {
+                          setState(() {
+                            currentElt = null;
+                            currentElt = toElement.id;
+                          });
                           Map<String, dynamic> parameters = {
                             "montant": montantController.text,
                             // "montant": montant,
                             "client": user?.id,
                             "from_site": true,
+                            "etat": false,
                             "typelignecredit": 2,
                             "type_paiement": toElement.id,
                           };

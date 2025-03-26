@@ -15,6 +15,8 @@ class LigneCredit with _$LigneCredit {
     int? id,
     dynamic? solde,
     dynamic? montant,
+    dynamic? from_site,
+    bool? etat,
     @JsonKey(name: "created_at_fr")String? createdAtFr,
     @JsonKey(name: "type_paiement")TypePaiement? typePaiement,
     @JsonKey(name: "type_ligne_credit")TypeLigneCredit? typeLigneCredit,
@@ -43,7 +45,7 @@ class LigneCredit with _$LigneCredit {
   }
 
   static shrinkedAttributs () {
-    return "id,montant,solde,date_fr,code,created_at_fr,type_paiement{designation},type_ligne_credit{designation}";
+    return "id,montant,solde,etat,from_site,date_fr,code,created_at_fr,type_paiement{designation},type_ligne_credit{designation}";
   }
 
   static String getEndpoint({bool isPagination = true}) {

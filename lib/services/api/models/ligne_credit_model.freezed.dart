@@ -23,6 +23,8 @@ mixin _$LigneCredit {
   int? get id => throw _privateConstructorUsedError;
   dynamic? get solde => throw _privateConstructorUsedError;
   dynamic? get montant => throw _privateConstructorUsedError;
+  dynamic? get from_site => throw _privateConstructorUsedError;
+  bool? get etat => throw _privateConstructorUsedError;
   @JsonKey(name: "created_at_fr")
   String? get createdAtFr => throw _privateConstructorUsedError;
   @JsonKey(name: "type_paiement")
@@ -52,6 +54,8 @@ abstract class $LigneCreditCopyWith<$Res> {
       {int? id,
       dynamic? solde,
       dynamic? montant,
+      dynamic? from_site,
+      bool? etat,
       @JsonKey(name: "created_at_fr") String? createdAtFr,
       @JsonKey(name: "type_paiement") TypePaiement? typePaiement,
       @JsonKey(name: "type_ligne_credit") TypeLigneCredit? typeLigneCredit,
@@ -79,6 +83,8 @@ class _$LigneCreditCopyWithImpl<$Res, $Val extends LigneCredit>
     Object? id = freezed,
     Object? solde = freezed,
     Object? montant = freezed,
+    Object? from_site = freezed,
+    Object? etat = freezed,
     Object? createdAtFr = freezed,
     Object? typePaiement = freezed,
     Object? typeLigneCredit = freezed,
@@ -97,6 +103,14 @@ class _$LigneCreditCopyWithImpl<$Res, $Val extends LigneCredit>
           ? _value.montant
           : montant // ignore: cast_nullable_to_non_nullable
               as dynamic?,
+      from_site: freezed == from_site
+          ? _value.from_site
+          : from_site // ignore: cast_nullable_to_non_nullable
+              as dynamic?,
+      etat: freezed == etat
+          ? _value.etat
+          : etat // ignore: cast_nullable_to_non_nullable
+              as bool?,
       createdAtFr: freezed == createdAtFr
           ? _value.createdAtFr
           : createdAtFr // ignore: cast_nullable_to_non_nullable
@@ -157,6 +171,8 @@ abstract class _$$LigneCreditImplCopyWith<$Res>
       {int? id,
       dynamic? solde,
       dynamic? montant,
+      dynamic? from_site,
+      bool? etat,
       @JsonKey(name: "created_at_fr") String? createdAtFr,
       @JsonKey(name: "type_paiement") TypePaiement? typePaiement,
       @JsonKey(name: "type_ligne_credit") TypeLigneCredit? typeLigneCredit,
@@ -184,6 +200,8 @@ class __$$LigneCreditImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? solde = freezed,
     Object? montant = freezed,
+    Object? from_site = freezed,
+    Object? etat = freezed,
     Object? createdAtFr = freezed,
     Object? typePaiement = freezed,
     Object? typeLigneCredit = freezed,
@@ -202,6 +220,14 @@ class __$$LigneCreditImplCopyWithImpl<$Res>
           ? _value.montant
           : montant // ignore: cast_nullable_to_non_nullable
               as dynamic?,
+      from_site: freezed == from_site
+          ? _value.from_site
+          : from_site // ignore: cast_nullable_to_non_nullable
+              as dynamic?,
+      etat: freezed == etat
+          ? _value.etat
+          : etat // ignore: cast_nullable_to_non_nullable
+              as bool?,
       createdAtFr: freezed == createdAtFr
           ? _value.createdAtFr
           : createdAtFr // ignore: cast_nullable_to_non_nullable
@@ -229,6 +255,8 @@ class _$LigneCreditImpl extends _LigneCredit with DiagnosticableTreeMixin {
       {this.id,
       this.solde,
       this.montant,
+      this.from_site,
+      this.etat,
       @JsonKey(name: "created_at_fr") this.createdAtFr,
       @JsonKey(name: "type_paiement") this.typePaiement,
       @JsonKey(name: "type_ligne_credit") this.typeLigneCredit,
@@ -245,6 +273,10 @@ class _$LigneCreditImpl extends _LigneCredit with DiagnosticableTreeMixin {
   @override
   final dynamic? montant;
   @override
+  final dynamic? from_site;
+  @override
+  final bool? etat;
+  @override
   @JsonKey(name: "created_at_fr")
   final String? createdAtFr;
   @override
@@ -259,7 +291,7 @@ class _$LigneCreditImpl extends _LigneCredit with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'LigneCredit(id: $id, solde: $solde, montant: $montant, createdAtFr: $createdAtFr, typePaiement: $typePaiement, typeLigneCredit: $typeLigneCredit, dateFr: $dateFr)';
+    return 'LigneCredit(id: $id, solde: $solde, montant: $montant, from_site: $from_site, etat: $etat, createdAtFr: $createdAtFr, typePaiement: $typePaiement, typeLigneCredit: $typeLigneCredit, dateFr: $dateFr)';
   }
 
   @override
@@ -270,6 +302,8 @@ class _$LigneCreditImpl extends _LigneCredit with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('solde', solde))
       ..add(DiagnosticsProperty('montant', montant))
+      ..add(DiagnosticsProperty('from_site', from_site))
+      ..add(DiagnosticsProperty('etat', etat))
       ..add(DiagnosticsProperty('createdAtFr', createdAtFr))
       ..add(DiagnosticsProperty('typePaiement', typePaiement))
       ..add(DiagnosticsProperty('typeLigneCredit', typeLigneCredit))
@@ -284,6 +318,8 @@ class _$LigneCreditImpl extends _LigneCredit with DiagnosticableTreeMixin {
             (identical(other.id, id) || other.id == id) &&
             const DeepCollectionEquality().equals(other.solde, solde) &&
             const DeepCollectionEquality().equals(other.montant, montant) &&
+            const DeepCollectionEquality().equals(other.from_site, from_site) &&
+            (identical(other.etat, etat) || other.etat == etat) &&
             (identical(other.createdAtFr, createdAtFr) ||
                 other.createdAtFr == createdAtFr) &&
             (identical(other.typePaiement, typePaiement) ||
@@ -300,6 +336,8 @@ class _$LigneCreditImpl extends _LigneCredit with DiagnosticableTreeMixin {
       id,
       const DeepCollectionEquality().hash(solde),
       const DeepCollectionEquality().hash(montant),
+      const DeepCollectionEquality().hash(from_site),
+      etat,
       createdAtFr,
       typePaiement,
       typeLigneCredit,
@@ -326,6 +364,8 @@ abstract class _LigneCredit extends LigneCredit {
       {final int? id,
       final dynamic? solde,
       final dynamic? montant,
+      final dynamic? from_site,
+      final bool? etat,
       @JsonKey(name: "created_at_fr") final String? createdAtFr,
       @JsonKey(name: "type_paiement") final TypePaiement? typePaiement,
       @JsonKey(name: "type_ligne_credit")
@@ -342,6 +382,10 @@ abstract class _LigneCredit extends LigneCredit {
   dynamic? get solde;
   @override
   dynamic? get montant;
+  @override
+  dynamic? get from_site;
+  @override
+  bool? get etat;
   @override
   @JsonKey(name: "created_at_fr")
   String? get createdAtFr;

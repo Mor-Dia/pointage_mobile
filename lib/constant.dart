@@ -52,7 +52,7 @@ const padding_constant = spacingConstant;
 void _openLink(String link) async {
   final Uri url = Uri.parse(link);
   if (await canLaunchUrl(url)) {
-    await launch(url.toString());
+    await launchUrl(url);
   } else {
     print("Could not launch the link: $link");
   }
