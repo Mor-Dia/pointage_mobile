@@ -84,8 +84,10 @@ class _MyAppState extends State<MyApp> {
       Helpers.handleNotificationData(context, widget.notificationData!);
     }
   }
-  askForNotificationPermission() async{
-    final notificationSettings = await FirebaseMessaging.instance.requestPermission(provisional: true);
+
+  askForNotificationPermission() async {
+    final notificationSettings =
+        await FirebaseMessaging.instance.requestPermission(provisional: true);
   }
 
   @override
