@@ -9,7 +9,6 @@ final class PostApiInitial extends PostApiState {
   List<Object?> get props => [];
 }
 
-
 final class PostApiProcessing extends PostApiState {
   const PostApiProcessing();
   @override
