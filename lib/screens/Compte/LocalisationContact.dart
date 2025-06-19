@@ -154,68 +154,55 @@ class _LocalisationContactState extends State<LocalisationContact> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Visibility(
-                            visible: numTel != null,
-                            child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text('YOGI VIDA',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: spacingConstant,
-                                      )),
-                                  IntrinsicWidth(
-                                      child: ButtonFiled(
-                                    text: 'Appeler',
-                                    handlerPress: () => {_launchCaller(numTel)},
-                                  ))
-                                ]),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Visibility(
-                            visible: adresse != null,
-                            child: Row(
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Icon(Icons.location_on,
-                                    color: primaryColor),
-                                const SizedBox(width: 8.0),
-                                Expanded(
-                                  child: Text(
-                                    "$adresse",
-                                    style: const TextStyle(color: primaryColor),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                const Text('YOGI VIDA',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: spacingConstant,
+                                    )),
+                                IntrinsicWidth(
+                                    child: ButtonFiled(
+                                  text: 'Appeler',
+                                  handlerPress: () => {_launchCaller(numTel)},
+                                ))
+                              ]),
                           const SizedBox(height: 8.0),
-                          Visibility(
-                            visible: numTel != null,
-                            child: Row(
-                              children: [
-                                const Icon(Icons.phone, color: primaryColor),
-                                const SizedBox(width: 8.0),
-                                Text(
-                                  '$numTel',
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on,
+                                  color: primaryColor),
+                              const SizedBox(width: 8.0),
+                              Expanded(
+                                child: Text(
+                                  "${adresse ?? 'Non renseigné'}",
                                   style: const TextStyle(color: primaryColor),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8.0),
-                          Visibility(
-                            visible: email != null,
-                            child: Row(
-                              children: [
-                                const Icon(Icons.email, color: primaryColor),
-                                const SizedBox(width: 8.0),
-                                Text(
-                                  "$email",
-                                  style: const TextStyle(color: primaryColor),
-                                ),
-                              ],
-                            ),
+                          Row(
+                            children: [
+                              const Icon(Icons.phone, color: primaryColor),
+                              const SizedBox(width: 8.0),
+                              Text(
+                                "${numTel ?? 'Non renseigné'}",
+                                style: const TextStyle(color: primaryColor),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8.0),
+                          Row(
+                            children: [
+                              const Icon(Icons.email, color: primaryColor),
+                              const SizedBox(width: 8.0),
+                              Text(
+                                "${email ?? 'Non renseigné'}",
+                                style: const TextStyle(color: primaryColor),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 16.0),
                         ],

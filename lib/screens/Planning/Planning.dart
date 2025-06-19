@@ -36,6 +36,7 @@ class _PlanningState extends State<Planning> {
   Map<String, dynamic> currentFilter = {};
   late DataBloc<List<Programme>> programmeBloc;
   late DataBloc<List<Salle>> salleBloc;
+  Salle? selectedStudio;
   late DataBloc<List<Studio>> studioBloc;
   Map<String, dynamic> studioBlocFilter = {"showatwebsite": "true"};
 
@@ -154,6 +155,15 @@ class _PlanningState extends State<Planning> {
           ...currentFilter,
           'pratique_id': int.parse(widget.id.toString()),
         };
+      }
+    });
+  }
+
+  void reset(type) {
+    setState(() {
+      if (type == 'search') {
+        currentFilter.remove('nom_pratique');
+        designationFilter.text = '';
       }
     });
   }
@@ -310,13 +320,10 @@ class _PlanningState extends State<Planning> {
                 height: spacingConstant,
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: spacingConstant),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Flexible(
-                      flex: 1,
+                    Expanded(
                       child: Inputfiled(
                         controller: designationFilter,
                         type: "text",
@@ -325,6 +332,20 @@ class _PlanningState extends State<Planning> {
                         error: '',
                       ),
                     ),
+                    SizedBox(width: designationFilter.text != '' ? 10 : 0),
+                    designationFilter.text != ''
+                        ? GestureDetector(
+                            onTap: () {
+                              reset('search');
+                            },
+                            child: Icon(
+                              Icons.cancel,
+                              size: spacingConstant,
+                              color: Colors.red,
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                    const SizedBox(width: 10),
                     SizedBox.square(
                       child: GestureDetector(
                         onTap: () {
@@ -347,57 +368,34 @@ class _PlanningState extends State<Planning> {
                         ),
                       ),
                     ),
-                    Visibility(
-                      visible: designationFilter.text.isNotEmpty,
-                      child: SizedBox.square(
-                        dimension: 50,
-                        child: GestureDetector(
-                          onTap: () {
-                            cleanFieldAndUpdateList();
-                          },
-                          child: const Icon(
-                            Icons.cancel,
-                            size: spacingConstant,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox.square(
-                      dimension: 2,
-                    ),
-                    // const Spacer(),
-                    // // const Text('|'),
-                    // const Spacer(),
-                    // Flexible(
-                    //   flex: 1,
-                    //   child: BlocBasedWidget<List<Salle>>(
-                    //     customDataBloc: salleBloc,
-                    //     customWidget: (state) {
-                    //       List<Salle> salles = state.data;
-                    //       return StudioSelect(
-                    //         studioList: salles,
-                    //         onSelect: selectStudio,
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
+                    const SizedBox(width: 10),
+                    const Text('|'),
+                    const SizedBox(width: 10),
                     Flexible(
                       flex: 1,
-                      child: BlocBasedWidget<List<Studio>>(
-                        customDataBloc: studioBloc,
-                        filter: studioBlocFilter,
+                      child: BlocBasedWidget<List<Salle>>(
+                        customDataBloc: salleBloc,
                         customWidget: (state) {
-                          List<Studio> studios = [];
+                          List<Salle> studios = [];
                           studios = studios
-                            ..add(Studio(id: null, designation: "Studios"));
+                            ..add(Salle(id: null, designation: "Salle"));
                           studios = studios..addAll(state.data);
 
                           print("STUDIOS ${studios}");
-                          return StudioSelect(
+
+                          return StudioSelectBox(
                             studioList: studios,
-                            onSelect: selectStudio,
+                            selectedStudio: selectedStudio,
+                            onSelect: (salle) {
+                              selectedStudio = salle;
+                              setState(() {
+                                selectedStudio = salle;
+                                currentFilter = {
+                                  ...currentFilter,
+                                  'salle_id': salle?.id,
+                                };
+                              });
+                            },
                           );
                         },
                       ),
@@ -525,9 +523,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        DateFormat.E('fr_FR')
-                            .format(date)
-                            .toCapitalized, // Jour abrégé
+                        DateFormat.E('fr_FR').format(date), // Jour abrégé
                         style: TextStyle(
                           fontSize: textConstant,
                           color: isSelected ? primaryColor : greyColor,
@@ -552,92 +548,76 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
     );
   }
 }
+// Adapte l'import selon ton projet
 
-class StudioSelect extends StatefulWidget {
-  // final List<Salle?> studioList;
-  final List<Studio?> studioList;
-  final Function? onSelect;
-  const StudioSelect({super.key, required this.studioList, this.onSelect});
+class StudioSelectBox extends StatefulWidget {
+  final List<Salle> studioList;
+  final Salle? selectedStudio;
+  final ValueChanged<Salle?> onSelect;
+
+  const StudioSelectBox({
+    Key? key,
+    required this.studioList,
+    this.selectedStudio,
+    required this.onSelect,
+  }) : super(key: key);
 
   @override
-  State<StudioSelect> createState() => _StudioSelectState();
+  _StudioSelectBoxState createState() => _StudioSelectBoxState();
 }
 
-class _StudioSelectState extends State<StudioSelect> {
-  // List<Salle?> studioList = [];
-  List<Studio?> studioList = [];
-  Function? onSelect;
-  dynamic selectedValue;
-
-  @override
-  void initState() {
-    studioList = widget.studioList;
-    onSelect = widget.onSelect;
-    super.initState();
+class _StudioSelectBoxState extends State<StudioSelectBox> {
+  void _openStudioSelector() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return ListView.separated(
+          itemCount: widget.studioList.length,
+          separatorBuilder: (_, __) => Divider(height: 1),
+          itemBuilder: (context, index) {
+            final studio = widget.studioList[index];
+            return ListTile(
+              title: Text(studio.designation ?? "Studio inconnu"),
+              onTap: () {
+                Navigator.of(context).pop();
+                widget.onSelect(studio);
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 45,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      decoration: BoxDecoration(
-        color: primaryColor, // Couleur de fond bleu
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset("assets/icons/home2.svg",
-              height: 15, color: Colors.white),
-          const SizedBox(
-              width: 5.0), // Espace entre l'icône et le DropdownButton
-          DropdownButton(
-            dropdownColor: primaryColor, // Couleur du dropdown
-            value: selectedValue,
-            hint: const Text(
-              'Studio',
-              overflow: TextOverflow.ellipsis,
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: _openStudioSelector,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade400),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.location_city, color: Colors.grey),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                widget.selectedStudio?.designation ?? "Sélectionner un studio",
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: widget.selectedStudio != null
+                      ? Colors.black
+                      : Colors.grey,
+                ),
+              ),
             ),
-            style: const TextStyle(color: Colors.white), // Couleur du texte
-            icon: const Icon(
-              Icons.keyboard_arrow_down,
-              color: Colors.white,
-            ),
-            underline: const SizedBox(), // Supprime la ligne par défaut
-            items: [
-              ...studioList.map((Studio? studio) {
-                return DropdownMenuItem(
-                  value: studio?.id,
-                  child: Text("${studio?.designation}",
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white)),
-                );
-              }).toList(),
-              // ...studioList.map((Studio? toElement) {
-              //   return DropdownMenuItem(
-              //     value: toElement?.id, // accédez à l'id comme clé dans la map
-              //     child: Text(
-              //       "${toElement?.designation}", // accédez à la désignation comme clé dans la map
-              //       overflow: TextOverflow.ellipsis,
-              //       style: const TextStyle(color: Colors.white),
-              //     ),
-              //   );
-              // }).toList(),
-            ],
-            onChanged: (newValue) {
-              print("SELECTION $newValue ${onSelect != null}");
-              setState(() {
-                selectedValue = newValue;
-              });
-              if (onSelect != null) {
-                onSelect!(newValue);
-              }
-            },
-          ),
-        ],
+            Icon(Icons.arrow_drop_down, color: Colors.grey),
+          ],
+        ),
       ),
     );
   }

@@ -13,6 +13,7 @@ class Programme with _$Programme {
     String? displaycoloretat,
     String? displayetat,
     @JsonKey(name: "date_fr") String? dateFr,
+    @JsonKey(name: "etat") String? etat,
     String? duration,
     @JsonKey(name: "file_attente") bool? fileAttente,
     @JsonKey(name: "file_attente_display") String? fileAttenteDisplay,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-showNotifyingDialog({required BuildContext context, String? message, bool isError = false}){
+showNotifyingDialog(
+    {required BuildContext context, String? message, bool isError = false}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -24,12 +25,14 @@ showNotifyingDialog({required BuildContext context, String? message, bool isErro
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SvgPicture.asset(
-                isError ? 'assets/images/denied.svg' : 'assets/images/validated.svg',
+                isError
+                    ? 'assets/images/denied.svg'
+                    : 'assets/images/validated.svg',
                 height: 50,
               ),
               Expanded(
                 child: Text(
-                  message??"",
+                  message ?? "",
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 5,
@@ -40,7 +43,5 @@ showNotifyingDialog({required BuildContext context, String? message, bool isErro
         ),
       );
     },
-  ).then((onValue) {
-
-  });
+  ).then((onValue) {});
 }

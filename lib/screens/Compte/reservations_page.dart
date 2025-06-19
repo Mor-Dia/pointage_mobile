@@ -137,7 +137,9 @@ class ScrollableTabPage extends StatelessWidget {
 
   const ScrollableTabPage(
       // {Key? key, required this.reservationBloc, this.currentFilter = const {}})
-      {Key? key, required this.reservationBloc, this.currentFilter = const {}})
+      {Key? key,
+      required this.reservationBloc,
+      this.currentFilter = const {}})
       : super(key: key);
 
   updateList(newFilter) {

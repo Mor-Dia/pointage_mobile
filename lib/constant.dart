@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const REGISTRATION_ENDPOINT = "inscription";
@@ -25,6 +26,7 @@ const double titreConstant = 20;
 const double textConstant = 18;
 const double textminConstant = 12;
 const double spacingConstant = 20;
+
 
 double responsiveSize(BuildContext context, double baseSize) {
   double screenWidth = MediaQuery.of(context).size.width;

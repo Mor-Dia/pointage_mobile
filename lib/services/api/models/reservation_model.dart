@@ -13,27 +13,26 @@ class Reservation with _$Reservation {
     int? id,
     String? displayetat,
     String? displaycoloretat,
-    @JsonKey(name: "en_attente")String? enAttente,
-    @JsonKey(name: "created_at_fr")String? createdAtFr,
+    @JsonKey(name: "en_attente") String? enAttente,
+    @JsonKey(name: "created_at_fr") String? createdAtFr,
     Programme? programme,
     Souscription? souscription,
     dynamic ca_souscription,
   }) = _Reservation;
 
-  factory Reservation.fromJson(Map<String, dynamic> json)  => _$ReservationFromJson(json);
+  factory Reservation.fromJson(Map<String, dynamic> json) =>
+      _$ReservationFromJson(json);
 
-  static fromJsonList(List <dynamic>json){
+  static fromJsonList(List<dynamic> json) {
     List<Reservation> data = [];
-    try{
-      if (kDebugMode) {
-      }
+    try {
+      if (kDebugMode) {}
 
       for (var result in json) {
         data.add(Reservation.fromJson(result as Map<String, dynamic>));
       }
-      if (kDebugMode) {
-      }
-    } catch(error, stacktrace){
+      if (kDebugMode) {}
+    } catch (error, stacktrace) {
       if (kDebugMode) {
         print("ERROR WHILE TRANSFORMING $error $stacktrace");
       }
@@ -41,8 +40,8 @@ class Reservation with _$Reservation {
     return data;
   }
 
-  static shrinkedAttributs () {
-    return "id,etat,displayetat,displaycoloretat,with_ligne_credit,en_attente,created_at_fr,programme{id,salle_pratique{salle{designation,zone{designation}}},date_fr,heure_debut,heure_fin,professeur_pratique{id,professeur_id,pratique{designation},professeur{id,user{name}},pratique_id}},souscription{id,client{id,nom_complet}}";
+  static shrinkedAttributs() {
+    return "id,etat,displayetat,displaycoloretat,with_ligne_credit,en_attente,created_at_fr,programme{id,etat,salle_pratique{salle{designation,zone{designation}}},date_fr,heure_debut,heure_fin,professeur_pratique{id,professeur_id,pratique{designation},professeur{id,user{name}},pratique_id}},souscription{id,client{id,nom_complet}}";
   }
 
   static String getEndpoint({bool isPagination = true}) {

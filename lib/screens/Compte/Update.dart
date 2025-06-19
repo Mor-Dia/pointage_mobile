@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Compte/MonCompte.dart';
 import 'package:yogivida_mobile/screens/Home/MainHome.dart';
@@ -435,30 +436,15 @@ class _UpdateState extends State<Update> {
                                 Navigator.of(context).pop();
                                 ScaffoldMessenger.of(context)
                                     .hideCurrentSnackBar();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      "${state.message}",
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                    backgroundColor: Colors.green[400],
-                                  ),
-                                );
+                                TopDialogNotification.show(context,
+                                    message: "${state.message}",
+                                    isError: false);
                               }
                               if (state is PostApiFailure) {
                                 ScaffoldMessenger.of(context)
                                     .hideCurrentSnackBar();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      "${state.message}",
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
+                                TopDialogNotification.show(context,
+                                    message: "${state.message}", isError: true);
                               }
                               if (state is PostApiProcessing) {
                                 ScaffoldMessenger.of(context)

@@ -38,7 +38,6 @@ class _MonCompteState extends State<MonCompte> {
   late PostApiBloc accountDeletionPostBloc;
 
   @override
-  @override
   void initState() {
     accountDeletionPostBloc = PostApiBloc();
     utilisateurBloc = DataBloc<List<Utilisateur>>(
@@ -47,7 +46,6 @@ class _MonCompteState extends State<MonCompte> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Utilisateur.shrinkedAttributs());
-
     super.initState();
   }
 
@@ -214,8 +212,10 @@ class _MonCompteState extends State<MonCompte> {
                                       Utilisateur currentClient = users[0];
                                       return Text(
                                         "${Helpers.formatNumber(currentClient.solde)} XOF",
-                                        style: const TextStyle(
-                                            color: Color(0xff5EAB43),
+                                        style: TextStyle(
+                                            color: currentClient.solde > 0
+                                                ? Color(0xff5EAB43)
+                                                : Colors.red,
                                             fontWeight: FontWeight.bold),
                                       );
                                     },

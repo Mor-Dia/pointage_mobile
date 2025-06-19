@@ -8,6 +8,7 @@ import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardProduit.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
@@ -146,6 +147,7 @@ class _BoutiqueState extends State<Boutique> {
       Navigator.pop(context);
     }
   }
+  
 
   void addToPanier(Map<String, dynamic> arg) async {
     arg['token'] = token;
@@ -236,20 +238,12 @@ class _BoutiqueState extends State<Boutique> {
                         BlocConsumer<PanierBlocBloc, PanierBlocState>(
                             listener: (context, state) {
                           if (state is PanierError) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.message)),
-                            );
+                            TopDialogNotification.show(context,
+                                message: state.message, isError: true);
                           }
                           if (state is PanierSuccess) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  state.message,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                backgroundColor: Colors.green[400],
-                              ),
-                            );
+                            TopDialogNotification.show(context,
+                                message: state.message, isError: false);
                           }
                           if (state is PanierLoaded) {
                             _panier = state.panier.panierProduit;
