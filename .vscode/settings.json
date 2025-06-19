@@ -1,3 +1,12 @@
 {
-    "dart.flutterSdkPath": "/Applications/flutter"
+  "dart.sdkPaths": [
+    "/Users/mac/Documents/flutter"
+  ],
+  "dart.flutterSdkPath": ".fvm/versions/3.29.3",
+  "swift.swiftEnvironmentVariables": {
+    "DEVELOPER_DIR": "/Applications/Xcode.app/Contents/Contents/Developer"
+  },
+  "lldb.library": "/Applications/Xcode.app/Contents/SharedFrameworks/LLDB.framework/Versions/A/LLDB",
+  "lldb.launch.expressions": "native",
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

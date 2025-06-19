@@ -1,0 +1,2 @@
+/Applications/XAMPP7/xamppfiles/htdocs/yogivida_mobile/android/app/.cxx/RelWithDebInfo/5k2kx48p/arm64-v8a/CMakeFiles/edit_cache.dir
+/Applications/XAMPP7/xamppfiles/htdocs/yogivida_mobile/android/app/.cxx/RelWithDebInfo/5k2kx48p/arm64-v8a/CMakeFiles/rebuild_cache.dir

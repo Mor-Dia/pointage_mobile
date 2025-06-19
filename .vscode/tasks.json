@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "flutter",
+			"command": "flutter",
+			"args": [
+				"run",
+				"--no-enable-impeller"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"label": "myShellCommand",
+			"detail": ""
+		}
+	]
+}

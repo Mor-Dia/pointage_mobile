@@ -1,0 +1,1 @@
+/Applications/XAMPP7/xamppfiles/htdocs/yogivida_mobile/build/app/intermediates/cxx/RelWithDebInfo/5k2kx48p/obj/arm64-v8a
