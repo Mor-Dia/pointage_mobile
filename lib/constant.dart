@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const REGISTRATION_ENDPOINT = "inscription";
@@ -21,10 +22,10 @@ const Color successColor = Color(0xff37BC9B);
 const Color dangerColor = Color(0xffDA4453);
 const Color warningColor = Color(0xffF6BB42);
 
-const double titreConstant = 20;
-const double textConstant = 18;
-const double textminConstant = 12;
-const double spacingConstant = 20;
+const double titreConstant = 18;
+const double textConstant = 14;
+const double textminConstant = 11;
+const double spacingConstant = 18;
 
 double responsiveSize(BuildContext context, double baseSize) {
   double screenWidth = MediaQuery.of(context).size.width;
@@ -52,7 +53,7 @@ const padding_constant = spacingConstant;
 void _openLink(String link) async {
   final Uri url = Uri.parse(link);
   if (await canLaunchUrl(url)) {
-    await launch(url.toString());
+    await launchUrl(url);
   } else {
     print("Could not launch the link: $link");
   }

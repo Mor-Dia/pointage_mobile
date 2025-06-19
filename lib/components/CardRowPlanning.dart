@@ -90,6 +90,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                   children: [
                                     SvgPicture.asset(
                                       "assets/icons/person.svg",
+                                      width: 10,
                                       color: const Color(0xFF838282),
                                     ),
                                     const SizedBox(
@@ -180,37 +181,45 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                     width: spacingConstant,
                   ),
                   Expanded(
-                    child: widget.data.fileAttente.toString() ==
-                            'true' // Comparaison en fonction de ton type de `fileAttente`
+                    child: widget.data.etat == "1"
                         ? ButtonFiled(
-                            text: 'Réserver',
-                            handlerPress: () {
-                              if (user == null) {
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      "Veuillez vous connecter !",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                                return; // Arrêter l'exécution si l'utilisateur n'est pas connecté
-                              }
-                              showBottomSheet(
-                                  context,
-                                  widget
-                                      .data); // Action pour afficher le BottomSheet
-                            },
-                          )
-                        : ButtonFiled(
                             text:
-                                'Plein', // Si fileAttente n'est pas 'Disponible', afficher "Plein"
+                                'Annuler', // Si fileAttente n'est pas 'Disponible', afficher "Plein"
                             handlerPress: () {}, // Pas d'action
-                            color: Colors.grey, // Couleur grise pour "Plein"
-                          ),
+                            color: Colors.red, // Couleur grise pour "Plein"
+                          )
+                        : widget.data.fileAttente.toString() ==
+                                'true' // Comparaison en fonction de ton type de `fileAttente`
+                            ? ButtonFiled(
+                                text: 'Réserver',
+                                handlerPress: () {
+                                  if (user == null) {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Veuillez vous connecter !",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    return; // Arrêter l'exécution si l'utilisateur n'est pas connecté
+                                  }
+                                  showBottomSheet(
+                                      context,
+                                      widget
+                                          .data); // Action pour afficher le BottomSheet
+                                },
+                              )
+                            : ButtonFiled(
+                                text:
+                                    'Plein', // Si fileAttente n'est pas 'Disponible', afficher "Plein"
+                                handlerPress: () {}, // Pas d'action
+                                color:
+                                    Colors.grey, // Couleur grise pour "Plein"
+                              ),
                   ),
                 ],
               )
@@ -220,7 +229,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
       ),
     );
   }
-dynamic currentElt;
+
+  dynamic currentElt;
   Future<dynamic> showBottomSheet(BuildContext context, Programme programme) {
     return showModalBottomSheet(
         context: context,
@@ -520,7 +530,6 @@ dynamic currentElt;
     late PostApiBloc reservationPostBloc;
     reservationPostBloc = PostApiBloc();
 
-  
     // print("HOHOHGL ${currentElt}");
 
     reserverCours({required Map<String, dynamic> parameters}) {
@@ -539,43 +548,43 @@ dynamic currentElt;
               return BlocConsumer(
                 bloc: reservationPostBloc,
                 listener: (context, state) {
-                   print("MESSAGE RESE ${currentElt} ");
-                  if(currentElt == toElement.id){
+                  print("MESSAGE RESE ${currentElt} ");
+                  if (currentElt == toElement.id) {
                     if (state is PostApiSuccess) {
-                   
-                    //Navigator.of(parentContext).pop();
-                    if(state.data != null && state.data["url"] != null){
-                      launchUrl(Uri.parse(state.data["url"].toString()));
-                    } else{
-                    ScaffoldMessenger.of(parentContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "${state.message}",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.green[400],
-                      ),
-                    );
+                      //Navigator.of(parentContext).pop();
+                      if (state.data != null && state.data["url"] != null) {
+                        launchUrl(Uri.parse(state.data["url"].toString()));
+                      } else {
+                        ScaffoldMessenger.of(parentContext).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "${state.message}",
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Colors.green[400],
+                          ),
+                        );
+                      }
                     }
-                  }
-                  if (state is PostApiFailure) {
-                    print("MESSAGE RESE ${state.message} ");
-                    ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(parentContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "${state.message}",
-                          style: const TextStyle(color: Colors.white),
+                    if (state is PostApiFailure) {
+                      print("MESSAGE RESE ${state.message} ");
+                      ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(parentContext).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "${state.message}",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.red,
                         ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
+                      );
+                    }
                   }
                 },
                 builder: (BuildContext context, postBlocState) {
                   return AnimatedGestureButton(
-                    animate:currentElt == toElement.id && postBlocState is PostApiProcessing,
+                    animate: currentElt == toElement.id &&
+                        postBlocState is PostApiProcessing,
                     child: GestureDetector(
                         onTap: () {
                           setState(() {

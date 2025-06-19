@@ -24,8 +24,7 @@ class PostApiBloc extends Bloc<PostApiEvent, PostApiState> {
       response = await postApiData(event.endpoint, event.parameters);
     }
     if (kDebugMode) {
-      print(
-          "POST REQUEST RESPONSE , ${response}, ${response.body}, ${response.statusCode}");
+      print("POST REQUEST RESPONSE , ${response}, ${response.body}, ${response.statusCode}");
     }
     try {
       if (response.statusCode == 200) {

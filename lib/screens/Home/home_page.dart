@@ -814,88 +814,88 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<dynamic> ShowBottomSheetPayment(
-    BuildContext context, Programme programme,
-    {Function? customFunction}) {
-  DataBloc<List<TypePaiement>> typePaiementPushBloc =
-      DataBloc<List<TypePaiement>>(
-          (response) => TypePaiement.fromJsonList(response),
-          TypePaiement.getEndpoint(isPagination: false),
-          isGraphQl: true,
-          isPagination: false,
-          attributeToGet: TypePaiement.shrinkedAttributs());
+      BuildContext context, Programme programme,
+      {Function? customFunction}) {
+    DataBloc<List<TypePaiement>> typePaiementPushBloc =
+        DataBloc<List<TypePaiement>>(
+            (response) => TypePaiement.fromJsonList(response),
+            TypePaiement.getEndpoint(isPagination: false),
+            isGraphQl: true,
+            isPagination: false,
+            attributeToGet: TypePaiement.shrinkedAttributs());
 
-  return showModalBottomSheet(
-      context: context,
-      builder: (BuildContext currentContext) {
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Container(
-            height: MediaQuery.of(context).size.height * 0.8,
-            decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(spacingConstant),
-                    topRight: Radius.circular(spacingConstant))),
-            child: Padding(
-              padding: const EdgeInsets.all(spacingConstant),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        height: 2,
-                        width: 50,
-                        decoration: const BoxDecoration(
-                            color: greyColor,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(spacingConstant))),
+    return showModalBottomSheet(
+        context: context,
+        builder: (BuildContext currentContext) {
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Container(
+              height: MediaQuery.of(context).size.height * 0.8,
+              decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(spacingConstant),
+                      topRight: Radius.circular(spacingConstant))),
+              child: Padding(
+                padding: const EdgeInsets.all(spacingConstant),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          height: 2,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                              color: greyColor,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(spacingConstant))),
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: spacingConstant,
-                    ),
-                    Center(
-                      child: Text(
-                        'Payer par '.toUpperCase(),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      const SizedBox(
+                        height: spacingConstant,
                       ),
-                    ),
-                    const SizedBox(
-                      height: spacingConstant,
-                    ),
-                    BlocBasedWidget<List<TypePaiement>>(
-                      customDataBloc: typePaiementPushBloc,
-                      // filter: currentFilter,
-                      filter: const {'showatwebsite': 'true'},
-                      useInfiniteScroller: true,
-                      customWidget: (state) {
-                        List<TypePaiement> typePaiements = state.data;
-                        return Column(children: [
-                          const SizedBox(
-                            height: spacingConstant,
-                          ),
-                          Wrap(spacing: 10, runSpacing: 10, children: [
-                            ...buildTypePaiementList(
-                                currentContext, typePaiements, programme),
-                          ]),
-                        ]);
-                      },
-                    )
-                  ],
+                      Center(
+                        child: Text(
+                          'Payer par '.toUpperCase(),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: spacingConstant,
+                      ),
+                      BlocBasedWidget<List<TypePaiement>>(
+                        customDataBloc: typePaiementPushBloc,
+                        // filter: currentFilter,
+                        filter: const {'showatwebsite': 'true'},
+                        useInfiniteScroller: true,
+                        customWidget: (state) {
+                          List<TypePaiement> typePaiements = state.data;
+                          return Column(children: [
+                            const SizedBox(
+                              height: spacingConstant,
+                            ),
+                            Wrap(spacing: 10, runSpacing: 10, children: [
+                              ...buildTypePaiementList(
+                                  currentContext, typePaiements, programme),
+                            ]),
+                          ]);
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      });
-}
-    List<Widget> buildTypePaiementList(BuildContext parentContext,
+          );
+        });
+  }
+
+  List<Widget> buildTypePaiementList(BuildContext parentContext,
       List<TypePaiement> typePaiements, Programme programme) {
     late PostApiBloc reservationPostBloc;
     reservationPostBloc = PostApiBloc();
 
-  
     // print("HOHOHGL ${currentElt}");
 
     reserverCours({required Map<String, dynamic> parameters}) {
@@ -914,43 +914,43 @@ class _HomePageState extends State<HomePage> {
               return BlocConsumer(
                 bloc: reservationPostBloc,
                 listener: (context, state) {
-                   print("MESSAGE RESE ${currentElt} ");
-                  if(currentElt == toElement.id){
+                  print("MESSAGE RESE ${currentElt} ");
+                  if (currentElt == toElement.id) {
                     if (state is PostApiSuccess) {
-                   
-                    //Navigator.of(parentContext).pop();
-                    if(state.data != null && state.data["url"] != null){
-                      launchUrl(Uri.parse(state.data["url"].toString()));
-                    } else{
-                    ScaffoldMessenger.of(parentContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "${state.message}",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.green[400],
-                      ),
-                    );
+                      //Navigator.of(parentContext).pop();
+                      if (state.data != null && state.data["url"] != null) {
+                        launchUrl(Uri.parse(state.data["url"].toString()));
+                      } else {
+                        ScaffoldMessenger.of(parentContext).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "${state.message}",
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            backgroundColor: Colors.green[400],
+                          ),
+                        );
+                      }
                     }
-                  }
-                  if (state is PostApiFailure) {
-                    print("MESSAGE RESE ${state.message} ");
-                    ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(parentContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "${state.message}",
-                          style: const TextStyle(color: Colors.white),
+                    if (state is PostApiFailure) {
+                      print("MESSAGE RESE ${state.message} ");
+                      ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(parentContext).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "${state.message}",
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.red,
                         ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
+                      );
+                    }
                   }
                 },
                 builder: (BuildContext context, postBlocState) {
                   return AnimatedGestureButton(
-                    animate:currentElt == toElement.id && postBlocState is PostApiProcessing,
+                    animate: currentElt == toElement.id &&
+                        postBlocState is PostApiProcessing,
                     child: GestureDetector(
                         onTap: () {
                           setState(() {
@@ -980,5 +980,3 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 }
-
-

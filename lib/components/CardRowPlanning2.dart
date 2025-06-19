@@ -42,7 +42,7 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
         DateFormat("dd/MM/yyyy hh:mm").parse(reservationDateTimeString);
     if (currentDate.isBefore(reservationDateTime)) {
       setState(() {
-        enCours = true;
+        enCours = reservation.programme?.etat == "1" ? false : true;
       });
     }
   }
@@ -111,6 +111,7 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                         children: [
                           SvgPicture.asset(
                             "assets/icons/person.svg",
+                            width: 10,
                             color: const Color(0xFF838282),
                           ),
                           const SizedBox(
@@ -181,13 +182,21 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                             color: Color(0xff838282)),
                       ),
                       Text(
-                        enCours ? "En cours " : "Passé",
+                        enCours
+                            ? "En cours "
+                            : reservation.programme?.etat == "1"
+                                ? enCours
+                                    ? 'Annulé'
+                                    : "Passé"
+                                : '',
                         style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: enCours
                                 ? const Color(0xff5EAB43)
-                                : Colors.black38),
+                                : reservation.programme?.etat == "1"
+                                    ? Colors.red
+                                    : Colors.black38),
                       )
                     ],
                   ),

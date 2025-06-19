@@ -26,13 +26,19 @@ class CardLignecredit extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                  "${Helpers.formatNumber(ligneCredit.solde)} XOF / ${Helpers.formatNumber(ligneCredit.montant)} XOF",
-                  style: const TextStyle(
-                      fontSize: 16,
-                      color: primaryColor,
-                      fontWeight: FontWeight.bold
-                  )
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                      "${Helpers.formatNumber(ligneCredit.solde)} XOF",
+                      style: const TextStyle(
+                          fontSize: 16,
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold
+                      )
+                  ),
+                  Text(ligneCredit.etat == true ? "Payé" : "En cours")
+                ],
               ),
               const SizedBox(height: 5),
               Text(

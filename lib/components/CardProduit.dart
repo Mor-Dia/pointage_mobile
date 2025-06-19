@@ -4,19 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
-import 'package:yogivida_mobile/components/please_login_widget.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
-import 'package:yogivida_mobile/screens/Boutique/Boutique.dart';
-
-import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/produit_model.dart';
 import 'package:yogivida_mobile/services/api/models/taille_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/post_api_bloc.dart';
-
 import '../core/models/user_model.dart';
 import '../services/authentication_bloc/authentication_bloc.dart';
 import 'animated_gesture_detector.dart';
@@ -96,7 +91,13 @@ class _CardProduitState extends State<CardProduit> {
                       ),
                     ),
                   ),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  errorWidget: (context, url, error) => const Center(
+                    child: const Icon(
+                      Icons.image,
+                      size: 50,
+                      color: primaryColor,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -134,17 +135,11 @@ class _CardProduitState extends State<CardProduit> {
                       listener: (context, state) {
                         if (state is PostApiSuccess) {
                           changeStateFavoris();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                liked!
-                                    ? 'Ajouter au favoris'
-                                    : 'Retirer des favoris',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: Colors.green[400],
-                            ),
-                          );
+                          TopDialogNotification.show(context,
+                              message: liked!
+                                  ? 'Ajouter au favoris'
+                                  : 'Retirer des favoris',
+                              isError: false);
                         }
                         if (state is PostApiProcessing) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -480,15 +475,9 @@ Future<dynamic> ShowBottomSheetBoutique(
                         } else {
                           print("Utilisateur non connecté 22");
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "Veuillez vous connectez !",
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: primaryColor,
-                            ),
-                          );
+                          TopDialogNotification.show(context,
+                              message: "Veuillez vous connectez !",
+                              isError: true);
                         }
                       },
                       child: Container(

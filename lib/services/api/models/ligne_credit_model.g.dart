@@ -11,6 +11,8 @@ _$LigneCreditImpl _$$LigneCreditImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num?)?.toInt(),
       solde: json['solde'],
       montant: json['montant'],
+      from_site: json['from_site'],
+      etat: json['etat'] as bool?,
       createdAtFr: json['created_at_fr'] as String?,
       typePaiement: json['type_paiement'] == null
           ? null
@@ -28,6 +30,8 @@ Map<String, dynamic> _$$LigneCreditImplToJson(_$LigneCreditImpl instance) =>
       'id': instance.id,
       'solde': instance.solde,
       'montant': instance.montant,
+      'from_site': instance.from_site,
+      'etat': instance.etat,
       'created_at_fr': instance.createdAtFr,
       'type_paiement': instance.typePaiement,
       'type_ligne_credit': instance.typeLigneCredit,

@@ -70,7 +70,7 @@ class Cardactivite extends StatelessWidget {
                 SizedBox(width: MediaQuery.of(context).size.width * 0.040),
                 Row(
                   children: [
-                    SvgPicture.asset('assets/icons/person.svg'),
+                    SvgPicture.asset('assets/icons/person.svg', width: 10),
                     SizedBox(width: MediaQuery.of(context).size.width * 0.010),
                     Text(
                       data.professeurPratique?.professeur?.user?.name ?? "",

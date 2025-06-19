@@ -23,42 +23,42 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthenticationBloc<Utilisateur>,
+    return BlocBuilder<AuthenticationBloc<Utilisateur>,
         AuthenticationState<Utilisateur>>(
-      listener: (context, state) {
-        AuthenticationStatus currentStatus = state.status;
-        switch (currentStatus) {
-          case AuthenticationStatus.authenticated:
-            if (kDebugMode) {
-              print("AUTH STATE AUTHENTICATED ${state.status}");
+      builder: (context, state) {
+        return BlocListener<AuthenticationBloc<Utilisateur>,
+            AuthenticationState<Utilisateur>>(
+          listener: (context, state) {
+            switch (state.status) {
+              case AuthenticationStatus.authenticated:
+                if (kDebugMode) {
+                  print("AUTH STATE AUTHENTICATED ${state.status}");
+                }
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const Mainhome()),
+                  (route) => false,
+                );
+              case AuthenticationStatus.unknown:
+              case AuthenticationStatus.unauthenticated:
+              case AuthenticationStatus.failure:
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
             }
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => const Mainhome(),
-                ),
-                (route) => false);
-          case AuthenticationStatus.unknown:
-          case AuthenticationStatus.unauthenticated:
-          case AuthenticationStatus.failure:
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  // builder: (BuildContext context) => const LoginScreen(),
-                    builder: (BuildContext context) => const Mainhome(),
-
-                ),
-                (route) => false);
-        }
-      },
-      child: Scaffold(
-        body: Container(
-          color: primaryColor,
-          child: Center(
-            child: SvgPicture.asset('assets/images/logos/logo-splash.svg'),
+          },
+          child: Scaffold(
+            body: Container(
+              color: primaryColor,
+              child: Center(
+                child: SvgPicture.asset('assets/images/logos/logo-splash.svg'),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

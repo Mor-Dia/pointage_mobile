@@ -58,21 +58,10 @@ class _InputfiledState extends State<Inputfiled> {
             ),
             child: widget.type != "select"
                 ? Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: TextField(
-                      enabled: widget.enable,
-                      obscureText: widget.type == "password" ? hide : false,
-                      controller: widget.controller,
-                      keyboardType: widget.type == 'number' ? TextInputType.number : TextInputType.text,
-                      onChanged: widget.handleChangeValue,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.only(top: 6.5),
-                        hintText: widget.text,
-                        hintStyle: TextStyle(
-                            fontSize:
-                               textConstant),
-                        prefixIcon: SvgPicture.asset(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(
                           color: const Color(0xff15274d),
                           widget.type == 'password'
                               ? 'assets/icons/lock.svg'
@@ -80,23 +69,47 @@ class _InputfiledState extends State<Inputfiled> {
                           fit: BoxFit.scaleDown,
                           height: spacingConstant,
                         ),
-                        suffixIcon: widget.type == 'password'
-                            ? IconButton(
-                                onPressed: () => {
-                                  setState(() {
-                                    hide = !hide;
-                                  })
-                                },
-                                icon: Icon(
-                                  hide
-                                      ? Icons.visibility_off
-                                      : Icons.remove_red_eye,
-                                  size: spacingConstant,
-                                  color: const Color(0xff15274d),
-                                ),
-                              )
-                            : null,
-                      ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Flexible(
+                          child: TextField(
+                            enabled: widget.enable,
+                            obscureText:
+                                widget.type == "password" ? hide : false,
+                            controller: widget.controller,
+                            keyboardType: widget.type == 'number'
+                                ? TextInputType.number
+                                : TextInputType.text,
+                            onChanged: widget.handleChangeValue,
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              contentPadding:
+                                  const EdgeInsets.only(bottom: 5, left: 0),
+                              hintText: widget.text,
+                              hintStyle: TextStyle(fontSize: textConstant),
+                              prefixIconConstraints:
+                                  BoxConstraints(maxWidth: 20, minHeight: 20),
+                              suffixIcon: widget.type == 'password'
+                                  ? IconButton(
+                                      onPressed: () => {
+                                        setState(() {
+                                          hide = !hide;
+                                        })
+                                      },
+                                      icon: Icon(
+                                        hide
+                                            ? Icons.visibility_off
+                                            : Icons.remove_red_eye,
+                                        size: spacingConstant,
+                                        color: const Color(0xff15274d),
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 : Container(
