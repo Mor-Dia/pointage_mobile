@@ -100,30 +100,30 @@ class _PanierState extends State<PanierPage> {
 
                   return Column(
                     children: [
-                      Stack(children: [
-                        Expanded(
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: ((state is PanierLoaded)
-                                    ? state.panier.panierProduit!
-                                    : _panier!)
-                                .map((toElement) =>
-                                    CardProduitPanier(data: toElement))
-                                .toList(),
-                          ),
-                        ),
-                        (state is PanierLoading)
-                            ? Positioned(
-                                child: Opacity(
-                                opacity: .7,
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            ListView(
+                              shrinkWrap: true,
+                              children: ((state is PanierLoaded)
+                                      ? state.panier.panierProduit!
+                                      : _panier!)
+                                  .map((toElement) =>
+                                      CardProduitPanier(data: toElement))
+                                  .toList(),
+                            ),
+                            if (state is PanierLoading)
+                              Positioned.fill(
                                 child: Container(
-                                    color: Colors.white,
-                                    child: const Center(
-                                        child: CircularProgressIndicator())),
-                              ))
-                            : const SizedBox.shrink()
-                      ]),
-                      const Spacer(),
+                                  color: Colors.white.withOpacity(0.7),
+                                  child: const Center(
+                                      child: CircularProgressIndicator()),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       if ((state is PanierLoaded) &&
                           state.panier.total != 0) ...[
                         Text(
@@ -134,19 +134,8 @@ class _PanierState extends State<PanierPage> {
                             fontSize: titreConstant,
                           ),
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.symmetric(
-                        //       horizontal: spacingConstant),
-                        //   child: ButtonFiled(
-                        //     text: 'FINALISER LA COMMANDE',
-                        //     handlerPress: () {
-                        //       // Logique du bouton pour finaliser la commande
-                        //       ShowBottomSheetCommande(context, state.panier);
-                        //     },
-                        //   ),
-                        // ),
                       ],
-                      const SizedBox(height: 40)
+                      const SizedBox(height: 40),
                     ],
                   );
                 })));

@@ -147,7 +147,6 @@ class _BoutiqueState extends State<Boutique> {
       Navigator.pop(context);
     }
   }
-  
 
   void addToPanier(Map<String, dynamic> arg) async {
     arg['token'] = token;
@@ -164,17 +163,24 @@ class _BoutiqueState extends State<Boutique> {
 
   void reset(type) {
     setState(() {
-      if (type == 'search') {
-        productFilter = {...productFilter..remove('search')};
-        searchController.text = '';
-      } else if (type == 'minmax') {
-        productFilter = {...productFilter..remove('prix_min')};
-        productFilter = {...productFilter..remove('prix_max')};
-        productFilter = {...productFilter..remove('prix_croissant')};
-        minMax = {"min": '', "max": '', "isFiltering": false};
-        if (Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
+      switch (type) {
+        case 'search':
+          productFilter.remove('search');
+          searchController.clear();
+          break;
+
+        case 'minmax':
+          productFilter.removeWhere((key, _) =>
+              key == 'prix_min' ||
+              key == 'prix_max' ||
+              key == 'prix_croissant');
+
+          minMax = {"min": '', "max": '', "isFiltering": false};
+
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+          break;
       }
     });
   }
