@@ -136,23 +136,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "genre": null,
     };
 
-    if(inputFields.isNotEmpty){
-      for(String key in postData.keys){
+    if (inputFields.isNotEmpty) {
+      for (String key in postData.keys) {
         dynamic currentField = inputFields.firstWhere((element) {
-          if(element['tag'] != null){
+          if (element['tag'] != null) {
             return element['tag'] == key;
           }
           return false;
         });
         TextEditingController? currentController = currentField['controller'];
-        if(currentController != null){
+        if (currentController != null) {
           postData[key] = currentController.text;
-          if(postData[key] == null){
+          if (postData[key] == null) {
             canSubmit = false;
           }
         } else {
           postData['genre'] = selectedGender?.id.toString();
-          if(postData[key] == null){
+          if (postData[key] == null) {
             canSubmit = false;
           }
         }
@@ -163,23 +163,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
       print("INPUT canSubmit $canSubmit");
     }
 
-    if(canSubmit){
+    if (canSubmit) {
       var registrationLink = Uri.parse("$BASE_URL$REGISTRATION_ENDPOINT");
-      await http.post(registrationLink, body: postData).then((Response response) {
+      await http
+          .post(registrationLink, body: postData)
+          .then((Response response) {
         setState(() {
           isLoading = false;
         });
         var responseBody = jsonDecode(response.body) as Map<String, dynamic>;
         var isError = false;
         var message = "";
-        if(responseBody.containsKey("errors") && responseBody['errors'] != null){
+        if (responseBody.containsKey("errors") &&
+            responseBody['errors'] != null) {
           message = responseBody['errors'];
           isError = true;
-        } else if (responseBody.containsKey("success") && responseBody['success'] != null){
+        } else if (responseBody.containsKey("success") &&
+            responseBody['success'] != null) {
           message = responseBody['success'];
           isError = false;
         }
-        showNotifyingDialog(context: context, message: message, isError: isError);
+        showNotifyingDialog(
+          context: context,
+          message: "Inscription réussie",
+          isError: false,
+          onClose: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          },
+        );
+
+        // showNotifyingDialog(
+        //     context: context, message: message, isError: isError);
         if (kDebugMode) {
           print("REGISTRATION RESPONSE ${responseBody}");
         }
@@ -191,10 +208,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -237,24 +252,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                       Column(
-                        children: inputFields.map((field) {
-                          return Column(
-                            children: [
-                              Inputfiled(
-                                type: field['type'],
-                                text: field['text'],
-                                icon: field['icon'],
-                                controller: field['controller'],
-                                selectedValue: selectedGender,
-                                items: field['items'],
-                                handleAction: (value) => selectGenre(value!),
-                                error: field[
-                                    'error'], // L'erreur est vide au départ
-                              ),
-                              const SizedBox(height: 30),
-                            ],
-                          );
-                        }).toList()),
+                          children: inputFields.map((field) {
+                        return Column(
+                          children: [
+                            Inputfiled(
+                              type: field['type'],
+                              text: field['text'],
+                              icon: field['icon'],
+                              controller: field['controller'],
+                              selectedValue: selectedGender,
+                              items: field['items'],
+                              handleAction: (value) => selectGenre(value!),
+                              error:
+                                  field['error'], // L'erreur est vide au départ
+                            ),
+                            const SizedBox(height: 30),
+                          ],
+                        );
+                      }).toList()),
                       SizedBox(
                           height: MediaQuery.of(context).size.height *
                               0.1), // Espacement en bas pour mieux centrer
@@ -267,9 +282,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ButtonFiled(
                     isLoading: isLoading,
                     text: "S'inscrire",
-                    handlerPress: () => {
-                      signUp()
-                    },
+                    handlerPress: () => {signUp()},
                   ),
                   const SizedBox(height: 30),
                   Row(

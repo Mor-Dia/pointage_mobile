@@ -161,6 +161,30 @@ class _BoutiqueState extends State<Boutique> {
         .add(PanierBlocEvent.postPanier(body: arg, token: token ?? ''));
   }
 
+  // void reset(type) {
+  //   setState(() {
+  //     switch (type) {
+  //       case 'search':
+  //         productFilter.remove('search');
+  //         searchController.clear();
+  //         break;
+
+  //       case 'minmax':
+  //         productFilter.removeWhere((key, _) =>
+  //             key == 'prix_min' ||
+  //             key == 'prix_max' ||
+  //             key == 'prix_croissant');
+
+  //         minMax = {"min": '', "max": '', "isFiltering": false};
+
+  //         if (Navigator.canPop(context)) {
+  //           Navigator.pop(context);
+  //         }
+  //         break;
+  //     }
+  //   });
+  // }
+
   void reset(type) {
     setState(() {
       switch (type) {
@@ -175,7 +199,11 @@ class _BoutiqueState extends State<Boutique> {
               key == 'prix_max' ||
               key == 'prix_croissant');
 
-          minMax = {"min": '', "max": '', "isFiltering": false};
+          minMax = {"min": '', "max": '', "isFiltering": true};
+
+          // vider les champs min et max
+          minController.clear();
+          maxController.clear();
 
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
@@ -183,6 +211,9 @@ class _BoutiqueState extends State<Boutique> {
           break;
       }
     });
+
+    produitBloc
+        .add(FetchDataEvent(filter: {'count': 15, 'showatwebsite': 'true'}));
   }
 
   void dispose() {

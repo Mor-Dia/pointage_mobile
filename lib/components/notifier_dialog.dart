@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-showNotifyingDialog(
-    {required BuildContext context, String? message, bool isError = false}) {
+showNotifyingDialog({
+  required BuildContext context,
+  String? message,
+  bool isError = false,
+  VoidCallback? onClose,
+}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      // Future.delayed(const Duration(seconds: 10), () {
-      //   if (Navigator.canPop(context)) {
-      //     Navigator.of(context).pop();
-      //   }
-      // });
+      Future.delayed(const Duration(seconds: 5), () {
+        if (Navigator.canPop(context)) {
+          Navigator.of(context).pop();
+          if (onClose != null) onClose();
+        }
+      });
       return Dialog(
         backgroundColor: Colors.white,
         alignment: Alignment.topCenter,
@@ -43,5 +48,7 @@ showNotifyingDialog(
         ),
       );
     },
-  ).then((onValue) {});
+  ).then((_) {
+    if (onClose != null) onClose();
+  });
 }

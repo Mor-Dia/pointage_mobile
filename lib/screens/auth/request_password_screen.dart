@@ -101,7 +101,18 @@ class _RequestPasswordScreenState extends State<RequestPasswordScreen> {
         message = responseBody['errors'];
         isError = true;
       }
-      showNotifyingDialog(context: context, message: message, isError: isError);
+      showNotifyingDialog(
+        context: context,
+        message: "Réussie",
+        isError: false,
+        onClose: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        },
+      );
+      // showNotifyingDialog(context: context, message: message, isError: isError);
       setState(() {
         isLoading = false;
       });

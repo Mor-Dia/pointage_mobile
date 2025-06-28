@@ -271,7 +271,10 @@ Future<dynamic> ShowBottomSheetPratique(BuildContext context, Pratique pratique,
                           fontWeight: FontWeight.bold, fontSize: 17),
                     ),
                     const SizedBox(height: spacingConstant / 2),
-                    Text(pratique.description.toString(),
+                    Text(
+                        pratique.description != null
+                            ? pratique.description.toString()
+                            : "",
                         style: GoogleFonts.arimo(
                           fontSize: 14,
                           color: Colors.black,
