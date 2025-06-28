@@ -141,13 +141,13 @@ class _LocalisationContactState extends State<LocalisationContact> {
                       dynamic email;
                       dynamic adresse;
                       if (numPref != null) {
-                        numTel = numPref.valeurText;
+                        numTel = numPref.valeurText ?? numPref.valeur;
                       }
                       if (emailPref != null) {
-                        email = emailPref.valeurText;
+                        email = emailPref.valeurText ?? emailPref.valeur;
                       }
                       if (adressePref != null) {
-                        adresse = adressePref.valeurText;
+                        adresse = adressePref.valeurText ?? adressePref.valeur;
                       }
 
                       return Column(
