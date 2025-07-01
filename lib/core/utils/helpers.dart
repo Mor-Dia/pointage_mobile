@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/services/api/actions/postData.dart';
 
 import '../../constant.dart';
@@ -48,19 +49,8 @@ class Helpers {
 
   static showSnackBar(BuildContext context,
       {bool isError = false, String? message}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message ?? "",
-          style: TextStyle(
-            color: isError ? Colors.white : Colors.black,
-          ),
-        ),
-        backgroundColor: isError
-            ? Colors.red
-            : Theme.of(context).colorScheme.primaryContainer,
-      ),
-    );
+    TopDialogNotification.show(context,
+        message: message ?? "", isError: isError ? true : false);
   }
 
   static saveDataInSharedPreferences(String key, dynamic data) async {

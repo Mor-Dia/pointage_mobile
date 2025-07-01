@@ -185,7 +185,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
         showNotifyingDialog(
           context: context,
-          message: "Inscription réussie",
+          message: message,
           isError: false,
           onClose: () {
             Navigator.pushReplacement(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
@@ -388,28 +389,14 @@ class _CardTypeNotificationPushState extends State<CardTypeNotificationPush> {
                 bloc: reservationPostBloc,
                 listener: (context, state) {
                   if (state is PostApiSuccess) {
-                    ScaffoldMessenger.of(parentContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "${state.message}",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.green[400],
-                      ),
-                    );
+                    TopDialogNotification.show(context,
+                        message: "${state.message}", isError: false);
                   }
                   if (state is PostApiFailure) {
                     print("NEW STATE ${state.message}");
                     ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(parentContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "${state.message}",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    TopDialogNotification.show(context,
+                        message: "${state.message}", isError: true);
                   }
                 },
                 builder: (BuildContext context, postBlocState) {

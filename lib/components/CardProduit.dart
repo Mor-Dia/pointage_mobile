@@ -318,15 +318,8 @@ class _CardProduitState extends State<CardProduit> {
                 print("Utilisateur non connecté 22");
 
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      "Veuillez vous connectez !",
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    backgroundColor: primaryColor,
-                  ),
-                );
+                TopDialogNotification.show(context,
+                    message: "Veuillez vous connectez !", isError: false);
               }
             },
             child: Container(

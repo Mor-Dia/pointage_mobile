@@ -9,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
@@ -421,17 +422,11 @@ class _HomePageState extends State<HomePage> {
                                               if (user == null) {
                                                 ScaffoldMessenger.of(context)
                                                     .hideCurrentSnackBar();
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  const SnackBar(
-                                                    content: Text(
-                                                      "Veuillez vous connecter !",
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                    backgroundColor: Colors.red,
-                                                  ),
-                                                );
+                                                TopDialogNotification.show(
+                                                    context,
+                                                    message:
+                                                        "Veuillez vous connecter !",
+                                                    isError: true);
                                                 return; // Arrêter l'exécution si l'utilisateur n'est pas connecté
                                               }
 
@@ -921,29 +916,15 @@ class _HomePageState extends State<HomePage> {
                       if (state.data != null && state.data["url"] != null) {
                         launchUrl(Uri.parse(state.data["url"].toString()));
                       } else {
-                        ScaffoldMessenger.of(parentContext).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "${state.message}",
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            backgroundColor: Colors.green[400],
-                          ),
-                        );
+                        TopDialogNotification.show(context,
+                            message: "${state.message}", isError: false);
                       }
                     }
                     if (state is PostApiFailure) {
                       print("MESSAGE RESE ${state.message} ");
                       ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                      ScaffoldMessenger.of(parentContext).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "${state.message}",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
+                      TopDialogNotification.show(context,
+                          message: "${state.message}", isError: true);
                     }
                   }
                 },

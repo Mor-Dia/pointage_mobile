@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/constant.dart';
 
@@ -119,17 +120,11 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
                       listener: (context, state) {
                         if (state is PostApiSuccess) {
                           changeStateFavoris();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                liked!
-                                    ? 'Ajouter au favoris'
-                                    : 'Retirer des favoris',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: Colors.green[400],
-                            ),
-                          );
+                          TopDialogNotification.show(context,
+                              message: liked!
+                                  ? 'Ajouter au favoris'
+                                  : 'Retirer des favoris',
+                              isError: false);
                           if (widget.updateFunction != null) {
                             widget.updateFunction!();
                           }
@@ -310,15 +305,8 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
               } else {
                 print("Utilisateur non connecté 22");
                 ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      "Veuillez vous connectez !",
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    backgroundColor: primaryColor,
-                  ),
-                );
+                TopDialogNotification.show(context,
+                    message: "Veuillez vous connectez !", isError: true);
               }
             },
             child: Container(

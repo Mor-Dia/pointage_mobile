@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Compte/commandes_page.dart';
@@ -484,15 +485,8 @@ class _MonCompteState extends State<MonCompte> {
                         listener: (context, state) {
                           if (state is PostApiSuccess) {
                             Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  "Suppression effectuée",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                backgroundColor: Colors.green[400],
-                              ),
-                            );
+                            TopDialogNotification.show(context,
+                                message: "${state.message}", isError: false);
                             Future.delayed(const Duration(seconds: 5), () {
                               logout();
                             });

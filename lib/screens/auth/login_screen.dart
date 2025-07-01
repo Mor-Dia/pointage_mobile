@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
       {
         'type': 'password',
         'text': 'Mot de passe',
-        'icon': '',
+        'icon': 'lock',
         'controller': null,
         'error': ''
       }
@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
     for (var i = 0; i < _controllers.length; i++) {
       _controllers[i].dispose();
     }
-    
+
     super.dispose();
   }
 

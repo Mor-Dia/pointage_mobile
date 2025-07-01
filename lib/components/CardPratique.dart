@@ -2,6 +2,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
@@ -101,17 +102,11 @@ class _CardPratiqueState extends State<CardPratique> {
                         listener: (context, state) {
                           if (state is PostApiSuccess) {
                             changeStateFavoris();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  liked!
-                                      ? 'Ajouter au favoris'
-                                      : 'Retirer des favoris',
-                                  style: const TextStyle(color: Colors.white),
-                                ),
-                                backgroundColor: Colors.green[400],
-                              ),
-                            );
+                            TopDialogNotification.show(context,
+                                message: liked!
+                                    ? 'Ajouter au favoris'
+                                    : 'Retirer des favoris',
+                                isError: false);
                             if (afterLike != null) {
                               afterLike!();
                             }

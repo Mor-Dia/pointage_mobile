@@ -57,11 +57,22 @@ class _InputfiledState extends State<Inputfiled> {
               borderRadius: BorderRadius.circular(15.0),
             ),
             child: widget.type != "select"
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(
+                ? TextField(
+                    enabled: widget.enable,
+                    obscureText: widget.type == "password" ? hide : false,
+                    controller: widget.controller,
+                    keyboardType: widget.type == 'number'
+                        ? TextInputType.number
+                        : TextInputType.text,
+                    onChanged: widget.handleChangeValue,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 13),
+                      hintText: widget.text,
+                      hintStyle: TextStyle(fontSize: textConstant),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset(
                           color: const Color(0xff15274d),
                           widget.type == 'password'
                               ? 'assets/icons/lock.svg'
@@ -69,61 +80,41 @@ class _InputfiledState extends State<Inputfiled> {
                           fit: BoxFit.scaleDown,
                           height: spacingConstant,
                         ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Flexible(
-                          child: TextField(
-                            enabled: widget.enable,
-                            obscureText:
-                                widget.type == "password" ? hide : false,
-                            controller: widget.controller,
-                            keyboardType: widget.type == 'number'
-                                ? TextInputType.number
-                                : TextInputType.text,
-                            onChanged: widget.handleChangeValue,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding:
-                                  const EdgeInsets.only(bottom: 5, left: 0),
-                              hintText: widget.text,
-                              hintStyle: TextStyle(fontSize: textConstant),
-                              prefixIconConstraints:
-                                  BoxConstraints(maxWidth: 20, minHeight: 20),
-                              suffixIcon: widget.type == 'password'
-                                  ? IconButton(
-                                      onPressed: () => {
-                                        setState(() {
-                                          hide = !hide;
-                                        })
-                                      },
-                                      icon: Icon(
-                                        hide
-                                            ? Icons.visibility_off
-                                            : Icons.remove_red_eye,
-                                        size: spacingConstant,
-                                        color: const Color(0xff15274d),
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
+                      prefixIconConstraints: const BoxConstraints(
+                        minWidth: 30,
+                        minHeight: 30,
+                      ),
+                      suffixIcon: widget.type == 'password'
+                          ? IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  hide = !hide;
+                                });
+                              },
+                              icon: Icon(
+                                hide
+                                    ? Icons.visibility_off
+                                    : Icons.remove_red_eye,
+                                size: spacingConstant,
+                                color: const Color(0xff15274d),
+                              ),
+                            )
+                          : null,
                     ),
                   )
-                : Container(
+                : Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: DropdownButton<Item>(
                       value: widget.selectedValue,
                       isExpanded: true,
                       underline: const SizedBox.shrink(),
-                      padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                       hint: Text(
                         widget.text,
                         style: TextStyle(
-                            color: primaryColor,
-                            fontSize:
-                                MediaQuery.of(context).size.width * 0.035),
+                          color: primaryColor,
+                          fontSize: MediaQuery.of(context).size.width * 0.035,
+                        ),
                       ),
                       dropdownColor: Colors.white,
                       icon: SvgPicture.asset('assets/icons/arrow_b.svg'),
@@ -142,12 +133,14 @@ class _InputfiledState extends State<Inputfiled> {
                   ),
           ),
         ),
-        (widget.error != null && widget.error!.isNotEmpty)
-            ? Text(
-                widget.error!.toString(),
-                style: const TextStyle(color: Colors.red, fontSize: 11),
-              )
-            : const SizedBox.shrink()
+        if (widget.error != null && widget.error!.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, top: 4),
+            child: Text(
+              widget.error!,
+              style: const TextStyle(color: Colors.red, fontSize: 11),
+            ),
+          ),
       ],
     );
   }

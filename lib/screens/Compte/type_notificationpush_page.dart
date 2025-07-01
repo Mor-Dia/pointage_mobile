@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/CardTypeNotificationPush.dart';
 import 'package:yogivida_mobile/components/CardProduit.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
 
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
@@ -138,26 +139,12 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
                   bloc: saveTNPPostBloc,
                   listener: (context, state) {
                     if (state is PostApiSuccess) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "",
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          backgroundColor: Colors.green[400],
-                        ),
-                      );
+                      TopDialogNotification.show(context,
+                          message: "Success", isError: false);
                     }
                     if (state is PostApiFailure) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text(
-                            'Une erreur est survenue',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          backgroundColor: Colors.red[400],
-                        ),
-                      );
+                      TopDialogNotification.show(context,
+                          message: "Une erreur est survenue", isError: true);
                     }
                     if (state is PostApiProcessing) {
                       setState(() {

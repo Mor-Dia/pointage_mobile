@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
 
 import '../../components/InputFiled.dart';
@@ -27,7 +28,6 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
   TextEditingController montantController = TextEditingController();
   String? currentError;
   dynamic currentElt;
-
 
   @override
   void initState() {
@@ -344,40 +344,25 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
               return BlocConsumer(
                 bloc: lcPostBloc,
                 listener: (context, state) {
-                  if(currentElt == toElement.id){
-
-                  if (state is PostApiSuccess) {
-                    // fermer l'element apres success
-                    Navigator.of(parentContext).pop();
-
-                    ScaffoldMessenger.of(parentContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "${state.message}",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.green[400],
-                      ),
-                    );
-                  }
-                  if (state is PostApiFailure) {
-                    print("NEW STATE ${state.message}");
-                    ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(parentContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "${state.message}",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
+                  if (currentElt == toElement.id) {
+                    if (state is PostApiSuccess) {
+                      // fermer l'element apres success
+                      Navigator.of(parentContext).pop();
+                      TopDialogNotification.show(context,
+                          message: "${state.message}", isError: false);
+                    }
+                    if (state is PostApiFailure) {
+                      print("NEW STATE ${state.message}");
+                      ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                      TopDialogNotification.show(context,
+                          message: "${state.message}", isError: true);
+                    }
                   }
                 },
                 builder: (BuildContext context, postBlocState) {
                   return AnimatedGestureButton(
-                    animate: currentElt == toElement.id && postBlocState is PostApiProcessing,
+                    animate: currentElt == toElement.id &&
+                        postBlocState is PostApiProcessing,
                     child: GestureDetector(
                         onTap: () {
                           setState(() {

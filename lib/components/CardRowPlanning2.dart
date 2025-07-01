@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/helpers.dart';
 
@@ -223,18 +224,15 @@ class _CardRowPlanning2State extends State<CardRowPlanning2> {
                           message = "${state.message}";
                           bgColor = Colors.red;
                         }
-                        if (state is PostApiSuccess ||
-                            state is PostApiFailure) {
+                        if (state is PostApiSuccess) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "${message}",
-                                style: TextStyle(color: textColor),
-                              ),
-                              backgroundColor: bgColor,
-                            ),
-                          );
+                          TopDialogNotification.show(context,
+                              message: "${message}", isError: false);
+                        }
+                        if (state is PostApiFailure) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          TopDialogNotification.show(context,
+                              message: "${message}", isError: true);
                         }
                         if (state is PostApiProcessing) {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
