@@ -102,10 +102,10 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                   child: CachedNetworkImage(
                     progressIndicatorBuilder: (context, url, progress) =>
                         Center(
-                      child: CircularProgressIndicator(
-                        value: progress.progress,
-                      ),
-                    ),
+                            // child: CircularProgressIndicator(
+                            //   value: progress.progress,
+                            // ),
+                            child: Loader1(size: 8)),
                     imageUrl: widget.data.produit!.image ?? '',
                     imageBuilder: (context, imageProvider) => Container(
                       decoration: BoxDecoration(

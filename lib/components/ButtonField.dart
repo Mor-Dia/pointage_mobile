@@ -29,9 +29,7 @@ class ButtonFiled extends StatelessWidget {
         children: [
           Text(
             text,
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: textminConstant ),
+            style: TextStyle(color: Colors.white, fontSize: textminConstant),
           ),
           const SizedBox(
             width: 10,
@@ -40,10 +38,11 @@ class ButtonFiled extends StatelessWidget {
               ? const SizedBox(
                   height: 10,
                   width: 10,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 1,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
+                  child: Loader1(size: 8),
+                  // CircularProgressIndicator(
+                  //     strokeWidth: 1,
+                  //     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  //   ),
                 )
               : const SizedBox.shrink(),
         ],

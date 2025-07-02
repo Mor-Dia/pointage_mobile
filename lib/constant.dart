@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
@@ -10,7 +11,6 @@ const LOGOUT_ENDPOINT = "deconnexion";
 const REQUEST_PWD_ENDPOINT = "password-create";
 const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
 // const BASE_URL = 'http://localhost/yogivida_back/public/';
-// const BASE_URL = 'https://d909-137-255-16-121.ngrok-free.app/yogivida_back/public/';
 const BASE_URL_QGL = '${BASE_URL}graphql?query=';
 
 const Color primaryColor = Color(0xff15274D);
@@ -85,3 +85,24 @@ class Item {
 }
 
 FirebaseAuth auth = FirebaseAuth.instance;
+
+class Loader1 extends StatelessWidget {
+  final bool isLight;
+  final double size;
+  final Color color;
+
+  const Loader1({
+    Key? key,
+    this.isLight = false,
+    this.size = 50,
+    this.color = primaryColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SpinKitThreeBounce(
+      color: isLight ? Colors.white : color,
+      size: size,
+    );
+  }
+}

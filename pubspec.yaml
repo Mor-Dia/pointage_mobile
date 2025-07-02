@@ -44,6 +44,8 @@ dependencies:
   icons_launcher: ^3.0.0
   cloud_firestore: ^5.6.0
   firebase_app_check: ^0.3.1+7
+  flutter_spinkit: ^5.2.0
+
 
 dev_dependencies:
   flutter_test:

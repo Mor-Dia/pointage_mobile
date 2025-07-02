@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yogivida_mobile/constant.dart';
 import '../bloc/data_bloc.dart';
 import 'custom_error.dart';
 import 'no_data_widget.dart';
@@ -13,16 +14,16 @@ class BlocBasedWidget<T> extends StatefulWidget {
   final Widget? customErrorWidget;
   final Widget? customPendingWidget;
   final Widget? customNoDataWidget;
-  const BlocBasedWidget(
-      {super.key,
-      required this.customWidget,
-      required this.customDataBloc,
-      this.filter,
-      this.useInfiniteScroller = false,
-      this.customErrorWidget,
-      this.customPendingWidget,
-      this.customNoDataWidget,
-      });
+  const BlocBasedWidget({
+    super.key,
+    required this.customWidget,
+    required this.customDataBloc,
+    this.filter,
+    this.useInfiniteScroller = false,
+    this.customErrorWidget,
+    this.customPendingWidget,
+    this.customNoDataWidget,
+  });
 
   @override
   State<BlocBasedWidget<T>> createState() => _BlocBasedWidgetState();
@@ -135,8 +136,8 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
                         child: const Padding(
                           padding: EdgeInsets.all(8.0),
                           child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                              // child: CircularProgressIndicator(),
+                              child: Loader1(size: 8)),
                         )),
                   ],
                 ),
@@ -144,17 +145,20 @@ class _BlocBasedWidgetState<T> extends State<BlocBasedWidget<T>> {
             }
             return customWidget(state);
           }
-          return customNoDataWidget ?? const Center(
-            child: NoDataWidget(),
-          );
+          return customNoDataWidget ??
+              const Center(
+                child: NoDataWidget(),
+              );
         } else if (state is DataFailure) {
-          return customErrorWidget ?? const Center(
-            child: CustomErrorWidget(),
-          );
+          return customErrorWidget ??
+              const Center(
+                child: CustomErrorWidget(),
+              );
         } else {
-          return  customPendingWidget ??const Center(
-            child: CircularProgressIndicator(),
-          );
+          return customPendingWidget ??
+              const Center(
+                  // child: CircularProgressIndicator(),
+                  child: Loader1(size: 8));
         }
       },
     );

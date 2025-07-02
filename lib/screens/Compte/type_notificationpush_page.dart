@@ -174,8 +174,8 @@ class _TypeNotificationPushsPageState extends State<TypeNotificationPushsPage> {
                     width: double.infinity,
                     height: double.infinity,
                     child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                        // child: CircularProgressIndicator(),
+                        child: Loader1(size: 8)),
                   ),
                 ),
                 Padding(

@@ -72,10 +72,10 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
               height: 100,
               child: CachedNetworkImage(
                 progressIndicatorBuilder: (context, url, progress) => Center(
-                  child: CircularProgressIndicator(
-                    value: progress.progress,
-                  ),
-                ),
+                    // child: CircularProgressIndicator(
+                    //   value: progress.progress,
+                    // ),
+                    child: Loader1(size: 8)),
                 imageUrl: widget.data.image ?? '',
                 imageBuilder: (context, imageProvider) => Container(
                   decoration: BoxDecoration(

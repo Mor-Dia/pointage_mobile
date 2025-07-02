@@ -117,7 +117,8 @@ class _PanierState extends State<PanierPage> {
                                 child: Container(
                                   color: Colors.white.withOpacity(0.7),
                                   child: const Center(
-                                      child: CircularProgressIndicator()),
+                                      // child: CircularProgressIndicator()
+                                      child: Loader1(size: 8)),
                                 ),
                               ),
                           ],

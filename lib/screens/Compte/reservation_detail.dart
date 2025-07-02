@@ -13,7 +13,10 @@ import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 
 class ReservationDetail extends StatefulWidget {
   final int? reservationId;
-  const ReservationDetail({super.key, required this.reservationId,});
+  const ReservationDetail({
+    super.key,
+    required this.reservationId,
+  });
 
   @override
   State<ReservationDetail> createState() => _ReservationDetailState();
@@ -27,7 +30,7 @@ class _ReservationDetailState extends State<ReservationDetail> {
   void initState() {
     initFilter();
     dataBloc = DataBloc<List<Reservation>>(
-            (response) => Reservation.fromJsonList(response),
+        (response) => Reservation.fromJsonList(response),
         Reservation.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
@@ -35,8 +38,8 @@ class _ReservationDetailState extends State<ReservationDetail> {
     super.initState();
   }
 
-  initFilter(){
-    if(widget.reservationId != null){
+  initFilter() {
+    if (widget.reservationId != null) {
       globalFilter.addAll({"id": widget.reservationId});
     }
   }
@@ -71,15 +74,14 @@ class _ReservationDetailState extends State<ReservationDetail> {
           ),
         ),
       ),
-
       body: BlocBasedWidget<List<Reservation>>(
         customDataBloc: dataBloc,
-        filter: {...globalFilter },
+        filter: {...globalFilter},
         useInfiniteScroller: true,
         customWidget: (state) {
           List<Reservation> data = state.data;
 
-          if(data.isEmpty){
+          if (data.isEmpty) {
             return const Center(child: Text('Aucune réservation trouvée'));
           }
           Reservation currentReservation = data[0];
@@ -105,9 +107,10 @@ class _ReservationDetailState extends State<ReservationDetail> {
   }
 }
 
-customWidget(context, widgetType){
-  Widget widgetToDisplay = const CircularProgressIndicator();
-  if(widgetType == "error"){
+customWidget(context, widgetType) {
+  Widget widgetToDisplay = const Loader1(size: 8);
+  // CircularProgressIndicator();
+  if (widgetType == "error") {
     widgetToDisplay = const CustomErrorWidget();
   } else {
     widgetToDisplay = const NoDataWidget();
@@ -147,8 +150,7 @@ customWidget(context, widgetType){
     ),
     body: SafeArea(
         child: Center(
-          child: widgetToDisplay,
-        )
-    ),
+      child: widgetToDisplay,
+    )),
   );
 }

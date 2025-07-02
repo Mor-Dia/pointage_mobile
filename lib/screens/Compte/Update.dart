@@ -401,8 +401,8 @@ class _UpdateState extends State<Update> {
                       Visibility(
                         visible: gettingUsersInfos,
                         child: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                            // child: CircularProgressIndicator(),
+                            child: Loader1(size: 8)),
                       ),
                       Visibility(
                           visible: !gettingUsersInfos,

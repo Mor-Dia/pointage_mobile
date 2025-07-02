@@ -12,7 +12,10 @@ import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 
 class PratiqueDetail extends StatefulWidget {
   final int? pratiqueId;
-  const PratiqueDetail({super.key, required this.pratiqueId,});
+  const PratiqueDetail({
+    super.key,
+    required this.pratiqueId,
+  });
 
   @override
   State<PratiqueDetail> createState() => _PratiqueDetailState();
@@ -26,7 +29,7 @@ class _PratiqueDetailState extends State<PratiqueDetail> {
   void initState() {
     initFilter();
     dataBloc = DataBloc<List<Pratique>>(
-            (response) => Pratique.fromJsonList(response),
+        (response) => Pratique.fromJsonList(response),
         Pratique.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
@@ -34,8 +37,8 @@ class _PratiqueDetailState extends State<PratiqueDetail> {
     super.initState();
   }
 
-  initFilter(){
-    if(widget.pratiqueId != null){
+  initFilter() {
+    if (widget.pratiqueId != null) {
       globalFilter.addAll({"id": widget.pratiqueId});
     }
   }
@@ -70,14 +73,13 @@ class _PratiqueDetailState extends State<PratiqueDetail> {
           ),
         ),
       ),
-
       body: BlocBasedWidget<List<Pratique>>(
         customDataBloc: dataBloc,
-        filter: {...globalFilter },
+        filter: {...globalFilter},
         useInfiniteScroller: true,
         customWidget: (state) {
           List<Pratique> data = state.data;
-          if(data.isEmpty){
+          if (data.isEmpty) {
             return const Center(child: Text('Aucune pratique trouvée'));
           }
           Pratique currentPratique = data[0];
@@ -87,21 +89,18 @@ class _PratiqueDetailState extends State<PratiqueDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
-
               children: [
                 Text(
                   "${currentPratique.designation}",
                   style: const TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 20
-                  ),
+                      fontWeight: FontWeight.w900, fontSize: 20),
                 ),
                 const SizedBox(height: 10),
-                CustomCachedNetworkImage(imageUrl: currentPratique.image ?? '', fallBackAsset: 'assets/images/pratique_fallback.png'),
+                CustomCachedNetworkImage(
+                    imageUrl: currentPratique.image ?? '',
+                    fallBackAsset: 'assets/images/pratique_fallback.png'),
                 const SizedBox(height: 10),
-                Text(
-                    "${currentPratique.description}"
-                ),
+                Text("${currentPratique.description}"),
               ],
             ),
           );
@@ -114,9 +113,10 @@ class _PratiqueDetailState extends State<PratiqueDetail> {
   }
 }
 
-customWidget(context, widgetType){
-  Widget widgetToDisplay = const CircularProgressIndicator();
-  if(widgetType == "error"){
+customWidget(context, widgetType) {
+  Widget widgetToDisplay =
+      const Loader1(size: 8); // CircularProgressIndicator();
+  if (widgetType == "error") {
     widgetToDisplay = const CustomErrorWidget();
   } else {
     widgetToDisplay = const NoDataWidget();
@@ -155,9 +155,8 @@ customWidget(context, widgetType){
       ),
     ),
     body: SafeArea(
-      child: Center(
-        child: widgetToDisplay,
-      )
-    ),
+        child: Center(
+      child: widgetToDisplay,
+    )),
   );
 }

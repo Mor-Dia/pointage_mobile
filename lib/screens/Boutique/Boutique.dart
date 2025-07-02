@@ -310,11 +310,11 @@ class _BoutiqueState extends State<Boutique> {
                                       ? Container(
                                           width: 10,
                                           height: 10,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        )
+                                          // child: CircularProgressIndicator(
+                                          //   strokeWidth: 2,
+                                          //   color: Colors.white,
+                                          // ),
+                                          child: Loader1(size: 8))
                                       : Text(
                                           (_panier?.length ?? 0).toString(),
                                           style: TextStyle(
