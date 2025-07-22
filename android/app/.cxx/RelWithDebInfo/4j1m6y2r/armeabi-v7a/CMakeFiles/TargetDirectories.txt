@@ -1,0 +1,2 @@
+/Volumes/guindy/htdocs/yogivida_mobile/android/app/.cxx/RelWithDebInfo/4j1m6y2r/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Volumes/guindy/htdocs/yogivida_mobile/android/app/.cxx/RelWithDebInfo/4j1m6y2r/armeabi-v7a/CMakeFiles/rebuild_cache.dir

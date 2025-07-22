@@ -1,0 +1,1 @@
+/Volumes/guindy/htdocs/yogivida_mobile/build/app/intermediates/cxx/RelWithDebInfo/4z497361/obj/arm64-v8a
