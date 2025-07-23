@@ -202,7 +202,7 @@ class _MonCompteState extends State<MonCompte> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   const Text(
-                                    "Mes lignes crédit",
+                                    "Mes lignes crédit", 
                                     style: TextStyle(color: Color(0xff5EAB43)),
                                   ),
                                   BlocBasedWidget<List<Utilisateur>>(
