@@ -602,7 +602,7 @@ class _HomePageState extends State<HomePage> {
                       SvgPicture.asset(
                         "assets/icons/heure.svg",
                         height: 15,
-                        color: const Color(0xFF838282),
+                        color: Color.fromARGB(255, 0, 0, 0),
                       ),
                       const SizedBox(
                         width: 5,
@@ -610,20 +610,16 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         "${programme.heureDebut}",
                         style: const TextStyle(
-                            color: Color(0xff838282), fontSize: 12),
+                            color: Color.fromARGB(255, 0, 0, 0), fontSize: 12),
                       ),
                       Text(
                         " - ${programme.heureFin}",
                         style: const TextStyle(
-                            color: Color(0xff838282), fontSize: 12),
-                      )
-                    ],
-                  ),
-                  const SizedBox(
-                    height: spacingConstant,
-                  ),
-                  Row(
-                    children: [
+                            color: Color.fromARGB(255, 0, 0, 0), fontSize: 12),
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
                       SvgPicture.asset(
                         "assets/icons/lc.svg",
                         height: 15,
