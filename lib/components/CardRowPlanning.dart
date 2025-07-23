@@ -8,6 +8,7 @@ import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
+import 'package:yogivida_mobile/core/utils/helpers.dart';
 import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 
 import '../core/models/user_model.dart';
@@ -295,6 +296,26 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                   const SizedBox(
                     height: spacingConstant,
                   ),
+                  Row(
+                    children: [
+                      SvgPicture.asset(
+                        "assets/icons/lc.svg",
+                        height: 15,
+                        color: const Color.fromARGB(255, 0, 0, 0),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        "${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} XOF",
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 0, 0, 0), fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: spacingConstant,
+                  ),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -493,6 +514,15 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                       const SizedBox(
                         height: spacingConstant,
                       ),
+                      Center(
+                        child: Text(
+                          "Montant : ${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} XOF",
+                          style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 0, 0),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
                       BlocBasedWidget<List<TypePaiement>>(
                         customDataBloc: typePaiementPushBloc,
                         // filter: currentFilter,
@@ -546,7 +576,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                   print("MESSAGE RESE ${currentElt} ");
                   if (currentElt == toElement.id) {
                     if (state is PostApiSuccess) {
-                      //Navigator.of(parentContext).pop();
+                      Navigator.of(parentContext).pop();
+                      Navigator.of(context).pop();
                       if (state.data != null && state.data["url"] != null) {
                         launchUrl(Uri.parse(state.data["url"].toString()));
                       } else {

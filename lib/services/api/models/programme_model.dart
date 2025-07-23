@@ -50,7 +50,7 @@ class Programme with _$Programme {
   }
 
   static shrinkedAttributs() {
-    return "id,file_attente,file_attente_color,file_attente_display,duration,date_fr,heure_debut,heure_fin,etat,salle_pratique{id,salle{id,designation}},professeur_pratique{id,professeur{id,user{name}},pratique{id,designation}},displayetat,displaycoloretat";
+    return "id,file_attente,file_attente_color,file_attente_display,duration,date_fr,heure_debut,heure_fin,etat,salle_pratique{id,salle{id,designation}},professeur_pratique{id,professeur{id,user{name}},pratique{id,designation,prix_seance}},displayetat,displaycoloretat";
   }
 
   static String getEndpoint({bool isPagination = true}) {

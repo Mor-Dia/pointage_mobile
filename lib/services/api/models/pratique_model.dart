@@ -14,6 +14,7 @@ class Pratique with _$Pratique {
     String? designation,
     String? image,
     String? description,
+    @JsonKey(name: "prix_seance") int? prixSeance,
     @JsonKey(name: "description_en") String? descriptionEn,
     @JsonKey(name: "type_pratique") TypePratique? typePratique,
     dynamic ca_souscription,
@@ -40,7 +41,7 @@ class Pratique with _$Pratique {
   }
 
   static shrinkedAttributs() {
-    return "id,favoris,image,designation,description,description_en,type_pratique_id,type_pratique{id,designation}";
+    return "id,favoris,image,designation,description,description_en,type_pratique_id,type_pratique{id,designation},prix_seance";
   }
 
   static String getEndpoint({bool isPagination = true}) {

@@ -33,7 +33,7 @@ class Planning extends StatefulWidget {
 
 class _PlanningState extends State<Planning> {
   var selectedValue;
-  Map<String, dynamic> currentFilter = {};
+  Map<String, dynamic> currentFilter = {"is_front": true};
   late DataBloc<List<Programme>> programmeBloc;
   late DataBloc<List<Salle>> salleBloc;
   Salle? selectedStudio;
@@ -85,7 +85,11 @@ class _PlanningState extends State<Planning> {
 
   initFilter() {
     print("INIT FILTER papa" + widget.id.toString());
-    currentFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+    // currentFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+    currentFilter = {
+      ...currentFilter,
+      'date': '${date.year}-${date.month}-${date.day}',
+    };
     if (widget.id != 0) {
       currentFilter = {
         ...currentFilter,
@@ -115,6 +119,7 @@ class _PlanningState extends State<Planning> {
     setState(() {
       selectedDate = date;
       currentFilter = {
+        ...currentFilter,
         'date': "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"
       };
       if (widget.id != 0) {

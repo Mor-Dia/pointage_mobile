@@ -25,6 +25,8 @@ mixin _$Pratique {
   String? get designation => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
+  @JsonKey(name: "prix_seance")
+  int? get prixSeance => throw _privateConstructorUsedError;
   @JsonKey(name: "description_en")
   String? get descriptionEn => throw _privateConstructorUsedError;
   @JsonKey(name: "type_pratique")
@@ -52,6 +54,7 @@ abstract class $PratiqueCopyWith<$Res> {
       String? designation,
       String? image,
       String? description,
+      @JsonKey(name: "prix_seance") int? prixSeance,
       @JsonKey(name: "description_en") String? descriptionEn,
       @JsonKey(name: "type_pratique") TypePratique? typePratique,
       dynamic ca_souscription});
@@ -79,6 +82,7 @@ class _$PratiqueCopyWithImpl<$Res, $Val extends Pratique>
     Object? designation = freezed,
     Object? image = freezed,
     Object? description = freezed,
+    Object? prixSeance = freezed,
     Object? descriptionEn = freezed,
     Object? typePratique = freezed,
     Object? ca_souscription = freezed,
@@ -104,6 +108,10 @@ class _$PratiqueCopyWithImpl<$Res, $Val extends Pratique>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      prixSeance: freezed == prixSeance
+          ? _value.prixSeance
+          : prixSeance // ignore: cast_nullable_to_non_nullable
+              as int?,
       descriptionEn: freezed == descriptionEn
           ? _value.descriptionEn
           : descriptionEn // ignore: cast_nullable_to_non_nullable
@@ -148,6 +156,7 @@ abstract class _$$PratiqueImplCopyWith<$Res>
       String? designation,
       String? image,
       String? description,
+      @JsonKey(name: "prix_seance") int? prixSeance,
       @JsonKey(name: "description_en") String? descriptionEn,
       @JsonKey(name: "type_pratique") TypePratique? typePratique,
       dynamic ca_souscription});
@@ -174,6 +183,7 @@ class __$$PratiqueImplCopyWithImpl<$Res>
     Object? designation = freezed,
     Object? image = freezed,
     Object? description = freezed,
+    Object? prixSeance = freezed,
     Object? descriptionEn = freezed,
     Object? typePratique = freezed,
     Object? ca_souscription = freezed,
@@ -199,6 +209,10 @@ class __$$PratiqueImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String?,
+      prixSeance: freezed == prixSeance
+          ? _value.prixSeance
+          : prixSeance // ignore: cast_nullable_to_non_nullable
+              as int?,
       descriptionEn: freezed == descriptionEn
           ? _value.descriptionEn
           : descriptionEn // ignore: cast_nullable_to_non_nullable
@@ -224,6 +238,7 @@ class _$PratiqueImpl extends _Pratique with DiagnosticableTreeMixin {
       this.designation,
       this.image,
       this.description,
+      @JsonKey(name: "prix_seance") this.prixSeance,
       @JsonKey(name: "description_en") this.descriptionEn,
       @JsonKey(name: "type_pratique") this.typePratique,
       this.ca_souscription})
@@ -243,6 +258,9 @@ class _$PratiqueImpl extends _Pratique with DiagnosticableTreeMixin {
   @override
   final String? description;
   @override
+  @JsonKey(name: "prix_seance")
+  final int? prixSeance;
+  @override
   @JsonKey(name: "description_en")
   final String? descriptionEn;
   @override
@@ -253,7 +271,7 @@ class _$PratiqueImpl extends _Pratique with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Pratique(id: $id, favoris: $favoris, designation: $designation, image: $image, description: $description, descriptionEn: $descriptionEn, typePratique: $typePratique, ca_souscription: $ca_souscription)';
+    return 'Pratique(id: $id, favoris: $favoris, designation: $designation, image: $image, description: $description, prixSeance: $prixSeance, descriptionEn: $descriptionEn, typePratique: $typePratique, ca_souscription: $ca_souscription)';
   }
 
   @override
@@ -266,6 +284,7 @@ class _$PratiqueImpl extends _Pratique with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('designation', designation))
       ..add(DiagnosticsProperty('image', image))
       ..add(DiagnosticsProperty('description', description))
+      ..add(DiagnosticsProperty('prixSeance', prixSeance))
       ..add(DiagnosticsProperty('descriptionEn', descriptionEn))
       ..add(DiagnosticsProperty('typePratique', typePratique))
       ..add(DiagnosticsProperty('ca_souscription', ca_souscription));
@@ -283,6 +302,8 @@ class _$PratiqueImpl extends _Pratique with DiagnosticableTreeMixin {
             (identical(other.image, image) || other.image == image) &&
             (identical(other.description, description) ||
                 other.description == description) &&
+            (identical(other.prixSeance, prixSeance) ||
+                other.prixSeance == prixSeance) &&
             (identical(other.descriptionEn, descriptionEn) ||
                 other.descriptionEn == descriptionEn) &&
             (identical(other.typePratique, typePratique) ||
@@ -300,6 +321,7 @@ class _$PratiqueImpl extends _Pratique with DiagnosticableTreeMixin {
       designation,
       image,
       description,
+      prixSeance,
       descriptionEn,
       typePratique,
       const DeepCollectionEquality().hash(ca_souscription));
@@ -327,6 +349,7 @@ abstract class _Pratique extends Pratique {
       final String? designation,
       final String? image,
       final String? description,
+      @JsonKey(name: "prix_seance") final int? prixSeance,
       @JsonKey(name: "description_en") final String? descriptionEn,
       @JsonKey(name: "type_pratique") final TypePratique? typePratique,
       final dynamic ca_souscription}) = _$PratiqueImpl;
@@ -345,6 +368,9 @@ abstract class _Pratique extends Pratique {
   String? get image;
   @override
   String? get description;
+  @override
+  @JsonKey(name: "prix_seance")
+  int? get prixSeance;
   @override
   @JsonKey(name: "description_en")
   String? get descriptionEn;

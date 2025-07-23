@@ -45,6 +45,10 @@ Future<void> main() async {
 
   Bloc.observer = SimpleBlocObserver();
 
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+  };
+
   runApp(MyApp());
 }
 

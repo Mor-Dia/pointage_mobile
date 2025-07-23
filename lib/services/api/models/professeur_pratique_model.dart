@@ -4,7 +4,6 @@ import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
 import 'package:yogivida_mobile/services/api/models/professeur_model.dart';
 part 'professeur_pratique_model.freezed.dart';
 part 'professeur_pratique_model.g.dart';
-// id,date,file_attente,date_fr,date_fr_day,heure_debut,heure_fin,etat,salle_pratique{id,salle_id,salle{id,designation}},professeur_pratique{id,professeur_id,pratique{designation},professeur{id,user{name}},pratique_id},contrat{id},programme_langues{id,langue_id,langue{id,designation}},programme_niveaus{id,niveau_id,niveau{id,designation}},type_personne{id},reservations{id},displayetat,displaycoloretat,user{name,image}}}}
 @freezed
 class ProfesseurPratique with _$ProfesseurPratique {
   const ProfesseurPratique._();

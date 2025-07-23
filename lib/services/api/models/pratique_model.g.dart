@@ -13,6 +13,7 @@ _$PratiqueImpl _$$PratiqueImplFromJson(Map<String, dynamic> json) =>
       designation: json['designation'] as String?,
       image: json['image'] as String?,
       description: json['description'] as String?,
+      prixSeance: (json['prix_seance'] as num?)?.toInt(),
       descriptionEn: json['description_en'] as String?,
       typePratique: json['type_pratique'] == null
           ? null
@@ -28,6 +29,7 @@ Map<String, dynamic> _$$PratiqueImplToJson(_$PratiqueImpl instance) =>
       'designation': instance.designation,
       'image': instance.image,
       'description': instance.description,
+      'prix_seance': instance.prixSeance,
       'description_en': instance.descriptionEn,
       'type_pratique': instance.typePratique,
       'ca_souscription': instance.ca_souscription,

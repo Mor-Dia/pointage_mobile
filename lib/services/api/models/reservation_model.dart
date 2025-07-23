@@ -41,7 +41,7 @@ class Reservation with _$Reservation {
   }
 
   static shrinkedAttributs() {
-    return "id,etat,displayetat,displaycoloretat,with_ligne_credit,en_attente,created_at_fr,programme{id,etat,salle_pratique{salle{designation,zone{designation}}},date_fr,heure_debut,heure_fin,professeur_pratique{id,professeur_id,pratique{designation},professeur{id,user{name}},pratique_id}},souscription{id,client{id,nom_complet}}";
+    return "id,etat,displayetat,displaycoloretat,with_ligne_credit,en_attente,created_at_fr,programme{id,etat,salle_pratique{salle{designation,zone{designation}}},date_fr,heure_debut,heure_fin,professeur_pratique{id,professeur_id,pratique{designation,prix_seance},professeur{id,user{name}},pratique_id}},souscription{id,client{id,nom_complet}}";
   }
 
   static String getEndpoint({bool isPagination = true}) {

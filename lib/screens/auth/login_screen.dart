@@ -227,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 height:
                                     30), // Espacement entre le logo et le texte
                             Text(
-                              'Bienvenue !',
+                              "Bienvenue !",
                               style: GoogleFonts.alata(
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.085,
@@ -236,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             Text(
-                              'Yoga pour le corps, l\'esprit et l\'âme.',
+                              "Yoga pour le corps, l'esprit et l'âme.",
                               style: GoogleFonts.montserrat(
                                 fontSize:
                                     MediaQuery.of(context).size.width * 0.035,
@@ -258,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     error: field[
                                         'error'], // L'erreur est vide au départ
                                   ),
-                                  const SizedBox(height: 30),
+                                  const SizedBox(height: 10),
                                 ],
                               );
                             }).toList()),
@@ -290,9 +290,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(
-                                      height: 30,
-                                    )
+                                    // const SizedBox(
+                                    //   height: 10,
+                                    // )
                                   ],
                                 ),
                               ),
@@ -311,7 +311,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         (route) => false);
                                   },
                                   child: Text(
-                                    'Mot de passe oublier ?',
+                                    'Mot de passe oublié ?',
                                     textAlign: TextAlign.right,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -324,9 +324,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ],
                             ),
-                            SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    0.1), // Espacement en bas pour mieux centrer
+                            // SizedBox(
+                            //     height: MediaQuery.of(context).size.height *
+                            //         0.1), // Espacement en bas pour mieux centrer
                           ],
                         ),
                       ),
