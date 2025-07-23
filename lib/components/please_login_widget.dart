@@ -15,7 +15,7 @@ class PleaseLoginWidget extends StatelessWidget {
       children: [
         const SizedBox(height: 50),
         SizedBox.square(
-          // dimension: 300,
+          dimension: 250,
           child: Lottie.asset(
             'assets/animations/pleaselogin.json',
             repeat: false,
@@ -24,9 +24,12 @@ class PleaseLoginWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 30),
-        Text(
-          textAlign: TextAlign.center,
-          "Veuillez vous connecter à votre compte ou créer un compte pour continuer.",
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(
+            textAlign: TextAlign.center,
+            "Veuillez vous connecter à votre compte ou créer un compte pour continuer.",
+          ),
         ),
         const SizedBox(height: 30),
         GestureDetector(

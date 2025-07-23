@@ -215,80 +215,29 @@ class _HomePageState extends State<HomePage> {
                         //   minHeight: spacingConstant,
                         // ),
                         child: Center(
-                          child: BlocBuilder<AuthenticationBloc<Utilisateur>,
-                              AuthenticationState<Utilisateur>>(
-                            builder: (context, authState) {
-                              // Vérifiez si l'utilisateur est authentifié
-                              if (authState.status ==
-                                  AuthenticationStatus.authenticated) {
-                                // Utilisateur connecté
-                                Utilisateur? user = authState.user;
-                                print("Utilisateur connecté papa");
-                                final userId = user?.id;
-
-                                return BlocBasedWidget<List<NotificationPush>>(
-                                  customDataBloc: notificationPushBloc,
-                                  // filter: globalFilter, // Optionnel si nécessaire
-                                  filter: {
-                                    "client_id": userId, // Filtrage par user_id
-                                    "count": 100,
-                                    "is_read": false,
-                                  },
-                                  useInfiniteScroller: true,
-                                  customWidget: (state) {
-                                    Map<String, dynamic> metadata =
-                                        state.metadata;
-                                    dynamic totalNotifs = metadata['total'];
-                                    return Text(
-                                      "${totalNotifs}",
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    );
-                                  },
-                                );
-                              } else {
-                                // Utilisateur non authentifié
-                                return const Text(
-                                  "0",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                );
-                              }
-                            },
-                          ),
-                        ),
-
-                        // child: BlocBasedWidget<List<NotificationPush>>(
-                        //   customDataBloc: notificationPushBloc,
-                        //   // filter: globalFilter,
-                        //   useInfiniteScroller: true,
-                        //   customWidget: (
-                        //     state,
-                        //   ) {
-                        //     Map<String, dynamic> metadata = state.metadata;
-                        //     dynamic totalNotifs = metadata['total'];
-                        //     // dynamic totalNotifs = 0;
-                        //     print("NOTIF TOTAL ${totalNotifs}");
-                        //     return Text(
-                        //       "${totalNotifs}",
-                        //       style: const TextStyle(
-                        //         color: Colors.white,
-                        //         // overflow: TextOverflow.ellipsis,
-                        //         fontSize: 10,
-                        //         fontWeight: FontWeight.bold,
-                        //       ),
-                        //       textAlign: TextAlign.center,
-                        //     );
-                        //   },
-                        // ),
+                            child: BlocBasedWidget<List<NotificationPush>>(
+                          customDataBloc: notificationPushBloc,
+                          // filter: globalFilter, // Optionnel si nécessaire
+                          filter: {
+                            "client_id": user.id, // Filtrage par user_id
+                            "count": 100,
+                            "is_read": false,
+                          },
+                          useInfiniteScroller: true,
+                          customWidget: (state) {
+                            Map<String, dynamic> metadata = state.metadata;
+                            dynamic totalNotifs = metadata['total'];
+                            return Text(
+                              "${totalNotifs}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            );
+                          },
+                        )),
                       ),
                     ),
                   ],
