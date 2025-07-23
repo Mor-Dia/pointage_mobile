@@ -42,6 +42,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     inputFields = [
       {
+        'type': 'select',
+        'text': 'Genre',
+        'icon': '',
+        'tag': 'genre',
+        'controller': null,
+        'selectedValue': selectedGender,
+        'items': items,
+        'error': ''
+      },
+      {
         'type': 'text',
         'text': 'Nom ',
         'icon': 'user',
@@ -71,16 +81,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'icon': 'phone',
         'tag': 'phone',
         'controller': null,
-        'error': ''
-      },
-      {
-        'type': 'select',
-        'text': 'Genre',
-        'icon': '',
-        'tag': 'genre',
-        'controller': null,
-        'selectedValue': selectedGender,
-        'items': items,
         'error': ''
       },
       {
@@ -127,13 +127,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
     bool canSubmit = true;
     Map<String, dynamic> postData = {
+      "genre": null,
       "nom": null,
       "prenom": null,
       "email": null,
       "phone": null,
       "password": null,
-      "confirmpassword": null,
-      "genre": null,
+      "confirmpassword": null
     };
 
     if (inputFields.isNotEmpty) {
@@ -188,10 +188,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           message: message,
           isError: false,
           onClose: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => LoginScreen()),
-            );
+            if (!isError) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+              );
+            }
           },
         );
 

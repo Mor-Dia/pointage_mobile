@@ -91,7 +91,7 @@ class _BoutiqueState extends State<Boutique> {
         isPagination: true,
         attributeToGet: Produit.shrinkedAttributs());
 
-    productFilter.addAll({'count': 150, 'showatwebsite': 'true'});
+    productFilter.addAll({'count': 100, 'showatwebsite': 'true'});
 
     familleFilter.addAll({'showatwebsite': 'true'});
     // produitBloc.add(FetchDataEvent())
@@ -213,7 +213,7 @@ class _BoutiqueState extends State<Boutique> {
     });
 
     produitBloc
-        .add(FetchDataEvent(filter: {'count': 150, 'showatwebsite': 'true'}));
+        .add(FetchDataEvent(filter: {'count': 100, 'showatwebsite': 'true'}));
   }
 
   void dispose() {

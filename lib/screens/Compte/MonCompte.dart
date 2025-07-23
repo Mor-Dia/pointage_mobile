@@ -216,7 +216,7 @@ class _MonCompteState extends State<MonCompte> {
                                         style: TextStyle(
                                             color: currentClient.solde > 0
                                                 ? Color(0xff5EAB43)
-                                                : Colors.red,
+                                                : Colors.black,
                                             fontWeight: FontWeight.bold),
                                       );
                                     },

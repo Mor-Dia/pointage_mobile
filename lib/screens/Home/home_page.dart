@@ -105,7 +105,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   initFilter() {
-    programmeBlocFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+    // programmeBlocFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+    programmeBlocFilter = {
+      ...programmeBlocFilter
+        ..addAll({'date': '${date.year}-${date.month}-${date.day}'})
+    };
   }
 
   void filtreTypePratique(index, type_pratique_id) {
