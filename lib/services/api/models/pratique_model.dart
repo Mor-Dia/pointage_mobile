@@ -23,21 +23,25 @@ class Pratique with _$Pratique {
   factory Pratique.fromJson(Map<String, dynamic> json) =>
       _$PratiqueFromJson(json);
 
-  static fromJsonList(List<dynamic> json) {
-    List<Pratique> data = [];
-    try {
-      if (kDebugMode) {}
+  // static fromJsonList(List<dynamic> json) {
+  //   List<Pratique> data = [];
+  //   try {
+  //     if (kDebugMode) {}
 
-      for (var result in json) {
-        data.add(Pratique.fromJson(result as Map<String, dynamic>));
-      }
-      if (kDebugMode) {}
-    } catch (error, stacktrace) {
-      if (kDebugMode) {
-        print("ERROR WHILE TRANSFORMING $error $stacktrace");
-      }
-    }
-    return data;
+  //     for (var result in json) {
+  //       data.add(Pratique.fromJson(result as Map<String, dynamic>));
+  //     }
+  //     if (kDebugMode) {}
+  //   } catch (error, stacktrace) {
+  //     if (kDebugMode) {
+  //       print("ERROR WHILE TRANSFORMING $error $stacktrace");
+  //     }
+  //   }
+  //   return data;
+  // }
+
+  static List<Pratique> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((json) => Pratique.fromJson(json)).toList();
   }
 
   static shrinkedAttributs() {

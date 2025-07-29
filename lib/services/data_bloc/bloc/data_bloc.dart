@@ -49,6 +49,7 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
     this.customDataPath,
   }) : super(DataFetchInitial()) {
     on<FetchDataEvent>((event, emit) async {
+      print("FETCHING DATA WITH ENDPOINT ${event} ${this.endPoint}");
       await getDataFromApi(event);
     });
     on<PostDataEvent>((event, emit) async {
@@ -95,7 +96,8 @@ class DataBloc<T> extends Bloc<DataFetchEvent, DataFetchState> {
         }
       }
       if (!forAddingDataPurpose) {
-        emit(DataLoading()); //Dans le cas où il ne s'agit pas d'infinite scroll, réinitialiser le BLOC
+        emit(
+            DataLoading()); //Dans le cas où il ne s'agit pas d'infinite scroll, réinitialiser le BLOC
       }
 
       Map<String, dynamic>? parameters;

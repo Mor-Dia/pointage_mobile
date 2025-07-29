@@ -1,5 +1,4 @@
 import 'package:authentication_repository/authentication_repository.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,17 +7,14 @@ import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/Home/MainHome.dart';
 import 'package:yogivida_mobile/screens/auth/register_screen.dart';
-import 'package:yogivida_mobile/screens/Home/home_page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:yogivida_mobile/screens/auth/request_password_screen.dart';
-import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
 
 import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
+import 'package:yogivida_mobile/services/notification_api.dart';
 
-import '../../core/global.dart';
 import '../../core/utils/helpers.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -174,10 +170,11 @@ class _LoginScreenState extends State<LoginScreen> {
         switch (currentStatus) {
           case AuthenticationStatus.authenticated:
             if (kDebugMode) {
-              print("AUTH STATE AUTHENTICATED ${state.status}");
+              print("AUTH STATE AUTHENTICATED ${state.user!.id}");
             }
 
             Helpers.setFCMTokenToServer();
+            NotificationApi.manageTokenFcm();
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(

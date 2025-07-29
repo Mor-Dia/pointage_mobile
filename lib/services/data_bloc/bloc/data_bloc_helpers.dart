@@ -42,7 +42,6 @@ class DataBlocHelpers {
       metadata = "metadata{total,per_page,current_page,last_page}";
       return """query{$endPoint $filterToString{$metadata,data{$attributeToGet}}}""";
     }
-    // {programmespaginated(page:1,count:7,is_front:true){metadata{total,per_page,current_page,last_page},data{id}}}
   }
 
 }

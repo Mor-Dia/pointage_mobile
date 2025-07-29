@@ -3,19 +3,13 @@ import 'dart:convert';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/screens/Compte/MonCompte.dart';
-import 'package:yogivida_mobile/screens/Home/MainHome.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
-import 'package:yogivida_mobile/screens/Home/home_page.dart';
-import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
 
 import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
@@ -23,7 +17,6 @@ import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc
 import '../../components/animated_gesture_detector.dart';
 import '../../components/please_login_widget.dart';
 import '../../services/data_bloc/bloc/data_bloc.dart';
-import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 import '../../services/post_api_bloc.dart';
 
 class Update extends StatefulWidget {

@@ -195,13 +195,14 @@ class Helpers {
   }
 
   static setFCMTokenToServer() async {
-    print("SET FCM TOKEN ");
+    // print("SET FCM TOKEN ");
     // FirebaseMessaging fcm = firebaseMessagingInstance();
     // await fcm.setAutoInitEnabled(true);
     // String? fcmToken = await fcm.getToken();
-    // if(fcmToken != null){
+    // print("SET FCM TOKEN 2 " + fcmToken.toString());
+    // if (fcmToken != null) {
     //   print("SET FCM TOKEN 2");
-    //   postApiData("setfcmtoken", {"fcm_token": fcmToken});
+    //   // postApiData("setfcmtoken", {"fcm_token": fcmToken});
     // }
   }
 

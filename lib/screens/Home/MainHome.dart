@@ -20,6 +20,8 @@ class _MainhomeState extends State<Mainhome> {
   Key _boutiqueKey = UniqueKey();
   Key _planningKey = UniqueKey();
 
+  List<Widget> pages = [];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -37,8 +39,10 @@ class _MainhomeState extends State<Mainhome> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final List<Widget> pages = [
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    pages = [
       HomePage(
         key: _homeKey,
       ),
@@ -46,7 +50,10 @@ class _MainhomeState extends State<Mainhome> {
       Boutique(key: _boutiqueKey),
       MonCompte(key: _monCompteKey),
     ];
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,

@@ -1,24 +1,13 @@
 import 'dart:convert';
 
-import 'package:authentication_repository/authentication_repository.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/screens/Home/MainHome.dart';
 import 'package:yogivida_mobile/screens/auth/register_screen.dart';
-import 'package:yogivida_mobile/screens/Home/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
-
-import 'package:yogivida_mobile/core/models/user_model.dart';
-import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
-
 import 'package:yogivida_mobile/components/notifier_dialog.dart';
 import 'login_screen.dart';
 

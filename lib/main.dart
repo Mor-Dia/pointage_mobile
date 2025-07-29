@@ -19,6 +19,9 @@ import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 import 'package:yogivida_mobile/simple_bloc_observer.dart';
 
+import 'package:yogivida_mobile/services/notification_api.dart';
+
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message ${message.data}");
 }
@@ -42,6 +45,8 @@ Future<void> main() async {
   await fcm.setAutoInitEnabled(true);
 
   Helpers.setFCMTokenToServer();
+
+  NotificationApi.manageTokenFcm();
 
   Bloc.observer = SimpleBlocObserver();
 

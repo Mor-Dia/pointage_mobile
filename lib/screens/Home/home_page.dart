@@ -54,7 +54,6 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> programmeBlocFilter = {"is_front": true};
   Map<String, dynamic> typePracticeBlocFilter = {"showatwebsite": "true"};
   Map<String, dynamic> practiceBlocFilter = {"showatwebsite": true};
-  // Map<String, dynamic> banniereBlocFilter = {};
   Map<String, dynamic> banniereBlocFilter = {"statut": "true"};
   Map<String, dynamic> notificationPushBlocFilter = {
     "count": 100,
@@ -222,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                           customDataBloc: notificationPushBloc,
                           // filter: globalFilter, // Optionnel si nécessaire
                           filter: {
-                            "client_id": user.id, // Filtrage par user_id
+                            "client_id": user.id, // Filtrage par userid
                             "count": 100,
                             "is_read": false,
                           },
@@ -257,7 +256,7 @@ class _HomePageState extends State<HomePage> {
             programmeBloc.add(RefreshDataEvent(filter: programmeBlocFilter));
             practiceBloc.add(RefreshDataEvent());
             banniereBloc.add(RefreshDataEvent(filter: banniereBlocFilter));
-            await Future.delayed(const Duration(seconds: 2));
+            await Future.delayed(const Duration(seconds: 1));
           },
           child: ListView(
             children: [
@@ -845,9 +844,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       BlocBasedWidget<List<TypePaiement>>(
                         customDataBloc: typePaiementPushBloc,
-                        // filter: currentFilter,
                         filter: const {'showatwebsite': 'true'},
-                        useInfiniteScroller: true,
                         customWidget: (state) {
                           List<TypePaiement> typePaiements = state.data;
                           return Column(children: [

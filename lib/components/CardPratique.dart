@@ -45,7 +45,6 @@ class _CardPratiqueState extends State<CardPratique> {
     favorisPostBloc = PostApiBloc();
     liked = widget.data.favoris;
     afterLike = widget.afterLike;
-    // initParentDataBloc();
     super.initState();
   }
 
