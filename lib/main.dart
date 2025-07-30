@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,9 +22,10 @@ import 'package:yogivida_mobile/simple_bloc_observer.dart';
 
 import 'package:yogivida_mobile/services/notification_api.dart';
 
-
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message ${message.data}");
+  // await Firebase.initializeApp();
+  print('📬 BG message: ${message.messageId}');
 }
 
 Future<void> main() async {
@@ -41,11 +43,9 @@ Future<void> main() async {
   );
 
   FirebaseMessaging fcm = firebaseMessagingInstance();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await fcm.setAutoInitEnabled(true);
 
   Helpers.setFCMTokenToServer();
-
   NotificationApi.manageTokenFcm();
 
   Bloc.observer = SimpleBlocObserver();
@@ -53,6 +53,25 @@ Future<void> main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.dumpErrorToConsole(details);
   };
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Initialisation Awesome Notifications
+  await AwesomeNotifications().initialize(
+    null, // icône par défaut (null = icône app)
+    [
+      NotificationChannel(
+        channelKey: 'basic_channel',
+        channelName: 'Notifications importantes',
+        channelDescription: 'Notifications importantes de l\'application',
+        defaultColor: Colors.teal,
+        ledColor: Colors.white,
+        importance: NotificationImportance.High,
+        playSound: true,
+        enableVibration: true,
+      ),
+    ],
+  );
 
   runApp(MyApp());
 }
@@ -71,7 +90,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     _userRepository = UserRepository<Utilisateur>(
       factoryFunction: (json) => Utilisateur.fromJson(json),
     );
