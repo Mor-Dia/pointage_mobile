@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:yogivida_mobile/components/CardRowPlanning.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
+import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/custom_error.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/no_data_widget.dart';
 
@@ -10,36 +13,36 @@ import '../../constant.dart';
 import '../../services/data_bloc/bloc/data_bloc.dart';
 import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 
-class PratiqueDetail extends StatefulWidget {
-  final int? pratiqueId;
-  const PratiqueDetail({
+class PlanningDetail extends StatefulWidget {
+  final int? programmeId;
+  const PlanningDetail({
     super.key,
-    required this.pratiqueId,
+    required this.programmeId,
   });
 
   @override
-  State<PratiqueDetail> createState() => _PratiqueDetailState();
+  State<PlanningDetail> createState() => _PlanningDetailState();
 }
 
-class _PratiqueDetailState extends State<PratiqueDetail> {
-  late DataBloc<List<Pratique>> dataBloc;
+class _PlanningDetailState extends State<PlanningDetail> {
+  late DataBloc<List<Programme>> dataBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
 
   @override
   void initState() {
     initFilter();
-    dataBloc = DataBloc<List<Pratique>>(
-        (response) => Pratique.fromJsonList(response),
-        Pratique.getEndpoint(isPagination: true),
+    dataBloc = DataBloc<List<Programme>>(
+        (response) => Programme.fromJsonList(response),
+        Programme.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
-        attributeToGet: Pratique.shrinkedAttributs());
+        attributeToGet: Programme.shrinkedAttributs());
     super.initState();
   }
 
   initFilter() {
-    if (widget.pratiqueId != null) {
-      globalFilter.addAll({"id": widget.pratiqueId});
+    if (widget.programmeId != null) {
+      globalFilter.addAll({"id": widget.programmeId});
     }
   }
 
@@ -66,7 +69,7 @@ class _PratiqueDetailState extends State<PratiqueDetail> {
         ),
         toolbarHeight: 60,
         title: Text(
-          "Pratique",
+          "Planning",
           style: GoogleFonts.arimo(
             color: const Color(0xff15274d),
             fontSize: titreConstant,
@@ -74,37 +77,18 @@ class _PratiqueDetailState extends State<PratiqueDetail> {
           ),
         ),
       ),
-      body: BlocBasedWidget<List<Pratique>>(
+      body: BlocBasedWidget<List<Programme>>(
         customDataBloc: dataBloc,
         filter: {...globalFilter},
         useInfiniteScroller: true,
         customWidget: (state) {
-          List<Pratique> data = state.data;
+          List<Programme> data = state.data;
           if (data.isEmpty) {
-            return const Center(child: Text('Aucune pratique trouvée'));
+            return const Center(child: Text('Aucune planning trouvée'));
           }
-          Pratique currentPratique = data[0];
-          return Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "${currentPratique.designation}",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w900, fontSize: 20),
-                ),
-                const SizedBox(height: 10),
-                CustomCachedNetworkImage(
-                    imageUrl: currentPratique.image ?? '',
-                    fallBackAsset: 'assets/images/pratique_fallback.png'),
-                const SizedBox(height: 10),
-                Text(
-                    "${currentPratique.description != null ? currentPratique.description.toString() : ""}"),
-              ],
-            ),
+          Programme currentPlanning = data[0];
+          return CardRowPlanning(
+            data: currentPlanning,
           );
         },
         customErrorWidget: customWidget(context, "error"),
@@ -146,7 +130,7 @@ customWidget(context, widgetType) {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Pratique',
+            'Planning',
             style: GoogleFonts.arimo(
               color: const Color(0xff15274d),
               fontSize: titreConstant,

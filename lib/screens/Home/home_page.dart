@@ -147,6 +147,7 @@ class _HomePageState extends State<HomePage> {
         currentUserId = currentUser.id;
         notificationPushBlocFilter = {
           "client_id": currentUserId,
+          "is_read": false
         };
         notificationPushBloc
             .add(RefreshDataEvent(filter: notificationPushBlocFilter));
@@ -253,6 +254,7 @@ class _HomePageState extends State<HomePage> {
         child: RefreshIndicator(
           onRefresh: () async {
             initFilter();
+            initNotif();
             programmeBloc.add(RefreshDataEvent(filter: programmeBlocFilter));
             practiceBloc.add(RefreshDataEvent());
             banniereBloc.add(RefreshDataEvent(filter: banniereBlocFilter));

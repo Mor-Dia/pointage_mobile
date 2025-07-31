@@ -51,15 +51,15 @@ class NotificationApi {
   static Future<void> _showNotification(RemoteMessage message) async {
     print("Affichage de la notifications");
 
-    await AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
-        channelKey: 'basic_channel',
-        title: 'Notification',
-        body: 'test ici',
-        notificationLayout: NotificationLayout.Default,
-      ),
-    );
+    // await AwesomeNotifications().createNotification(
+    //   content: NotificationContent(
+    //     id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
+    //     channelKey: 'basic_channel',
+    //     title: 'Notification',
+    //     body: 'test ici',
+    //     notificationLayout: NotificationLayout.Default,
+    //   ),
+    // );
 
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;
