@@ -158,13 +158,49 @@ class _SplashScreenState extends State<SplashScreen> {
       _navigateToHome(context);
     });
 
-    return Scaffold(
-          body: Container(
-            color: primaryColor,
-            child: Center(
-              child: SvgPicture.asset('assets/images/logos/logo-splash.svg'),
-            ),
+    return BlocListener<AuthenticationBloc<Utilisateur>,
+        AuthenticationState<Utilisateur>>(
+      listener: (context, state) {
+        AuthenticationStatus currentStatus = state.status;
+        switch (currentStatus) {
+          case AuthenticationStatus.authenticated:
+            if (kDebugMode) {
+              print("AUTH STATE AUTHENTICATED ${state.status}");
+            }
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const Mainhome(),
+                ),
+                (route) => false);
+          case AuthenticationStatus.unknown:
+          case AuthenticationStatus.unauthenticated:
+          case AuthenticationStatus.failure:
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => const Mainhome(),
+                ),
+                (route) => false);
+        }
+      },
+      child: Scaffold(
+        body: Container(
+          color: primaryColor,
+          child: Center(
+            child: SvgPicture.asset('assets/images/logos/logo-splash.svg'),
           ),
-        );
+        ),
+      ),
+    );
+
+    // return Scaffold(
+    //       body: Container(
+    //         color: primaryColor,
+    //         child: Center(
+    //           child: SvgPicture.asset('assets/images/logos/logo-splash.svg'),
+    //         ),
+    //       ),
+    //     );
   }
 }
