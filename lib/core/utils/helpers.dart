@@ -152,31 +152,31 @@ class Helpers {
   }
 
   static Future<String> getBaseUrl() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // // print(
-    // // "from firebase mode debug " + prefs.getString("modeDebug").toString());
-    // if (!prefs.containsKey("modeDebug")) {
-    //   prefs.setString("selectedBase", "prod");
-    // }
-    // String selectedBase = prefs.getString("selectedBase").toString();
-    // CollectionReference linkRef =
-    //     FirebaseFirestore.instance.collection(selectedBase);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // print(
+    // "from firebase mode debug " + prefs.getString("modeDebug").toString());
+    if (!prefs.containsKey("modeDebug")) {
+      prefs.setString("selectedBase", "prod");
+    }
+    String selectedBase = prefs.getString("selectedBase").toString();
+    CollectionReference linkRef =
+        FirebaseFirestore.instance.collection(selectedBase);
 
-    // String? baseUrl;
-    // try {
-    //   dynamic linkDoc = await linkRef.doc("liens").get();
-    //   baseUrl = linkDoc.data()["baseUrl"];
-    //   print("link from firebase " +
-    //       selectedBase.toString() +
-    //       " " +
-    //       baseUrl.toString());
-    // } catch (exception, stackTrace) {
-    //   print("NETWORK ERROR WITH CONSOLE B " + exception.toString());
-    // }
+    String? baseUrl;
+    try {
+      dynamic linkDoc = await linkRef.doc("liens").get();
+      baseUrl = linkDoc.data()["baseUrl"];
+      print("link from firebase " +
+          selectedBase.toString() +
+          " " +
+          baseUrl.toString());
+    } catch (exception, stackTrace) {
+      print("NETWORK ERROR WITH CONSOLE B " + exception.toString());
+    }
 
-    // baseUrl ??= BASE_URL;
+    baseUrl ??= BASE_URL;
 
-    return BASE_URL;
+    return baseUrl;
     // return BASE_URL;
   }
 

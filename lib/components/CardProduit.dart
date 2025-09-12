@@ -156,7 +156,7 @@ class _CardProduitState extends State<CardProduit> {
                                   )
                                 : const Icon(
                                     Icons.favorite,
-                                    color: Color(0xffFF0000),
+                                    color: Color(0xff000000),
                                     size: 25,
                                   ),
                             onTap: () {

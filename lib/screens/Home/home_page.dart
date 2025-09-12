@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:marquee/marquee.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
@@ -18,6 +19,7 @@ import 'package:yogivida_mobile/core/utils/helpers.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
 import 'package:yogivida_mobile/services/api/models/banniere_model.dart';
+import 'package:yogivida_mobile/services/api/models/preference_model.dart';
 import 'package:yogivida_mobile/services/api/models/type_pratique_model.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
@@ -63,6 +65,9 @@ class _HomePageState extends State<HomePage> {
 
   int selectedTypePratiqueIndex = 0;
 
+  late DataBloc<List<Preference>> dataBloc;
+
+
   @override
   void initState() {
     practiceBloc = DataBloc<List<Pratique>>(
@@ -98,6 +103,13 @@ class _HomePageState extends State<HomePage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: TypePratique.shrinkedAttributs());
+
+    dataBloc = DataBloc<List<Preference>>(
+        (response) => Preference.fromJsonList(response),
+        Preference.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        isPagination: false,
+        attributeToGet: Preference.shrinkedAttributs());
 
     initFilter();
     initNotif();
@@ -407,6 +419,57 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: spacingConstant,
               ),
+              BlocBasedWidget<List<Preference>>(
+                    customDataBloc: dataBloc,
+                    filter: {},
+                    customWidget: (state) {
+                      List<Preference> preferences = state.data;
+                      print("$preferences");
+
+                      Preference? preference = preferences.firstWhere(
+                          (Preference element) => element.parametre == "TexteMobile");
+                      
+                      dynamic TexteMobile;
+                      if (preference != null) {
+                        TexteMobile = preference.valeur ?? "";
+                      }
+                      print("$TexteMobile");
+
+                      if(TexteMobile.toString().length > 0)
+                      {
+                        return 
+                        Padding(
+                          padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
+                          child: SizedBox(
+                            height: 30, // ajuste selon tes besoins
+                            child: Marquee(
+                              text: TexteMobile,
+                              style: GoogleFonts.montserrat(
+                                fontSize: MediaQuery.of(context).size.width * 0.035,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xff000000),
+                              ),
+                            scrollAxis: Axis.horizontal,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            blankSpace: 50.0,
+                            velocity: 50.0,
+                            pauseAfterRound: Duration(seconds: 2),
+                            // startPadding: 10.0,
+                            accelerationDuration: Duration(seconds: 1),
+                            accelerationCurve: Curves.linear,
+                            decelerationDuration: Duration(milliseconds: 500),
+                            decelerationCurve: Curves.easeOut,// 👈 défile une seule fois
+                            ),
+                          ),
+                        );
+                      }
+                      
+                    },
+                  ),
+               const SizedBox(
+                // height: spacingConstant,
+                height: 5,
+              ),
               BlocBasedWidget<List<TypePratique>>(
                   customDataBloc: typePracticeBloc,
                   filter: typePracticeBlocFilter,
@@ -546,7 +609,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   );
                 },
-              )
+              ),
             ],
           ),
         ),

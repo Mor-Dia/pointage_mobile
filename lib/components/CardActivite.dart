@@ -26,7 +26,7 @@ class Cardactivite extends StatelessWidget {
     }
 
     print("ici color => " +
-        this.color.toString() +
+        this.data.toString() +
         "alors => " +
         displayColor.toString());
 
@@ -81,6 +81,20 @@ class Cardactivite extends StatelessWidget {
                 )
               ],
             ),
+            const SizedBox(height: 5),
+            Row(
+              children: [
+                SvgPicture.asset('assets/icons/loc.svg', width: 10,color: Color(0xff838282),),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.010),
+                Text(
+                  data.sallePratique?.salle?.designation
+                  .toString()
+                  .toCapitalized ?? "",
+                  style: const TextStyle(
+                      color: Color(0xff838282), fontSize: 11),
+                )
+              ],
+            ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,7 +132,8 @@ class Cardactivite extends StatelessWidget {
                 Image.asset(
                   'assets/icons/woman.png',
                   color: Color(displayColor),
-                  height: 60,
+                  height: 50,
+                  // height: 60,
                 )
               ],
             ),
@@ -128,5 +143,3 @@ class Cardactivite extends StatelessWidget {
     );
   }
 }
-
-// Image.asset('assets/icons/woman.png', height: 50,)

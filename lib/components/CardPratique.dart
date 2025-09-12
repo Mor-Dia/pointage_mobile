@@ -65,69 +65,65 @@ class _CardPratiqueState extends State<CardPratique> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 300),
-      width: MediaQuery.of(context).size.width * 0.60,
-      decoration: BoxDecoration(
-          border: Border.all(width: 1, color: primaryColor.withOpacity(.2)),
-          borderRadius: BorderRadius.circular(15)),
-      child: Padding(
-        padding: const EdgeInsets.all(spacingConstant),
-        child: Column(
-          children: [
-            Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    widget.data.designation.toString().toCapitalized ?? '',
-                    softWrap: true,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.arimo(
-                        fontSize: textConstant, fontWeight: FontWeight.bold),
+    return 
+      GestureDetector(
+        onTap: () {
+          ShowBottomSheetPratique(context, widget.data);
+        },
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 300),
+          width: MediaQuery.of(context).size.width * 0.60,
+          height: 180,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(width: 1, color: primaryColor.withOpacity(.2)),
+          ),
+          child: Stack(
+            children: [
+              // Image avec overlay
+              Positioned.fill(
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    Colors.black.withOpacity(0.4), // brightness 0.6 environ
+                    BlendMode.darken,
+                  ),
+                  child: CustomCachedNetworkImage(
+                    imageUrl: widget.data.image ?? '',
+                    fallBackAsset: 'assets/images/pratique_fallback.png',
+                    // fit: BoxFit.cover,
                   ),
                 ),
-                BlocBuilder<AuthenticationBloc<Utilisateur>,
-                        AuthenticationState<Utilisateur>>(
-                    builder: (context, authState) {
-                  AuthenticationStatus currentStatus = authState.status;
-                  Utilisateur? user = authState.user;
-                  switch (currentStatus) {
-                    case AuthenticationStatus.authenticated:
-                      return BlocConsumer(
-                        bloc: favorisPostBloc,
-                        listener: (context, state) {
-                          if (state is PostApiSuccess) {
-                            changeStateFavoris();
-                            TopDialogNotification.show(context,
-                                message: liked!
-                                    ? 'Ajouter au favoris'
-                                    : 'Retirer des favoris',
-                                isError: false);
-                            if (afterLike != null) {
-                              afterLike!();
+              ),
+
+              // Bouton favoris en haut à droite
+              Positioned(
+                top: 10,
+                right: 10,
+                child: BlocBuilder<AuthenticationBloc<Utilisateur>,
+                    AuthenticationState<Utilisateur>>(
+                  builder: (context, authState) {
+                    AuthenticationStatus currentStatus = authState.status;
+                    Utilisateur? user = authState.user;
+                    switch (currentStatus) {
+                      case AuthenticationStatus.authenticated:
+                        return BlocConsumer(
+                          bloc: favorisPostBloc,
+                          listener: (context, state) {
+                            if (state is PostApiSuccess) {
+                              changeStateFavoris();
+                              TopDialogNotification.show(context,
+                                  message: liked!
+                                      ? 'Ajouter au favoris'
+                                      : 'Retirer des favoris',
+                                  isError: false);
+                              if (afterLike != null) {
+                                afterLike!();
+                              }
                             }
-                          }
-                          if (state is PostApiProcessing) {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          }
-                        },
-                        builder: (BuildContext context, postBlocState) {
-                          return AnimatedGestureButton(
-                            animate: postBlocState is PostApiProcessing,
-                            child: GestureDetector(
-                              child: !liked!
-                                  ? const Icon(
-                                      Icons.favorite_outline,
-                                      size: 25,
-                                    )
-                                  : const Icon(
-                                      Icons.favorite,
-                                      color: Color(0xffFF0000),
-                                      size: 25,
-                                    ),
+                          },
+                          builder: (BuildContext context, postBlocState) {
+                            return GestureDetector(
                               onTap: () {
                                 Map<String, dynamic> parameters = {
                                   "token": user?.token ?? "",
@@ -136,71 +132,186 @@ class _CardPratiqueState extends State<CardPratique> {
                                 };
                                 likePratique(parameters: parameters);
                               },
-                            ),
-                          );
-                        },
-                      );
-                    case AuthenticationStatus.unknown:
-                    case AuthenticationStatus.unauthenticated:
-                    case AuthenticationStatus.failure:
-                      return const Center(child: SizedBox.shrink());
-                  }
-                })
-              ],
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                ShowBottomSheetPratique(context, widget.data);
-              },
-              child: Container(
-                width: MediaQuery.of(context).size.width * 20,
-                height: 100,
-                clipBehavior: Clip.antiAlias,
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(8)),
-                child: CustomCachedNetworkImage(
-                  imageUrl: widget.data.image ?? '',
-                  fallBackAsset: 'assets/images/pratique_fallback.png',
+                              child: Icon(
+                                liked! ? Icons.favorite : Icons.favorite_outline,
+                                color: liked! ? Colors.red : Colors.white,
+                                size: 28,
+                              ),
+                            );
+                          },
+                        );
+                      default:
+                        return const SizedBox.shrink();
+                    }
+                  },
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                print("${widget.data.id}");
-                ShowBottomSheetPratique(context, widget.data);
-              },
-              child: Container(
-                height: 30,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: primaryColor,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          'Voir Plus',
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.arimo(
-                            color: Colors.white,
-                            fontSize: textminConstant,
-                          ),
-                        ),
-                      ),
+
+              // Titre en bas à gauche
+              Positioned(
+                left: 12,
+                bottom: 12,
+                right: 12,
+                child: Text(
+                  widget.data.designation.toString().toCapitalized ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.arimo(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.7),
+                        offset: const Offset(0, 1),
+                        blurRadius: 3,
+                      )
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+
+
+    // Container(
+    //   constraints: const BoxConstraints(maxWidth: 300),
+    //   width: MediaQuery.of(context).size.width * 0.60,
+    //   decoration: BoxDecoration(
+    //       border: Border.all(width: 1, color: primaryColor.withOpacity(.2)),
+    //       borderRadius: BorderRadius.circular(15)),
+    //   child: Padding(
+    //     padding: const EdgeInsets.all(spacingConstant),
+    //     child: Column(
+    //       children: [
+    //         Row(
+    //           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //           mainAxisAlignment: MainAxisAlignment.start,
+    //           children: [
+    //             Expanded(
+    //               child: Text(
+    //                 widget.data.designation.toString().toCapitalized ?? '',
+    //                 softWrap: true,
+    //                 maxLines: 1,
+    //                 overflow: TextOverflow.ellipsis,
+    //                 style: GoogleFonts.arimo(
+    //                     fontSize: textConstant, fontWeight: FontWeight.bold),
+    //               ),
+    //             ),
+    //             BlocBuilder<AuthenticationBloc<Utilisateur>,
+    //                     AuthenticationState<Utilisateur>>(
+    //                 builder: (context, authState) {
+    //               AuthenticationStatus currentStatus = authState.status;
+    //               Utilisateur? user = authState.user;
+    //               switch (currentStatus) {
+    //                 case AuthenticationStatus.authenticated:
+    //                   return BlocConsumer(
+    //                     bloc: favorisPostBloc,
+    //                     listener: (context, state) {
+    //                       if (state is PostApiSuccess) {
+    //                         changeStateFavoris();
+    //                         TopDialogNotification.show(context,
+    //                             message: liked!
+    //                                 ? 'Ajouter au favoris'
+    //                                 : 'Retirer des favoris',
+    //                             isError: false);
+    //                         if (afterLike != null) {
+    //                           afterLike!();
+    //                         }
+    //                       }
+    //                       if (state is PostApiProcessing) {
+    //                         ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    //                       }
+    //                     },
+    //                     builder: (BuildContext context, postBlocState) {
+    //                       return AnimatedGestureButton(
+    //                         animate: postBlocState is PostApiProcessing,
+    //                         child: GestureDetector(
+    //                           child: !liked!
+    //                               ? const Icon(
+    //                                   Icons.favorite_outline,
+    //                                   size: 25,
+    //                                 )
+    //                               : const Icon(
+    //                                   Icons.favorite,
+    //                                   color: Color(0xffFF0000),
+    //                                   size: 25,
+    //                                 ),
+    //                           onTap: () {
+    //                             Map<String, dynamic> parameters = {
+    //                               "token": user?.token ?? "",
+    //                               "pratique_id": widget.data.id,
+    //                               "etat": liked,
+    //                             };
+    //                             likePratique(parameters: parameters);
+    //                           },
+    //                         ),
+    //                       );
+    //                     },
+    //                   );
+    //                 case AuthenticationStatus.unknown:
+    //                 case AuthenticationStatus.unauthenticated:
+    //                 case AuthenticationStatus.failure:
+    //                   return const Center(child: SizedBox.shrink());
+    //               }
+    //             })
+    //           ],
+    //         ),
+    //         const SizedBox(height: 10),
+    //         GestureDetector(
+    //           onTap: () {
+    //             ShowBottomSheetPratique(context, widget.data);
+    //           },
+    //           child: Container(
+    //             width: MediaQuery.of(context).size.width * 20,
+    //             height: 100,
+    //             clipBehavior: Clip.antiAlias,
+    //             decoration:
+    //                 BoxDecoration(borderRadius: BorderRadius.circular(8)),
+    //             child: CustomCachedNetworkImage(
+    //               imageUrl: widget.data.image ?? '',
+    //               fallBackAsset: 'assets/images/pratique_fallback.png',
+    //             ),
+    //           ),
+    //         ),
+    //         const SizedBox(height: 10),
+    //         GestureDetector(
+    //           onTap: () {
+    //             print("${widget.data.id}");
+    //             ShowBottomSheetPratique(context, widget.data);
+    //           },
+    //           child: Container(
+    //             height: 30,
+    //             decoration: BoxDecoration(
+    //               borderRadius: BorderRadius.circular(10),
+    //               color: primaryColor,
+    //             ),
+    //             child: Padding(
+    //               padding: const EdgeInsets.symmetric(horizontal: 10.0),
+    //               child: Row(
+    //                 mainAxisAlignment: MainAxisAlignment.center,
+    //                 children: [
+    //                   Flexible(
+    //                     child: Text(
+    //                       'Voir Plus',
+    //                       overflow: TextOverflow.ellipsis,
+    //                       style: GoogleFonts.arimo(
+    //                         color: Colors.white,
+    //                         fontSize: textminConstant,
+    //                       ),
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }
 
