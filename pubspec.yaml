@@ -62,7 +62,7 @@ dev_dependencies:
   json_serializable: ^6.8.0
 
 icons_launcher:
-  image_path: "assets/images/logos/newlogo-bg.jpg"
+  image_path: "assets/images/logos/newlogo-bg.png"
   platforms:
     android:
       enable: true

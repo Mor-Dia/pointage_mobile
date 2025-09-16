@@ -186,9 +186,9 @@ class _SplashScreenState extends State<SplashScreen> {
       },
       child: Scaffold(
         body: Container(
-          color: primaryColor,
+          color: Colors.white,
           child: Center(
-            child: SvgPicture.asset('assets/images/logos/logo-splash.svg'),
+            child: SvgPicture.asset('assets/images/logos/logo-splash.svg', width: 150),
           ),
         ),
       ),
