@@ -268,7 +268,7 @@ class _HomePageState extends State<HomePage> {
             initFilter();
             initNotif();
             programmeBloc.add(RefreshDataEvent(filter: programmeBlocFilter));
-            practiceBloc.add(RefreshDataEvent());
+            practiceBloc.add(RefreshDataEvent(filter: practiceBlocFilter));
             banniereBloc.add(RefreshDataEvent(filter: banniereBlocFilter));
             await Future.delayed(const Duration(seconds: 1));
           },
