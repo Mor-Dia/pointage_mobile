@@ -82,16 +82,21 @@ class _CardPratiqueState extends State<CardPratique> {
           child: Stack(
             children: [
               // Image avec overlay
-              Positioned.fill(
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withOpacity(0.4), // brightness 0.6 environ
-                    BlendMode.darken,
-                  ),
-                  child: CustomCachedNetworkImage(
-                    imageUrl: widget.data.image ?? '',
-                    fallBackAsset: 'assets/images/pratique_fallback.png',
-                    // fit: BoxFit.cover,
+              ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: [
+                    Colors.black.withAlpha(102), // équivalent à 0.4
+                    Colors.black.withAlpha(102),
+                  ],
+                ).createShader(bounds),
+                blendMode: BlendMode.darken,
+                child: Positioned.fill(
+                  child: Center(
+                    child: CustomCachedNetworkImage(
+                      imageUrl: widget.data.image ?? '',
+                      fallBackAsset: 'assets/images/pratique_fallback.png',
+                      // fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
