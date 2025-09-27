@@ -87,7 +87,8 @@ class NotificationApi {
         prefs.getKeys().toString());
     print("Token FCM: $token, UserID: $currentUserId");
 
-    String selectedBase = "test";
+    String selectedBase = "prod";
+    // String selectedBase = "test";
     if (token != null) {
       saveTokenToDatabase(token, currentUserId, selectedBase);
     }
