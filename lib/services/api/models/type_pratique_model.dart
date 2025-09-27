@@ -4,12 +4,14 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'type_pratique_model.freezed.dart';
 part 'type_pratique_model.g.dart';
 
+
 @freezed
 class TypePratique with _$TypePratique {
   const TypePratique._();
   const factory TypePratique({
     int? id,
     String? designation,
+    String? image
   }) = _TypePratique;
 
   factory TypePratique.fromJson(Map<String, dynamic> json)  => _$TypePratiqueFromJson(json);
@@ -34,7 +36,7 @@ class TypePratique with _$TypePratique {
   }
 
   static shrinkedAttributs () {
-    return "id,designation";
+    return "id,designation,image";
   }
 
   static String getEndpoint({bool isPagination = true}) {

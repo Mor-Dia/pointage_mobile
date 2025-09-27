@@ -22,6 +22,7 @@ TypePratique _$TypePratiqueFromJson(Map<String, dynamic> json) {
 mixin _$TypePratique {
   int? get id => throw _privateConstructorUsedError;
   String? get designation => throw _privateConstructorUsedError;
+  String? get image => throw _privateConstructorUsedError;
 
   /// Serializes this TypePratique to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -39,7 +40,7 @@ abstract class $TypePratiqueCopyWith<$Res> {
           TypePratique value, $Res Function(TypePratique) then) =
       _$TypePratiqueCopyWithImpl<$Res, TypePratique>;
   @useResult
-  $Res call({int? id, String? designation});
+  $Res call({int? id, String? designation, String? image});
 }
 
 /// @nodoc
@@ -59,6 +60,7 @@ class _$TypePratiqueCopyWithImpl<$Res, $Val extends TypePratique>
   $Res call({
     Object? id = freezed,
     Object? designation = freezed,
+    Object? image = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -68,6 +70,10 @@ class _$TypePratiqueCopyWithImpl<$Res, $Val extends TypePratique>
       designation: freezed == designation
           ? _value.designation
           : designation // ignore: cast_nullable_to_non_nullable
+              as String?,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -81,7 +87,7 @@ abstract class _$$TypePratiqueImplCopyWith<$Res>
       __$$TypePratiqueImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? id, String? designation});
+  $Res call({int? id, String? designation, String? image});
 }
 
 /// @nodoc
@@ -99,6 +105,7 @@ class __$$TypePratiqueImplCopyWithImpl<$Res>
   $Res call({
     Object? id = freezed,
     Object? designation = freezed,
+    Object? image = freezed,
   }) {
     return _then(_$TypePratiqueImpl(
       id: freezed == id
@@ -109,6 +116,10 @@ class __$$TypePratiqueImplCopyWithImpl<$Res>
           ? _value.designation
           : designation // ignore: cast_nullable_to_non_nullable
               as String?,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -116,7 +127,7 @@ class __$$TypePratiqueImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$TypePratiqueImpl extends _TypePratique with DiagnosticableTreeMixin {
-  const _$TypePratiqueImpl({this.id, this.designation}) : super._();
+  const _$TypePratiqueImpl({this.id, this.designation, this.image}) : super._();
 
   factory _$TypePratiqueImpl.fromJson(Map<String, dynamic> json) =>
       _$$TypePratiqueImplFromJson(json);
@@ -125,10 +136,12 @@ class _$TypePratiqueImpl extends _TypePratique with DiagnosticableTreeMixin {
   final int? id;
   @override
   final String? designation;
+  @override
+  final String? image;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'TypePratique(id: $id, designation: $designation)';
+    return 'TypePratique(id: $id, designation: $designation, image: $image)';
   }
 
   @override
@@ -137,7 +150,8 @@ class _$TypePratiqueImpl extends _TypePratique with DiagnosticableTreeMixin {
     properties
       ..add(DiagnosticsProperty('type', 'TypePratique'))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('designation', designation));
+      ..add(DiagnosticsProperty('designation', designation))
+      ..add(DiagnosticsProperty('image', image));
   }
 
   @override
@@ -147,12 +161,13 @@ class _$TypePratiqueImpl extends _TypePratique with DiagnosticableTreeMixin {
             other is _$TypePratiqueImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.designation, designation) ||
-                other.designation == designation));
+                other.designation == designation) &&
+            (identical(other.image, image) || other.image == image));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, designation);
+  int get hashCode => Object.hash(runtimeType, id, designation, image);
 
   /// Create a copy of TypePratique
   /// with the given fields replaced by the non-null parameter values.
@@ -171,8 +186,10 @@ class _$TypePratiqueImpl extends _TypePratique with DiagnosticableTreeMixin {
 }
 
 abstract class _TypePratique extends TypePratique {
-  const factory _TypePratique({final int? id, final String? designation}) =
-      _$TypePratiqueImpl;
+  const factory _TypePratique(
+      {final int? id,
+      final String? designation,
+      final String? image}) = _$TypePratiqueImpl;
   const _TypePratique._() : super._();
 
   factory _TypePratique.fromJson(Map<String, dynamic> json) =
@@ -182,6 +199,8 @@ abstract class _TypePratique extends TypePratique {
   int? get id;
   @override
   String? get designation;
+  @override
+  String? get image;
 
   /// Create a copy of TypePratique
   /// with the given fields replaced by the non-null parameter values.

@@ -86,6 +86,7 @@ class _PratiquesPageState extends State<PratiquesPage> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.square(kToolbarHeight),
         child: Visibility(
@@ -128,78 +129,15 @@ class _PratiquesPageState extends State<PratiquesPage> {
       ),
       body: Container(
         color: Colors.white,
+        // width: double.infinity,
         height: size.height,
         child: SingleChildScrollView(
           // Ajouter ici un SingleChildScrollView
-
           child: Padding(
             padding: const EdgeInsets.only(
                 left: spacingConstant, right: spacingConstant),
             child: Column(
               children: [
-                // Ajouter ici l'élément avant le listing des pratiques
-                const SizedBox(height: spacingConstant),
-                BlocBasedWidget<List<TypePratique>>(
-                  customDataBloc: typePracticeBloc,
-                  filter: typePracticeBlocFilter,
-                  customWidget: (state) {
-                    List<TypePratique> typepratiques = [];
-                    typepratiques = typepratiques
-                      ..add(TypePratique(id: null, designation: "Tous"));
-                    typepratiques = typepratiques..addAll(state.data);
-
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          // const SizedBox(width: spacingConstant),
-                          ...typepratiques.map((toElement) {
-                            int index = typepratiques.indexOf(toElement);
-                            bool isSelected =
-                                selectedTypePratiqueIndex == index;
-
-                            return Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    filtreTypePratique(index, toElement.id);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 16),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? primaryColor
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? Colors.white
-                                            : primaryColor,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      toElement.designation?.toString() ?? "",
-                                      style: TextStyle(
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: spacingConstant / 2),
-                              ],
-                            );
-                          }).toList(),
-                          // const SizedBox(width: spacingConstant),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-
                 // Listing des pratiques
                 BlocBasedWidget<List<Pratique>>(
                   customDataBloc: practiceBloc,
@@ -207,6 +145,19 @@ class _PratiquesPageState extends State<PratiquesPage> {
                   useInfiniteScroller: true,
                   customWidget: (state) {
                     List<Pratique> pratiques = state.data;
+
+                    if (pratiques.isEmpty) {
+                      return SizedBox(
+                        height: MediaQuery.of(context).size.height - kToolbarHeight,
+                        child: const Center(
+                          child: Text(
+                            "Aucune donnée disponible",
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                        ),
+                      );
+                    }
+                    
                     return Column(
                       children: [
                         const SizedBox(height: spacingConstant),

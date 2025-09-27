@@ -176,8 +176,8 @@ class Helpers {
 
     baseUrl ??= BASE_URL;
 
-    return baseUrl;
-    // return BASE_URL;
+    // return baseUrl;
+    return BASE_URL;
   }
 
   static handleNotificationData(

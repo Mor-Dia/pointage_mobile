@@ -72,15 +72,13 @@ class _CardProduitState extends State<CardProduit> {
               onTap: () {
                 print('Image cliquée' + widget.data.image.toString());
                 ShowBottomSheetBoutique(
-                    context, widget.data, widget.handlePress);
+                    context, widget.data, widget.handlePress as Function);
+                    // context, widget.data, widget.handlePress);
               },
               child: Container(
                 height: 100,
                 child: CachedNetworkImage(
                   progressIndicatorBuilder: (context, url, progress) => Center(
-                      // child: CircularProgressIndicator(
-                      //   value: progress.progress,
-                      // ),
                       child: Loader1(size: 8)),
                   imageUrl: widget.data.image ?? '',
                   imageBuilder: (context, imageProvider) => Container(
@@ -112,7 +110,7 @@ class _CardProduitState extends State<CardProduit> {
                 child: GestureDetector(
                   onTap: () {
                     ShowBottomSheetBoutique(
-                        context, widget.data, widget.handlePress);
+                        context, widget.data, widget.handlePress as Function);
                   },
                   child: Text(
                     '${(widget.data.designation ?? "").toUpperCase()}',
@@ -189,106 +187,8 @@ class _CardProduitState extends State<CardProduit> {
           const SizedBox(
             height: 10,
           ),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => {
-                  setState(() {
-                    if (qte > 1) {
-                      qte -= 1;
-                    }
-                  })
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  decoration: BoxDecoration(
-                      color: greyColor,
-                      borderRadius: BorderRadius.circular(spacingConstant)),
-                  child: const Center(
-                    child: Text(
-                      '-',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 40,
-                child: Text(
-                  qte.toString(),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => {
-                  setState(() {
-                    qte += 1;
-                  })
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  decoration: BoxDecoration(
-                      color: greyColor,
-                      borderRadius: BorderRadius.circular(spacingConstant)),
-                  child: const Center(
-                    child: Text(
-                      '+',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: widget.data.produitTailles?.map((Taille toElement) {
-                    int index = widget.data.produitTailles!.indexOf(toElement);
-                    // selectedTaille = toElement;
-                    return Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              print("toElement taille ici $toElement");
-                              indexOfSelectedTaille = index;
-                              selectedTaille = toElement;
-                            });
-                          },
-                          child: Container(
-                            height: 30,
-                            width: 30,
-                            decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: index == indexOfSelectedTaille
-                                    ? Border.all(color: primaryColor, width: 1)
-                                    : Border.all(
-                                        color: Colors.transparent, width: 1),
-                                borderRadius:
-                                    BorderRadius.circular(spacingConstant)),
-                            child: Center(
-                              child: Text(
-                                toElement.taille.abreviation.toUpperCase(),
-                                style: const TextStyle(fontSize: 10),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        )
-                      ],
-                    );
-                  }).toList() ??
-                  [],
-            ),
-          ),
-          const SizedBox(height: 10),
+          
+          // const SizedBox(height: 10),
           GestureDetector(
             onTap: () {
               print("taille selectedTaille: $selectedTaille");
@@ -365,28 +265,29 @@ class _CardProduitState extends State<CardProduit> {
 Future<dynamic> ShowBottomSheetBoutique(
   BuildContext context,
   Produit produit,
-  handlePress, {
+  Function handlePress, {
   Function? customFunction,
 }) {
-  DataBloc<List<Produit>> produitBloc = DataBloc<List<Produit>>(
-      (response) => Produit.fromJsonList(response),
-      Produit.getEndpoint(isPagination: false),
-      isGraphQl: true,
-      isPagination: false,
-      attributeToGet: Produit.shrinkedAttributs());
+  int qte = 1;
+  Taille? selectedTaille;
+  int indexOfSelectedTaille = -1;
 
   return showModalBottomSheet(
-      context: context,
-      builder: (BuildContext currentContext) {
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Container(
-            height: MediaQuery.of(context).size.height * 0.8,
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext currentContext) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.7,
             decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(spacingConstant),
-                    topRight: Radius.circular(spacingConstant))),
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(spacingConstant),
+                topRight: Radius.circular(spacingConstant),
+              ),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(spacingConstant),
               child: SingleChildScrollView(
@@ -398,103 +299,165 @@ Future<dynamic> ShowBottomSheetBoutique(
                         height: 2,
                         width: 50,
                         decoration: const BoxDecoration(
-                            color: greyColor,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(spacingConstant))),
+                          color: greyColor,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(spacingConstant),
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                      height: spacingConstant,
-                    ),
+                    const SizedBox(height: spacingConstant),
                     Container(
-                      width: MediaQuery.of(context).size.width * 25,
-                      height: 150,
+                      width: MediaQuery.of(context).size.width,
+                      // height: 150,
+                      height: 220,
                       clipBehavior: Clip.antiAlias,
-                      decoration:
-                          BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       child: CustomCachedNetworkImage(
                         imageUrl: produit.image ?? '',
                         fallBackAsset: 'assets/images/pratique_fallback.png',
                       ),
                     ),
-                    const SizedBox(
-                      height: spacingConstant,
-                    ),
-                    Text(
-                      produit.designation.toString().toCapitalized ?? '',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 17),
+                    const SizedBox(height: spacingConstant),
+                    Center(
+                      child: Text(
+                        produit.designation?.toCapitalized ?? '',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: spacingConstant / 2),
-                    Text(
-                        produit.description != null
-                            ? produit.description.toString()
-                            : '',
+                    Center(
+                      child: Text(
+                        produit.description ?? '',
                         style: GoogleFonts.arimo(
                           fontSize: 14,
                           color: Colors.black,
                           fontWeight: FontWeight.w400,
-                        )),
-                    const SizedBox(
-                      height: spacingConstant,
+                        ),
+                      ),
                     ),
+                    const SizedBox(height: spacingConstant),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (qte > 1) setState(() => qte--);
+                          },
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              color: greyColor,
+                              borderRadius: BorderRadius.circular(spacingConstant),
+                            ),
+                            child: const Center(child: Text('-', textAlign: TextAlign.center)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 40,
+                          child: Text(qte.toString(), textAlign: TextAlign.center),
+                        ),
+                        GestureDetector(
+                          onTap: () => setState(() => qte++),
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              color: greyColor,
+                              borderRadius: BorderRadius.circular(spacingConstant),
+                            ),
+                            child: const Center(child: Text('+', textAlign: TextAlign.center)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    if (produit.produitTailles != null && produit.produitTailles!.isNotEmpty)
+                      Center(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: produit.produitTailles!.map((tailleItem) {
+                              int index = produit.produitTailles!.indexOf(tailleItem);
+                              bool isSelected = index == indexOfSelectedTaille;
+                        
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 2, left:5),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      indexOfSelectedTaille = index;
+                                      selectedTaille = tailleItem;
+                                    });
+                                  },
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      border: Border.all(
+                                        color: isSelected ? primaryColor : Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(spacingConstant),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        tailleItem.taille.abreviation.toUpperCase(),
+                                        style: const TextStyle(fontSize: 10),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: spacingConstant),
                     GestureDetector(
                       onTap: () {
-                        var authBloc =
-                            context.read<AuthenticationBloc<Utilisateur>>();
+                        var authBloc = context.read<AuthenticationBloc<Utilisateur>>();
                         Utilisateur? user = authBloc.state.user;
 
                         if (user != null) {
-                          int id = produit.id ?? 0;
-                          print(produit);
-
-                          String? token = user.token;
-                          int? client_id = user.id;
-                          int tailleId =
-                              produit.produitTailles?.first.taille_id ?? 0;
-                          print("Utilisateur papa 22222 $client_id");
-
-                          if (handlePress != null) {
-                            handlePress!({
-                              'client_id': client_id,
-                              'produit_id': produit.id,
-                              'quantite': 1,
-                              'taille_id':
-                                  tailleId, // Ou récupérer la taille si elle est sélectionnée
-                              'token':
-                                  token, // Passer le token de l'utilisateur
-                            });
-                          }
+                          handlePress({
+                            'client_id': user.id,
+                            'produit_id': produit.id,
+                            'quantite': qte,
+                            'taille_id': selectedTaille?.taille_id ?? produit.produitTailles?.first.taille_id,
+                            'token': user.token,
+                          });
+                          Navigator.pop(context);
                         } else {
-                          print("Utilisateur non connecté 22");
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          TopDialogNotification.show(context,
-                              message: "Veuillez vous connectez !",
-                              isError: true);
+                          TopDialogNotification.show(
+                            context,
+                            message: "Veuillez vous connecter !",
+                            isError: true,
+                          );
                         }
                       },
                       child: Container(
-                        height: 30,
+                        height: 40,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: primaryColor,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  'Ajouter au panier',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.arimo(
-                                    color: Colors.white,
-                                    fontSize: textminConstant,
-                                  ),
-                                ),
-                              ),
-                            ],
+                        child: Center(
+                          child: Text(
+                            'Ajouter au panier',
+                            style: GoogleFonts.arimo(
+                              color: Colors.white,
+                              fontSize: textminConstant,
+                            ),
                           ),
                         ),
                       ),
@@ -503,7 +466,258 @@ Future<dynamic> ShowBottomSheetBoutique(
                 ),
               ),
             ),
-          ),
-        );
-      });
+          );
+        },
+      );
+    },
+  );
 }
+
+
+// Future<dynamic> ShowBottomSheetBoutique(
+//   BuildContext context,
+//   Produit produit,
+//   handlePress, {
+//   Function? customFunction,
+// }) {
+//   DataBloc<List<Produit>> produitBloc = DataBloc<List<Produit>>(
+//       (response) => Produit.fromJsonList(response),
+//       Produit.getEndpoint(isPagination: false),
+//       isGraphQl: true,
+//       isPagination: false,
+//       attributeToGet: Produit.shrinkedAttributs());
+
+//   return showModalBottomSheet(
+//       context: context,
+//       builder: (BuildContext currentContext) {
+//         return Scaffold(
+//           backgroundColor: Colors.transparent,
+//           body: Container(
+//             height: MediaQuery.of(context).size.height * 0.8,
+//             decoration: const BoxDecoration(
+//                 color: Colors.white,
+//                 borderRadius: BorderRadius.only(
+//                     topLeft: Radius.circular(spacingConstant),
+//                     topRight: Radius.circular(spacingConstant))),
+//             child: Padding(
+//               padding: const EdgeInsets.all(spacingConstant),
+//               child: SingleChildScrollView(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Center(
+//                       child: Container(
+//                         height: 2,
+//                         width: 50,
+//                         decoration: const BoxDecoration(
+//                             color: greyColor,
+//                             borderRadius: BorderRadius.all(
+//                                 Radius.circular(spacingConstant))),
+//                       ),
+//                     ),
+//                     const SizedBox(
+//                       height: spacingConstant,
+//                     ),
+//                     Container(
+//                       width: MediaQuery.of(context).size.width * 25,
+//                       height: 150,
+//                       clipBehavior: Clip.antiAlias,
+//                       decoration:
+//                           BoxDecoration(borderRadius: BorderRadius.circular(8)),
+//                       child: CustomCachedNetworkImage(
+//                         imageUrl: produit.image ?? '',
+//                         fallBackAsset: 'assets/images/pratique_fallback.png',
+//                       ),
+//                     ),
+//                     const SizedBox(
+//                       height: spacingConstant,
+//                     ),
+//                     Text(
+//                       produit.designation.toString().toCapitalized ?? '',
+//                       style: const TextStyle(
+//                           fontWeight: FontWeight.bold, fontSize: 17),
+//                     ),
+//                     const SizedBox(height: spacingConstant / 2),
+//                     Text(
+//                         produit.description != null
+//                             ? produit.description.toString()
+//                             : '',
+//                         style: GoogleFonts.arimo(
+//                           fontSize: 14,
+//                           color: Colors.black,
+//                           fontWeight: FontWeight.w400,
+//                         )),
+//                     const SizedBox(
+//                       height: spacingConstant,
+//                     ),
+//                     Row(
+//                       children: [
+//                         GestureDetector(
+//                           onTap: () => {
+//                             setState(() {
+//                               if (qte > 1) {
+//                                 qte -= 1;
+//                               }
+//                             })
+//                           },
+//                           child: Container(
+//                             height: 30,
+//                             width: 30,
+//                             decoration: BoxDecoration(
+//                                 color: greyColor,
+//                                 borderRadius: BorderRadius.circular(spacingConstant)),
+//                             child: const Center(
+//                               child: Text(
+//                                 '-',
+//                                 textAlign: TextAlign.center,
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                         SizedBox(
+//                           width: 40,
+//                           child: Text(
+//                             qte.toString(),
+//                             textAlign: TextAlign.center,
+//                           ),
+//                         ),
+//                         GestureDetector(
+//                           onTap: () => {
+//                             setState(() {
+//                               qte += 1;
+//                             })
+//                           },
+//                           child: Container(
+//                             height: 30,
+//                             width: 30,
+//                             decoration: BoxDecoration(
+//                                 color: greyColor,
+//                                 borderRadius: BorderRadius.circular(spacingConstant)),
+//                             child: const Center(
+//                               child: Text(
+//                                 '+',
+//                                 textAlign: TextAlign.center,
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                     const SizedBox(height: 10),
+//                     SingleChildScrollView(
+//                       scrollDirection: Axis.horizontal,
+//                       child: Row(
+//                         children: widget.data.produitTailles?.map((Taille toElement) {
+//                               int index = widget.data.produitTailles!.indexOf(toElement);
+//                               // selectedTaille = toElement;
+//                               return Row(
+//                                 children: [
+//                                   GestureDetector(
+//                                     onTap: () {
+//                                       setState(() {
+//                                         print("toElement taille ici $toElement");
+//                                         indexOfSelectedTaille = index;
+//                                         selectedTaille = toElement;
+//                                       });
+//                                     },
+//                                     child: Container(
+//                                       height: 30,
+//                                       width: 30,
+//                                       decoration: BoxDecoration(
+//                                           color: Colors.transparent,
+//                                           border: index == indexOfSelectedTaille
+//                                               ? Border.all(color: primaryColor, width: 1)
+//                                               : Border.all(
+//                                                   color: Colors.transparent, width: 1),
+//                                           borderRadius:
+//                                               BorderRadius.circular(spacingConstant)),
+//                                       child: Center(
+//                                         child: Text(
+//                                           toElement.taille.abreviation.toUpperCase(),
+//                                           style: const TextStyle(fontSize: 10),
+//                                           textAlign: TextAlign.center,
+//                                         ),
+//                                       ),
+//                                     ),
+//                                   ),
+//                                   SizedBox(
+//                                     width: 10,
+//                                   )
+//                                 ],
+//                               );
+//                             }).toList() ??
+//                             [],
+//                       ),
+//                     ),
+//                     const SizedBox(
+//                       height: spacingConstant,
+//                     ),
+//                     GestureDetector(
+//                       onTap: () {
+//                         var authBloc =
+//                             context.read<AuthenticationBloc<Utilisateur>>();
+//                         Utilisateur? user = authBloc.state.user;
+
+//                         if (user != null) {
+//                           int id = produit.id ?? 0;
+//                           print(produit);
+
+//                           String? token = user.token;
+//                           int? client_id = user.id;
+//                           int tailleId =
+//                               produit.produitTailles?.first.taille_id ?? 0;
+//                           print("Utilisateur papa 22222 $client_id");
+
+//                           if (handlePress != null) {
+//                             handlePress!({
+//                               'client_id': client_id,
+//                               'produit_id': produit.id,
+//                               'quantite': 1,
+//                               'taille_id':
+//                                   tailleId, // Ou récupérer la taille si elle est sélectionnée
+//                               'token':
+//                                   token, // Passer le token de l'utilisateur
+//                             });
+//                           }
+//                         } else {
+//                           print("Utilisateur non connecté 22");
+//                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
+//                           TopDialogNotification.show(context,
+//                               message: "Veuillez vous connectez !",
+//                               isError: true);
+//                         }
+//                       },
+//                       child: Container(
+//                         height: 30,
+//                         decoration: BoxDecoration(
+//                           borderRadius: BorderRadius.circular(10),
+//                           color: primaryColor,
+//                         ),
+//                         child: Padding(
+//                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//                           child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Flexible(
+//                                 child: Text(
+//                                   'Ajouter au panier',
+//                                   overflow: TextOverflow.ellipsis,
+//                                   style: GoogleFonts.arimo(
+//                                     color: Colors.white,
+//                                     fontSize: textminConstant,
+//                                   ),
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ),
+//         );
+//       });
+// }

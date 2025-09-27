@@ -15,7 +15,7 @@ class CustomCachedNetworkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
-      imageUrl: imageUrl,
+      imageUrl: imageUrl ?? '',
       progressIndicatorBuilder: (context, url, progress) => const Center(
         child: Loader1(size: 8),
       ),
@@ -24,12 +24,13 @@ class CustomCachedNetworkImage extends StatelessWidget {
           image: DecorationImage(
             image: imageProvider,
             fit: BoxFit.cover,
+            alignment: Alignment.center,
           ),
         ),
       ),
       errorWidget: (context, url, error) {
         if (fallBackAsset != null && fallBackAsset!.isNotEmpty) {
-          return Image.asset(fallBackAsset!, fit: BoxFit.cover);
+          return Image.asset(fallBackAsset!, fit: BoxFit.cover, alignment: Alignment.center);
         }
         return const Icon(Icons.error, color: Colors.red);
       },

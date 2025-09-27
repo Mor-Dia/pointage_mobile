@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardActivite.dart';
 import 'package:yogivida_mobile/components/CardPratique.dart';
+import 'package:yogivida_mobile/components/CardTypePratique.dart';
 import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/components/type_paiement_card.dart';
@@ -18,6 +19,7 @@ import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/core/utils/helpers.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
+import 'package:yogivida_mobile/screens/Home/type_pratique_page.dart';
 import 'package:yogivida_mobile/services/api/models/banniere_model.dart';
 import 'package:yogivida_mobile/services/api/models/preference_model.dart';
 import 'package:yogivida_mobile/services/api/models/type_pratique_model.dart';
@@ -66,6 +68,24 @@ class _HomePageState extends State<HomePage> {
   int selectedTypePratiqueIndex = 0;
 
   late DataBloc<List<Preference>> dataBloc;
+
+
+int _getCrossAxisCount(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+  if (width >= 1200) return 5;
+  if (width >= 900) return 4;
+  if (width >= 600) return 3;
+  return 2;
+}
+
+double _getChildAspectRatio(BuildContext context) {
+  final width = MediaQuery.of(context).size.width;
+  if (width >= 400) return 1;
+  if (width >= 230) return 0.88;
+  if (width >= 200) return 0.85;
+  if (width >= 100) return 0.8;
+  return 1;
+}
 
 
   @override
@@ -173,6 +193,7 @@ class _HomePageState extends State<HomePage> {
     Utilisateur? user =
         context.read<AuthenticationBloc<Utilisateur>>().state.user;
 
+var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xffffffff),
@@ -466,150 +487,128 @@ class _HomePageState extends State<HomePage> {
                       
                     },
                   ),
-               const SizedBox(
-                // height: spacingConstant,
-                height: 5,
-              ),
-              BlocBasedWidget<List<TypePratique>>(
-                  customDataBloc: typePracticeBloc,
-                  filter: typePracticeBlocFilter,
-                  customWidget: (state) {
-                    List<TypePratique> typepratiques = [];
-                    typepratiques = typepratiques
-                      ..add(TypePratique(id: null, designation: "Tous"));
-                    typepratiques = typepratiques..addAll(state.data);
-                    print("state.data => ${state.data}");
-                    print(
-                        "Refreshing typePracticeBlocFilter with filter: $typePracticeBlocFilter");
-                    const SizedBox(
-                      height: spacingConstant,
-                    );
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          const SizedBox(width: spacingConstant),
-                          ...typepratiques.map((toElement) {
-                            int index = typepratiques
-                                .indexOf(toElement); // obtenir l'index actuel
-                            bool isSelected = selectedTypePratiqueIndex ==
-                                index; // vérifier si l'élément est sélectionné
-
-                            return Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    // Appeler ta fonction filtreTypePratique avec l'index et le ID
-                                    filtreTypePratique(index, toElement.id);
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 16),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? primaryColor
-                                          : Colors.transparent, // badge color
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? Colors.white
-                                            : primaryColor, // bordure colorée, dépend de la sélection
-                                        width: 1, // largeur de la bordure
-                                      ),
-                                    ),
-                                    child: Text(
-                                      toElement.designation
-                                              .toString()
-                                              .toCapitalized ??
-                                          "",
-                                      style: TextStyle(
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors
-                                                .black, // texte blanc si sélectionné
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: spacingConstant / 2),
-                              ],
-                            );
-                          }).toList(),
-                          const SizedBox(width: spacingConstant),
-                        ],
-                      ),
-                    );
-                  }),
+                  const SizedBox(
+                    // height: spacingConstant,
+                    height: 15,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: spacingConstant, right: spacingConstant),
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Nos pratiques",
+                          style: GoogleFonts.montserrat(
+                              fontSize: MediaQuery.of(context).size.width * 0.045,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //             builder: (context) => const TypePratiquePage()));
+                        //   },
+                        //   child: const Icon(
+                        //     Icons.arrow_outward_rounded,
+                        //     color: primaryColor,
+                        //   ),
+                        // )
+                      ],
+                    ),
+                  ),
+                ),
               const SizedBox(
-                height: spacingConstant,
+                height: 10,
               ),
               Padding(
                 padding: const EdgeInsets.only(
                     left: spacingConstant, right: spacingConstant),
-                child: Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Nos pratiques",
-                        style: GoogleFonts.montserrat(
-                            fontSize: MediaQuery.of(context).size.width * 0.045,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const PratiquesPage()));
-                        },
-                        child: const Icon(
-                          Icons.arrow_outward_rounded,
-                          color: primaryColor,
-                        ),
-                      )
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    // Ajouter ici l'élément avant le listing des pratiques
+                    // const SizedBox(height: spacingConstant),
+                    // Listing des pratiques
+                    BlocBasedWidget<List<TypePratique>>(
+                      customDataBloc: typePracticeBloc,
+                      filter: typePracticeBlocFilter,
+                      useInfiniteScroller: true,
+                      customWidget: (state) {
+                        List<TypePratique> typepratiques = state.data;
+                        return Column(
+                          children: [
+                            const SizedBox(height: spacingConstant),
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: typepratiques.map((toElement) {
+                                return SizedBox(
+                                  width: size.width /
+                                          (MediaQuery.of(context).size.width > 400
+                                              ? 2
+                                              : 2) -
+                                      25,
+                                  child: CardTypePratique(
+                                    data: toElement,
+                                    handlePress: () {},
+                                    // afterLike: () {
+                                    //   // Après un like, on met à jour la liste des pratiques
+                                    //   // updateListPratique(currentFilter);
+                                    // },
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            const SizedBox(width: spacingConstant),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
+
               const SizedBox(
                 height: spacingConstant,
               ),
-              BlocBasedWidget<List<Pratique>>(
-                customDataBloc: practiceBloc,
-                filter: practiceBlocFilter,
-                customWidget: (state) {
-                  List<Pratique> pratiques = state.data;
-                  Map<String, dynamic>? metadata = state.metadata;
-                  bool canLoadNewData = state.canLoadNewData;
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        ...pratiques
-                            .map((toElement) => Row(
-                                  children: [
-                                    const SizedBox(
-                                      width: spacingConstant,
-                                    ),
-                                    CardPratique(
-                                      data: toElement,
-                                      handlePress: () {},
-                                      afterLike: () {
-                                        print("HELLO");
-                                      },
-                                    )
-                                  ],
-                                ))
-                            .toList(),
-                        const SizedBox(
-                          width: spacingConstant,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+              
+              // BlocBasedWidget<List<Pratique>>(
+              //   customDataBloc: practiceBloc,
+              //   filter: practiceBlocFilter,
+              //   customWidget: (state) {
+              //     List<Pratique> pratiques = state.data;
+              //     Map<String, dynamic>? metadata = state.metadata;
+              //     bool canLoadNewData = state.canLoadNewData;
+              //     return SingleChildScrollView(
+              //       scrollDirection: Axis.horizontal,
+              //       child: Row(
+              //         children: [
+              //           ...pratiques
+              //               .map((toElement) => Row(
+              //                     children: [
+              //                       const SizedBox(
+              //                         width: spacingConstant,
+              //                       ),
+              //                       CardPratique(
+              //                         data: toElement,
+              //                         handlePress: () {},
+              //                         afterLike: () {
+              //                           print("HELLO");
+              //                         },
+              //                       )
+              //                     ],
+              //                   ))
+              //               .toList(),
+              //           const SizedBox(
+              //             width: spacingConstant,
+              //           ),
+              //         ],
+              //       ),
+              //     );
+              //   },
+              // ),
             ],
           ),
         ),

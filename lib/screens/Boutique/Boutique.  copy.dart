@@ -448,6 +448,63 @@ class _BoutiqueState extends State<Boutique> {
                   ),
               ],
             )),
+        // body: BlocBasedWidget<List<Famille>>(
+        //     customDataBloc: familleBloc,
+        //     filter: familleFilter,
+        //     customWidget: (state) {
+        //       List<Famille> familles = [];
+        //       familles = familles..add(Famille(id: null, designation: 'Tout'));
+        //       familles = familles..addAll(state.data);
+        //       return Container(
+        //         color: Colors.white,
+        //         child: ListView(
+        //           children: [
+        //             const SizedBox(height: spacingConstant),
+        //             _buildFamillesList(state.data),
+        //             const SizedBox(height: spacingConstant),
+        //             _buildFiltresBar(),
+        //             const SizedBox(height: spacingConstant),
+        //             Padding(
+        //               padding: const EdgeInsets.symmetric(
+        //                   horizontal: spacingConstant),
+        //               child: BlocBasedWidget<List<Produit>>(
+        //                 customDataBloc: produitBloc,
+        //                 useInfiniteScroller: false, // 👈 Désactivé
+        //                 filter: productFilter,
+        //                 customWidget: (state) {
+        //                   List<Produit> produits = state.data;
+
+        //                   if (produits.isEmpty) {
+        //                     return const Center(
+        //                         child: Text('Aucun produits trouvés'));
+        //                   }
+
+        //                   return Wrap(
+        //                     alignment: WrapAlignment.start,
+        //                     spacing: 10,
+        //                     runSpacing: 10,
+        //                     children: produits
+        //                         .map((Produit toElement) => SizedBox(
+        //                               width: Helpers.getGridElementWidth(
+        //                                   context, 25),
+        //                               child: CardProduit(
+        //                                 data: toElement,
+        //                                 handlePress: (value) {
+        //                                   toElement.currentQuantity! >= 1
+        //                                       ? addToPanier(value)
+        //                                       : null;
+        //                                 },
+        //                               ),
+        //                             ))
+        //                         .toList(),
+        //                   );
+        //                 },
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       );
+        //     }));
 
         body: BlocBasedWidget<List<Famille>>(
           customDataBloc: familleBloc,

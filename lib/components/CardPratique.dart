@@ -73,7 +73,8 @@ class _CardPratiqueState extends State<CardPratique> {
         child: Container(
           constraints: const BoxConstraints(maxWidth: 300),
           width: MediaQuery.of(context).size.width * 0.60,
-          height: 180,
+          height: 160,
+          // height: 180,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
@@ -81,23 +82,17 @@ class _CardPratiqueState extends State<CardPratique> {
           ),
           child: Stack(
             children: [
-              // Image avec overlay
-              ShaderMask(
-                shaderCallback: (bounds) => LinearGradient(
-                  colors: [
-                    Colors.black.withAlpha(102), // équivalent à 0.4
-                    Colors.black.withAlpha(102),
-                  ],
-                ).createShader(bounds),
-                blendMode: BlendMode.darken,
-                child: Positioned.fill(
-                  child: Center(
-                    child: CustomCachedNetworkImage(
+              Positioned.fill(
+                child: Stack(
+                  children: [
+                    CustomCachedNetworkImage(
                       imageUrl: widget.data.image ?? '',
                       fallBackAsset: 'assets/images/pratique_fallback.png',
-                      // fit: BoxFit.cover,
                     ),
-                  ),
+                    Container(
+                      color: Colors.black.withOpacity(0.4), // Ajuste l’opacité
+                    ),
+                  ],
                 ),
               ),
 
