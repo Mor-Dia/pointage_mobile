@@ -1,20 +1,28 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
+import 'package:yogivida_mobile/components/InputFiled.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
+import 'package:yogivida_mobile/components/animated_gesture_detector.dart';
+import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 import 'package:yogivida_mobile/services/api/models/panier_model.dart';
 import 'package:yogivida_mobile/services/api/models/type_paiement_model.dart';
+import 'package:yogivida_mobile/services/api/models/zone_livraison_model.dart';
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
 import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
+import 'package:yogivida_mobile/services/post_api_bloc.dart';
 
 import '../../core/utils/helpers.dart';
 
@@ -135,23 +143,119 @@ class _PanierState extends State<PanierPage> {
                             fontSize: titreConstant,
                           ),
                         ),
+                        const SizedBox(height: 10),
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                            child: ButtonFiled(
+                              text: 'Finaliser la commande',
+                              handlerPress: () {
+                                ShowBottomSheetCommande(context, state.panier);
+                              },
+                            ),
+                          ),
+                        ),
                       ],
                       const SizedBox(height: 40),
                     ],
                   );
                 })));
   }
-}
+
+  dynamic currentElt;
+
+  List<Widget> buildTypePaiementList(BuildContext parentContext,
+      List<TypePaiement> typePaiements, Panier panier, zone_livraison_id
+) {
+    late PostApiBloc panierPostBloc;
+    panierPostBloc = PostApiBloc();
+
+
+    List<int?> panier_produit_id = panier.panierProduit
+    !.map((panierProduit) => panierProduit.produit?.id)
+    .toList();
+
+        print("HOHOHGL panier ${panier_produit_id} -- ${zone_livraison_id}");
+
+
+    savePanier({required Map<String, dynamic> parameters}) {
+      panierPostBloc.add(
+          PostApiMakeCall(endpoint: 'commande_client', parameters: parameters));
+    }
+
+    return [
+      ...typePaiements.map((toElement) {
+        return BlocBuilder<AuthenticationBloc<Utilisateur>,
+            AuthenticationState<Utilisateur>>(builder: (context, authState) {
+          AuthenticationStatus currentStatus = authState.status;
+          Utilisateur? user = authState.user;
+          switch (currentStatus) {
+            case AuthenticationStatus.authenticated:
+              return BlocConsumer(
+                bloc: panierPostBloc,
+                listener: (context, state) {
+                  print("MESSAGE success state ${state} ");
+                  if (currentElt == toElement.id) {
+                    if (state is PostApiSuccess) {
+                      // Navigator.of(parentContext).pop();
+                      // Navigator.of(context).pop();
+                      if (state.data != null && state.data["url"] != null) {
+                        launchUrl(Uri.parse(state.data["url"].toString()));
+                      } else {
+                        TopDialogNotification.show(context,
+                            message: "${state.message}", isError: false);
+                      }
+                    }
+                    if (state is PostApiFailure) {
+                      print("MESSAGE RESE ${state.message} ");
+                      ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
+                      TopDialogNotification.show(context,
+                          message: "${state.message}", isError: true);
+                    }
+                  }
+                },
+                builder: (BuildContext context, postBlocState) {
+                  return AnimatedGestureButton(
+                    animate: currentElt == toElement.id &&
+                        postBlocState is PostApiProcessing,
+                    child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            currentElt = null;
+                            currentElt = toElement.id;
+                            print(currentElt);
+                          });
+                          Map<String, dynamic> parameters = {
+                            "panier_produit_id": panier_produit_id ?? null,
+                            "client_id": user?.id,
+                            "token": user?.token,
+                            "email": user?.email ?? null,
+                            "politique_retour": true,
+                            "from_site": true,
+                            "type_paiement_id": toElement.id,
+                            "montant": panier.total,
+                            "zone_livraison_id": zone_livraison_id ?? 1,
+                            // "zone_livraison_id": zone_livraison_id,
+                          };
+                          savePanier(parameters: parameters);
+                        },
+                        child: TypePaiementCard(typePaiement: toElement)),
+                  );
+                },
+              );
+            case AuthenticationStatus.unknown:
+            case AuthenticationStatus.unauthenticated:
+            case AuthenticationStatus.failure:
+              return const SizedBox();
+          }
+        });
+      }).toList(),
+    ];
+  }
+
+
 
 Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
-  // Controllers pour les champs de saisie
-  TextEditingController prenomController =
-      // TextEditingController(text: panier.client.prenom);
-      TextEditingController(text: "panier.client.prenom");
-  TextEditingController nomController =
-      TextEditingController(text: "panier.client.nom");
-  TextEditingController adresseController =
-      TextEditingController(text: "panier.client.adresse");
 
   return showModalBottomSheet(
     context: context,
@@ -164,6 +268,16 @@ Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
               isGraphQl: true,
               isPagination: false,
               attributeToGet: TypePaiement.shrinkedAttributs());
+              
+      DataBloc<List<ZoneLivraison>> zoneLivraisonBloc =
+          DataBloc<List<ZoneLivraison>>(
+              (response) => ZoneLivraison.fromJsonList(response),
+              ZoneLivraison.getEndpoint(isPagination: false),
+              isGraphQl: true,
+              isPagination: false,
+              attributeToGet: ZoneLivraison.shrinkedAttributs());
+      
+      int? zone_livraison_id; // ta variable sélectionnée
 
       return Padding(
         padding: EdgeInsets.only(
@@ -203,56 +317,103 @@ Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
                 ),
                 const SizedBox(height: spacingConstant),
 
-                // ✅ Informations du client
-                const Text("Informations du client",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextFormField(
-                      controller: prenomController,
-                      decoration: const InputDecoration(labelText: "Prénom"),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    TextFormField(
-                      controller: nomController,
-                      decoration: const InputDecoration(labelText: "Nom"),
-                    ),
-                  ],
+                BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
+                  builder: (context, authState) {
+                    Utilisateur? user = authState.user;
+
+                    
+                    print("HOHOHGL panier user ${user}");
+
+
+                    TextEditingController nom_completController =
+                        TextEditingController(text: user?.nom_complet ?? '');
+                    TextEditingController adresseController =
+                        TextEditingController(text: '');
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Informations du client",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 8),
+                          Inputfiled(
+                                  type: 'text',
+                                  text: "Nom complet",
+                                  controller: nom_completController,
+                                  error: '',
+                                ),
+                          const SizedBox(height: 8),
+                          Inputfiled(
+                            type: 'text',
+                            text: "Adresse",
+                            controller: adresseController,
+                            error: '',
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: adresseController,
-                  decoration: const InputDecoration(labelText: "Adresse"),
-                ),
+
                 const Divider(height: spacingConstant),
 
-                // ✅ Sélection de la zone de livraison
+                // // ✅ Sélection de la zone de livraison
                 const Text("Zone de livraison",
                     style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
-                // DropdownButton<String>(
-                //   value: "panier.zoneLivraison",
-                //   onChanged: (newValue) {
-                //     print(newValue);
-                //     // panier.zoneLivraison = newValue!;
-                //   },
-                //   items: [
-                //     "Zone 1",
-                //     "Zone 2",
-                //     "Zone 3"
-                //   ] // Remplace par tes vraies zones
-                //       .map<DropdownMenuItem<String>>((String value) {
-                //     return DropdownMenuItem<String>(
-                //       value: value,
-                //       child: Text(value),
-                //     );
-                //   }).toList(),
-                // ),
-                const Divider(height: spacingConstant),
+                
+                BlocBasedWidget<List<ZoneLivraison>>(
+                  customDataBloc: zoneLivraisonBloc, // ton DataBloc pour récupérer les zones
+                  filter: const {'showatwebsite': 'true'},
+                  useInfiniteScroller: true,
+                  customWidget: (state) {
+                    List<ZoneLivraison> zones = state.data;
+                    
+                    return DropdownButton<int>(
+                      isExpanded: true,
+                      value: zone_livraison_id,
+                      hint: const Text("Sélectionner une zone"),
+                      items: zones.map((zone) {
+                        return DropdownMenuItem<int>(
+                          value: zone.id,
+                          child: Text(zone.designation ?? ""),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        zone_livraison_id = newValue;
+                        // 🔥 tu peux mettre à jour ton panier ici
+                        // panier.zoneLivraisonId = zone_livraison_id;
+                        if (kDebugMode) {
+                          print("Zone sélectionnée: $zone_livraison_id");
+                        }
+                      },
+                    );
+                  },
+                ),
+
+                // // DropdownButton<String>(
+                // //   value: "panier.zoneLivraison",
+                // //   onChanged: (newValue) {
+                // //     print(newValue);
+                // //     // panier.zoneLivraison = newValue!;
+                // //   },
+                // //   items: [
+                // //     "Zone 1",
+                // //     "Zone 2",
+                // //     "Zone 3"
+                // //   ] // Remplace par tes vraies zones
+                // //       .map<DropdownMenuItem<String>>((String value) {
+                // //     return DropdownMenuItem<String>(
+                // //       value: value,
+                // //       child: Text(value),
+                // //     );
+                // //   }).toList(),
+                // // ),
+                // const Divider(height: spacingConstant),
 
                 // ✅ Type de paiement
                 const Text("Type de paiement",
@@ -260,50 +421,71 @@ Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
                 const SizedBox(height: 8),
 
                 BlocBasedWidget<List<TypePaiement>>(
-                  customDataBloc: typePaiementPushBloc,
-                  filter: const {'showatwebsite': 'true'},
-                  useInfiniteScroller: true,
-                  customWidget: (state) {
-                    List<TypePaiement> typePaiements = state.data;
-                    print("typePaiements $typePaiements");
-                    return Column(
-                      children: typePaiements.map((paiement) {
-                        return RadioListTile<TypePaiement>(
-                          title: Text(paiement?.designation.toString() ?? ""),
-                          value: paiement,
-                          groupValue: paiement,
-                          onChanged: (TypePaiement? newPaiement) {
-                            // panier.typePaiement = newPaiement!;
-                            print(newPaiement);
-                          },
-                        );
-                      }).toList(),
-                    );
-                  },
-                ),
+                        customDataBloc: typePaiementPushBloc,
+                        filter: const {
+                          'showatwebsite': 'true',
+                          'showatwebsiteNotLC': 'true'
+                        },
+                        useInfiniteScroller: true,
+                        customWidget: (state) {
+                          List<TypePaiement> typePaiements = state.data;
+                          return Column(children: [
+                            const SizedBox(
+                              height: spacingConstant,
+                            ),
+                            Wrap(spacing: 10, runSpacing: 10, children: [
+                              ...buildTypePaiementList(context,
+                                  typePaiements, panier, zone_livraison_id),
+                            ]),
+                          ]);
+                        },
+                      ),
 
-                const SizedBox(height: spacingConstant),
+                // BlocBasedWidget<List<TypePaiement>>(
+                //   customDataBloc: typePaiementPushBloc,
+                //   filter: const {'showatwebsite': 'true'},
+                //   useInfiniteScroller: true,
+                //   customWidget: (state) {
+                //     List<TypePaiement> typePaiements = state.data;
+                //     print("typePaiements $typePaiements");
+                //     return Column(
+                //       children: typePaiements.map((paiement) {
+                //         return RadioListTile<TypePaiement>(
+                //           title: Text(paiement?.designation.toString() ?? ""),
+                //           value: paiement,
+                //           groupValue: paiement,
+                //           onChanged: (TypePaiement? newPaiement) {
+                //             // panier.typePaiement = newPaiement!;
+                //             print(newPaiement);
+                //           },
+                //         );
+                //       }).toList(),
+                //     );
+                //   },
+                // ),
 
-                // ✅ Bouton de finalisation
-                Center(
-                  child: Container(
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.50,
-                    ),
-                    child: ButtonFiled(
-                      text: 'Finaliser la commande',
-                      handlerPress: () {
-                        // Mettre à jour les valeurs avant validation
-                        // panier.client.prenom = prenomController.text;
-                        // panier.client.nom = nomController.text;
-                        // panier.client.adresse = adresseController.text;
+                // const SizedBox(height: spacingConstant),
 
-                        // Logique pour valider la commande
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: spacingConstant),
+                // // ✅ Bouton de finalisation
+                // Center(
+                //   child: Container(
+                //     constraints: BoxConstraints(
+                //       maxWidth: MediaQuery.of(context).size.width * 0.50,
+                //     ),
+                //     child: ButtonFiled(
+                //       text: 'Finaliser la commande',
+                //       handlerPress: () {
+                //         // Mettre à jour les valeurs avant validation
+                //         // panier.client.prenom = prenomController.text;
+                //         // panier.client.nom = nomController.text;
+                //         // panier.client.adresse = adresseController.text;
+
+                //         // Logique pour valider la commande
+                //       },
+                //     ),
+                //   ),
+                // ),
+                // const SizedBox(height: spacingConstant),
               ],
             ),
           ),
@@ -312,3 +494,9 @@ Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
     },
   );
 }
+
+
+}
+
+
+  

@@ -8,10 +8,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/screens/Boutique/Panier.dart';
 import 'package:yogivida_mobile/screens/Home/MainHome.dart';
 import 'package:yogivida_mobile/screens/Home/home_page.dart';
 import 'package:yogivida_mobile/screens/maintenance/maintenance_page_screen.dart';
 import 'package:yogivida_mobile/screens/update/update_page_screen.dart';
+import 'package:yogivida_mobile/services/api/models/panier_model.dart';
 import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
 import 'package:yogivida_mobile/core/models/user_model.dart';
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
@@ -170,6 +172,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
+                  // builder: (BuildContext context) => const PanierPage(),
                   builder: (BuildContext context) => const Mainhome(),
                 ),
                 (route) => false);
