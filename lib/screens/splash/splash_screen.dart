@@ -172,8 +172,8 @@ class _SplashScreenState extends State<SplashScreen> {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) => const PanierPage(),
-                  // builder: (BuildContext context) => const Mainhome(),
+                  // builder: (BuildContext context) => const PanierPage(),
+                  builder: (BuildContext context) => const Mainhome(),
                 ),
                 (route) => false);
           case AuthenticationStatus.unknown:
