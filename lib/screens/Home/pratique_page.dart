@@ -182,7 +182,7 @@ class _PratiquesPageState extends State<PratiquesPage> {
                             );
                           }).toList(),
                         ),
-                        const SizedBox(width: spacingConstant),
+                        const SizedBox(height: 30),
                       ],
                     );
                   },

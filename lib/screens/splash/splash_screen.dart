@@ -172,8 +172,8 @@ class _SplashScreenState extends State<SplashScreen> {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  // builder: (BuildContext context) => const PanierPage(),
-                  builder: (BuildContext context) => const Mainhome(),
+                  builder: (BuildContext context) => const PanierPage(),
+                  // builder: (BuildContext context) => const Mainhome(),
                 ),
                 (route) => false);
           case AuthenticationStatus.unknown:
@@ -189,7 +189,7 @@ class _SplashScreenState extends State<SplashScreen> {
       },
       child: Scaffold(
         body: Container(
-          color: Colors.white,
+          color: primaryColor,
           child: Center(
             child: SvgPicture.asset('assets/images/logos/logo-splash.svg', width: 150),
           ),

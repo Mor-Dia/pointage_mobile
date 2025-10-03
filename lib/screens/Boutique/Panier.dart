@@ -331,7 +331,7 @@ Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
                         TextEditingController(text: '');
 
                     return Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -359,8 +359,9 @@ Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
                   },
                 ),
 
-                const Divider(height: spacingConstant),
-
+                // const Divider(height: spacingConstant),
+                
+                const SizedBox(height: 20),
                 // // ✅ Sélection de la zone de livraison
                 const Text("Zone de livraison",
                     style: TextStyle(fontWeight: FontWeight.bold)),
@@ -395,25 +396,7 @@ Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
                   },
                 ),
 
-                // // DropdownButton<String>(
-                // //   value: "panier.zoneLivraison",
-                // //   onChanged: (newValue) {
-                // //     print(newValue);
-                // //     // panier.zoneLivraison = newValue!;
-                // //   },
-                // //   items: [
-                // //     "Zone 1",
-                // //     "Zone 2",
-                // //     "Zone 3"
-                // //   ] // Remplace par tes vraies zones
-                // //       .map<DropdownMenuItem<String>>((String value) {
-                // //     return DropdownMenuItem<String>(
-                // //       value: value,
-                // //       child: Text(value),
-                // //     );
-                // //   }).toList(),
-                // // ),
-                // const Divider(height: spacingConstant),
+                const SizedBox(height: 20),
 
                 // ✅ Type de paiement
                 const Text("Type de paiement",
@@ -430,13 +413,13 @@ Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
                         customWidget: (state) {
                           List<TypePaiement> typePaiements = state.data;
                           return Column(children: [
-                            const SizedBox(
-                              height: spacingConstant,
-                            ),
                             Wrap(spacing: 10, runSpacing: 10, children: [
                               ...buildTypePaiementList(context,
                                   typePaiements, panier, zone_livraison_id),
                             ]),
+                            const SizedBox(
+                              height: spacingConstant,
+                            ),
                           ]);
                         },
                       ),
