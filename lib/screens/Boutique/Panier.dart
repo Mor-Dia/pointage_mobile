@@ -199,8 +199,9 @@ class _PanierState extends State<PanierPage> {
                     if (state is PostApiSuccess) {
                       // Navigator.of(parentContext).pop();
                       // Navigator.of(context).pop();
-                      if (state.data != null && state.data["url"] != null) {
-                        launchUrl(Uri.parse(state.data["url"].toString()));
+                      if (state.data != null && state.data["bictorys_link"] != null) {
+                        // launchUrl(Uri.parse(state.data["url"].toString()));
+                        launchUrl(Uri.parse(state.data["bictorys_link"].toString()));
                       } else {
                         TopDialogNotification.show(context,
                             message: "${state.message}", isError: false);

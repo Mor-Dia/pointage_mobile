@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -448,7 +449,6 @@ class _BoutiqueState extends State<Boutique> {
                   ),
               ],
             )),
-
         body: BlocBasedWidget<List<Famille>>(
           customDataBloc: familleBloc,
           filter: familleFilter,
@@ -533,13 +533,13 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(spacingConstant),
                   topRight: Radius.circular(spacingConstant))),
           child: Padding(
-            padding: EdgeInsets.all(spacingConstant),
+            padding: const EdgeInsets.all(spacingConstant),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -547,22 +547,22 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                   child: Container(
                     height: 2,
                     width: 50,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: greyColor,
                         borderRadius:
                             BorderRadius.all(Radius.circular(spacingConstant))),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: spacingConstant,
                 ),
                 Center(
                   child: Text(
                     'Filtrer par prix '.toUpperCase(),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: spacingConstant,
                 ),
                 Row(
@@ -578,7 +578,12 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                               horizontal: spacingConstant),
                           child: TextField(
                               controller: minController,
-                              decoration: InputDecoration(
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter
+                                    .digitsOnly, // autorise seulement les chiffres
+                              ],
+                              decoration: const InputDecoration(
                                   icon: Text(
                                     'Min',
                                     style: TextStyle(
@@ -592,7 +597,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: spacingConstant,
                     ),
                     Expanded(
@@ -600,13 +605,18 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                         decoration: BoxDecoration(
                             border: Border.all(width: 1, color: primaryColor),
                             borderRadius:
-                                BorderRadius.all(Radius.circular(15))),
+                                const BorderRadius.all(Radius.circular(15))),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: spacingConstant),
                           child: TextField(
                               controller: maxController,
-                              decoration: InputDecoration(
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter
+                                    .digitsOnly, // autorise seulement les chiffres
+                              ],
+                              decoration: const InputDecoration(
                                   icon: Text(
                                     'Max',
                                     style: TextStyle(
@@ -622,7 +632,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: spacingConstant,
                 ),
                 Row(
@@ -635,7 +645,7 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
                         },
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: spacingConstant,
                     ),
                     Expanded(

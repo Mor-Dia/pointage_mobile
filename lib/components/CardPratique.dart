@@ -153,7 +153,7 @@ class _CardPratiqueState extends State<CardPratique> {
                 bottom: 12,
                 right: 12,
                 child: Text(
-                  widget.data.designation.toString().toCapitalized ?? '',
+                  widget.data.designation.toString() ?? '',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.arimo(

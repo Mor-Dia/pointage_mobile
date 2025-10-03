@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
@@ -345,11 +346,22 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                 bloc: lcPostBloc,
                 listener: (context, state) {
                   if (currentElt == toElement.id) {
-                    if (state is PostApiSuccess) {
-                      // fermer l'element apres success
-                      Navigator.of(parentContext).pop();
-                      TopDialogNotification.show(context,
-                          message: "${state.message}", isError: false);
+                    // if (state is PostApiSuccess) {
+                    //   // fermer l'element apres success
+                    //   Navigator.of(parentContext).pop();
+                    //   TopDialogNotification.show(context,
+                    //       message: "${state.message}", isError: false);
+                    // }
+                    if (state is PostApiSuccess)
+                    {
+                      if (state.data != null && state.data["bictorys_link"] != null)
+                      {
+                        launchUrl(Uri.parse(state.data["bictorys_link"].toString()));
+                      }
+                      else
+                      {
+                        TopDialogNotification.show(context, message: "${state.message}", isError: false);
+                      }
                     }
                     if (state is PostApiFailure) {
                       print("NEW STATE ${state.message}");

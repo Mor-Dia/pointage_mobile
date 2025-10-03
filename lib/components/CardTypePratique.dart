@@ -101,8 +101,7 @@ class _CardTypePratiqueState extends State<CardTypePratique> {
                 bottom: 12,
                 right: 12,
                 child: Text(
-                  // widget.data.image ?? '',
-                  widget.data.designation.toString().toCapitalized ?? '',
+                  widget.data.designation.toString() ?? '',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.arimo(
