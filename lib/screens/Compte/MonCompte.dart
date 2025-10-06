@@ -212,7 +212,7 @@ class _MonCompteState extends State<MonCompte> {
                                       List<Utilisateur> users = state.data;
                                       Utilisateur currentClient = users[0];
                                       return Text(
-                                        "${Helpers.formatNumber(currentClient.solde)} XOF",
+                                        "${Helpers.formatNumber(currentClient.solde)} FCFA TTC",
                                         style: TextStyle(
                                             color: currentClient.solde > 0
                                                 ? Color(0xff5EAB43)

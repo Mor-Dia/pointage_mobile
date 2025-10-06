@@ -45,7 +45,7 @@ class TypePaiementCard extends StatelessWidget {
                           color: primaryColor, fontSize: 12)
                   ),
                   Text(
-                      "${Helpers.formatNumber(typePaiement.soldeDisponible)} XOF",
+                      "${Helpers.formatNumber(typePaiement.soldeDisponible)} FCFA TTC",
                       style: const TextStyle(
                           color: primaryColor,
                           fontWeight: FontWeight.bold

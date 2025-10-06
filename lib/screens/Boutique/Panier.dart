@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +138,7 @@ class _PanierState extends State<PanierPage> {
                       if ((state is PanierLoaded) &&
                           state.panier.total != 0) ...[
                         Text(
-                          'TOTAL TTC : ${Helpers.formatNumber(state.panier.total)}',
+                          'TOTAL : ${Helpers.formatNumber(state.panier.total)} FCFA TTC',
                           style: const TextStyle(
                             color: primaryColor,
                             fontWeight: FontWeight.bold,
@@ -146,7 +148,8 @@ class _PanierState extends State<PanierPage> {
                         const SizedBox(height: 10),
                         Center(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8.0),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8.0),
                             child: ButtonFiled(
                               text: 'Finaliser la commande',
                               handlerPress: () {
@@ -165,18 +168,18 @@ class _PanierState extends State<PanierPage> {
   dynamic currentElt;
 
   List<Widget> buildTypePaiementList(BuildContext parentContext,
-      List<TypePaiement> typePaiements, Panier panier, zone_livraison_id
-) {
+      List<TypePaiement> typePaiements, Panier panier, selectedZoneLivraison) {
     late PostApiBloc panierPostBloc;
     panierPostBloc = PostApiBloc();
 
+    List<int?> panier_produit_id = panier.panierProduit!
+        .map((panierProduit) => panierProduit.produit?.id)
+        .toList();
 
-    List<int?> panier_produit_id = panier.panierProduit
-    !.map((panierProduit) => panierProduit.produit?.id)
-    .toList();
+    print("HOHOHGL panier ${panier_produit_id} -- ${selectedZoneLivraison}");
 
-        print("HOHOHGL panier ${panier_produit_id} -- ${zone_livraison_id}");
-
+    print(
+        "HOHOHGL panier getPrixZoneLivraison -- ${panier.total} -- ${selectedZoneLivraison}");
 
     savePanier({required Map<String, dynamic> parameters}) {
       panierPostBloc.add(
@@ -197,11 +200,12 @@ class _PanierState extends State<PanierPage> {
                   print("MESSAGE success state ${state} ");
                   if (currentElt == toElement.id) {
                     if (state is PostApiSuccess) {
-                      // Navigator.of(parentContext).pop();
-                      // Navigator.of(context).pop();
-                      if (state.data != null && state.data["bictorys_link"] != null) {
-                        // launchUrl(Uri.parse(state.data["url"].toString()));
-                        launchUrl(Uri.parse(state.data["bictorys_link"].toString()));
+                      Navigator.of(parentContext).pop();
+                      Navigator.of(context).pop();
+                      if (state.data != null &&
+                          state.data["bictorys_link"] != null) {
+                        launchUrl(
+                            Uri.parse(state.data["bictorys_link"].toString()));
                       } else {
                         TopDialogNotification.show(context,
                             message: "${state.message}", isError: false);
@@ -233,10 +237,13 @@ class _PanierState extends State<PanierPage> {
                             "email": user?.email ?? null,
                             "politique_retour": true,
                             "from_site": true,
+                            "from_mobile": true,
+                            "platform": Platform.isAndroid ? "Android" : "Ios",
                             "type_paiement_id": toElement.id,
-                            "montant": panier.total,
-                            "zone_livraison_id": zone_livraison_id ?? 1,
-                            // "zone_livraison_id": zone_livraison_id,
+                            // "montant": panier.total,
+                            "montant":
+                                panier.total! + (selectedZoneLivraison!.prix?.toInt() ?? 0),
+                            "zone_livraison_id": selectedZoneLivraison!.id ?? 1,
                           };
                           savePanier(parameters: parameters);
                         },
@@ -254,157 +261,154 @@ class _PanierState extends State<PanierPage> {
     ];
   }
 
+  Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        DataBloc<List<TypePaiement>> typePaiementPushBloc =
+            DataBloc<List<TypePaiement>>(
+          (response) => TypePaiement.fromJsonList(response),
+          TypePaiement.getEndpoint(isPagination: false),
+          isGraphQl: true,
+          isPagination: false,
+          attributeToGet: TypePaiement.shrinkedAttributs(),
+        );
 
+        DataBloc<List<ZoneLivraison>> zoneLivraisonBloc =
+            DataBloc<List<ZoneLivraison>>(
+          (response) => ZoneLivraison.fromJsonList(response),
+          ZoneLivraison.getEndpoint(isPagination: false),
+          isGraphQl: true,
+          isPagination: false,
+          attributeToGet: ZoneLivraison.shrinkedAttributs(),
+        );
 
-Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
+        // List? zone_livraison;
+        ZoneLivraison? selectedZoneLivraison;
 
-  return showModalBottomSheet(
-    context: context,
-    isScrollControlled: true, // Permet d'éviter le débordement clavier
-    builder: (BuildContext context) {
-      DataBloc<List<TypePaiement>> typePaiementPushBloc =
-          DataBloc<List<TypePaiement>>(
-              (response) => TypePaiement.fromJsonList(response),
-              TypePaiement.getEndpoint(isPagination: false),
-              isGraphQl: true,
-              isPagination: false,
-              attributeToGet: TypePaiement.shrinkedAttributs());
-              
-      DataBloc<List<ZoneLivraison>> zoneLivraisonBloc =
-          DataBloc<List<ZoneLivraison>>(
-              (response) => ZoneLivraison.fromJsonList(response),
-              ZoneLivraison.getEndpoint(isPagination: false),
-              isGraphQl: true,
-              isPagination: false,
-              attributeToGet: ZoneLivraison.shrinkedAttributs());
-      
-      int? zone_livraison_id; // ta variable sélectionnée
-
-      return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom, // Gère le clavier
-        ),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(spacingConstant),
-              topRight: Radius.circular(spacingConstant),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(spacingConstant),
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // S'ajuste au contenu
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Indicateur de swipe pour fermer
-                Center(
-                  child: Container(
-                    height: 2,
-                    width: 50,
-                    decoration: const BoxDecoration(
-                      color: greyColor,
-                      borderRadius:
-                          BorderRadius.all(Radius.circular(spacingConstant)),
-                    ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(spacingConstant),
+                    topRight: Radius.circular(spacingConstant),
                   ),
                 ),
-                const SizedBox(height: spacingConstant),
-
-                const Text(
-                  "Finaliser la commande",
-                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
-                ),
-                const SizedBox(height: spacingConstant),
-
-                BlocBuilder<AuthenticationBloc<Utilisateur>, AuthenticationState<Utilisateur>>(
-                  builder: (context, authState) {
-                    Utilisateur? user = authState.user;
-
-                    
-                    print("HOHOHGL panier user ${user}");
-
-
-                    TextEditingController nom_completController =
-                        TextEditingController(text: user?.nom_complet ?? '');
-                    TextEditingController adresseController =
-                        TextEditingController(text: '');
-
-                    return Padding(
-                      padding: const EdgeInsets.all(0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Informations du client",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                child: Padding(
+                  padding: const EdgeInsets.all(spacingConstant),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          height: 2,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            color: greyColor,
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(spacingConstant)),
                           ),
-                          const SizedBox(height: 8),
-                          Inputfiled(
-                                  type: 'text',
-                                  text: "Nom complet",
-                                  controller: nom_completController,
-                                  error: '',
-                                ),
-                          const SizedBox(height: 8),
-                          Inputfiled(
-                            type: 'text',
-                            text: "Adresse",
-                            controller: adresseController,
-                            error: '',
-                          ),
-                        ],
+                        ),
                       ),
-                    );
-                  },
-                ),
+                      const SizedBox(height: spacingConstant),
 
-                // const Divider(height: spacingConstant),
-                
-                const SizedBox(height: 20),
-                // // ✅ Sélection de la zone de livraison
-                const Text("Zone de livraison",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                
-                BlocBasedWidget<List<ZoneLivraison>>(
-                  customDataBloc: zoneLivraisonBloc, // ton DataBloc pour récupérer les zones
-                  filter: const {'showatwebsite': 'true'},
-                  useInfiniteScroller: true,
-                  customWidget: (state) {
-                    List<ZoneLivraison> zones = state.data;
-                    
-                    return DropdownButton<int>(
-                      isExpanded: true,
-                      value: zone_livraison_id,
-                      hint: const Text("Sélectionner une zone"),
-                      items: zones.map((zone) {
-                        return DropdownMenuItem<int>(
-                          value: zone.id,
-                          child: Text(zone.designation ?? ""),
-                        );
-                      }).toList(),
-                      onChanged: (newValue) {
-                        zone_livraison_id = newValue;
-                        // 🔥 tu peux mettre à jour ton panier ici
-                        // panier.zoneLivraisonId = zone_livraison_id;
-                        if (kDebugMode) {
-                          print("Zone sélectionnée: $zone_livraison_id");
-                        }
-                      },
-                    );
-                  },
-                ),
+                      const Text(
+                        "Finaliser la commande",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w900, fontSize: 16),
+                      ),
+                      const SizedBox(height: spacingConstant),
 
-                const SizedBox(height: 20),
+                      // Bloc Auth
+                      BlocBuilder<AuthenticationBloc<Utilisateur>,
+                          AuthenticationState<Utilisateur>>(
+                        builder: (context, authState) {
+                          Utilisateur? user = authState.user;
 
-                // ✅ Type de paiement
-                const Text("Type de paiement",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
+                          TextEditingController nom_completController =
+                              TextEditingController(
+                                  text: user?.nom_complet ?? '');
+                          TextEditingController adresseController =
+                              TextEditingController(text: '');
 
-                BlocBasedWidget<List<TypePaiement>>(
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Informations du client",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8),
+                              Inputfiled(
+                                type: 'text',
+                                text: "Nom complet",
+                                controller: nom_completController,
+                                error: '',
+                              ),
+                              const SizedBox(height: 8),
+                              Inputfiled(
+                                type: 'text',
+                                text: "Adresse",
+                                controller: adresseController,
+                                error: '',
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Zone de livraison
+                      const Text("Zone de livraison",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+
+                      BlocBasedWidget<List<ZoneLivraison>>(
+                        customDataBloc: zoneLivraisonBloc,
+                        filter: const {'showatwebsite': 'true'},
+                        useInfiniteScroller: true,
+                        customWidget: (state) {
+                          List<ZoneLivraison> zones = state.data;
+
+                          return DropdownButton<ZoneLivraison>(
+                            isExpanded: true,
+                            value: selectedZoneLivraison,
+                            hint: const Text("Sélectionner une zone"),
+                            items: zones.map((zone) {
+                              return DropdownMenuItem<ZoneLivraison>(
+                                value: zone,
+                                child: Text(zone.designation ?? ""),
+                              );
+                            }).toList(),
+                            onChanged: (newValue) {
+                              setModalState(() {
+                                selectedZoneLivraison = newValue;
+                              });
+                              if (kDebugMode) {
+                                print("Zone sélectionnée : $selectedZoneLivraison");
+                              }
+                            },
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      // Type de paiement
+                      const Text("Type de paiement",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+
+                      BlocBasedWidget<List<TypePaiement>>(
                         customDataBloc: typePaiementPushBloc,
                         filter: const {
                           'showatwebsite': 'true',
@@ -413,74 +417,31 @@ Future<dynamic> ShowBottomSheetCommande(BuildContext context, Panier panier) {
                         useInfiniteScroller: true,
                         customWidget: (state) {
                           List<TypePaiement> typePaiements = state.data;
-                          return Column(children: [
-                            Wrap(spacing: 10, runSpacing: 10, children: [
-                              ...buildTypePaiementList(context,
-                                  typePaiements, panier, zone_livraison_id),
-                            ]),
-                            const SizedBox(
-                              height: spacingConstant,
-                            ),
-                          ]);
+                          return Column(
+                            children: [
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
+                                children: [
+                                  ...buildTypePaiementList(context,
+                                      typePaiements, panier, selectedZoneLivraison),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: spacingConstant,
+                              ),
+                            ],
+                          );
                         },
                       ),
-
-                // BlocBasedWidget<List<TypePaiement>>(
-                //   customDataBloc: typePaiementPushBloc,
-                //   filter: const {'showatwebsite': 'true'},
-                //   useInfiniteScroller: true,
-                //   customWidget: (state) {
-                //     List<TypePaiement> typePaiements = state.data;
-                //     print("typePaiements $typePaiements");
-                //     return Column(
-                //       children: typePaiements.map((paiement) {
-                //         return RadioListTile<TypePaiement>(
-                //           title: Text(paiement?.designation.toString() ?? ""),
-                //           value: paiement,
-                //           groupValue: paiement,
-                //           onChanged: (TypePaiement? newPaiement) {
-                //             // panier.typePaiement = newPaiement!;
-                //             print(newPaiement);
-                //           },
-                //         );
-                //       }).toList(),
-                //     );
-                //   },
-                // ),
-
-                // const SizedBox(height: spacingConstant),
-
-                // // ✅ Bouton de finalisation
-                // Center(
-                //   child: Container(
-                //     constraints: BoxConstraints(
-                //       maxWidth: MediaQuery.of(context).size.width * 0.50,
-                //     ),
-                //     child: ButtonFiled(
-                //       text: 'Finaliser la commande',
-                //       handlerPress: () {
-                //         // Mettre à jour les valeurs avant validation
-                //         // panier.client.prenom = prenomController.text;
-                //         // panier.client.nom = nomController.text;
-                //         // panier.client.adresse = adresseController.text;
-
-                //         // Logique pour valider la commande
-                //       },
-                //     ),
-                //   ),
-                // ),
-                // const SizedBox(height: spacingConstant),
-              ],
-            ),
-          ),
-        ),
-      );
-    },
-  );
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }
-
-
-}
-
-
-  

@@ -146,7 +146,7 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
                         ),
                         Text(
                           textAlign: TextAlign.start,
-                          ('${Helpers.formatNumber(widget.data.produit!.prix)}xof')
+                          ('${Helpers.formatNumber(widget.data.produit!.prix)} FCFA TTC')
                               .toUpperCase(),
                           style: GoogleFonts.arimo(
                               fontSize: textConstant,

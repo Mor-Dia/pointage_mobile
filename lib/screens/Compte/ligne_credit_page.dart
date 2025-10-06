@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
+import '../../core/utils/helpers.dart';
 
 import '../../components/InputFiled.dart';
 import '../../components/animated_gesture_detector.dart';
@@ -130,7 +133,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                                     return Text(
                                       hide
                                           ? "*******"
-                                          : "${currentClient.solde} XOF",
+                                          : "${Helpers.formatNumber(currentClient.solde)} FCFA TTC",
                                       style: const TextStyle(
                                           fontSize: 16,
                                           color: primaryColor,
@@ -186,14 +189,6 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                 ),
               ),
             ),
-
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
-            //   child: ButtonFiled(
-            //     text: 'Approvisionner le compte',
-            //     handlerPress: () => {ShowBottomSheetPayment(context)},
-            //   ),
-            // ),
             const SizedBox(
               height: spacingConstant,
             ),
@@ -214,11 +209,23 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                         const SizedBox(
                           height: spacingConstant,
                         ),
-                        ...lcs
-                            .map((toElement) => CardLignecredit(
-                                  ligneCredit: toElement,
-                                ))
-                            .toList(),
+                        ...lcs.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final toElement = entry.value;
+
+                          return CardLignecredit(
+                            ligneCredit: toElement,
+                            onShowPaymentSheet: () {
+                              ShowBottomSheetPayment(context,
+                                  toElement); // 🔥 appel du bottom sheet
+                            },
+                            onDelete: () {
+                              setState(() {
+                                lcs.removeAt(index);
+                              });
+                            },
+                          );
+                        }).toList(),
                       ]);
                     },
                   );
@@ -235,8 +242,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
   }
 
   Future<dynamic> ShowBottomSheetPayment(BuildContext context,
-      {Function? customFunction}) {
-    print("ShowBottomSheetPayment");
+      [LigneCredit? ligneCredit]) {
     DataBloc<List<TypePaiement>> typePaiementPushBloc =
         DataBloc<List<TypePaiement>>(
             (response) => TypePaiement.fromJsonList(response),
@@ -244,6 +250,13 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
             isGraphQl: true,
             isPagination: false,
             attributeToGet: TypePaiement.shrinkedAttributs());
+
+    // Pré-remplir montant si ligneCredit existe
+    if (ligneCredit != null) {
+      montantController.text = ligneCredit.montant.toString();
+    } else {
+      montantController.text = '';
+    }
 
     return showModalBottomSheet(
         context: context,
@@ -276,12 +289,11 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                         height: spacingConstant,
                       ),
                       Inputfiled(
-                        type: 'text',
-                        text: "Montant",
-                        controller: montantController,
-                        error: '', // L'erreur est vide au départ
-                        // error: currentError, // L'erreur est vide au départ
-                      ),
+                          type: 'number',
+                          text: "Montant",
+                          controller: montantController,
+                          error: '',
+                        ),
                       const SizedBox(
                         height: spacingConstant,
                       ),
@@ -309,7 +321,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                             ),
                             Wrap(spacing: 10, runSpacing: 10, children: [
                               ...buildTypePaiementList(currentContext,
-                                  typePaiements, montantController.text),
+                                  typePaiements, montantController.text, ligneCredit),
                             ]),
                           ]);
                         },
@@ -324,7 +336,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
   }
 
   List<Widget> buildTypePaiementList(
-      BuildContext parentContext, List<TypePaiement> typePaiements, montant) {
+      BuildContext parentContext, List<TypePaiement> typePaiements, montant, LigneCredit? ligneCredit) {
     late PostApiBloc lcPostBloc;
     lcPostBloc = PostApiBloc();
 
@@ -346,22 +358,19 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                 bloc: lcPostBloc,
                 listener: (context, state) {
                   if (currentElt == toElement.id) {
-                    // if (state is PostApiSuccess) {
-                    //   // fermer l'element apres success
-                    //   Navigator.of(parentContext).pop();
-                    //   TopDialogNotification.show(context,
-                    //       message: "${state.message}", isError: false);
-                    // }
-                    if (state is PostApiSuccess)
-                    {
-                      if (state.data != null && state.data["bictorys_link"] != null)
-                      {
-                        launchUrl(Uri.parse(state.data["bictorys_link"].toString()));
+                    if (state is PostApiSuccess) {
+                      if (state.data != null &&
+                          state.data["bictorys_link"] != null) {
+                        launchUrl(
+                            Uri.parse(state.data["bictorys_link"].toString()));
+                      } else {
+                        TopDialogNotification.show(context,
+                            message: "${state.message}", isError: false);
                       }
-                      else
-                      {
-                        TopDialogNotification.show(context, message: "${state.message}", isError: false);
-                      }
+                      lcBloc.add(FetchDataEvent(
+                          filter: {...globalFilter, "client_id": user?.id}));
+
+                      // lcBloc.add(FetchDataEvent(loadNewData: true));
                     }
                     if (state is PostApiFailure) {
                       print("NEW STATE ${state.message}");
@@ -381,15 +390,30 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                             currentElt = null;
                             currentElt = toElement.id;
                           });
+                          // Map<String, dynamic> parameters = {
+                          //   "montant": montantController.text,
+                          //   // "montant": montant,
+                          //   "client": user?.id,
+                          //   "from_site": true,
+                          //   "etat": false,
+                          //   "typelignecredit": 2,
+                          //   "type_paiement": toElement.id,
+                          // };
                           Map<String, dynamic> parameters = {
-                            "montant": montantController.text,
-                            // "montant": montant,
+                            "montant": ligneCredit != null ? ligneCredit.montant : montantController.text,
                             "client": user?.id,
                             "from_site": true,
+                            "from_mobile": true,
                             "etat": false,
                             "typelignecredit": 2,
                             "type_paiement": toElement.id,
+                            "platform": Platform.isAndroid ? "Android" : "Ios",
                           };
+
+                          if (ligneCredit != null) {
+                            parameters["id"] = ligneCredit.id; // 🔥 relance paiement
+                          }
+                      
                           buyLigneCredit(parameters: parameters);
                         },
                         child: TypePaiementCard(typePaiement: toElement)),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -692,7 +694,7 @@ var size = MediaQuery.of(context).size;
                         width: 5,
                       ),
                       Text(
-                        "${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} XOF",
+                        "${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} FCFA TTC",
                         style: const TextStyle(
                             color: Color.fromARGB(255, 0, 0, 0), fontSize: 12),
                       ),
@@ -899,7 +901,7 @@ var size = MediaQuery.of(context).size;
                       ),
                       Center(
                         child: Text(
-                          "Montant : ${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} XOF",
+                          "Montant : ${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} FCFA TTC",
                           style: const TextStyle(
                               color: Color.fromARGB(255, 0, 0, 0),
                               fontSize: 12,
@@ -990,7 +992,9 @@ var size = MediaQuery.of(context).size;
                             "programme": programme.id,
                             "client": user?.id,
                             "from_site": true,
+                            "from_mobile": true,
                             "mode_paiement_id": toElement.id,
+                            "platform": Platform.isAndroid ? "Android" : "Ios",
                           };
                           reserverCours(parameters: parameters);
                         },

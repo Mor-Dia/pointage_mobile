@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -303,7 +305,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                         width: 5,
                       ),
                       Text(
-                        "${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} XOF",
+                        "${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} FCFA TTC",
                         style: const TextStyle(
                             color: Color.fromARGB(255, 0, 0, 0), fontSize: 12),
                       ),
@@ -512,7 +514,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                       ),
                       Center(
                         child: Text(
-                          "Montant : ${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} XOF",
+                          "Montant : ${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} FCFA TTC",
                           style: const TextStyle(
                               color: Color.fromARGB(255, 0, 0, 0),
                               fontSize: 12,
@@ -604,6 +606,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                             "programme": programme.id,
                             "client": user?.id,
                             "from_site": true,
+                            "from_mobile": true,
+                            "platform": Platform.isAndroid ? "Android" : "Ios",
                             "mode_paiement_id": toElement.id,
                           };
                           reserverCours(parameters: parameters);

@@ -45,7 +45,7 @@ class LigneCredit with _$LigneCredit {
   }
 
   static shrinkedAttributs () {
-    return "id,montant,solde,etat,from_site,date_fr,code,created_at_fr,type_paiement{designation},type_ligne_credit{designation}";
+    return "id,montant,solde,etat,from_site,date_fr,code,created_at_fr,type_paiement{id,designation},type_ligne_credit{designation}";
   }
 
   static String getEndpoint({bool isPagination = true}) {

@@ -31,7 +31,7 @@ class CardCommande extends StatelessWidget {
                   "N° ${commande.id ?? ''}",
                 ),
                 Text(
-                  "${Helpers.formatNumber(commande.total)}XOF",
+                  "${Helpers.formatNumber(commande.total)} FCFA TTC",
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 )
               ],
