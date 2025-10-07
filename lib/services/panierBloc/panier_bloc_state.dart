@@ -9,4 +9,5 @@ class PanierBlocState with _$PanierBlocState {
   const factory PanierBlocState.loaded({required Panier panier}) =
       PanierLoaded;
   const factory PanierBlocState.error({required String message}) = PanierError;
+  
 }

@@ -202,6 +202,7 @@ class _PanierState extends State<PanierPage> {
                     if (state is PostApiSuccess) {
                       Navigator.of(parentContext).pop();
                       Navigator.of(context).pop();
+
                       if (state.data != null &&
                           state.data["bictorys_link"] != null) {
                         launchUrl(
@@ -240,7 +241,6 @@ class _PanierState extends State<PanierPage> {
                             "from_mobile": true,
                             "platform": Platform.isAndroid ? "Android" : "Ios",
                             "type_paiement_id": toElement.id,
-                            // "montant": panier.total,
                             "montant":
                                 panier.total! + (selectedZoneLivraison!.prix?.toInt() ?? 0),
                             "zone_livraison_id": selectedZoneLivraison!.id ?? 1,
