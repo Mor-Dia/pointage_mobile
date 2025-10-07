@@ -56,5 +56,19 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+	<dict>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>yogivida</string>
+		</array>
+	</dict>
+	</array>
+	<key>NSUserActivityTypes</key>
+	<array>
+	<string>NSUserActivityTypeBrowsingWeb</string>
+	</array>
+
 </dict>
 </plist>
