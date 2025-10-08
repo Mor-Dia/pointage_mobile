@@ -12,7 +12,8 @@ class TypePaiementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return
+     Container(
       decoration: BoxDecoration(
           border: Border.all(width: 1, color: greyColorL),
           borderRadius: const BorderRadius.all(Radius.circular(spacingConstant))),

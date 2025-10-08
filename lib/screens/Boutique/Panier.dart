@@ -241,8 +241,8 @@ class _PanierState extends State<PanierPage> {
                             "from_mobile": true,
                             "platform": Platform.isAndroid ? "Android" : "Ios",
                             "type_paiement_id": toElement.id,
-                            "montant":
-                                panier.total! + (selectedZoneLivraison!.prix?.toInt() ?? 0),
+                            "montant": panier.total! +
+                                (selectedZoneLivraison!.prix?.toInt() ?? 0),
                             "zone_livraison_id": selectedZoneLivraison!.id ?? 1,
                           };
                           savePanier(parameters: parameters);
@@ -268,12 +268,12 @@ class _PanierState extends State<PanierPage> {
       builder: (BuildContext context) {
         DataBloc<List<TypePaiement>> typePaiementPushBloc =
             DataBloc<List<TypePaiement>>(
-          (response) => TypePaiement.fromJsonList(response),
-          TypePaiement.getEndpoint(isPagination: false),
-          isGraphQl: true,
-          isPagination: false,
-          attributeToGet: TypePaiement.shrinkedAttributs(),
-        );
+                (response) => TypePaiement.fromJsonList(response),
+                TypePaiement.getEndpoint(isPagination: false),
+                isGraphQl: true,
+                isPagination: false,
+                attributeToGet: TypePaiement.shrinkedAttributs())
+              ..add(RefreshDataEvent(filter: {'showatwebsite': 'true', 'showatwebsiteNotLC': 'true'}));
 
         DataBloc<List<ZoneLivraison>> zoneLivraisonBloc =
             DataBloc<List<ZoneLivraison>>(
@@ -394,7 +394,8 @@ class _PanierState extends State<PanierPage> {
                                 selectedZoneLivraison = newValue;
                               });
                               if (kDebugMode) {
-                                print("Zone sélectionnée : $selectedZoneLivraison");
+                                print(
+                                    "Zone sélectionnée : $selectedZoneLivraison");
                               }
                             },
                           );
@@ -423,8 +424,11 @@ class _PanierState extends State<PanierPage> {
                                 spacing: 10,
                                 runSpacing: 10,
                                 children: [
-                                  ...buildTypePaiementList(context,
-                                      typePaiements, panier, selectedZoneLivraison),
+                                  ...buildTypePaiementList(
+                                      context,
+                                      typePaiements,
+                                      panier,
+                                      selectedZoneLivraison),
                                 ],
                               ),
                               const SizedBox(

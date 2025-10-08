@@ -90,7 +90,7 @@ class _BoutiqueState extends State<Boutique> {
         isPagination: true,
         attributeToGet: Produit.shrinkedAttributs());
 
-    productFilter.addAll({'count': 100, 'showatwebsite': 'true'});
+    productFilter.addAll({'count': 100, 'showatwebsite': 'true', 'is_front': true});
     familleFilter.addAll({'showatwebsite': 'true'});
 
     _searchProductScrollControler = ScrollController();
@@ -186,7 +186,7 @@ class _BoutiqueState extends State<Boutique> {
     });
 
     produitBloc
-        .add(FetchDataEvent(filter: {'count': 100, 'showatwebsite': 'true'}));
+        .add(FetchDataEvent(filter: {'count': 100, 'showatwebsite': 'true', 'is_front': true}));
   }
 
   void dispose() {
@@ -472,7 +472,7 @@ class _BoutiqueState extends State<Boutique> {
                   /// BlocBasedWidget Produits sans SingleChildScrollView
                   BlocBasedWidget<List<Produit>>(
                     customDataBloc: produitBloc,
-                    useInfiniteScroller: false,
+                    useInfiniteScroller: true,
                     filter: productFilter,
                     customWidget: (state) {
                       List<Produit> produits = state.data;

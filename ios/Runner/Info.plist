@@ -69,6 +69,8 @@
 	<array>
 	<string>NSUserActivityTypeBrowsingWeb</string>
 	</array>
+	<key>BranchKey</key>
+	<string>yogivida</string>
 
 </dict>
 </plist>

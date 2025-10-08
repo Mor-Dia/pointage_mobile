@@ -67,13 +67,15 @@ class Cardactivite extends StatelessWidget {
                     )
                   ],
                 ),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.040),
+                Text(" - ", style: const TextStyle(
+                          color: Color(0xff838282), fontSize: 11),),
+                              
                 Row(
                   children: [
-                    SvgPicture.asset('assets/icons/person.svg', width: 10),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.010),
+                    // SvgPicture.asset('assets/icons/heure.svg', width: 10),
+                    // SizedBox(width: MediaQuery.of(context).size.width * 0.010),
                     Text(
-                      data.professeurPratique?.professeur?.user?.name ?? "",
+                      data.heureFin ?? "",
                       style: const TextStyle(
                           color: Color(0xff838282), fontSize: 11),
                     )
@@ -84,15 +86,37 @@ class Cardactivite extends StatelessWidget {
             const SizedBox(height: 5),
             Row(
               children: [
-                SvgPicture.asset('assets/icons/loc.svg', width: 10,color: Color(0xff838282),),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.010),
-                Text(
-                  data.sallePratique?.salle?.designation
-                  .toString()
-                  .toCapitalized ?? "",
-                  style: const TextStyle(
-                      color: Color(0xff838282), fontSize: 11),
+                Row(
+                  children: [
+                    SvgPicture.asset('assets/icons/person.svg', width: 10),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.010),
+                    Text(
+                      data.professeurPratique?.professeur?.user?.name ?? "",
+                      style: const TextStyle(
+                          color: Color(0xff838282), fontSize: 11),
+                    )
+                  ],
+                ),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.040),
+                Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/loc.svg',
+                      width: 10,
+                      color: Color(0xff838282),
+                    ),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.010),
+                    Text(
+                      data.sallePratique?.salle?.designation
+                              .toString()
+                              .toCapitalized ??
+                          "",
+                      style: const TextStyle(
+                          color: Color(0xff838282), fontSize: 11),
+                    )
+                  ],
                 )
+
               ],
             ),
             Row(

@@ -57,20 +57,30 @@ class CardLignecredit extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
+                Text(
+                  "${ligneCredit.dateFr}",
+                  style: const TextStyle(
+                      fontSize: 13,
+                      color: primaryColor,
+                      fontWeight: FontWeight.bold),
+                ),
+                                const SizedBox(height: 2),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                         "Montant : ${Helpers.formatNumber(ligneCredit.montant)} FCFA TTC",
                         style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 13,
                             color: primaryColor,
                             fontWeight: FontWeight.bold)),
                     if (ligneCredit.etat == true)
                       Text(
                           "Solde : ${Helpers.formatNumber(ligneCredit.solde)} FCFA TTC",
                           style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               color: primaryColor,
                               fontWeight: FontWeight.bold)),
                     if (ligneCredit.etat == false)
@@ -130,14 +140,6 @@ class CardLignecredit extends StatelessWidget {
                       ),
                   ],
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  "${ligneCredit.dateFr}",
-                  style: const TextStyle(
-                      fontSize: 11,
-                      color: primaryColor,
-                      fontWeight: FontWeight.bold),
-                )
               ],
             ),
           ),

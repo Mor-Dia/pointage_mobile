@@ -27,6 +27,8 @@ import '../../services/post_api_bloc.dart';
 class _LigneCreditPageState extends State<LigneCreditPage> {
   late DataBloc<List<LigneCredit>> lcBloc;
   late DataBloc<List<Utilisateur>> utilisateurBloc;
+  late DataBloc<List<TypePaiement>> typePaiementBloc;
+
   Map<String, dynamic> globalFilter = {"count": 10};
   bool hide = false;
   TextEditingController montantController = TextEditingController();
@@ -48,6 +50,14 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
         isGraphQl: true,
         isPagination: true,
         attributeToGet: Utilisateur.shrinkedAttributs());
+
+    typePaiementBloc = DataBloc<List<TypePaiement>>(
+      (response) => TypePaiement.fromJsonList(response),
+      TypePaiement.getEndpoint(isPagination: false),
+      isGraphQl: true,
+      isPagination: false,
+      attributeToGet: TypePaiement.shrinkedAttributs(),
+    );
 
     super.initState();
   }
@@ -167,27 +177,43 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
             const SizedBox(
               height: spacingConstant,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: spacingConstant),
-              child: GestureDetector(
-                onTap: () => ShowBottomSheetPayment(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  decoration: BoxDecoration(
-                    color: primaryColor,
-                    borderRadius: BorderRadius.circular(8.0), // Coins arrondis
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Approvisionner le compte',
-                      style: TextStyle(
-                        color: Colors.white, // Couleur du texte
-                        fontWeight: FontWeight.bold,
+            BlocBasedWidget<List<TypePaiement>>(
+              customDataBloc: typePaiementBloc,
+              filter: {'showatwebsite': 'true', 'showatwebsiteNotLC': 'true'},
+              useInfiniteScroller: true,
+              customWidget: (state) {
+                final typePaiements = state.data;
+
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: spacingConstant),
+                  child: GestureDetector(
+                    onTap: () {
+                      ShowBottomSheetPayment(
+                        context,
+                        null,
+                        typePaiements,
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'Approvisionner le compte',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
             const SizedBox(
               height: spacingConstant,
@@ -216,8 +242,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                           return CardLignecredit(
                             ligneCredit: toElement,
                             onShowPaymentSheet: () {
-                              ShowBottomSheetPayment(context,
-                                  toElement); // 🔥 appel du bottom sheet
+                              ShowBottomSheetPayment(context, toElement, []);
                             },
                             onDelete: () {
                               setState(() {
@@ -242,14 +267,17 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
   }
 
   Future<dynamic> ShowBottomSheetPayment(BuildContext context,
-      [LigneCredit? ligneCredit]) {
+      LigneCredit? ligneCredit, List<TypePaiement> typePaiements) {
+
     DataBloc<List<TypePaiement>> typePaiementPushBloc =
         DataBloc<List<TypePaiement>>(
             (response) => TypePaiement.fromJsonList(response),
             TypePaiement.getEndpoint(isPagination: false),
             isGraphQl: true,
             isPagination: false,
-            attributeToGet: TypePaiement.shrinkedAttributs());
+            attributeToGet: TypePaiement.shrinkedAttributs())
+          ..add(RefreshDataEvent(
+              filter: {'showatwebsite': 'true', 'showatwebsiteNotLC': 'true'}));
 
     // Pré-remplir montant si ligneCredit existe
     if (ligneCredit != null) {
@@ -289,11 +317,11 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                         height: spacingConstant,
                       ),
                       Inputfiled(
-                          type: 'number',
-                          text: "Montant",
-                          controller: montantController,
-                          error: '',
-                        ),
+                        type: 'number',
+                        text: "Montant",
+                        controller: montantController,
+                        error: '',
+                      ),
                       const SizedBox(
                         height: spacingConstant,
                       ),
@@ -306,26 +334,38 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                       const SizedBox(
                         height: spacingConstant,
                       ),
-                      BlocBasedWidget<List<TypePaiement>>(
-                        customDataBloc: typePaiementPushBloc,
-                        filter: const {
-                          'showatwebsite': 'true',
-                          'showatwebsiteNotLC': 'true'
-                        },
-                        useInfiniteScroller: true,
-                        customWidget: (state) {
-                          List<TypePaiement> typePaiements = state.data;
-                          return Column(children: [
-                            const SizedBox(
-                              height: spacingConstant,
-                            ),
-                            Wrap(spacing: 10, runSpacing: 10, children: [
-                              ...buildTypePaiementList(currentContext,
-                                  typePaiements, montantController.text, ligneCredit),
-                            ]),
-                          ]);
-                        },
-                      )
+                      if (typePaiements.isEmpty)
+                        BlocBasedWidget<List<TypePaiement>>(
+                          customDataBloc: typePaiementPushBloc,
+                          filter: const {
+                            'showatwebsite': 'true',
+                            'showatwebsiteNotLC': 'true'
+                          },
+                          useInfiniteScroller: true,
+                          customWidget: (state) {
+                            List<TypePaiement> typePaiements = state.data;
+                            return Column(children: [
+                              const SizedBox(
+                                height: spacingConstant,
+                              ),
+                              Wrap(spacing: 10, runSpacing: 10, children: [
+                                ...buildTypePaiementList(
+                                    currentContext,
+                                    typePaiements,
+                                    montantController.text,
+                                    ligneCredit),
+                              ]),
+                            ]);
+                          },
+                        ),
+                      if (typePaiements.isNotEmpty)
+                        Wrap(spacing: 10, runSpacing: 10, children: [
+                          ...buildTypePaiementList(
+                              currentContext,
+                              typePaiements,
+                              montantController.text,
+                              ligneCredit),
+                        ]),
                     ],
                   ),
                 ),
@@ -335,8 +375,8 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
         });
   }
 
-  List<Widget> buildTypePaiementList(
-      BuildContext parentContext, List<TypePaiement> typePaiements, montant, LigneCredit? ligneCredit) {
+  List<Widget> buildTypePaiementList(BuildContext parentContext,
+      List<TypePaiement> typePaiements, montant, LigneCredit? ligneCredit) {
     late PostApiBloc lcPostBloc;
     lcPostBloc = PostApiBloc();
 
@@ -400,7 +440,9 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                           //   "type_paiement": toElement.id,
                           // };
                           Map<String, dynamic> parameters = {
-                            "montant": ligneCredit != null ? ligneCredit.montant : montantController.text,
+                            "montant": ligneCredit != null
+                                ? ligneCredit.montant
+                                : montantController.text,
                             "client": user?.id,
                             "from_site": true,
                             "from_mobile": true,
@@ -411,9 +453,10 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                           };
 
                           if (ligneCredit != null) {
-                            parameters["id"] = ligneCredit.id; // 🔥 relance paiement
+                            parameters["id"] =
+                                ligneCredit.id; // 🔥 relance paiement
                           }
-                      
+
                           buyLigneCredit(parameters: parameters);
                         },
                         child: TypePaiementCard(typePaiement: toElement)),

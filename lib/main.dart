@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -21,6 +23,8 @@ import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 import 'package:yogivida_mobile/simple_bloc_observer.dart';
 
 import 'package:yogivida_mobile/services/notification_api.dart';
+
+import 'package:app_links/app_links.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -87,9 +91,14 @@ class _MyAppState extends State<MyApp> {
   late final AuthenticationRepository _authenticationRepository;
   late final UserRepository<Utilisateur> _userRepository;
 
+  late final AppLinks _appLinks;
+  StreamSubscription<Uri>? _sub;
+
   @override
   void initState() {
     super.initState();
+    _initDeepLink();
+
     _userRepository = UserRepository<Utilisateur>(
       factoryFunction: (json) => Utilisateur.fromJson(json),
     );
@@ -104,6 +113,33 @@ class _MyAppState extends State<MyApp> {
     _requestNotificationPermission();
   }
 
+  void _initDeepLink() async {
+    _appLinks = AppLinks();
+
+    final Uri? initialLink = await _appLinks.getInitialLink();
+    if (initialLink != null && initialLink.path == '/app') {
+      _navigateToSplash();
+    }
+
+    // 🔹 Écoute les liens ouverts pendant que l’app est déjà en cours d’exécution
+    _sub = _appLinks.uriLinkStream.listen((Uri uri) {
+      print('Lien reçu : $uri');
+      if (uri.path == '/app') {
+        _navigateToSplash();
+      }
+    }, onError: (err) {
+      print('Erreur deep link: $err');
+    });
+  }
+
+  void _navigateToSplash() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const SplashScreen()),
+      (route) => false,
+    );
+  }
+
   void _requestNotificationPermission() async {
     await FirebaseMessaging.instance.requestPermission(provisional: true);
   }
@@ -112,6 +148,7 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     _authenticationRepository.dispose();
     _userRepository.dispose();
+    _sub?.cancel();
     super.dispose();
   }
 

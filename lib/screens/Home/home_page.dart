@@ -19,6 +19,7 @@ import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/core/utils/helpers.dart';
+import 'package:yogivida_mobile/screens/Compte/ligne_credit_page.dart';
 import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
 import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
 import 'package:yogivida_mobile/screens/Home/type_pratique_page.dart';
@@ -71,24 +72,22 @@ class _HomePageState extends State<HomePage> {
 
   late DataBloc<List<Preference>> dataBloc;
 
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width >= 1200) return 5;
+    if (width >= 900) return 4;
+    if (width >= 600) return 3;
+    return 2;
+  }
 
-int _getCrossAxisCount(BuildContext context) {
-  final width = MediaQuery.of(context).size.width;
-  if (width >= 1200) return 5;
-  if (width >= 900) return 4;
-  if (width >= 600) return 3;
-  return 2;
-}
-
-double _getChildAspectRatio(BuildContext context) {
-  final width = MediaQuery.of(context).size.width;
-  if (width >= 400) return 1;
-  if (width >= 230) return 0.88;
-  if (width >= 200) return 0.85;
-  if (width >= 100) return 0.8;
-  return 1;
-}
-
+  double _getChildAspectRatio(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width >= 400) return 1;
+    if (width >= 230) return 0.88;
+    if (width >= 200) return 0.85;
+    if (width >= 100) return 0.8;
+    return 1;
+  }
 
   @override
   void initState() {
@@ -195,7 +194,7 @@ double _getChildAspectRatio(BuildContext context) {
     Utilisateur? user =
         context.read<AuthenticationBloc<Utilisateur>>().state.user;
 
-var size = MediaQuery.of(context).size;
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xffffffff),
@@ -443,85 +442,85 @@ var size = MediaQuery.of(context).size;
                 height: spacingConstant,
               ),
               BlocBasedWidget<List<Preference>>(
-                    customDataBloc: dataBloc,
-                    filter: {},
-                    customWidget: (state) {
-                      List<Preference> preferences = state.data;
-                      print("$preferences");
+                customDataBloc: dataBloc,
+                filter: {},
+                customWidget: (state) {
+                  List<Preference> preferences = state.data;
+                  print("$preferences");
 
-                      Preference? preference = preferences.firstWhere(
-                          (Preference element) => element.parametre == "TexteMobile");
-                      
-                      dynamic TexteMobile;
-                      if (preference != null) {
-                        TexteMobile = preference.valeur ?? "";
-                      }
-                      print("$TexteMobile");
+                  Preference? preference = preferences.firstWhere(
+                      (Preference element) =>
+                          element.parametre == "TexteMobile");
 
-                      if(TexteMobile.toString().length > 0)
-                      {
-                        return 
-                        Padding(
-                          padding: const EdgeInsets.only(left: spacingConstant, right: spacingConstant),
-                          child: SizedBox(
-                            height: 30, // ajuste selon tes besoins
-                            child: Marquee(
-                              text: TexteMobile,
-                              style: GoogleFonts.montserrat(
-                                fontSize: MediaQuery.of(context).size.width * 0.035,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xff000000),
-                              ),
-                            scrollAxis: Axis.horizontal,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            blankSpace: 50.0,
-                            velocity: 50.0,
-                            pauseAfterRound: Duration(seconds: 2),
-                            // startPadding: 10.0,
-                            accelerationDuration: Duration(seconds: 1),
-                            accelerationCurve: Curves.linear,
-                            decelerationDuration: Duration(milliseconds: 500),
-                            decelerationCurve: Curves.easeOut,// 👈 défile une seule fois
-                            ),
-                          ),
-                        );
-                      }
-                      
-                    },
-                  ),
-                  const SizedBox(
-                    // height: spacingConstant,
-                    height: 15,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      left: spacingConstant, right: spacingConstant),
-                  child: Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Nos pratiques",
+                  dynamic TexteMobile;
+                  if (preference != null) {
+                    TexteMobile = preference.valeur ?? "";
+                  }
+                  print("$TexteMobile");
+
+                  if (TexteMobile.toString().length > 0) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          left: spacingConstant, right: spacingConstant),
+                      child: SizedBox(
+                        height: 30, // ajuste selon tes besoins
+                        child: Marquee(
+                          text: TexteMobile,
                           style: GoogleFonts.montserrat(
-                              fontSize: MediaQuery.of(context).size.width * 0.045,
-                              fontWeight: FontWeight.bold),
+                            fontSize: MediaQuery.of(context).size.width * 0.035,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xff000000),
+                          ),
+                          scrollAxis: Axis.horizontal,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          blankSpace: 50.0,
+                          velocity: 50.0,
+                          pauseAfterRound: Duration(seconds: 2),
+                          // startPadding: 10.0,
+                          accelerationDuration: Duration(seconds: 1),
+                          accelerationCurve: Curves.linear,
+                          decelerationDuration: Duration(milliseconds: 500),
+                          decelerationCurve:
+                              Curves.easeOut, // 👈 défile une seule fois
                         ),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     Navigator.push(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //             builder: (context) => const TypePratiquePage()));
-                        //   },
-                        //   child: const Icon(
-                        //     Icons.arrow_outward_rounded,
-                        //     color: primaryColor,
-                        //   ),
-                        // )
-                      ],
-                    ),
+                      ),
+                    );
+                  }
+                },
+              ),
+              const SizedBox(
+                // height: spacingConstant,
+                height: 15,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: spacingConstant, right: spacingConstant),
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Nos pratiques",
+                        style: GoogleFonts.montserrat(
+                            fontSize: MediaQuery.of(context).size.width * 0.045,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) => const TypePratiquePage()));
+                      //   },
+                      //   child: const Icon(
+                      //     Icons.arrow_outward_rounded,
+                      //     color: primaryColor,
+                      //   ),
+                      // )
+                    ],
                   ),
                 ),
+              ),
               const SizedBox(
                 height: 10,
               ),
@@ -548,7 +547,8 @@ var size = MediaQuery.of(context).size;
                               children: typepratiques.map((toElement) {
                                 return SizedBox(
                                   width: size.width /
-                                          (MediaQuery.of(context).size.width > 400
+                                          (MediaQuery.of(context).size.width >
+                                                  400
                                               ? 2
                                               : 2) -
                                       25,
@@ -575,7 +575,7 @@ var size = MediaQuery.of(context).size;
               const SizedBox(
                 height: spacingConstant,
               ),
-              
+
               // BlocBasedWidget<List<Pratique>>(
               //   customDataBloc: practiceBloc,
               //   filter: practiceBlocFilter,
@@ -851,13 +851,15 @@ var size = MediaQuery.of(context).size;
   Future<dynamic> ShowBottomSheetPayment(
       BuildContext context, Programme programme,
       {Function? customFunction}) {
+
     DataBloc<List<TypePaiement>> typePaiementPushBloc =
-        DataBloc<List<TypePaiement>>(
-            (response) => TypePaiement.fromJsonList(response),
-            TypePaiement.getEndpoint(isPagination: false),
-            isGraphQl: true,
-            isPagination: false,
-            attributeToGet: TypePaiement.shrinkedAttributs());
+    DataBloc<List<TypePaiement>>(
+        (response) => TypePaiement.fromJsonList(response),
+        TypePaiement.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        isPagination: false,
+        attributeToGet: TypePaiement.shrinkedAttributs())
+      ..add(RefreshDataEvent(filter: {'showatwebsite': 'true'}));
 
     return showModalBottomSheet(
         context: context,
@@ -904,7 +906,7 @@ var size = MediaQuery.of(context).size;
                           "Montant : ${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} FCFA TTC",
                           style: const TextStyle(
                               color: Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 12,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -933,6 +935,50 @@ var size = MediaQuery.of(context).size;
         });
   }
 
+  void _showMoreLigneCredit(BuildContext context, lignecredit) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          content: const SizedBox(
+            // width: double.maxFinite,
+            child: Text(
+              "Solde insuffisant merci d'approvisionner votre compte",
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsPadding: const EdgeInsets.only(bottom: 15),
+          actions: [
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LigneCreditPage()),
+              ),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: const Text(
+                  'Approvisionner le compte',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   List<Widget> buildTypePaiementList(BuildContext parentContext,
       List<TypePaiement> typePaiements, Programme programme) {
     late PostApiBloc reservationPostBloc;
@@ -959,11 +1005,13 @@ var size = MediaQuery.of(context).size;
                   print("MESSAGE RESE ${currentElt} ");
                   if (currentElt == toElement.id) {
                     if (state is PostApiSuccess) {
-                      // Navigator.of(parentContext).pop();
-                      // Navigator.of(context).pop();
-                      if (state.data != null && state.data["bictorys_link"] != null) {
+                      Navigator.of(parentContext).pop();
+                      Navigator.of(context).pop();
+                      if (state.data != null &&
+                          state.data["bictorys_link"] != null) {
                         // launchUrl(Uri.parse(state.data["url"].toString()));
-                        launchUrl(Uri.parse(state.data["bictorys_link"].toString()));
+                        launchUrl(
+                            Uri.parse(state.data["bictorys_link"].toString()));
                       } else {
                         TopDialogNotification.show(context,
                             message: "${state.message}", isError: false);
@@ -996,7 +1044,11 @@ var size = MediaQuery.of(context).size;
                             "mode_paiement_id": toElement.id,
                             "platform": Platform.isAndroid ? "Android" : "Ios",
                           };
-                          reserverCours(parameters: parameters);
+                          var montant = programme.professeurPratique?.pratique?.prixSeance;
+                          print({" le prix progame : ${montant} et le solde : ${user?.solde}"});
+                          (toElement.isLigneCredit == true && user?.solde.toInt() < montant)
+                              ? _showMoreLigneCredit(context, toElement)
+                              : reserverCours(parameters: parameters);
                         },
                         child: TypePaiementCard(typePaiement: toElement)),
                   );

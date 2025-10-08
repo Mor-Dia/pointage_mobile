@@ -6,7 +6,7 @@ class TopDialogNotification {
     required String message,
     bool isError = false,
     IconData? icon,
-    Duration duration = const Duration(seconds: 2),
+    Duration duration = const Duration(seconds: 5),
   }) {
     final Color backgroundColor =
         isError ? Colors.red[400]! : Colors.green[400]!;

@@ -11,6 +11,8 @@ import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 import 'package:yogivida_mobile/core/utils/helpers.dart';
+import 'package:yogivida_mobile/screens/Compte/ligne_credit_page.dart';
+import 'package:yogivida_mobile/services/api/models/ligne_credit_model.dart';
 import 'package:yogivida_mobile/services/api/models/programme_model.dart';
 
 import '../core/models/user_model.dart';
@@ -466,12 +468,13 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
       BuildContext context, Programme programme,
       {Function? customFunction}) {
     DataBloc<List<TypePaiement>> typePaiementPushBloc =
-        DataBloc<List<TypePaiement>>(
-            (response) => TypePaiement.fromJsonList(response),
-            TypePaiement.getEndpoint(isPagination: false),
-            isGraphQl: true,
-            isPagination: false,
-            attributeToGet: TypePaiement.shrinkedAttributs());
+    DataBloc<List<TypePaiement>>(
+        (response) => TypePaiement.fromJsonList(response),
+        TypePaiement.getEndpoint(isPagination: false),
+        isGraphQl: true,
+        isPagination: false,
+        attributeToGet: TypePaiement.shrinkedAttributs())
+      ..add(RefreshDataEvent(filter: {'showatwebsite': 'true'}));
 
     return showModalBottomSheet(
         context: context,
@@ -517,7 +520,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                           "Montant : ${Helpers.formatNumber(programme.professeurPratique?.pratique?.prixSeance)} FCFA TTC",
                           style: const TextStyle(
                               color: Color.fromARGB(255, 0, 0, 0),
-                              fontSize: 12,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -548,6 +551,50 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
         });
   }
 
+  void _showMoreLigneCredit(BuildContext context, lignecredit) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          content: const SizedBox(
+            // width: double.maxFinite,
+            child: Text(
+              "Solde insuffisant merci d'approvisionner votre compte",
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsPadding: const EdgeInsets.only(bottom: 15),
+          actions: [
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LigneCreditPage()),
+              ),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: const Text(
+                  'Approvisionner le compte',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   List<Widget> buildTypePaiementList(BuildContext parentContext,
       List<TypePaiement> typePaiements, Programme programme) {
     late PostApiBloc reservationPostBloc;
@@ -576,8 +623,10 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                     if (state is PostApiSuccess) {
                       Navigator.of(parentContext).pop();
                       Navigator.of(context).pop();
-                      if (state.data != null && state.data["url"] != null) {
-                        launchUrl(Uri.parse(state.data["url"].toString()));
+                      if (state.data != null &&
+                          state.data["bictorys_link"] != null) {
+                        launchUrl(
+                            Uri.parse(state.data["bictorys_link"].toString()));
                       } else {
                         TopDialogNotification.show(context,
                             message: "${state.message}", isError: false);
@@ -610,7 +659,16 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                             "platform": Platform.isAndroid ? "Android" : "Ios",
                             "mode_paiement_id": toElement.id,
                           };
-                          reserverCours(parameters: parameters);
+                          var montant = programme
+                              .professeurPratique?.pratique?.prixSeance;
+
+                          print({
+                            " le prix progame : ${montant} et le solde : ${user?.solde}"
+                          });
+                          (toElement.isLigneCredit == true &&
+                                  user?.solde.toInt() < montant)
+                              ? _showMoreLigneCredit(context, toElement)
+                              : reserverCours(parameters: parameters);
                         },
                         child: TypePaiementCard(typePaiement: toElement)),
                   );

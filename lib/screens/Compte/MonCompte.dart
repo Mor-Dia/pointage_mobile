@@ -41,13 +41,22 @@ class _MonCompteState extends State<MonCompte> {
   @override
   void initState() {
     accountDeletionPostBloc = PostApiBloc();
+    this.getUser();
     utilisateurBloc = DataBloc<List<Utilisateur>>(
         (response) => Utilisateur.fromJsonList(response),
         Utilisateur.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
-        attributeToGet: Utilisateur.shrinkedAttributs());
+        attributeToGet: Utilisateur.shrinkedAttributs())
+      ..add(RefreshDataEvent(filter: {'id': this.getUser()}));
     super.initState();
+  }
+
+  getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+     String currentUserId = prefs.getInt("id").toString();
+    print("ici le user connecte apappa ${currentUserId}"); 
+    return currentUserId;
   }
 
   Future logout() async {
@@ -201,26 +210,39 @@ class _MonCompteState extends State<MonCompte> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Text(
-                                    "Mes lignes crédit", 
-                                    style: TextStyle(color: Color(0xff5EAB43)),
-                                  ),
-                                  BlocBasedWidget<List<Utilisateur>>(
-                                    customDataBloc: utilisateurBloc,
-                                    filter: {"id": currentUser?.id},
-                                    customWidget: (state) {
-                                      List<Utilisateur> users = state.data;
-                                      Utilisateur currentClient = users[0];
-                                      return Text(
-                                        "${Helpers.formatNumber(currentClient.solde)} FCFA TTC",
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        "Solde : ",
                                         style: TextStyle(
-                                            color: currentClient.solde > 0
-                                                ? Color(0xff5EAB43)
-                                                : Colors.black,
+                                            color: primaryColor,
                                             fontWeight: FontWeight.bold),
-                                      );
-                                    },
-                                  )
+                                      ),
+                                      BlocBasedWidget<List<Utilisateur>>(
+                                        customDataBloc: utilisateurBloc,
+                                        filter: {"id": currentUser?.id},
+                                        customWidget: (state) {
+                                          List<Utilisateur> users = state.data;
+                                          Utilisateur currentClient = users[0];
+                                          return Text(
+                                            " ${Helpers.formatNumber(currentClient.solde)} FCFA TTC",
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                color: primaryColor,
+                                                fontWeight: FontWeight.bold),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: spacingConstant / 2),
+                                  const Text(
+                                    "Approvisionner le compte",
+                                    style: TextStyle(
+                                        color: Color(0xff5EAB43),
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ],
                               ),
                             ),
@@ -319,34 +341,34 @@ class _MonCompteState extends State<MonCompte> {
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const TypeNotificationPushsPage()),
-                        ),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  top: BorderSide(width: 1, color: greyColor))),
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: spacingConstant,
-                                vertical: spacingConstant),
-                            child: Row(
-                              children: [
-                                Icon(Icons.settings, color: primaryColor),
-                                SizedBox(width: 10),
-                                Text(
-                                  "Paramètres de notification",
-                                  style: TextStyle(fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: () => Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) =>
+                      //             const TypeNotificationPushsPage()),
+                      //   ),
+                      //   child: Container(
+                      //     decoration: const BoxDecoration(
+                      //         border: Border(
+                      //             top: BorderSide(width: 1, color: greyColor))),
+                      //     child: const Padding(
+                      //       padding: EdgeInsets.symmetric(
+                      //           horizontal: spacingConstant,
+                      //           vertical: spacingConstant),
+                      //       child: Row(
+                      //         children: [
+                      //           Icon(Icons.settings, color: primaryColor),
+                      //           SizedBox(width: 10),
+                      //           Text(
+                      //             "Paramètres de notification",
+                      //             style: TextStyle(fontSize: 16),
+                      //           )
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       GestureDetector(
                         onTap: () => Navigator.push(
                           context,
