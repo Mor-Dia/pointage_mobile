@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/TopDialogNotification.dart';
+import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
 import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/constant.dart';
 
@@ -68,28 +69,34 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
           Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-            child: Container(
-              height: 100,
-              child: CachedNetworkImage(
-                progressIndicatorBuilder: (context, url, progress) => Center(
-                    // child: CircularProgressIndicator(
-                    //   value: progress.progress,
-                    // ),
-                    child: Loader1(size: 8)),
-                imageUrl: widget.data.image ?? '',
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.cover,
+            child: GestureDetector(
+              onTap: () {
+                print('Image cliquée' + widget.data.image.toString());
+                ShowBottomSheetBoutique(
+                    context, widget.data, widget.handlePress as Function);
+              },
+              child: Container(
+                height: 100,
+                child: CachedNetworkImage(
+                  progressIndicatorBuilder: (context, url, progress) =>
+                      Center(child: Loader1(size: 8)),
+                  imageUrl: widget.data.image ?? '',
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => const Center(
+                    child: const Icon(
+                      Icons.image,
+                      size: 50,
+                      color: primaryColor,
                     ),
                   ),
                 ),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-                // placeholder: (context, url) => const CircleAvatar(
-                //   backgroundColor: Colors.amber,
-                //   radius: 150,
-                // )
               ),
             ),
           ),
@@ -174,106 +181,112 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
             style: GoogleFonts.arimo(
                 fontSize: textConstant, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              GestureDetector(
-                onTap: () => {
-                  setState(() {
-                    if (qte > 1) {
-                      qte -= 1;
-                    }
-                  })
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  decoration: BoxDecoration(
-                      color: greyColor,
-                      borderRadius: BorderRadius.circular(spacingConstant)),
-                  child: const Center(
-                    child: Text(
-                      '-',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 40,
-                child: Text(
-                  qte.toString(),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => {
-                  setState(() {
-                    qte += 1;
-                  })
-                },
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  decoration: BoxDecoration(
-                      color: greyColor,
-                      borderRadius: BorderRadius.circular(spacingConstant)),
-                  child: const Center(
-                    child: Text(
-                      '+',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
+          // const SizedBox(
+          //   height: 10,
+          // ),
+          Visibility(
+            visible: false,
             child: Row(
-              children: widget.data.produitTailles?.map((Taille toElement) {
-                    int index = widget.data.produitTailles!.indexOf(toElement);
-                    // selectedTaille = toElement;
-                    return Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              print(toElement);
-                              indexOfSelectedTaille = index;
-                              selectedTaille = toElement;
-                            });
-                          },
-                          child: Container(
-                            height: 30,
-                            width: 30,
-                            decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: index == indexOfSelectedTaille
-                                    ? Border.all(color: primaryColor, width: 1)
-                                    : Border.all(
-                                        color: Colors.transparent, width: 1),
-                                borderRadius:
-                                    BorderRadius.circular(spacingConstant)),
-                            child: Center(
-                              child: Text(
-                                toElement.taille.abreviation.toUpperCase(),
-                                style: const TextStyle(fontSize: 10),
-                                textAlign: TextAlign.center,
+              children: [
+                GestureDetector(
+                  onTap: () => {
+                    setState(() {
+                      if (qte > 1) {
+                        qte -= 1;
+                      }
+                    })
+                  },
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                        color: greyColor,
+                        borderRadius: BorderRadius.circular(spacingConstant)),
+                    child: const Center(
+                      child: Text(
+                        '-',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 40,
+                  child: Text(
+                    qte.toString(),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => {
+                    setState(() {
+                      qte += 1;
+                    })
+                  },
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                        color: greyColor,
+                        borderRadius: BorderRadius.circular(spacingConstant)),
+                    child: const Center(
+                      child: Text(
+                        '+',
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // const SizedBox(height: 10),
+          Visibility(
+            visible: false,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: widget.data.produitTailles?.map((Taille toElement) {
+                      int index = widget.data.produitTailles!.indexOf(toElement);
+                      // selectedTaille = toElement;
+                      return Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                print(toElement);
+                                indexOfSelectedTaille = index;
+                                selectedTaille = toElement;
+                              });
+                            },
+                            child: Container(
+                              height: 30,
+                              width: 30,
+                              decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: index == indexOfSelectedTaille
+                                      ? Border.all(color: primaryColor, width: 1)
+                                      : Border.all(
+                                          color: Colors.transparent, width: 1),
+                                  borderRadius:
+                                      BorderRadius.circular(spacingConstant)),
+                              child: Center(
+                                child: Text(
+                                  toElement.taille.abreviation.toUpperCase(),
+                                  style: const TextStyle(fontSize: 10),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        )
-                      ],
-                    );
-                  }).toList() ??
-                  [],
+                          SizedBox(
+                            width: 10,
+                          )
+                        ],
+                      );
+                    }).toList() ??
+                    [],
+              ),
             ),
           ),
           const SizedBox(height: 10),
@@ -347,4 +360,216 @@ class _CardProduitFavorisState extends State<CardProduitFavoris> {
       ),
     );
   }
+}
+
+
+Future<dynamic> ShowBottomSheetBoutique(
+  BuildContext context,
+  Produit produit,
+  Function handlePress, {
+  Function? customFunction,
+}) {
+  int qte = 1;
+  Taille? selectedTaille;
+  int indexOfSelectedTaille = -1;
+
+  return showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext currentContext) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.7,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(spacingConstant),
+                topRight: Radius.circular(spacingConstant),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(spacingConstant/2),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        height: 2,
+                        width: 50,
+                        decoration: const BoxDecoration(
+                          color: greyColor,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(spacingConstant),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: spacingConstant),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      // height: 150,
+                      height: 220,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: CustomCachedNetworkImage(
+                        imageUrl: produit.image ?? '',
+                        fallBackAsset: 'assets/images/pratique_fallback.png',
+                      ),
+                    ),
+                    const SizedBox(height: spacingConstant),
+                    Center(
+                      child: Text(
+                        produit.designation ?? '',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: spacingConstant / 2),
+                    Center(
+                      child: Text(
+                        produit.description ?? '',
+                        style: GoogleFonts.arimo(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: spacingConstant),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (qte > 1) setState(() => qte--);
+                          },
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              color: greyColor,
+                              borderRadius: BorderRadius.circular(spacingConstant),
+                            ),
+                            child: const Center(child: Text('-', textAlign: TextAlign.center)),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 40,
+                          child: Text(qte.toString(), textAlign: TextAlign.center),
+                        ),
+                        GestureDetector(
+                          onTap: () => setState(() => qte++),
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              color: greyColor,
+                              borderRadius: BorderRadius.circular(spacingConstant),
+                            ),
+                            child: const Center(child: Text('+', textAlign: TextAlign.center)),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    if (produit.produitTailles != null && produit.produitTailles!.isNotEmpty)
+                      Center(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: produit.produitTailles!.map((tailleItem) {
+                              int index = produit.produitTailles!.indexOf(tailleItem);
+                              bool isSelected = index == indexOfSelectedTaille;
+                        
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 2, left:5),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      indexOfSelectedTaille = index;
+                                      selectedTaille = tailleItem;
+                                    });
+                                  },
+                                  child: Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      border: Border.all(
+                                        color: isSelected ? primaryColor : Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      borderRadius: BorderRadius.circular(spacingConstant),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        tailleItem.taille.abreviation.toUpperCase(),
+                                        style: const TextStyle(fontSize: 10),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: spacingConstant),
+                    GestureDetector(
+                      onTap: () {
+                        var authBloc = context.read<AuthenticationBloc<Utilisateur>>();
+                        Utilisateur? user = authBloc.state.user;
+
+                        if (user != null) {
+                          handlePress({
+                            'client_id': user.id,
+                            'produit_id': produit.id,
+                            'quantite': qte,
+                            'taille_id': selectedTaille?.taille_id ?? produit.produitTailles?.first.taille_id,
+                            'token': user.token,
+                          });
+                          Navigator.pop(context);
+                        } else {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          TopDialogNotification.show(
+                            context,
+                            message: "Veuillez vous connecter !",
+                            isError: true,
+                          );
+                        }
+                      },
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: primaryColor,
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Ajouter au panier',
+                            style: GoogleFonts.arimo(
+                              color: Colors.white,
+                              fontSize: textminConstant,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
 }

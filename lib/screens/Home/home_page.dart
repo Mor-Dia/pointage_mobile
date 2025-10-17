@@ -965,7 +965,7 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(50.0),
                 ),
                 child: const Text(
-                  'Approvisionner le compte',
+                  'Approvisionner mon compte',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

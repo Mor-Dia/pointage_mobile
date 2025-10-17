@@ -48,11 +48,11 @@ class CardCommande extends StatelessWidget {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  commande.displayetat ?? "",
+                  commande.etat_paiement ?? "",
                   style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: getDisplayColor(commande.displayetat ?? "")
+                      color: getDisplayColor(commande.color_etat_paiement ?? "")
                   ),
                 )
               ],

@@ -67,7 +67,8 @@ class _CardProduitPanierState extends State<CardProduitPanier> {
     Map<String, dynamic> newArg = {
       // 'client_id': userId,
       'client_id': user?.id ?? 0,
-      'produit_id': newQte == 0 ? widget.data.id : widget.data.produit?.id,
+      'produit_id': widget.data.produit?.id,
+      // 'produit_id': newQte == 0 ? widget.data.id : widget.data.produit?.id,
       'quantite': newQte,
       'taille_id': 1,
       'token': token

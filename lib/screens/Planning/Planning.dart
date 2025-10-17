@@ -383,7 +383,7 @@ class _PlanningState extends State<Planning> {
                         customWidget: (state) {
                           List<Salle> studios = [];
                           studios = studios
-                            ..add(Salle(id: null, designation: "Salle"));
+                            ..add(Salle(id: null, designation: "TOUS LES STUDIOS"));
                           studios = studios..addAll(state.data);
 
                           print("STUDIOS ${studios}");
@@ -575,21 +575,25 @@ class _StudioSelectBoxState extends State<StudioSelectBox> {
   void _openStudioSelector() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       builder: (context) {
-        return ListView.separated(
-          itemCount: widget.studioList.length,
-          separatorBuilder: (_, __) => Divider(height: 1),
-          itemBuilder: (context, index) {
-            final studio = widget.studioList[index];
-            return ListTile(
-              title: Text(studio.designation ?? "Studio inconnu"),
-              onTap: () {
-                Navigator.of(context).pop();
-                widget.onSelect(studio);
-              },
-            );
-          },
+        return FractionallySizedBox(
+          heightFactor: 0.30,
+          child: ListView.separated(
+            itemCount: widget.studioList.length,
+            separatorBuilder: (_, __) => Divider(height: 1),
+            itemBuilder: (context, index) {
+              final studio = widget.studioList[index];
+              return ListTile(
+                title: Text(studio.designation ?? "Studio inconnu"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  widget.onSelect(studio);
+                },
+              );
+            },
+          ),
         );
       },
     );

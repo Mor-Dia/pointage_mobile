@@ -24,6 +24,8 @@ mixin _$Commande {
   dynamic? get total => throw _privateConstructorUsedError;
   String? get displaycoloretat => throw _privateConstructorUsedError;
   String? get displayetat => throw _privateConstructorUsedError;
+  String? get etat_paiement => throw _privateConstructorUsedError;
+  String? get color_etat_paiement => throw _privateConstructorUsedError;
   @JsonKey(name: "created_at_fr")
   String? get createdAtFr => throw _privateConstructorUsedError;
 
@@ -47,6 +49,8 @@ abstract class $CommandeCopyWith<$Res> {
       dynamic? total,
       String? displaycoloretat,
       String? displayetat,
+      String? etat_paiement,
+      String? color_etat_paiement,
       @JsonKey(name: "created_at_fr") String? createdAtFr});
 }
 
@@ -69,6 +73,8 @@ class _$CommandeCopyWithImpl<$Res, $Val extends Commande>
     Object? total = freezed,
     Object? displaycoloretat = freezed,
     Object? displayetat = freezed,
+    Object? etat_paiement = freezed,
+    Object? color_etat_paiement = freezed,
     Object? createdAtFr = freezed,
   }) {
     return _then(_value.copyWith(
@@ -87,6 +93,14 @@ class _$CommandeCopyWithImpl<$Res, $Val extends Commande>
       displayetat: freezed == displayetat
           ? _value.displayetat
           : displayetat // ignore: cast_nullable_to_non_nullable
+              as String?,
+      etat_paiement: freezed == etat_paiement
+          ? _value.etat_paiement
+          : etat_paiement // ignore: cast_nullable_to_non_nullable
+              as String?,
+      color_etat_paiement: freezed == color_etat_paiement
+          ? _value.color_etat_paiement
+          : color_etat_paiement // ignore: cast_nullable_to_non_nullable
               as String?,
       createdAtFr: freezed == createdAtFr
           ? _value.createdAtFr
@@ -109,6 +123,8 @@ abstract class _$$CommandeImplCopyWith<$Res>
       dynamic? total,
       String? displaycoloretat,
       String? displayetat,
+      String? etat_paiement,
+      String? color_etat_paiement,
       @JsonKey(name: "created_at_fr") String? createdAtFr});
 }
 
@@ -129,6 +145,8 @@ class __$$CommandeImplCopyWithImpl<$Res>
     Object? total = freezed,
     Object? displaycoloretat = freezed,
     Object? displayetat = freezed,
+    Object? etat_paiement = freezed,
+    Object? color_etat_paiement = freezed,
     Object? createdAtFr = freezed,
   }) {
     return _then(_$CommandeImpl(
@@ -148,6 +166,14 @@ class __$$CommandeImplCopyWithImpl<$Res>
           ? _value.displayetat
           : displayetat // ignore: cast_nullable_to_non_nullable
               as String?,
+      etat_paiement: freezed == etat_paiement
+          ? _value.etat_paiement
+          : etat_paiement // ignore: cast_nullable_to_non_nullable
+              as String?,
+      color_etat_paiement: freezed == color_etat_paiement
+          ? _value.color_etat_paiement
+          : color_etat_paiement // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAtFr: freezed == createdAtFr
           ? _value.createdAtFr
           : createdAtFr // ignore: cast_nullable_to_non_nullable
@@ -164,6 +190,8 @@ class _$CommandeImpl extends _Commande with DiagnosticableTreeMixin {
       this.total,
       this.displaycoloretat,
       this.displayetat,
+      this.etat_paiement,
+      this.color_etat_paiement,
       @JsonKey(name: "created_at_fr") this.createdAtFr})
       : super._();
 
@@ -179,12 +207,16 @@ class _$CommandeImpl extends _Commande with DiagnosticableTreeMixin {
   @override
   final String? displayetat;
   @override
+  final String? etat_paiement;
+  @override
+  final String? color_etat_paiement;
+  @override
   @JsonKey(name: "created_at_fr")
   final String? createdAtFr;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Commande(id: $id, total: $total, displaycoloretat: $displaycoloretat, displayetat: $displayetat, createdAtFr: $createdAtFr)';
+    return 'Commande(id: $id, total: $total, displaycoloretat: $displaycoloretat, displayetat: $displayetat, etat_paiement: $etat_paiement, color_etat_paiement: $color_etat_paiement, createdAtFr: $createdAtFr)';
   }
 
   @override
@@ -196,6 +228,8 @@ class _$CommandeImpl extends _Commande with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('total', total))
       ..add(DiagnosticsProperty('displaycoloretat', displaycoloretat))
       ..add(DiagnosticsProperty('displayetat', displayetat))
+      ..add(DiagnosticsProperty('etat_paiement', etat_paiement))
+      ..add(DiagnosticsProperty('color_etat_paiement', color_etat_paiement))
       ..add(DiagnosticsProperty('createdAtFr', createdAtFr));
   }
 
@@ -210,6 +244,10 @@ class _$CommandeImpl extends _Commande with DiagnosticableTreeMixin {
                 other.displaycoloretat == displaycoloretat) &&
             (identical(other.displayetat, displayetat) ||
                 other.displayetat == displayetat) &&
+            (identical(other.etat_paiement, etat_paiement) ||
+                other.etat_paiement == etat_paiement) &&
+            (identical(other.color_etat_paiement, color_etat_paiement) ||
+                other.color_etat_paiement == color_etat_paiement) &&
             (identical(other.createdAtFr, createdAtFr) ||
                 other.createdAtFr == createdAtFr));
   }
@@ -222,6 +260,8 @@ class _$CommandeImpl extends _Commande with DiagnosticableTreeMixin {
       const DeepCollectionEquality().hash(total),
       displaycoloretat,
       displayetat,
+      etat_paiement,
+      color_etat_paiement,
       createdAtFr);
 
   /// Create a copy of Commande
@@ -246,6 +286,8 @@ abstract class _Commande extends Commande {
           final dynamic? total,
           final String? displaycoloretat,
           final String? displayetat,
+          final String? etat_paiement,
+          final String? color_etat_paiement,
           @JsonKey(name: "created_at_fr") final String? createdAtFr}) =
       _$CommandeImpl;
   const _Commande._() : super._();
@@ -261,6 +303,10 @@ abstract class _Commande extends Commande {
   String? get displaycoloretat;
   @override
   String? get displayetat;
+  @override
+  String? get etat_paiement;
+  @override
+  String? get color_etat_paiement;
   @override
   @JsonKey(name: "created_at_fr")
   String? get createdAtFr;

@@ -34,29 +34,46 @@ class MonCompte extends StatefulWidget {
   State<MonCompte> createState() => _MonCompteState();
 }
 
-class _MonCompteState extends State<MonCompte> {
+class _MonCompteState extends State<MonCompte> with RouteAware {
   late DataBloc<List<Utilisateur>> utilisateurBloc;
   late PostApiBloc accountDeletionPostBloc;
+
+  final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
   @override
   void initState() {
     accountDeletionPostBloc = PostApiBloc();
-    this.getUser();
     utilisateurBloc = DataBloc<List<Utilisateur>>(
         (response) => Utilisateur.fromJsonList(response),
         Utilisateur.getEndpoint(isPagination: true),
         isGraphQl: true,
         isPagination: true,
-        attributeToGet: Utilisateur.shrinkedAttributs())
-      ..add(RefreshDataEvent(filter: {'id': this.getUser()}));
+        attributeToGet: Utilisateur.shrinkedAttributs());
     super.initState();
+    _loadUser();
   }
 
-  getUser() async {
+  Future<void> _loadUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-     String currentUserId = prefs.getInt("id").toString();
-    print("ici le user connecte apappa ${currentUserId}"); 
-    return currentUserId;
+    String currentUserId = prefs.getInt("id").toString();
+    utilisateurBloc.add(RefreshDataEvent(filter: {'id': currentUserId}));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    _loadUser(); // 👈 rechargement automatique quand on revient sur la page
   }
 
   Future logout() async {
@@ -214,7 +231,7 @@ class _MonCompteState extends State<MonCompte> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       const Text(
-                                        "Solde : ",
+                                        "SOLDE LC : ",
                                         style: TextStyle(
                                             color: primaryColor,
                                             fontWeight: FontWeight.bold),
@@ -238,7 +255,7 @@ class _MonCompteState extends State<MonCompte> {
                                   ),
                                   const SizedBox(height: spacingConstant / 2),
                                   const Text(
-                                    "Approvisionner le compte",
+                                    "Approvisionner mon compte",
                                     style: TextStyle(
                                         color: Color(0xff5EAB43),
                                         fontWeight: FontWeight.bold),

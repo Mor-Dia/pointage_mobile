@@ -203,7 +203,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                       ),
                       child: const Center(
                         child: Text(
-                          'Approvisionner le compte',
+                          'Approvisionner mon compte',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

@@ -14,6 +14,8 @@ class Commande with _$Commande {
     dynamic? total,
     String? displaycoloretat,
     String? displayetat,
+    String? etat_paiement,
+    String? color_etat_paiement,
     @JsonKey(name: "created_at_fr")String? createdAtFr,
   }) = _Commande;
 
@@ -39,7 +41,7 @@ class Commande with _$Commande {
   }
 
   static shrinkedAttributs () {
-    return "id,total,created_at_fr,displayetat,displaycoloretat";
+    return "id,total,color_etat_paiement,etat_paiement,created_at_fr,displayetat,displaycoloretat";
   }
 
   static String getEndpoint({bool isPagination = true}) {

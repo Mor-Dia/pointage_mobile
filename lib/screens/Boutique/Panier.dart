@@ -173,7 +173,7 @@ class _PanierState extends State<PanierPage> {
     panierPostBloc = PostApiBloc();
 
     List<int?> panier_produit_id = panier.panierProduit!
-        .map((panierProduit) => panierProduit.produit?.id)
+        .map((panierProduit) => panierProduit.id)
         .toList();
 
     print("HOHOHGL panier ${panier_produit_id} -- ${selectedZoneLivraison}");
@@ -200,8 +200,8 @@ class _PanierState extends State<PanierPage> {
                   print("MESSAGE success state ${state} ");
                   if (currentElt == toElement.id) {
                     if (state is PostApiSuccess) {
-                      Navigator.of(parentContext).pop();
-                      Navigator.of(context).pop();
+                      // Navigator.of(parentContext).pop();
+                      // Navigator.of(context).pop();
 
                       if (state.data != null &&
                           state.data["bictorys_link"] != null) {
@@ -245,6 +245,8 @@ class _PanierState extends State<PanierPage> {
                                 (selectedZoneLivraison!.prix?.toInt() ?? 0),
                             "zone_livraison_id": selectedZoneLivraison!.id ?? 1,
                           };
+                          print("ici les parameters ${parameters}");
+
                           savePanier(parameters: parameters);
                         },
                         child: TypePaiementCard(typePaiement: toElement)),

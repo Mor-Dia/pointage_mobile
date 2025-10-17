@@ -531,135 +531,139 @@ Future<dynamic> ShowBottomSheetFiltrePrix(
 
   return showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
-        return Container(
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(spacingConstant),
-                  topRight: Radius.circular(spacingConstant))),
-          child: Padding(
-            padding: const EdgeInsets.all(spacingConstant),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    height: 2,
-                    width: 50,
-                    decoration: const BoxDecoration(
-                        color: greyColor,
-                        borderRadius:
-                            BorderRadius.all(Radius.circular(spacingConstant))),
+        return FractionallySizedBox(
+          heightFactor: 0.35,
+          child: Container(
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(spacingConstant),
+                    topRight: Radius.circular(spacingConstant))),
+            child: Padding(
+              padding: const EdgeInsets.all(spacingConstant),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      height: 2,
+                      width: 50,
+                      decoration: const BoxDecoration(
+                          color: greyColor,
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(spacingConstant))),
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: spacingConstant,
-                ),
-                Center(
-                  child: Text(
-                    'Filtrer par prix '.toUpperCase(),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  const SizedBox(
+                    height: spacingConstant,
                   ),
-                ),
-                const SizedBox(
-                  height: spacingConstant,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 1, color: primaryColor),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15))),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: spacingConstant),
-                          child: TextField(
-                              controller: minController,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter
-                                    .digitsOnly, // autorise seulement les chiffres
-                              ],
-                              decoration: const InputDecoration(
-                                  icon: Text(
-                                    'Min',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: primaryColor),
-                                  ),
-                                  border: InputBorder.none,
-                                  hintText: '0',
-                                  hintStyle: TextStyle(
-                                      fontSize: 14, color: primaryColor))),
+                  Center(
+                    child: Text(
+                      'Filtrer par prix '.toUpperCase(),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: spacingConstant,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: primaryColor),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: spacingConstant),
+                            child: TextField(
+                                controller: minController,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter
+                                      .digitsOnly, // autorise seulement les chiffres
+                                ],
+                                decoration: const InputDecoration(
+                                    icon: Text(
+                                      'Min',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryColor),
+                                    ),
+                                    border: InputBorder.none,
+                                    hintText: '0',
+                                    hintStyle: TextStyle(
+                                        fontSize: 14, color: primaryColor))),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: spacingConstant,
-                    ),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 1, color: primaryColor),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(15))),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: spacingConstant),
-                          child: TextField(
-                              controller: maxController,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter
-                                    .digitsOnly, // autorise seulement les chiffres
-                              ],
-                              decoration: const InputDecoration(
-                                  icon: Text(
-                                    'Max',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: primaryColor),
-                                  ),
-                                  border: InputBorder.none,
-                                  hintText: '0',
-                                  hintStyle: TextStyle(
-                                      fontSize: 14, color: primaryColor))),
+                      const SizedBox(
+                        width: spacingConstant,
+                      ),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: primaryColor),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(15))),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: spacingConstant),
+                            child: TextField(
+                                controller: maxController,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter
+                                      .digitsOnly, // autorise seulement les chiffres
+                                ],
+                                decoration: const InputDecoration(
+                                    icon: Text(
+                                      'Max',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: primaryColor),
+                                    ),
+                                    border: InputBorder.none,
+                                    hintText: '0',
+                                    hintStyle: TextStyle(
+                                        fontSize: 14, color: primaryColor))),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: spacingConstant,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ButtonFiled(
-                        text: 'Valider',
-                        handlerPress: () {
-                          validate();
-                        },
+                    ],
+                  ),
+                  const SizedBox(
+                    height: spacingConstant,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ButtonFiled(
+                          text: 'Valider',
+                          handlerPress: () {
+                            validate();
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: spacingConstant,
-                    ),
-                    Expanded(
-                      child: ButtonFiled(
-                        text: 'Reinitialiser',
-                        color: Colors.red,
-                        handlerPress: () {
-                          reset();
-                        },
+                      const SizedBox(
+                        width: spacingConstant,
                       ),
-                    )
-                  ],
-                )
-              ],
+                      Expanded(
+                        child: ButtonFiled(
+                          text: 'Reinitialiser',
+                          color: Colors.red,
+                          handlerPress: () {
+                            reset();
+                          },
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
         );
