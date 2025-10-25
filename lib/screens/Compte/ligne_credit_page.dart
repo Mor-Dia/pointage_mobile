@@ -268,7 +268,6 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
 
   Future<dynamic> ShowBottomSheetPayment(BuildContext context,
       LigneCredit? ligneCredit, List<TypePaiement> typePaiements) {
-
     DataBloc<List<TypePaiement>> typePaiementPushBloc =
         DataBloc<List<TypePaiement>>(
             (response) => TypePaiement.fromJsonList(response),
@@ -399,21 +398,22 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                 listener: (context, state) {
                   if (currentElt == toElement.id) {
                     if (state is PostApiSuccess) {
+                      print("NEW STATE PostApiSuccess  ${state.message}");
                       if (state.data != null &&
                           state.data["bictorys_link"] != null) {
                         launchUrl(
                             Uri.parse(state.data["bictorys_link"].toString()));
+                        lcBloc.add(FetchDataEvent(
+                            filter: {...globalFilter, "client_id": user?.id}));
                       } else {
                         TopDialogNotification.show(context,
                             message: "${state.message}", isError: false);
                       }
-                      lcBloc.add(FetchDataEvent(
-                          filter: {...globalFilter, "client_id": user?.id}));
 
                       // lcBloc.add(FetchDataEvent(loadNewData: true));
                     }
                     if (state is PostApiFailure) {
-                      print("NEW STATE ${state.message}");
+                      print("NEW STATE PostApiFailure  ${state.message}");
                       ScaffoldMessenger.of(parentContext).hideCurrentSnackBar();
                       TopDialogNotification.show(context,
                           message: "${state.message}", isError: true);

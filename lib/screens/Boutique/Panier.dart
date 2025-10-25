@@ -167,19 +167,22 @@ class _PanierState extends State<PanierPage> {
 
   dynamic currentElt;
 
-  List<Widget> buildTypePaiementList(BuildContext parentContext,
-      List<TypePaiement> typePaiements, Panier panier, selectedZoneLivraison) {
+  List<Widget> buildTypePaiementList(
+      BuildContext parentContext,
+      List<TypePaiement> typePaiements,
+      Panier panier,
+      selectedZoneLivraison,
+      adresse) {
     late PostApiBloc panierPostBloc;
     panierPostBloc = PostApiBloc();
 
-    List<int?> panier_produit_id = panier.panierProduit!
-        .map((panierProduit) => panierProduit.id)
-        .toList();
+    List<int?> panier_produit_id =
+        panier.panierProduit!.map((panierProduit) => panierProduit.id).toList();
 
     print("HOHOHGL panier ${panier_produit_id} -- ${selectedZoneLivraison}");
 
     print(
-        "HOHOHGL panier getPrixZoneLivraison -- ${panier.total} -- ${selectedZoneLivraison}");
+        "HOHOHGL panier getPrixZoneLivraison -- ${panier.total} -- ${selectedZoneLivraison} -- ${adresse.text.trim()}");
 
     savePanier({required Map<String, dynamic> parameters}) {
       panierPostBloc.add(
@@ -226,6 +229,13 @@ class _PanierState extends State<PanierPage> {
                         postBlocState is PostApiProcessing,
                     child: GestureDetector(
                         onTap: () {
+                          if (selectedZoneLivraison == null) {
+                            TopDialogNotification.show(context,
+                                message:
+                                    "Veuillez sélectionner une zone de livraison.",
+                                isError: true);
+                            return;
+                          }
                           setState(() {
                             currentElt = null;
                             currentElt = toElement.id;
@@ -241,6 +251,7 @@ class _PanierState extends State<PanierPage> {
                             "from_mobile": true,
                             "platform": Platform.isAndroid ? "Android" : "Ios",
                             "type_paiement_id": toElement.id,
+                            "adresse": adresse.text.trim() ?? '',
                             "montant": panier.total! +
                                 (selectedZoneLivraison!.prix?.toInt() ?? 0),
                             "zone_livraison_id": selectedZoneLivraison!.id ?? 1,
@@ -275,7 +286,10 @@ class _PanierState extends State<PanierPage> {
                 isGraphQl: true,
                 isPagination: false,
                 attributeToGet: TypePaiement.shrinkedAttributs())
-              ..add(RefreshDataEvent(filter: {'showatwebsite': 'true', 'showatwebsiteNotLC': 'true'}));
+              ..add(RefreshDataEvent(filter: {
+                'showatwebsite': 'true',
+                'showatwebsiteNotLC': 'true'
+              }));
 
         DataBloc<List<ZoneLivraison>> zoneLivraisonBloc =
             DataBloc<List<ZoneLivraison>>(
@@ -288,6 +302,8 @@ class _PanierState extends State<PanierPage> {
 
         // List? zone_livraison;
         ZoneLivraison? selectedZoneLivraison;
+        TextEditingController adresseController =
+            TextEditingController(text: '');
 
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
@@ -338,8 +354,6 @@ class _PanierState extends State<PanierPage> {
                           TextEditingController nom_completController =
                               TextEditingController(
                                   text: user?.nom_complet ?? '');
-                          TextEditingController adresseController =
-                              TextEditingController(text: '');
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -430,7 +444,8 @@ class _PanierState extends State<PanierPage> {
                                       context,
                                       typePaiements,
                                       panier,
-                                      selectedZoneLivraison),
+                                      selectedZoneLivraison,
+                                      adresseController),
                                 ],
                               ),
                               const SizedBox(

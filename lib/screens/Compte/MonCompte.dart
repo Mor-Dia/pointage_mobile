@@ -236,20 +236,13 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
                                             color: primaryColor,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      BlocBasedWidget<List<Utilisateur>>(
-                                        customDataBloc: utilisateurBloc,
-                                        filter: {"id": currentUser?.id},
-                                        customWidget: (state) {
-                                          List<Utilisateur> users = state.data;
-                                          Utilisateur currentClient = users[0];
-                                          return Text(
-                                            " ${Helpers.formatNumber(currentClient.solde)} FCFA TTC",
-                                            style: const TextStyle(
-                                                fontSize: 16,
-                                                color: primaryColor,
-                                                fontWeight: FontWeight.bold),
-                                          );
-                                        },
+
+                                      Text(
+                                        " ${Helpers.formatNumber(currentUser?.solde ?? 0)} FCFA TTC",
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            color: primaryColor,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
@@ -358,34 +351,6 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
                           ),
                         ),
                       ),
-                      // GestureDetector(
-                      //   onTap: () => Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) =>
-                      //             const TypeNotificationPushsPage()),
-                      //   ),
-                      //   child: Container(
-                      //     decoration: const BoxDecoration(
-                      //         border: Border(
-                      //             top: BorderSide(width: 1, color: greyColor))),
-                      //     child: const Padding(
-                      //       padding: EdgeInsets.symmetric(
-                      //           horizontal: spacingConstant,
-                      //           vertical: spacingConstant),
-                      //       child: Row(
-                      //         children: [
-                      //           Icon(Icons.settings, color: primaryColor),
-                      //           SizedBox(width: 10),
-                      //           Text(
-                      //             "Paramètres de notification",
-                      //             style: TextStyle(fontSize: 16),
-                      //           )
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                       GestureDetector(
                         onTap: () => Navigator.push(
                           context,

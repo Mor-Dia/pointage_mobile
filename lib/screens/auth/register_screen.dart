@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/components/notifier_dialog.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -183,22 +184,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
           message = responseBody['success'];
           isError = false;
         }
-        showNotifyingDialog(
-          context: context,
-          message: message,
-          isError: false,
-          onClose: () {
-            if (!isError) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-              );
-            }
-          },
-        );
 
-        // showNotifyingDialog(
-        //     context: context, message: message, isError: isError);
+        TopDialogNotification.show(context, message: message, isError: isError);
+
+        if (!isError) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        }
+
         if (kDebugMode) {
           print("REGISTRATION RESPONSE ${responseBody}");
         }

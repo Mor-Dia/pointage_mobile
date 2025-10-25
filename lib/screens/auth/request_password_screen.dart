@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
+import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/screens/auth/register_screen.dart';
 import 'package:http/http.dart' as http;
@@ -90,18 +91,16 @@ class _RequestPasswordScreenState extends State<RequestPasswordScreen> {
         message = responseBody['errors'];
         isError = true;
       }
-      showNotifyingDialog(
-        context: context,
-        message: "Réussie",
-        isError: false,
-        onClose: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => LoginScreen()),
-          );
-        },
-      );
-      // showNotifyingDialog(context: context, message: message, isError: isError);
+
+      TopDialogNotification.show(context, message: "Réussie", isError: isError);
+
+      if (!isError) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      }
+
       setState(() {
         isLoading = false;
       });
