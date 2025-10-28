@@ -25,19 +25,36 @@ class AuthenticationBloc<T>
     on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
     on<_UserChanged>(_onUserChanged);
     _authenticationStatusSubscription = _authenticationRepository.status.listen(
-          (status) => add(_AuthenticationStatusChanged(status)),
+      (status) => add(_AuthenticationStatusChanged(status)),
     );
     _userStatusSubscription = _userRepository.status.listen(
-          (status) => add(_UserChanged(status)),
+      (status) => add(_UserChanged(status)),
     );
+
+    on<AuthenticationUserRefreshed>(_onAuthenticationUserRefreshed);
   }
 
   final AuthenticationRepository _authenticationRepository;
   final UserRepository _userRepository;
   late StreamSubscription<AuthenticationStatus>
-  _authenticationStatusSubscription;
-  late StreamSubscription<UserChangeStatus>
-  _userStatusSubscription;
+      _authenticationStatusSubscription;
+  late StreamSubscription<UserChangeStatus> _userStatusSubscription;
+
+  Future<void> _onAuthenticationUserRefreshed(
+    AuthenticationUserRefreshed event,
+    Emitter<AuthenticationState<T>> emit,
+  ) async {
+    try {
+      final user = await _tryGetUser();
+      if (user != null) {
+        emit(AuthenticationState<T>.authenticated(user));
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("Erreur lors du rafraîchissement de l'utilisateur : $e");
+      }
+    }
+  }
 
   void onCreate() async {
     if (kDebugMode) {
@@ -45,7 +62,6 @@ class AuthenticationBloc<T>
     }
     _authenticationRepository.checkPersistentUser();
   }
-
 
   @override
   Future<void> close() {
@@ -55,16 +71,16 @@ class AuthenticationBloc<T>
   }
 
   Future<void> _onAuthenticationChecked(
-      AuthenticationChecked event,
-      Emitter<AuthenticationState> emit,
-      ) async {
+    AuthenticationChecked event,
+    Emitter<AuthenticationState> emit,
+  ) async {
     _authenticationRepository.checkPersistentUser();
   }
 
   Future<void> _onAuthenticationStatusChanged(
-      _AuthenticationStatusChanged event,
-      Emitter<AuthenticationState> emit,
-      ) async {
+    _AuthenticationStatusChanged event,
+    Emitter<AuthenticationState> emit,
+  ) async {
     if (kDebugMode) {
       print("FROM BLOC AUTH AUTH STATUS CHANGED ${event.status}");
     }
@@ -78,7 +94,7 @@ class AuthenticationBloc<T>
         if (kDebugMode) {
           print("USER EMITTED $user");
         }
-         return emit(
+        return emit(
           user != null
               ? AuthenticationState<T>.authenticated(user)
               : AuthenticationState<T>.unauthenticated(),
@@ -89,16 +105,16 @@ class AuthenticationBloc<T>
   }
 
   void _onAuthenticationLogoutRequested(
-      AuthenticationLogoutRequested event,
-      Emitter<AuthenticationState<T>> emit,
-      ) {
+    AuthenticationLogoutRequested event,
+    Emitter<AuthenticationState<T>> emit,
+  ) {
     _authenticationRepository.logOut();
   }
 
   void _onUserChanged(
-      _UserChanged event,
-      Emitter<AuthenticationState<T>> emit,
-      ) async {
+    _UserChanged event,
+    Emitter<AuthenticationState<T>> emit,
+  ) async {
     if (kDebugMode) {
       print("USER CHANGED _onUserChanged ${event.status}");
     }

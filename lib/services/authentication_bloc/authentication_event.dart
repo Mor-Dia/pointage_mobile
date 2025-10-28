@@ -4,6 +4,15 @@ sealed class AuthenticationEvent {
   const AuthenticationEvent();
 }
 
+// abstract class AuthenticationEvent extends Equatable {
+//   const AuthenticationEvent();
+
+//   @override
+//   List<Object?> get props => [];
+// }
+
+class AuthenticationUserRefreshed extends AuthenticationEvent {}
+
 final class _AuthenticationStatusChanged extends AuthenticationEvent {
   const _AuthenticationStatusChanged(this.status);
 

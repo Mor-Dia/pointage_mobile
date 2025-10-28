@@ -29,7 +29,7 @@ class ButtonFiled extends StatelessWidget {
         children: [
           Text(
             text,
-            style: TextStyle(color: Colors.white, fontSize: textminConstant),
+            style: TextStyle(color: Colors.white, fontSize: textConstant),
           ),
           const SizedBox(
             width: 10,

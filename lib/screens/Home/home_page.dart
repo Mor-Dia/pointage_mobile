@@ -1045,8 +1045,10 @@ class _HomePageState extends State<HomePage> {
                             "platform": Platform.isAndroid ? "Android" : "Ios",
                           };
                           var montant = programme.professeurPratique?.pratique?.prixSeance;
-                          print({" le prix progame : ${montant} et le solde : ${user?.solde}"});
-                          (toElement.isLigneCredit == true && user?.solde.toInt() < montant)
+                          print({" le prix progame : ${montant} et le solde : ${user?.solde} => toElement ${toElement.soldeDisponible}"});
+                          print(toElement!.soldeDisponible!.toInt() < montant!.toInt());
+                          // (toElement.isLigneCredit == true && user?.solde.toInt() < montant)
+                          (toElement.isLigneCredit == true && toElement!.soldeDisponible!.toInt() < montant!.toInt())
                               ? _showMoreLigneCredit(context, toElement)
                               : reserverCours(parameters: parameters);
                         },

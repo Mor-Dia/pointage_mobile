@@ -19,7 +19,7 @@ class UpdatePageScreen extends StatelessWidget {
       try {
         if (await inAppReview.isAvailable()) {
         await inAppReview.openStoreListing(
-            appStoreId: '6746700746',
+            appStoreId: '6742237215',
           );
         } else {
           TopDialogNotification.show(

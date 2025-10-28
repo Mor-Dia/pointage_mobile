@@ -23,6 +23,7 @@ class _MainhomeState extends State<Mainhome> {
   List<Widget> pages = [];
 
   void _onItemTapped(int index) {
+    print("papa thiam ${index}");
     setState(() {
       _selectedIndex = index;
       if (index == 0) {

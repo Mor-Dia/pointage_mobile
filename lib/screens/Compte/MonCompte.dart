@@ -38,6 +38,10 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
   late DataBloc<List<Utilisateur>> utilisateurBloc;
   late PostApiBloc accountDeletionPostBloc;
 
+  var currentUserId;
+
+  bool hide = true;
+
   final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
   @override
@@ -53,16 +57,18 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
     _loadUser();
   }
 
-  Future<void> _loadUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String currentUserId = prefs.getInt("id").toString();
-    utilisateurBloc.add(RefreshDataEvent(filter: {'id': currentUserId}));
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+    context
+        .read<AuthenticationBloc<Utilisateur>>()
+        .add(AuthenticationUserRefreshed());
+  }
+
+  Future<void> _loadUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int currentUserId = prefs.getInt("id")!;
+    utilisateurBloc.add(RefreshDataEvent(filter: {'id': currentUserId}));
   }
 
   @override
@@ -108,8 +114,27 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
     }
   }
 
+  hideAndShowBalance() {
+    setState(() {
+      hide = !hide;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    SharedPreferences.getInstance().then((prefs) {
+      final int? id = prefs.getInt('id');
+      final String? currentUserId = id?.toString();
+
+      if (currentUserId != null) {
+        this.currentUserId = currentUserId;
+        print("Utilisateur ID : $currentUserId");
+        // 👉 tu peux maintenant utiliser currentUserId ici
+      } else {
+        print("Aucun utilisateur enregistré");
+      }
+    });
+
     return BlocConsumer<AuthenticationBloc<Utilisateur>,
         AuthenticationState<Utilisateur>>(
       listener: (context, state) {
@@ -131,6 +156,7 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
                 (route) => false);
         }
       },
+      // builder: (context, state) {
       builder: (context, state) {
         AuthenticationStatus currentStatus = state.status;
         Utilisateur? currentUser = state.user;
@@ -216,7 +242,7 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         const LigneCreditPage()),
-                              )
+                              ),
                             },
                             child: Container(
                               height: 80,
@@ -237,13 +263,42 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
                                             fontWeight: FontWeight.bold),
                                       ),
 
-                                      Text(
-                                        " ${Helpers.formatNumber(currentUser?.solde ?? 0)} FCFA TTC",
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            color: primaryColor,
-                                            fontWeight: FontWeight.bold),
+                                      BlocBasedWidget<List<Utilisateur>>(
+                                        customDataBloc: utilisateurBloc,
+                                        filter: {"id": currentUser?.id},
+                                        customWidget: (state) {
+                                          List<Utilisateur> users = state.data;
+                                          Utilisateur currentClient = users[0];
+                                          return Text(
+                                            hide
+                                                ? "*******"
+                                                : "${Helpers.formatNumber(currentClient.solde)} FCFA TTC",
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                color: primaryColor,
+                                                fontWeight: FontWeight.bold),
+                                          );
+                                        },
                                       ),
+                                      const SizedBox(width: 1/2),
+                                      IconButton(
+                                        onPressed: hideAndShowBalance,
+                                        icon: Icon(
+                                          hide
+                                              ? Icons.visibility_off
+                                              : Icons.remove_red_eye,
+                                          size: spacingConstant,
+                                          color: const Color(0xff15274d),
+                                        ),
+                                      ),
+
+                                      // Text(
+                                      //   " ${Helpers.formatNumber(currentUser?.solde ?? 0)} FCFA TTC",
+                                      //   style: const TextStyle(
+                                      //       fontSize: 16,
+                                      //       color: primaryColor,
+                                      //       fontWeight: FontWeight.bold),
+                                      // ),
                                     ],
                                   ),
                                   const SizedBox(height: spacingConstant / 2),

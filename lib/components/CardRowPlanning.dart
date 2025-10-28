@@ -664,9 +664,12 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
 
                           print({
                             " le prix progame : ${montant} et le solde : ${user?.solde}"
-                          });
-                          (toElement.isLigneCredit == true &&
-                                  user?.solde.toInt() < montant)
+                          }); 
+                          print(toElement!.soldeDisponible!.toInt() < montant!.toInt());                      
+
+                          // (toElement.isLigneCredit == true &&
+                          //         user?.solde.toInt() < montant)
+                          (toElement.isLigneCredit == true && toElement!.soldeDisponible!.toInt() < montant!.toInt())
                               ? _showMoreLigneCredit(context, toElement)
                               : reserverCours(parameters: parameters);
                         },

@@ -418,6 +418,61 @@ class _PanierState extends State<PanierPage> {
                         },
                       ),
 
+                      const SizedBox(height: 8),
+                      // 💰 Récapitulatif du montant
+                      const Text(
+                        "Récapitulatif commande",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text("Sous-total :"),
+                                Text(Helpers.formatNumber(panier.total!.toString())),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text("Tarif livraison :"),
+                                Text(Helpers.formatNumber((selectedZoneLivraison != null ? selectedZoneLivraison!.prix : 0).toString())),
+                              ],
+                            ),
+                            const Divider(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "Total commande :",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  (Helpers.formatNumber((panier.total?.toInt() ?? 0) +
+                                          (selectedZoneLivraison?.prix
+                                                  ?.toInt() ??
+                                              0))
+                                      .toString()),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 20),
 
                       // Type de paiement
@@ -429,7 +484,7 @@ class _PanierState extends State<PanierPage> {
                         customDataBloc: typePaiementPushBloc,
                         filter: const {
                           'showatwebsite': 'true',
-                          'showatwebsiteNotLC': 'true'
+                          // 'showatwebsiteNotLC': 'true'
                         },
                         useInfiniteScroller: true,
                         customWidget: (state) {

@@ -28,7 +28,7 @@ class UserRepository<T> {
 
   Future<T?> getUser() async {
     if (kDebugMode) {
-      print("TRYING TO GET USER");
+      // print("TRYING TO GET USER");
     }
     try{
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -36,8 +36,8 @@ class UserRepository<T> {
       String? token = prefs.getString('token');
       String? userInfo = prefs.getString('userinfos');
       if (kDebugMode) {
-        print('PREFERENCES TOKEN FROM GET USER: ${prefs.getString("userinfos")}');
-        print('PREFERENCES TOKEN FROM GET USER: ${prefs.getString("token")}');
+        // print('PREFERENCES TOKEN FROM GET USER: ${prefs.getString("userinfos")}');
+        // print('PREFERENCES TOKEN FROM GET USER: ${prefs.getString("token")}');
         print('PREFERENCES USERNAME FROM GET USER: ${prefs.getString("nom_complet")}');
       }
       if(userInfo != null){
