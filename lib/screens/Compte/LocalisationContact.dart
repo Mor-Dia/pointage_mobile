@@ -19,11 +19,11 @@ class LocalisationContact extends StatefulWidget {
 
 class _LocalisationContactState extends State<LocalisationContact> {
   final LatLng _yogivida =
-      const LatLng(14.692, -17.4474); // Coordonnées approximatives de Dakar
-  final LatLng _center = const LatLng(14.666975928704844,
-      -17.43435979326502); // Coordonnées approximatives de Dakar
-  final LatLng _center_2 = const LatLng(14.677245788373606,
-      -17.434475128246397); // Coordonnées approximatives de Dakar
+      const LatLng(14.666947385835803, -17.434383933063923); // Coordonnées approximatives de Dakar Mouhameth v
+  final LatLng _center = const LatLng(14.666428311557395,
+      -17.43476133003058); // Coordonnées approximatives de Dakar Jules Fery
+
+
   late DataBloc<List<Preference>> dataBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
   final String phoneNumber = "00221774567890"; // Remplace par ton numéro
@@ -58,7 +58,8 @@ class _LocalisationContactState extends State<LocalisationContact> {
           FlutterMap(
             options: MapOptions(
               initialCenter: _center,
-              initialZoom: 15,
+              // initialZoom: 15,
+              initialZoom: 17,
             ),
             children: [
               TileLayer(
@@ -75,14 +76,6 @@ class _LocalisationContactState extends State<LocalisationContact> {
                         const Icon(Icons.pin_drop, color: Colors.red, size: 55),
                   ),
                   Marker(
-                    point: _center_2,
-                    width: 70,
-                    height: 70,
-                    rotate: true,
-                    child:
-                        const Icon(Icons.pin_drop, color: Colors.red, size: 55),
-                  ),
-                  Marker(
                     point: _yogivida,
                     width: 70,
                     height: 70,
@@ -90,6 +83,14 @@ class _LocalisationContactState extends State<LocalisationContact> {
                     child:
                         const Icon(Icons.pin_drop, color: Colors.red, size: 55),
                   ),
+                  // Marker(
+                  //   point: _yogivida,
+                  //   width: 70,
+                  //   height: 70,
+                  //   rotate: true,
+                  //   child:
+                  //       const Icon(Icons.pin_drop, color: Colors.red, size: 55),
+                  // ),
                 ],
               ),
             ],

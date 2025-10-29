@@ -357,7 +357,7 @@ class _PanierState extends State<PanierPage> {
                 attributeToGet: TypePaiement.shrinkedAttributs())
               ..add(RefreshDataEvent(filter: {
                 'showatwebsite': 'true',
-                'showatwebsiteNotLC': 'true'
+                // 'showatwebsiteNotLC': 'true'
               }));
 
         DataBloc<List<ZoneLivraison>> zoneLivraisonBloc =
