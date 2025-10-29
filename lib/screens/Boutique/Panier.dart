@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/CardProduitPanier.dart';
@@ -15,6 +16,7 @@ import 'package:yogivida_mobile/components/animated_gesture_detector.dart';
 import 'package:yogivida_mobile/components/type_paiement_card.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:yogivida_mobile/core/models/user_model.dart';
+import 'package:yogivida_mobile/screens/Compte/ligne_credit_page.dart';
 import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
 import 'package:yogivida_mobile/services/api/models/panier_model.dart';
 import 'package:yogivida_mobile/services/api/models/type_paiement_model.dart';
@@ -25,6 +27,7 @@ import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
 import 'package:yogivida_mobile/components/please_login_widget.dart';
 import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
 import 'package:yogivida_mobile/services/post_api_bloc.dart';
+import 'package:yogivida_mobile/screens/Compte/commandes_page.dart';
 
 import '../../core/utils/helpers.dart';
 
@@ -165,6 +168,50 @@ class _PanierState extends State<PanierPage> {
                 })));
   }
 
+  void _showMoreLigneCredit(BuildContext context, lignecredit) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          content: const SizedBox(
+            // width: double.maxFinite,
+            child: Text(
+              "Solde insuffisant merci d'approvisionner votre compte",
+              textAlign: TextAlign.center,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actionsPadding: const EdgeInsets.only(bottom: 15),
+          actions: [
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LigneCreditPage()),
+              ),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                child: const Text(
+                  'Approvisionner mon compte',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   dynamic currentElt;
 
   List<Widget> buildTypePaiementList(
@@ -205,12 +252,26 @@ class _PanierState extends State<PanierPage> {
                     if (state is PostApiSuccess) {
                       // Navigator.of(parentContext).pop();
                       // Navigator.of(context).pop();
-
+                      context
+                          .read<PanierBlocBloc>()
+                          .add(const PanierBlocEvent.started());
+                      context.read<PanierBlocBloc>().add(
+                            PanierBlocEvent.refresh(
+                                token: user?.token?.toString() ?? ''),
+                          );
                       if (state.data != null &&
                           state.data["bictorys_link"] != null) {
+                        Navigator.of(parentContext).pop();
+                        Navigator.of(context).pop();
                         launchUrl(
                             Uri.parse(state.data["bictorys_link"].toString()));
                       } else {
+                        Navigator.of(parentContext).pop();
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const CommandesPage()));
                         TopDialogNotification.show(context,
                             message: "${state.message}", isError: false);
                       }
@@ -258,7 +319,15 @@ class _PanierState extends State<PanierPage> {
                           };
                           print("ici les parameters ${parameters}");
 
-                          savePanier(parameters: parameters);
+                          (toElement.isLigneCredit == true &&
+                                  toElement!.soldeDisponible!.toInt() <
+                                      (panier.total! +
+                                          (selectedZoneLivraison!.prix
+                                                  ?.toInt() ??
+                                              0)))
+                              ? _showMoreLigneCredit(context, toElement)
+                              : savePanier(parameters: parameters);
+                          // savePanier(parameters: parameters);
                         },
                         child: TypePaiementCard(typePaiement: toElement)),
                   );
@@ -440,7 +509,8 @@ class _PanierState extends State<PanierPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const Text("Sous-total :"),
-                                Text(Helpers.formatNumber(panier.total!.toString())),
+                                Text(Helpers.formatNumber(
+                                    panier.total!.toString())),
                               ],
                             ),
                             const SizedBox(height: 6),
@@ -448,7 +518,11 @@ class _PanierState extends State<PanierPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 const Text("Tarif livraison :"),
-                                Text(Helpers.formatNumber((selectedZoneLivraison != null ? selectedZoneLivraison!.prix : 0).toString())),
+                                Text(Helpers.formatNumber(
+                                    (selectedZoneLivraison != null
+                                            ? selectedZoneLivraison!.prix
+                                            : 0)
+                                        .toString())),
                               ],
                             ),
                             const Divider(),
@@ -460,10 +534,11 @@ class _PanierState extends State<PanierPage> {
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  (Helpers.formatNumber((panier.total?.toInt() ?? 0) +
-                                          (selectedZoneLivraison?.prix
-                                                  ?.toInt() ??
-                                              0))
+                                  (Helpers.formatNumber(
+                                          (panier.total?.toInt() ?? 0) +
+                                              (selectedZoneLivraison?.prix
+                                                      ?.toInt() ??
+                                                  0))
                                       .toString()),
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),

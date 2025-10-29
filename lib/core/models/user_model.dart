@@ -38,7 +38,7 @@ class Utilisateur with _$Utilisateur {
   }
 
   static shrinkedAttributs() {
-    return "id,nom_complet,nom,prenom,type_personne_id,email,image,telephone,nb_souscription,nb_vente,nb_reservation,ca_bon,created_at_fr,current_credit";
+    return "id,nom_complet,token,nom,prenom,type_personne_id,email,image,telephone,nb_souscription,nb_vente,nb_reservation,ca_bon,created_at_fr,current_credit";
   }
 
   static String getEndpoint({bool isPagination = true}) {
