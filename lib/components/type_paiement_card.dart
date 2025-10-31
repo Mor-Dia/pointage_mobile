@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:yogivida_mobile/core/utils/Capitalized.dart';
 
 import '../constant.dart';
 import '../core/utils/helpers.dart';
@@ -15,7 +16,9 @@ class TypePaiementCard extends StatelessWidget {
     return
      Container(
       decoration: BoxDecoration(
-          border: Border.all(width: 1, color: greyColorL),
+          // color: primaryColor,
+          border: Border.all(width: 1, color: primaryColor),
+          // border: Border.all(width: 1, color: greyColorL),
           borderRadius: const BorderRadius.all(Radius.circular(spacingConstant))),
       child: Padding(
         padding: const EdgeInsets.all(spacingConstant),
@@ -23,16 +26,10 @@ class TypePaiementCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // SvgPicture.asset(
-            //   'assets/icons/lc.svg',
-            //   height: 25,
-            // ),
-            // const SizedBox(
-            //   width: spacingConstant,
-            // ),
             Text(
-                "${typePaiement.designation}",
-                style: const TextStyle(color: primaryColor)
+                "${typePaiement.designation?.toCapitalized}",
+                style: const TextStyle(color: primaryColor,fontWeight: FontWeight.bold)
+                // style: const TextStyle(color: greyColorL)
             ),
             const Spacer(),
             Visibility(

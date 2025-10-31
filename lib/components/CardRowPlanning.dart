@@ -169,12 +169,6 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                             color: Color(0xff838282),
                                             fontSize: textminConstant),
                                       ),
-                                      //   Text(
-                                      //   widget.data.heureFin.toString(),
-                                      //   style: const TextStyle(
-                                      //       color: Color(0xff838282),
-                                      //       fontSize: textminConstant),
-                                      // )
                                     )
                                   ],
                                 )

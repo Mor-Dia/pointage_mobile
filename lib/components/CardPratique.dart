@@ -153,7 +153,7 @@ class _CardPratiqueState extends State<CardPratique> {
                 bottom: 12,
                 right: 12,
                 child: Text(
-                  widget.data.designation.toString() ?? '',
+                  widget.data.designation.toString().toUpperCase() ?? '',
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.arimo(
@@ -299,7 +299,7 @@ class _CardPratiqueState extends State<CardPratique> {
     //                       overflow: TextOverflow.ellipsis,
     //                       style: GoogleFonts.arimo(
     //                         color: Colors.white,
-    //                         fontSize: textminConstant,
+    //                         fontSize: textConstant,
     //                       ),
     //                     ),
     //                   ),
@@ -414,7 +414,7 @@ Future<dynamic> ShowBottomSheetPratique(BuildContext context, Pratique pratique,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.arimo(
                                     color: Colors.white,
-                                    fontSize: textminConstant,
+                                    fontSize: textConstant,
                                   ),
                                 ),
                               ),

@@ -551,7 +551,7 @@ class _PanierState extends State<PanierPage> {
                       const SizedBox(height: 20),
 
                       // Type de paiement
-                      const Text("Type de paiement",
+                      const Text("Mode de paiement",
                           style: TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
 
