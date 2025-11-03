@@ -5,6 +5,7 @@ import 'package:yogivida_mobile/components/ButtonField.dart';
 import 'package:yogivida_mobile/components/InputFiled.dart';
 import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/constant.dart';
+import 'package:yogivida_mobile/core/utils/helpers.dart';
 import 'package:yogivida_mobile/screens/auth/register_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,6 +40,8 @@ class _RequestPasswordScreenState extends State<RequestPasswordScreen> {
       isLoading = true;
     });
 
+    String link = await Helpers.getBaseUrl();
+
     String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
     RegExp regex = RegExp(emailPattern);
 
@@ -65,7 +68,8 @@ class _RequestPasswordScreenState extends State<RequestPasswordScreen> {
     print("REQUE IS FORM VALID $isFormValid");
 
     if (isFormValid) {
-      String requestUrl = "$BASE_URL$REQUEST_PWD_ENDPOINT";
+      String requestUrl = "$link$REQUEST_PWD_ENDPOINT";
+      // String requestUrl = "$BASE_URL$REQUEST_PWD_ENDPOINT";
       var requestUri = Uri.parse(requestUrl);
       Map<String, String> headers = {};
       Map<String, dynamic> postData = {

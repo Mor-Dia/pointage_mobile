@@ -12,6 +12,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:yogivida_mobile/core/models/user_model.dart';
+import 'package:yogivida_mobile/core/utils/helpers.dart';
 import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
 
 import '../../components/animated_gesture_detector.dart';
@@ -232,13 +233,15 @@ class _UpdateState extends State<Update> {
       isLoading = true;
     });
 
+    String link = await Helpers.getBaseUrl();
     if (data?['password'] == '') {
       setState(() {
         changePasswordError = 'Ce champ est requis !';
       });
     } else {
       try {
-        final url = Uri.parse(BASE_URL + 'connexion');
+        // final url = Uri.parse(BASE_URL + 'connexion');
+        final url = Uri.parse(link + 'connexion');
         // Requête POST avec le corps de la requête encodé en JSON
         final response = await http.post(
           url,

@@ -10,6 +10,7 @@ import 'package:yogivida_mobile/components/TopDialogNotification.dart';
 import 'package:yogivida_mobile/components/notifier_dialog.dart';
 import 'package:yogivida_mobile/constant.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:yogivida_mobile/core/utils/helpers.dart';
 import 'package:yogivida_mobile/screens/auth/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -137,6 +138,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       "confirmpassword": null
     };
 
+    String link = await Helpers.getBaseUrl();
+
     if (inputFields.isNotEmpty) {
       for (String key in postData.keys) {
         dynamic currentField = inputFields.firstWhere((element) {
@@ -165,7 +168,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     if (canSubmit) {
-      var registrationLink = Uri.parse("$BASE_URL$REGISTRATION_ENDPOINT");
+      var registrationLink = Uri.parse("$link$REGISTRATION_ENDPOINT");
+      // var registrationLink = Uri.parse("$BASE_URL$REGISTRATION_ENDPOINT");
       await http
           .post(registrationLink, body: postData)
           .then((Response response) {
