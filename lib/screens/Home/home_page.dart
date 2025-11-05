@@ -845,7 +845,7 @@ class _HomePageState extends State<HomePage> {
                           ButtonFiled(
                               text: 'Plein',
                               handlerPress: () {}, // Aucun action ici
-                              color: Color(0xFF9AB7A5),
+                              color: Colors.grey,
                             ),
                     ),
                   ),
