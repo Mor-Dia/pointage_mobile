@@ -17,12 +17,13 @@ class Cardactivite extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int displayColor = 0xffFF0000;
+    int displayColor = 0xff28A745;
     // print("ici color" + this.color.toString());
     if (color == "success") {
       displayColor = 0xff28A745;
     } else {
-      displayColor = 0xffDC3545;
+      displayColor = 0xFF9AB7A5;
+      // displayColor = 0xffDC3545;
     }
 
     print("ici color => " +
@@ -60,6 +61,13 @@ class Cardactivite extends StatelessWidget {
                   children: [
                     SvgPicture.asset('assets/icons/heure.svg'),
                     SizedBox(width: MediaQuery.of(context).size.width * 0.010),
+                    Text(
+                      data.dateFr ?? "",
+                      style: const TextStyle(
+                          color: Color(0xff838282), fontSize: 11),
+                    ),
+                    Text("   ", style: const TextStyle(
+                          color: Color(0xff838282), fontSize: 11),),
                     Text(
                       data.heureDebut ?? "",
                       style: const TextStyle(
@@ -146,7 +154,7 @@ class Cardactivite extends StatelessWidget {
                             SizedBox(
                                 width:
                                     MediaQuery.of(context).size.width * 0.020),
-                            SvgPicture.asset('assets/icons/play.svg'),
+                            SvgPicture.asset(data.fileAttente.toString() == 'true' ? 'assets/icons/play.svg' : 'assets/icons/stop.svg'),
                           ],
                         ),
                       ),

@@ -212,7 +212,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                                     'Plein', // Si fileAttente n'est pas 'Disponible', afficher "Plein"
                                 handlerPress: () {}, // Pas d'action
                                 color:
-                                    Colors.grey, // Couleur grise pour "Plein"
+                                    Color(0xFF9AB7A5), // Couleur grise pour "Plein"
                               ),
                   ),
                 ],
@@ -447,7 +447,7 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                           ButtonFiled(
                               text: 'Plein',
                               handlerPress: () {}, // Aucun action ici
-                              color: Colors.grey,
+                              color: Color(0xFF9AB7A5),
                             ),
                     ),
                   )

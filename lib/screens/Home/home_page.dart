@@ -138,10 +138,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   initFilter() {
-    // programmeBlocFilter = {'date': '${date.year}-${date.month}-${date.day}'};
+    // programmeBlocFilter = {
+    //   ...programmeBlocFilter
+    //     ..addAll({'date': '${date.year}-${date.month}-${date.day}'})
+    // };
+    final startOfToday = "${date.year}-${date.month}-${date.day}";
+    final endOfTomorrow = "${date.year}-${date.month}-${date.day+1}";
+
     programmeBlocFilter = {
-      ...programmeBlocFilter
-        ..addAll({'date': '${date.year}-${date.month}-${date.day}'})
+      ...programmeBlocFilter,
+      'date_start': startOfToday,
+      'date_end': endOfTomorrow,
     };
   }
 
@@ -385,7 +392,8 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.only(
                             left: spacingConstant, right: spacingConstant),
                         child: Text(
-                          "Votre activité du jour",
+                          "Votre activité à venir",
+                          // "Votre activité du jour",
                           style: GoogleFonts.montserrat(
                               fontSize:
                                   MediaQuery.of(context).size.width * 0.045,
@@ -837,7 +845,7 @@ class _HomePageState extends State<HomePage> {
                           ButtonFiled(
                               text: 'Plein',
                               handlerPress: () {}, // Aucun action ici
-                              color: Colors.grey,
+                              color: Color(0xFF9AB7A5),
                             ),
                     ),
                   ),
