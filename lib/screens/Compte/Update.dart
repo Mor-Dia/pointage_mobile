@@ -174,7 +174,9 @@ class _UpdateState extends State<Update> {
                 tempInputFields![i]['controller'] =
                     renderController(tag, currentUser);
               } else if (tempInputFields?[i]['type'] == "select") {
-                tempInputFields![i]['selected'] =
+                // tempInputFields![i]['selected'] =
+                //     retrieveItem(currentUser.typePersonne);
+                tempInputFields[i]['selectedValue'] =
                     retrieveItem(currentUser.typePersonne);
               }
             }
@@ -194,11 +196,10 @@ class _UpdateState extends State<Update> {
     setState(() {
       isUpdating = true;
       selectedGender = value;
+      print("ici le selectedGender => ${selectedGender?.id} => ${value.nom}");
       for (int i = 0; i < keys.length; i++) {
-        if (inputFields?[i]['type'] != 'password') {
-          if (inputFields?[i]['type'] == 'select') {
-            inputFields?[i]['selectedValue'] = selectedGender;
-          }
+        if (inputFields?[i]['type'] == 'select') {
+          inputFields?[i]['selectedValue'] = selectedGender;
         }
       }
     });

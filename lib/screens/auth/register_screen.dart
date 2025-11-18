@@ -27,6 +27,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Item? selectedGender;
 
+  bool isProcessing = false;
+
   final List<Item> items = [
     Item(id: 1, nom: 'Homme'),
     Item(id: 2, nom: 'Femme')
@@ -127,6 +129,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       isLoading = false;
       currentError = null;
     });
+
+    if (isProcessing) return;
+    setState(() => isProcessing = true);
+
     bool canSubmit = true;
     Map<String, dynamic> postData = {
       "genre": null,
@@ -188,6 +194,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           message = responseBody['success'];
           isError = false;
         }
+
+        setState(() => isProcessing = false);
 
         TopDialogNotification.show(context, message: message, isError: isError);
 
@@ -280,10 +288,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               Column(
                 children: [
-                  ButtonFiled(
-                    isLoading: isLoading,
-                    text: "S'inscrire",
-                    handlerPress: () => {signUp()},
+                  Opacity(
+                    opacity: isProcessing ? 0.5 : 1,
+                    child: IgnorePointer(
+                      ignoring: isProcessing,
+                      child: ButtonFiled(
+                        isLoading: isLoading,
+                        text: "S'inscrire",
+                        handlerPress: () => {signUp()},
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 30),
                   Row(
