@@ -34,6 +34,7 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
   TextEditingController montantController = TextEditingController();
   String? currentError;
   dynamic currentElt;
+  bool isProcessing = false;
 
   @override
   void initState() {
@@ -381,6 +382,8 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
 
     buyLigneCredit({required Map<String, dynamic> parameters}) {
       print("BUY LIGNE CREDIT  ${parameters.toString()}");
+      if (isProcessing) return;
+      setState(() => isProcessing = true);
       lcPostBloc.add(
           PostApiMakeCall(endpoint: 'lignecredit', parameters: parameters));
     }
@@ -397,6 +400,9 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
                 bloc: lcPostBloc,
                 listener: (context, state) {
                   if (currentElt == toElement.id) {
+                    if (state is PostApiSuccess || state is PostApiFailure) {
+                      setState(() => isProcessing = false);
+                    }
                     if (state is PostApiSuccess) {
                       print("NEW STATE PostApiSuccess  ${state.message}");
                       if (state.data != null &&
@@ -459,7 +465,13 @@ class _LigneCreditPageState extends State<LigneCreditPage> {
 
                           buyLigneCredit(parameters: parameters);
                         },
-                        child: TypePaiementCard(typePaiement: toElement)),
+                        child: Opacity(
+                          opacity: isProcessing ? 0.5 : 1,
+                          child: IgnorePointer(
+                            ignoring: isProcessing,
+                            child: TypePaiementCard(typePaiement: toElement),
+                          ),
+                        )),
                   );
                 },
               );

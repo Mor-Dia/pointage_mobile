@@ -214,6 +214,8 @@ class _PanierState extends State<PanierPage> {
 
   dynamic currentElt;
 
+  bool isProcessing = false;
+
   List<Widget> buildTypePaiementList(
       BuildContext parentContext,
       List<TypePaiement> typePaiements,
@@ -232,6 +234,9 @@ class _PanierState extends State<PanierPage> {
         "HOHOHGL panier getPrixZoneLivraison -- ${panier.total} -- ${selectedZoneLivraison} -- ${adresse.text.trim()}");
 
     savePanier({required Map<String, dynamic> parameters}) {
+      if (isProcessing) return;
+      setState(() => isProcessing = true);
+
       panierPostBloc.add(
           PostApiMakeCall(endpoint: 'commande_client', parameters: parameters));
     }
@@ -249,6 +254,9 @@ class _PanierState extends State<PanierPage> {
                 listener: (context, state) {
                   print("MESSAGE success state ${state} ");
                   if (currentElt == toElement.id) {
+                    if (state is PostApiSuccess || state is PostApiFailure) {
+                      setState(() => isProcessing = false);
+                    }
                     if (state is PostApiSuccess) {
                       // Navigator.of(parentContext).pop();
                       // Navigator.of(context).pop();
@@ -329,7 +337,13 @@ class _PanierState extends State<PanierPage> {
                               : savePanier(parameters: parameters);
                           // savePanier(parameters: parameters);
                         },
-                        child: TypePaiementCard(typePaiement: toElement)),
+                        child: Opacity(
+                          opacity: isProcessing ? 0.5 : 1,
+                          child: IgnorePointer(
+                            ignoring: isProcessing,
+                            child: TypePaiementCard(typePaiement: toElement),
+                          ),
+                        )),
                   );
                 },
               );

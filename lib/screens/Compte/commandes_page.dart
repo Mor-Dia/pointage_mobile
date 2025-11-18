@@ -32,6 +32,8 @@ class _CommandesPageState extends State<CommandesPage> {
   late DataBloc<List<Commande>> commandeBloc;
   Map<String, dynamic> globalFilter = {"count": 10};
 
+  bool isProcessing = false;
+
   @override
   void initState() {
     commandeBloc = DataBloc<List<Commande>>(
@@ -247,6 +249,9 @@ class _CommandesPageState extends State<CommandesPage> {
     print("HOHOHGL panier ${panier_produit_id}");
 
     buyCommande({required Map<String, dynamic> parameters}) {
+      if (isProcessing) return;
+      setState(() => isProcessing = true);
+
       print("BUY commande  ${parameters.toString()}");
       lcPostBloc.add(
           PostApiMakeCall(endpoint: 'commande_client', parameters: parameters));
@@ -264,6 +269,9 @@ class _CommandesPageState extends State<CommandesPage> {
                 bloc: lcPostBloc,
                 listener: (context, state) {
                   if (currentElt == toElement.id) {
+                    if (state is PostApiSuccess || state is PostApiFailure) {
+                      setState(() => isProcessing = false);
+                    }
                     if (state is PostApiSuccess) {
                       print("NEW STATE PostApiSuccess  ${state.message}");
                       if (state.data != null &&
@@ -339,7 +347,13 @@ class _CommandesPageState extends State<CommandesPage> {
 
                           buyCommande(parameters: parameters);
                         },
-                        child: TypePaiementCard(typePaiement: toElement)),
+                        child: Opacity(
+                          opacity: isProcessing ? 0.5 : 1,
+                          child: IgnorePointer(
+                            ignoring: isProcessing,
+                            child: TypePaiementCard(typePaiement: toElement),
+                          ),
+                        )),
                   );
                 },
               );

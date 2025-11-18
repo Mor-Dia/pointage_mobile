@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
     "is_read": false
   };
   dynamic currentElt;
-
+  bool isProcessing = false;
   int selectedTypePratiqueIndex = 0;
 
   late DataBloc<List<Preference>> dataBloc;
@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
     //     ..addAll({'date': '${date.year}-${date.month}-${date.day}'})
     // };
     final startOfToday = "${date.year}-${date.month}-${date.day}";
-    final endOfTomorrow = "${date.year}-${date.month}-${date.day+1}";
+    final endOfTomorrow = "${date.year}-${date.month}-${date.day + 1}";
 
     programmeBlocFilter = {
       ...programmeBlocFilter,
@@ -859,15 +859,14 @@ class _HomePageState extends State<HomePage> {
   Future<dynamic> ShowBottomSheetPayment(
       BuildContext context, Programme programme,
       {Function? customFunction}) {
-
     DataBloc<List<TypePaiement>> typePaiementPushBloc =
-    DataBloc<List<TypePaiement>>(
-        (response) => TypePaiement.fromJsonList(response),
-        TypePaiement.getEndpoint(isPagination: false),
-        isGraphQl: true,
-        isPagination: false,
-        attributeToGet: TypePaiement.shrinkedAttributs())
-      ..add(RefreshDataEvent(filter: {'showatwebsite': 'true'}));
+        DataBloc<List<TypePaiement>>(
+            (response) => TypePaiement.fromJsonList(response),
+            TypePaiement.getEndpoint(isPagination: false),
+            isGraphQl: true,
+            isPagination: false,
+            attributeToGet: TypePaiement.shrinkedAttributs())
+          ..add(RefreshDataEvent(filter: {'showatwebsite': 'true'}));
 
     return showModalBottomSheet(
         context: context,
@@ -995,6 +994,9 @@ class _HomePageState extends State<HomePage> {
     // print("HOHOHGL ${currentElt}");
 
     reserverCours({required Map<String, dynamic> parameters}) {
+      if (isProcessing) return;
+      setState(() => isProcessing = true);
+
       reservationPostBloc.add(
           PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
     }
@@ -1012,6 +1014,9 @@ class _HomePageState extends State<HomePage> {
                 listener: (context, state) {
                   print("MESSAGE RESE ${currentElt} ");
                   if (currentElt == toElement.id) {
+                    if (state is PostApiSuccess || state is PostApiFailure) {
+                      setState(() => isProcessing = false);
+                    }
                     if (state is PostApiSuccess) {
                       Navigator.of(parentContext).pop();
                       Navigator.of(context).pop();
@@ -1052,15 +1057,27 @@ class _HomePageState extends State<HomePage> {
                             "mode_paiement_id": toElement.id,
                             "platform": Platform.isAndroid ? "Android" : "Ios",
                           };
-                          var montant = programme.professeurPratique?.pratique?.prixSeance;
-                          print({" le prix progame : ${montant} et le solde : ${user?.solde} => toElement ${toElement.soldeDisponible}"});
-                          print(toElement!.soldeDisponible!.toInt() < montant!.toInt());
+                          var montant = programme
+                              .professeurPratique?.pratique?.prixSeance;
+                          print({
+                            " le prix progame : ${montant} et le solde : ${user?.solde} => toElement ${toElement.soldeDisponible}"
+                          });
+                          print(toElement!.soldeDisponible!.toInt() <
+                              montant!.toInt());
                           // (toElement.isLigneCredit == true && user?.solde.toInt() < montant)
-                          (toElement.isLigneCredit == true && toElement!.soldeDisponible!.toInt() < montant!.toInt())
+                          (toElement.isLigneCredit == true &&
+                                  toElement!.soldeDisponible!.toInt() <
+                                      montant!.toInt())
                               ? _showMoreLigneCredit(context, toElement)
                               : reserverCours(parameters: parameters);
                         },
-                        child: TypePaiementCard(typePaiement: toElement)),
+                        child: Opacity(
+                          opacity: isProcessing ? 0.5 : 1,
+                          child: IgnorePointer(
+                            ignoring: isProcessing,
+                            child: TypePaiementCard(typePaiement: toElement),
+                          ),
+                        )),
                   );
                 },
               );

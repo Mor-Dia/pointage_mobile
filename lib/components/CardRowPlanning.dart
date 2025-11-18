@@ -225,6 +225,8 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
   }
 
   dynamic currentElt;
+  bool isProcessing = false;
+
   Future<dynamic> showBottomSheet(BuildContext context, Programme programme) {
     return showModalBottomSheet(
         context: context,
@@ -462,13 +464,13 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
       BuildContext context, Programme programme,
       {Function? customFunction}) {
     DataBloc<List<TypePaiement>> typePaiementPushBloc =
-    DataBloc<List<TypePaiement>>(
-        (response) => TypePaiement.fromJsonList(response),
-        TypePaiement.getEndpoint(isPagination: false),
-        isGraphQl: true,
-        isPagination: false,
-        attributeToGet: TypePaiement.shrinkedAttributs())
-      ..add(RefreshDataEvent(filter: {'showatwebsite': 'true'}));
+        DataBloc<List<TypePaiement>>(
+            (response) => TypePaiement.fromJsonList(response),
+            TypePaiement.getEndpoint(isPagination: false),
+            isGraphQl: true,
+            isPagination: false,
+            attributeToGet: TypePaiement.shrinkedAttributs())
+          ..add(RefreshDataEvent(filter: {'showatwebsite': 'true'}));
 
     return showModalBottomSheet(
         context: context,
@@ -597,6 +599,9 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
     // print("HOHOHGL ${currentElt}");
 
     reserverCours({required Map<String, dynamic> parameters}) {
+      if (isProcessing) return;
+      setState(() => isProcessing = true);
+
       reservationPostBloc.add(
           PostApiMakeCall(endpoint: 'reservation', parameters: parameters));
     }
@@ -614,6 +619,9 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
                 listener: (context, state) {
                   print("MESSAGE RESE ${currentElt} ");
                   if (currentElt == toElement.id) {
+                    if (state is PostApiSuccess || state is PostApiFailure) {
+                      setState(() => isProcessing = false);
+                    }
                     if (state is PostApiSuccess) {
                       Navigator.of(parentContext).pop();
                       Navigator.of(context).pop();
@@ -658,16 +666,25 @@ class _CardRowPlanningState extends State<CardRowPlanning> {
 
                           print({
                             " le prix progame : ${montant} et le solde : ${user?.solde}"
-                          }); 
-                          print(toElement!.soldeDisponible!.toInt() < montant!.toInt());                      
+                          });
+                          print(toElement!.soldeDisponible!.toInt() <
+                              montant!.toInt());
 
                           // (toElement.isLigneCredit == true &&
                           //         user?.solde.toInt() < montant)
-                          (toElement.isLigneCredit == true && toElement!.soldeDisponible!.toInt() < montant!.toInt())
+                          (toElement.isLigneCredit == true &&
+                                  toElement!.soldeDisponible!.toInt() <
+                                      montant!.toInt())
                               ? _showMoreLigneCredit(context, toElement)
                               : reserverCours(parameters: parameters);
                         },
-                        child: TypePaiementCard(typePaiement: toElement)),
+                        child: Opacity(
+                          opacity: isProcessing ? 0.5 : 1,
+                          child: IgnorePointer(
+                            ignoring: isProcessing,
+                            child: TypePaiementCard(typePaiement: toElement),
+                          ),
+                        )),
                   );
                 },
               );
