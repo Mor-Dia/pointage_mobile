@@ -466,12 +466,21 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
   }
 
   // Fonction pour générer les jours restants de la semaine courante
+  // List<DateTime> _generateWeekDays() {
+  //   DateTime now = DateTime.now();
+  //   int currentWeekday = now.weekday; // Jour actuel (1 = Lundi, 7 = Dimanche)
+
+  //   // Créer une liste des jours à partir du jour actuel jusqu'à Dimanche
+  //   return List.generate(7 - currentWeekday + 1, (index) {
+  //     return now.add(Duration(days: index));
+  //   });
+  // }
+
   List<DateTime> _generateWeekDays() {
     DateTime now = DateTime.now();
-    int currentWeekday = now.weekday; // Jour actuel (1 = Lundi, 7 = Dimanche)
-
-    // Créer une liste des jours à partir du jour actuel jusqu'à Dimanche
-    return List.generate(7 - currentWeekday + 1, (index) {
+    
+    // Génère une liste du jour actuel jusqu'à +7 jours (total 8 jours)
+    return List.generate(7, (index) {
       return now.add(Duration(days: index));
     });
   }
