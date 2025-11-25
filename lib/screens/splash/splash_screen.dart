@@ -165,42 +165,13 @@ class _SplashScreenState extends State<SplashScreen> {
       _navigateToHome(context);
     });
 
-    return BlocListener<AuthenticationBloc<Utilisateur>,
-        AuthenticationState<Utilisateur>>(
-      listener: (context, state) {
-         if (_hasNavigated) return; // <-- bloque l’exécution du bloc
-        AuthenticationStatus currentStatus = state.status;
-        switch (currentStatus) {
-          case AuthenticationStatus.authenticated:
-            if (kDebugMode) {
-              print("AUTH STATE AUTHENTICATED ${state.status}");
-            }
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  // builder: (BuildContext context) => const PanierPage(),
-                  builder: (BuildContext context) => const Mainhome(),
-                ),
-                (route) => false);
-          case AuthenticationStatus.unknown:
-          case AuthenticationStatus.unauthenticated:
-          case AuthenticationStatus.failure:
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => const Mainhome(),
-                ),
-                (route) => false);
-        }
-      },
-      child: Scaffold(
+    return  Scaffold(
         body: Container(
           color: primaryColor,
           child: Center(
             child: SvgPicture.asset('assets/images/logos/logo-splash.svg', width: 150),
           ),
         ),
-      ),
     );
 
     // return Scaffold(
