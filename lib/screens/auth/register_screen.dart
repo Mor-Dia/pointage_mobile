@@ -211,6 +211,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       });
     } else {
+      setState(() => isProcessing = false);
       setState(() {
         currentError = "Veuillez renseigner tous les champs";
       });

@@ -174,10 +174,7 @@ class _UpdateState extends State<Update> {
                 tempInputFields![i]['controller'] =
                     renderController(tag, currentUser);
               } else if (tempInputFields?[i]['type'] == "select") {
-                // tempInputFields![i]['selected'] =
-                //     retrieveItem(currentUser.typePersonne);
-                tempInputFields[i]['selectedValue'] =
-                    retrieveItem(currentUser.typePersonne);
+                tempInputFields[i]['selectedValue'] = selectedGender ?? retrieveItem(currentUser.typePersonne);
               }
             }
             setState(() {
@@ -192,21 +189,43 @@ class _UpdateState extends State<Update> {
     }
   }
 
+  // void selectGenre(Item value) {
+  //   setState(() {
+  //     isUpdating = true;
+  //     selectedGender = value;
+  //     print("ici le selectedGender => ${selectedGender?.id} => ${value.nom}");
+  //     for (int i = 0; i < keys.length; i++) {
+  //       if (inputFields?[i]['type'] == 'select') {
+  //         inputFields?[i]['selectedValue'] = selectedGender;
+  //       }
+  //     }
+  //   });
+  // }
+
   void selectGenre(Item value) {
     setState(() {
       isUpdating = true;
-      selectedGender = value;
-      print("ici le selectedGender => ${selectedGender?.id} => ${value.nom}");
-      for (int i = 0; i < keys.length; i++) {
-        if (inputFields?[i]['type'] == 'select') {
-          inputFields?[i]['selectedValue'] = selectedGender;
+      selectedGender = value; // Met à jour l'état local
+
+      // Parcourir inputFields pour trouver l'élément 'genre' et le mettre à jour.
+      for (int i = 0; i < inputFields.length; i++) {
+        if (inputFields[i]['tag'] == 'genre') {
+          inputFields[i]['selectedValue'] =
+              selectedGender; // Met à jour l'état dans la liste
+          break;
         }
       }
+
+      // Vous n'avez pas besoin de mettre à jour inputFields = [...tempInputFields]
+      // car vous l'avez modifié directement, et setState va reconstruire.
+
+      print("ici le selectedGender => ${selectedGender?.id} => ${value.nom}");
     });
   }
 
   Item? retrieveItem(elementId) {
     if (elementId != null) {
+      // return items;
       return items.firstWhere((elmt) => elmt.id == elementId);
     }
   }

@@ -123,7 +123,12 @@ class _SplashScreenState extends State<SplashScreen> {
     return valueToReturn;
   }
 
+  bool _hasNavigated = false;
+
   void _navigateToHome(BuildContext context) async {
+
+    if (_hasNavigated) return; // <-- empêche un second appel
+    _hasNavigated = true;
     
     Map<String, dynamic>? isMaintenance = await getMaintenance();
     bool is_maintenance = false;
@@ -163,6 +168,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return BlocListener<AuthenticationBloc<Utilisateur>,
         AuthenticationState<Utilisateur>>(
       listener: (context, state) {
+         if (_hasNavigated) return; // <-- bloque l’exécution du bloc
         AuthenticationStatus currentStatus = state.status;
         switch (currentStatus) {
           case AuthenticationStatus.authenticated:
