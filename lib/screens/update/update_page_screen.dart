@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:yogivida_mobile/components/TopDialogNotification.dart';
-import 'package:yogivida_mobile/screens/Home/MainHome.dart';
-import 'package:yogivida_mobile/screens/auth/login_screen.dart';
+import 'package:pointage_mobile/components/TopDialogNotification.dart';
+import 'package:pointage_mobile/screens/Home/MainHome.dart';
+import 'package:pointage_mobile/screens/auth/login_screen.dart';
 
 class UpdatePageScreen extends StatelessWidget {
   final String? message;

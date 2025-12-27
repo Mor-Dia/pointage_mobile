@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yogivida_mobile/components/ButtonField.dart';
-import 'package:yogivida_mobile/components/TopDialogNotification.dart';
-import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
-import 'package:yogivida_mobile/components/please_login_widget.dart';
-import 'package:yogivida_mobile/constant.dart';
+import 'package:pointage_mobile/components/ButtonField.dart';
+import 'package:pointage_mobile/components/TopDialogNotification.dart';
+import 'package:pointage_mobile/components/custom_cached_network_image.dart';
+import 'package:pointage_mobile/components/please_login_widget.dart';
+import 'package:pointage_mobile/constant.dart';
 
-import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
-import 'package:yogivida_mobile/services/api/models/produit_model.dart';
-import 'package:yogivida_mobile/services/api/models/taille_model.dart';
-import 'package:yogivida_mobile/services/post_api_bloc.dart';
+import 'package:pointage_mobile/services/api/models/pratique_model.dart';
+import 'package:pointage_mobile/services/api/models/produit_model.dart';
+import 'package:pointage_mobile/services/api/models/taille_model.dart';
+import 'package:pointage_mobile/services/post_api_bloc.dart';
 
 import '../core/models/user_model.dart';
 import '../services/authentication_bloc/authentication_bloc.dart';

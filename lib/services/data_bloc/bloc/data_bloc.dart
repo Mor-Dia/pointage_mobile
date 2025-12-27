@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
-import 'package:yogivida_mobile/services/api/actions/postData.dart';
-import 'package:yogivida_mobile/services/api/models/panier_model.dart';
+import 'package:pointage_mobile/services/api/actions/postData.dart';
+import 'package:pointage_mobile/services/api/models/panier_model.dart';
 import '../../api/actions/getData.dart';
 // import '../../api/actions/PostData.dart';
 import 'data_bloc_helpers.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:yogivida_mobile/core/utils/Capitalized.dart';
+import 'package:pointage_mobile/core/utils/Capitalized.dart';
 
 import '../constant.dart';
 import '../core/utils/helpers.dart';

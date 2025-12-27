@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:yogivida_mobile/services/api/models/user_from_api_model.dart';
+import 'package:pointage_mobile/services/api/models/user_from_api_model.dart';
 
 part 'souscription_model.freezed.dart';
 part 'souscription_model.g.dart';

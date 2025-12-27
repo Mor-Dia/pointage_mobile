@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
-import 'package:yogivida_mobile/services/api/models/taille_model.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/services/api/models/panierProduit_model.dart';
+import 'package:pointage_mobile/services/api/models/taille_model.dart';
 
 part 'panier_model.freezed.dart';
 part 'panier_model.g.dart';

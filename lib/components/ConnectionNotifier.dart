@@ -6,7 +6,7 @@
 // import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:http/http.dart' as http;
 // import 'package:internet_connection_checker/internet_connection_checker.dart';
-// import 'package:yogivida_mobile/services/connection/Connectivity_service.dart'; // Service de connectivité
+// import 'package:pointage_mobile/services/connection/Connectivity_service.dart'; // Service de connectivité
 //
 // class ConnectionNotifier extends StatefulWidget {
 //   final Widget child;

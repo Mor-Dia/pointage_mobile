@@ -1,642 +1,1015 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:yogivida_mobile/components/CardRowPlanning.dart';
-import 'package:yogivida_mobile/components/InputFiled.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/core/utils/Capitalized.dart';
-import 'package:yogivida_mobile/screens/Home/NotificationPage.dart';
-import 'package:yogivida_mobile/services/api/models/programme_model.dart';
-import 'package:yogivida_mobile/services/api/models/salle_model.dart';
-import 'package:yogivida_mobile/services/api/models/studio_model.dart';
-import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
-import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
-
-import '../../services/api/models/notificationpush_model.dart';
-
-import 'package:flutter/rendering.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../core/models/user_model.dart';
-import '../../services/authentication_bloc/authentication_bloc.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../services/planification_service.dart';
+import '../../services/api/models/planification_model.dart';
+import '../../constant.dart';
+import 'tache_timer_modal.dart';
 
 class Planning extends StatefulWidget {
   final int id;
 
-  Planning({Key? key, required this.id}) : super(key: key);
+  const Planning({Key? key, required this.id}) : super(key: key);
 
   @override
   State<Planning> createState() => _PlanningState();
 }
 
 class _PlanningState extends State<Planning> {
-  var selectedValue;
-  Map<String, dynamic> currentFilter = {"is_front": true};
-  late DataBloc<List<Programme>> programmeBloc;
-  late DataBloc<List<Salle>> salleBloc;
-  Salle? selectedStudio;
-  late DataBloc<List<Studio>> studioBloc;
-  Map<String, dynamic> studioBlocFilter = {"showatwebsite": "true"};
+  final PlanificationService _planificationService = PlanificationService();
+  List<Planification> _planifications = [];
+  bool _isLoading = true;
+  String? _errorMessage;
 
-  final List<String> options = [];
-  TextEditingController designationFilter = TextEditingController();
-  late DataBloc<List<NotificationPush>> notificationPushBloc;
-  DateTime selectedDate = DateTime.now();
-  final DateTime date = DateTime.now();
-  // int id = 0;
-  // List<Salle?> studioList = [];
-  List<Studio?> studioList = [];
+  // Suivi du temps des tâches
+  final Map<int, Duration> _tachesDurees = {}; // tacheId -> durée
+  final Map<int, bool> _tachesEnCours = {}; // tacheId -> en cours
+
+  // Système d'onglets
+  int _selectedTab = 0; // 0 = Tâches en cours, 1 = Tâches clôturées
+
+  // Tâches et fonctionnalités terminées
+  final Set<int> _tachesTerminees = {}; // IDs des tâches terminées
+  final Set<int> _fonctionnalitesTerminees =
+      {}; // IDs des fonctionnalités terminées
 
   @override
   void initState() {
-    programmeBloc = DataBloc<List<Programme>>(
-        (response) => Programme.fromJsonList(response),
-        Programme.getEndpoint(isPagination: true),
-        isGraphQl: true,
-        isPagination: true,
-        attributeToGet: Programme.shrinkedAttributs());
-
-    salleBloc = DataBloc<List<Salle>>(
-        (response) => Salle.fromJsonList(response),
-        Salle.getEndpoint(isPagination: false),
-        isGraphQl: true,
-        isPagination: false,
-        attributeToGet: Salle.shrinkedAttributs());
-
-    studioBloc = DataBloc<List<Studio>>(
-        (response) => Studio.fromJsonList(response),
-        Studio.getEndpoint(isPagination: false),
-        isGraphQl: true,
-        isPagination: false,
-        attributeToGet: Studio.shrinkedAttributs());
-
-    notificationPushBloc = DataBloc<List<NotificationPush>>(
-        (response) => NotificationPush.fromJsonList(response),
-        NotificationPush.getEndpoint(isPagination: true),
-        isGraphQl: true,
-        isPagination: true,
-        attributeToGet: NotificationPush.shrinkedAttributs());
-
-    initFilter();
     super.initState();
+    _chargerPlanifications();
   }
 
-  initFilter() {
-    print("INIT FILTER papa" + widget.id.toString());
-    // currentFilter = {'date': '${date.year}-${date.month}-${date.day}'};
-    currentFilter = {
-      ...currentFilter,
-      'date': '${date.year}-${date.month}-${date.day}',
-    };
-    if (widget.id != 0) {
-      currentFilter = {
-        ...currentFilter,
-        'pratique_id': int.parse(widget.id.toString()),
-      };
+  Future<void> _chargerPlanifications() async {
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final planifications = await _planificationService.getPlanifications();
+      if (!mounted) return;
+
+      setState(() {
+        _planifications = planifications;
+
+        // Charger les statuts terminés depuis l'API
+        _tachesTerminees.clear();
+        _fonctionnalitesTerminees.clear();
+
+        for (var planification in planifications) {
+          for (var detail in planification.details) {
+            // Charger les fonctionnalités clôturées
+            if (detail.fonctionnalite?.id != null &&
+                detail.fonctionnalite?.statut == 'cloturee') {
+              _fonctionnalitesTerminees.add(detail.fonctionnalite!.id!);
+            }
+
+            // Charger les tâches terminées
+            if (detail.taches != null) {
+              for (var tache in detail.taches!) {
+                if (tache.id != null && tache.statut == 'terminee') {
+                  _tachesTerminees.add(tache.id!);
+                }
+              }
+            }
+          }
+        }
+
+        print(
+            '✅ Chargé ${_tachesTerminees.length} tâches terminées et ${_fonctionnalitesTerminees.length} fonctionnalités clôturées depuis l\'API');
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
     }
   }
 
-  selectStudio(dynamic newValue) {
-    print("SELECTION FF $newValue");
-    setState(() {
-      currentFilter = {
-        ...currentFilter,
-        ...{'studio_id': newValue}
-        // ...{'salle_id': newValue}
-      };
-      if (widget.id != 0) {
-        currentFilter = {
-          ...currentFilter,
-          'pratique_id': int.parse(widget.id.toString()),
-        };
+  int _getTotalTaches() {
+    int total = 0;
+    for (var planification in _planifications) {
+      for (var detail in planification.details) {
+        total += detail.taches?.length ?? 0;
       }
-    });
+    }
+    return total;
   }
 
-  void changeDate(DateTime date) {
-    setState(() {
-      selectedDate = date;
-      currentFilter = {
-        ...currentFilter,
-        'date': "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}"
-      };
-      if (widget.id != 0) {
-        currentFilter = {
-          ...currentFilter,
-          'pratique_id': int.parse(widget.id.toString()),
-        };
-      }
-    });
-    // var currentDate = '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}';
+  // Filtrer les planifications selon l'onglet actif
+  List<Planification> _getFiltredPlanifications() {
+    return _planifications
+        .map((planification) {
+          // Filtrer les détails selon l'onglet
+          final detailsFiltres = planification.details
+              .map((detail) {
+                // Filtrer les tâches selon l'onglet
+                final tachesFiltrees = detail.taches?.where((tache) {
+                  final estTacheTerminee = _tachesTerminees.contains(tache.id);
 
-    // programmeBloc.add(FetchDataEvent(filter: {'date': currentDate}));
-  }
+                  if (_selectedTab == 0) {
+                    // Onglet "Toutes les tâches" : afficher les tâches NON terminées
+                    return !estTacheTerminee;
+                  } else {
+                    // Onglet "Tâches clôturées" : afficher les tâches terminées
+                    return estTacheTerminee;
+                  }
+                }).toList();
 
-  void cleanFieldAndUpdateList() {
-    designationFilter.clear();
-    setState(() {
-      selectedDate = date;
-      currentFilter = {...currentFilter..remove('nom_pratique')};
-      if (widget.id != 0) {
-        currentFilter = {
-          ...currentFilter,
-          'pratique_id': int.parse(widget.id.toString()),
-        };
-      }
-    });
-  }
+                // Ne garder le detail que s'il a des tâches filtrées
+                if (tachesFiltrees != null && tachesFiltrees.isNotEmpty) {
+                  return PlanificationDetail(
+                    id: detail.id,
+                    projet: detail.projet,
+                    epic: detail.epic,
+                    fonctionnalite: detail.fonctionnalite,
+                    taches: tachesFiltrees,
+                  );
+                }
+                return null;
+              })
+              .whereType<PlanificationDetail>()
+              .toList();
 
-  void searchWithDesignation() {
-    String text = designationFilter.text;
-    setState(() {
-      selectedDate = date;
-      currentFilter = {
-        ...currentFilter..addAll({'nom_pratique': text})
-      };
-      if (widget.id != 0) {
-        currentFilter = {
-          ...currentFilter,
-          'pratique_id': int.parse(widget.id.toString()),
-        };
-      }
-    });
-  }
-
-  void reset(type) {
-    setState(() {
-      if (type == 'search') {
-        currentFilter.remove('nom_pratique');
-        designationFilter.text = '';
-      }
-    });
-  }
-
-  void Filter() {
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
-    designationFilter.dispose();
-    super.dispose();
+          // Retourner une planification avec les détails filtrés
+          return Planification(
+            id: planification.id,
+            dateDebut: planification.dateDebut,
+            dateFin: planification.dateFin,
+            dateDebutFr: planification.dateDebutFr,
+            dateFinFr: planification.dateFinFr,
+            personnelId: planification.personnelId,
+            personnel: planification.personnel,
+            status: planification.status,
+            nombreTache: planification.nombreTache,
+            nombreProjet: planification.nombreProjet,
+            details: detailsFiltres,
+          );
+        })
+        .where((p) => p.details.isNotEmpty)
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    Utilisateur? user =
-        context.read<AuthenticationBloc<Utilisateur>>().state.user;
+    final totalTaches = _getTotalTaches();
 
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color(0xffffffff),
-          elevation: 0,
-          automaticallyImplyLeading: widget.id == 0
-              ? false
-              : true, // Empêche l'affichage du bouton back
-          toolbarHeight: 60,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Planning',
-                style: GoogleFonts.arimo(
-                  color: const Color(0xff15274d),
-                  fontSize: titreConstant,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              if (user != null)
-                GestureDetector(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const NotificationPage())),
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: <Widget>[
+      backgroundColor: const Color(0xFFF5F5F5),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
                       Container(
-                        height: 50,
-                        width: 45,
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: const Color(0xff15274d),
+                          color: const Color(0xFFF3F4F6),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/icons/bell.svg',
-                            width: 18,
-                            color: Colors.white,
+                        child: SvgPicture.asset(
+                          'assets/icons/taches_icon.svg',
+                          width: 20,
+                          height: 20,
+                          colorFilter: const ColorFilter.mode(
+                            Color(0xFF2D3748),
+                            BlendMode.srcIn,
                           ),
                         ),
                       ),
-                      Positioned(
-                        right: 0,
-                        top: -5,
-                        child: Container(
-                          width: spacingConstant,
-                          height: spacingConstant,
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(width: 1, color: Colors.white)),
-                          // constraints: const BoxConstraints(
-                          //   minWidth: spacingConstant,
-                          //   minHeight: spacingConstant,
-                          // ),
-                          child: Center(
-                            child: BlocBuilder<AuthenticationBloc<Utilisateur>,
-                                AuthenticationState<Utilisateur>>(
-                              builder: (context, authState) {
-                                // Vérifiez si l'utilisateur est authentifié
-                                if (authState.status ==
-                                    AuthenticationStatus.authenticated) {
-                                  // Utilisateur connecté
-                                  Utilisateur? user = authState.user;
-                                  print("Utilisateur connecté papa");
-                                  final userId = user?.id;
-
-                                  return BlocBasedWidget<
-                                      List<NotificationPush>>(
-                                    customDataBloc: notificationPushBloc,
-                                    // filter: globalFilter, // Optionnel si nécessaire
-                                    filter: {
-                                      "client_id":
-                                          userId, // Filtrage par user_id
-                                      "count": 100,
-                                      "is_read": false,
-                                    },
-                                    useInfiniteScroller: true,
-                                    customWidget: (state) {
-                                      Map<String, dynamic> metadata =
-                                          state.metadata;
-                                      dynamic totalNotifs = metadata['total'];
-                                      return Text(
-                                        "${totalNotifs}",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  // Utilisateur non authentifié
-                                  return const Text(
-                                    "0",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  );
-                                }
-                              },
-                            ),
-                          ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Total tâches du mois',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF2D3748),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '$totalTaches',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2D3748),
                         ),
                       ),
                     ],
                   ),
-                ),
-            ],
-          ),
-        ),
-        body: Container(
-          color: Colors.white,
-          child: ListView(
-            children: [
-              const SizedBox(
-                height: spacingConstant,
+                  IconButton(
+                    icon: const Icon(Icons.notifications_outlined),
+                    onPressed: () {
+                      // Action pour les notifications
+                    },
+                  ),
+                ],
               ),
-              HorizontalCalendar(
-                selectedDate: selectedDate,
-                handleDate: (date) => changeDate(date),
-              ),
-              const SizedBox(
-                height: spacingConstant,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Inputfiled(
-                        controller: designationFilter,
-                        type: "text",
-                        text: 'Désignation',
-                        icon: 'loupe',
-                        error: '',
+            ),
+
+            // Onglets "Tâches du jour" / "Tâches clôturées"
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedTab = 0;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _selectedTab == 0
+                            ? const Color(0xFF4DB8AC)
+                            : Colors.grey[300],
+                        foregroundColor:
+                            _selectedTab == 0 ? Colors.white : Colors.grey[600],
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                    ),
-                    SizedBox(width: designationFilter.text != '' ? 10 : 0),
-                    designationFilter.text != ''
-                        ? GestureDetector(
-                            onTap: () {
-                              reset('search');
-                            },
-                            child: Icon(
-                              Icons.cancel,
-                              size: spacingConstant,
-                              color: Colors.red,
-                            ),
-                          )
-                        : SizedBox.shrink(),
-                    const SizedBox(width: 10),
-                    SizedBox.square(
-                      child: GestureDetector(
-                        onTap: () {
-                          searchWithDesignation();
-                        },
-                        child: Container(
-                          height: 45,
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          margin: const EdgeInsets.only(left: 2.0),
-                          decoration: BoxDecoration(
-                            color: primaryColor, // Couleur de fond bleu
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: SvgPicture.asset(
-                            color: Colors.white,
-                            'assets/icons/loupe.svg',
-                            fit: BoxFit.scaleDown,
-                            height: spacingConstant,
-                          ),
+                      child: const Text(
+                        'Tâches en cours',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    const Text('|'),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      flex: 1,
-                      child: BlocBasedWidget<List<Salle>>(
-                        customDataBloc: salleBloc,
-                        customWidget: (state) {
-                          List<Salle> studios = [];
-                          studios = studios
-                            ..add(Salle(id: null, designation: "TOUS LES STUDIOS"));
-                          studios = studios..addAll(state.data);
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedTab = 1;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _selectedTab == 1
+                            ? const Color(0xFF4DB8AC)
+                            : Colors.grey[300],
+                        foregroundColor:
+                            _selectedTab == 1 ? Colors.white : Colors.grey[600],
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text(
+                        'Tâches clôturées',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
 
-                          print("STUDIOS ${studios}");
+            // Contenu principal
+            Expanded(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _errorMessage != null
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.error_outline,
+                                  size: 48, color: Colors.red),
+                              const SizedBox(height: 16),
+                              Text('Erreur: $_errorMessage'),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: _chargerPlanifications,
+                                child: const Text('Réessayer'),
+                              ),
+                            ],
+                          ),
+                        )
+                      : _planifications.isEmpty
+                          ? const Center(
+                              child: Text('Aucune planification trouvée'),
+                            )
+                          : RefreshIndicator(
+                              onRefresh: _chargerPlanifications,
+                              child: () {
+                                final planificationsFiltrees =
+                                    _getFiltredPlanifications();
 
-                          return StudioSelectBox(
-                            studioList: studios,
-                            selectedStudio: selectedStudio,
-                            onSelect: (salle) {
-                              selectedStudio = salle;
-                              setState(() {
-                                selectedStudio = salle;
-                                currentFilter = {
-                                  ...currentFilter,
-                                  'salle_id': salle?.id,
-                                };
-                              });
-                            },
-                          );
-                        },
+                                if (planificationsFiltrees.isEmpty) {
+                                  return ListView(
+                                    padding: const EdgeInsets.all(16.0),
+                                    children: [
+                                      Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const SizedBox(height: 50),
+                                            Icon(
+                                              _selectedTab == 0
+                                                  ? Icons.task_alt
+                                                  : Icons.check_circle_outline,
+                                              size: 64,
+                                              color: Colors.grey[400],
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              _selectedTab == 0
+                                                  ? 'Aucune tâche en cours'
+                                                  : 'Aucune tâche clôturée',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey[600],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+
+                                return ListView.builder(
+                                  padding: const EdgeInsets.all(16.0),
+                                  itemCount: planificationsFiltrees.length,
+                                  itemBuilder: (context, index) {
+                                    return _buildPlanificationCard(
+                                        planificationsFiltrees[index]);
+                                  },
+                                );
+                              }(),
+                            ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlanificationCard(Planification planification) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // En-tête avec dates
+            Row(
+              children: [
+                const Icon(Icons.calendar_today,
+                    size: 16, color: Color(0xFF6B7280)),
+                const SizedBox(width: 8),
+                Text(
+                  'Du ${planification.dateDebutFr} au ${planification.dateFinFr}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2D3748),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Liste des détails de planification
+            ...planification.details.map((detail) {
+              return _buildPlanificationDetail(detail);
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlanificationDetail(PlanificationDetail detail) {
+    // Calculer le temps total des tâches de cette fonctionnalité
+    Duration tempsTotal = Duration.zero;
+    if (detail.taches != null) {
+      for (var tache in detail.taches!) {
+        final dureeSauvegardee = _parseDuree(tache.duree);
+        if (dureeSauvegardee != null) {
+          tempsTotal += dureeSauvegardee;
+        }
+      }
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Projet (EN VERT)
+          Row(
+            children: [
+              const Icon(Icons.folder, size: 16, color: Color(0xFF4CAF50)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  detail.projet?.nom ?? 'Projet',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF4CAF50), // VERT pour le projet
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          // Fonctionnalité avec icône œil et bouton Démarrer
+          if (detail.fonctionnalite?.nom != null &&
+              detail.fonctionnalite!.nom!.isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Carte cliquable de la fonctionnalité
+                Container(
+                  margin: const EdgeInsets.only(top: 12, bottom: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: const Color(0xFFE5E7EB)),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => _ouvrirDetailsFonctionnalite(detail),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    detail.fonctionnalite!.nom!,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF2D3748),
+                                    ),
+                                  ),
+                                  if (tempsTotal.inSeconds > 0) ...[
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.timer,
+                                          size: 14,
+                                          color: Color(0xFF4CAF50),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          _formatDuration(tempsTotal),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF4CAF50),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.remove_red_eye,
+                              size: 20,
+                              color: Color(0xFF4DB8AC),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                // Bouton Démarrer/Clôturer sous la fonctionnalité
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_selectedTab == 1) {
+                        // Si dans l'onglet clôturé, ne rien faire (déjà terminé)
+                        return;
+                      }
+
+                      // Utiliser la première tâche de la fonctionnalité
+                      if (detail.taches != null && detail.taches!.isNotEmpty) {
+                        final premiereTache = detail.taches!.first;
+                        _ouvrirChronometro(premiereTache);
+                      } else {
+                        // Si pas de tâches, créer une tâche globale
+                        final tacheFonctionnalite = PlanificationTache(
+                          id: detail.fonctionnalite?.id,
+                          nom: detail.fonctionnalite?.nom ?? 'Fonctionnalité',
+                        );
+                        _ouvrirChronometro(tacheFonctionnalite);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _selectedTab == 1
+                          ? Colors.grey[400]
+                          : const Color(0xFF4DB8AC),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      _selectedTab == 1 ? 'Clôturer' : 'Démarrer',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  // Méthode pour ouvrir les détails d'une fonctionnalité dans un bottom sheet
+  void _ouvrirDetailsFonctionnalite(PlanificationDetail detail) {
+    // Calculer le temps total
+    Duration tempsTotal = Duration.zero;
+    if (detail.taches != null) {
+      for (var tache in detail.taches!) {
+        final dureeSauvegardee = _parseDuree(tache.duree);
+        if (dureeSauvegardee != null) {
+          tempsTotal += dureeSauvegardee;
+        }
+      }
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 8),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Header
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        detail.fonctionnalite?.nom ?? 'Fonctionnalité',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2D3748),
+                        ),
+                      ),
+                    ),
+                    if (tempsTotal.inSeconds > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4DB8AC).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          _formatDuration(tempsTotal),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF4DB8AC),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(width: 8),
+                    // Bouton de fermeture
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Color(0xFF6B7280)),
+                      onPressed: () => Navigator.pop(context),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+              ),
+              // Label "Tâches"
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    Icon(Icons.list, size: 18, color: Color(0xFF4DB8AC)),
+                    SizedBox(width: 8),
+                    Text(
+                      'Tâches',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF4DB8AC),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(
-                height: spacingConstant,
+              const SizedBox(height: 12),
+              // Liste des tâches
+              Expanded(
+                child: detail.taches == null || detail.taches!.isEmpty
+                    ? const Center(
+                        child: Text('Aucune tâche disponible'),
+                      )
+                    : ListView.builder(
+                        controller: scrollController,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        itemCount: detail.taches!.length,
+                        itemBuilder: (context, index) {
+                          final tache = detail.taches![index];
+                          if (tache.nom == null) return const SizedBox();
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF9FAFB),
+                              borderRadius: BorderRadius.circular(8),
+                              border:
+                                  Border.all(color: const Color(0xFFE5E7EB)),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    tache.nom!,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF2D3748),
+                                    ),
+                                  ),
+                                ),
+                                // Bouton "Terminer" avec checkmark
+                                ElevatedButton(
+                                  onPressed: _selectedTab == 1
+                                      ? null
+                                      : () async {
+                                          if (tache.id != null) {
+                                            // Mettre à jour le statut dans le backend
+                                            await _mettreAJourStatutTache(
+                                                tache.id!, 'terminee');
+
+                                            // _chargerPlanifications() est déjà appelé dans _mettreAJourStatutTache()
+                                            // donc pas besoin de setState() ici
+                                          }
+                                        },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _selectedTab == 1
+                                        ? Colors.grey[400]
+                                        : const Color(0xFF4DB8AC),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 8,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    elevation: 0,
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: const [
+                                      Text(
+                                        'Terminer',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                      SizedBox(width: 4),
+                                      Icon(Icons.check, size: 14),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
               ),
-              BlocBasedWidget<List<Programme>>(
-                customDataBloc: programmeBloc,
-                filter: {...currentFilter},
-                customWidget: (state) {
-                  List<Programme> programmes = state.data;
-                  Map<String, dynamic>? metadata = state.metadata;
-                  // extractStudiosOptions(programmes);
-                  if (programmes.isEmpty) {
-                    return const Center(
-                        child: const Text('Aucune activité programmée'));
-                  }
-                  return Column(
-                    children: [
-                      ...programmes
-                          .map((toElement) => CardRowPlanning(
-                                data: toElement,
-                              ))
-                          .toList(),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(
-                height: spacingConstant,
+              // Bouton "Tout terminer"
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _selectedTab == 1
+                        ? null
+                        : () async {
+                            // Marquer toutes les tâches comme terminées dans le backend
+                            if (detail.taches != null) {
+                              for (var tache in detail.taches!) {
+                                if (tache.id != null) {
+                                  // Appel direct sans recharger à chaque fois
+                                  try {
+                                    await http.post(
+                                      Uri.parse(
+                                          '${BASE_URL}taches/${tache.id}/statut'),
+                                      headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                      },
+                                      body: json.encode({'statut': 'terminee'}),
+                                    );
+                                  } catch (e) {
+                                    print('❌ Erreur tâche ${tache.id}: $e');
+                                  }
+                                }
+                              }
+                            }
+
+                            // Marquer la fonctionnalité comme clôturée dans le backend
+                            if (detail.fonctionnalite?.id != null) {
+                              try {
+                                await http.post(
+                                  Uri.parse(
+                                      '${BASE_URL}fonctionnalites/${detail.fonctionnalite!.id}/statut'),
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                  },
+                                  body: json.encode({'statut': 'cloturee'}),
+                                );
+                              } catch (e) {
+                                print('❌ Erreur fonctionnalité: $e');
+                              }
+                            }
+
+                            // Recharger les planifications UNE SEULE FOIS à la fin
+                            await _chargerPlanifications();
+
+                            // Fermer le bottom sheet (vérifier que le context est valide)
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _selectedTab == 1
+                          ? Colors.grey[400]
+                          : const Color(0xFF4DB8AC),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'Tout terminer',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
-        ));
-  }
-}
-
-class HorizontalCalendar extends StatefulWidget {
-  final Function(DateTime date)? handleDate;
-  final DateTime? selectedDate;
-  const HorizontalCalendar({super.key, this.handleDate, this.selectedDate});
-
-  @override
-  _HorizontalCalendarState createState() => _HorizontalCalendarState();
-}
-
-class _HorizontalCalendarState extends State<HorizontalCalendar> {
-  DateTime selectedDate = DateTime.now();
-  late List<DateTime> weekDays; // Liste des jours de la semaine courante
-
-  @override
-  void initState() {
-    super.initState();
-    // Générer la liste des jours de la semaine courante
-    weekDays = _generateWeekDays();
-    if (widget.selectedDate != null) {
-      selectedDate = DateTime.now();
-    }
-  }
-
-  // Fonction pour générer les jours restants de la semaine courante
-  // List<DateTime> _generateWeekDays() {
-  //   DateTime now = DateTime.now();
-  //   int currentWeekday = now.weekday; // Jour actuel (1 = Lundi, 7 = Dimanche)
-
-  //   // Créer une liste des jours à partir du jour actuel jusqu'à Dimanche
-  //   return List.generate(7 - currentWeekday + 1, (index) {
-  //     return now.add(Duration(days: index));
-  //   });
-  // }
-
-  List<DateTime> _generateWeekDays() {
-    DateTime now = DateTime.now();
-    
-    // Génère une liste du jour actuel jusqu'à +7 jours (total 8 jours)
-    return List.generate(7, (index) {
-      return now.add(Duration(days: index));
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Affichage du mois et de l'année (fixe, pas de navigation)
-        Padding(
-          padding: const EdgeInsets.only(bottom: spacingConstant),
-          child: Text(
-            DateFormat.yMMM('fr_FR').format(DateTime.now()).toCapitalized,
-            style: const TextStyle(
-              fontSize: titreConstant,
-              color: primaryColor,
-            ),
-          ),
-        ),
-
-        // Liste horizontale des jours de la semaine courante
-        SizedBox(
-          height: 75,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: weekDays.length,
-            itemBuilder: (context, index) {
-              DateTime date = weekDays[index];
-              bool isSelected = date.day == selectedDate.day &&
-                  date.month == selectedDate.month &&
-                  date.year == selectedDate.year;
-
-              return GestureDetector(
-                onTap: () {
-                  widget.handleDate!(date);
-                  setState(() {
-                    selectedDate = date;
-                  });
-                },
-                child: Container(
-                  width: 60,
-                  margin: index == 0
-                      ? const EdgeInsets.only(
-                          right: spacingConstant, left: spacingConstant)
-                      : const EdgeInsets.only(right: spacingConstant),
-                  decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xffA8923B) : Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isSelected ? Colors.transparent : greyColor,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        DateFormat.E('fr_FR').format(date), // Jour abrégé
-                        style: TextStyle(
-                          fontSize: textConstant,
-                          color: isSelected ? primaryColor : greyColor,
-                        ),
-                      ),
-                      Text(
-                        date.day.toString(), // Numéro du jour
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? primaryColor : greyColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
-// Adapte l'import selon ton projet
-
-class StudioSelectBox extends StatefulWidget {
-  final List<Salle> studioList;
-  final Salle? selectedStudio;
-  final ValueChanged<Salle?> onSelect;
-
-  const StudioSelectBox({
-    Key? key,
-    required this.studioList,
-    this.selectedStudio,
-    required this.onSelect,
-  }) : super(key: key);
-
-  @override
-  _StudioSelectBoxState createState() => _StudioSelectBoxState();
-}
-
-class _StudioSelectBoxState extends State<StudioSelectBox> {
-  void _openStudioSelector() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      builder: (context) {
-        return FractionallySizedBox(
-          heightFactor: 0.30,
-          child: ListView.separated(
-            itemCount: widget.studioList.length,
-            separatorBuilder: (_, __) => Divider(height: 1),
-            itemBuilder: (context, index) {
-              final studio = widget.studioList[index];
-              return ListTile(
-                title: Text(studio.designation ?? "Studio inconnu"),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  widget.onSelect(studio);
-                },
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _openStudioSelector,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade400),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.location_city, color: Colors.grey),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                widget.selectedStudio?.designation ?? "Sélectionner un studio",
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: widget.selectedStudio != null
-                      ? Colors.black
-                      : Colors.grey,
-                ),
-              ),
-            ),
-            Icon(Icons.arrow_drop_down, color: Colors.grey),
-          ],
         ),
       ),
     );
+  }
+
+  // Méthode pour ouvrir le chronomètre d'une tâche
+  void _ouvrirChronometro(PlanificationTache tache) {
+    // Récupérer la durée sauvegardée ou la durée en cours
+    final dureeSauvegardee = _parseDuree(tache.duree);
+    final dureeInitiale = _tachesDurees[tache.id] ?? dureeSauvegardee;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => TacheTimerModal(
+        tacheTitre: tache.nom ?? 'Tâche',
+        tacheId: tache.id,
+        initialDuration: dureeInitiale, // Passer la durée initiale
+        onSaveDuration: (duration) {
+          setState(() {
+            if (tache.id != null) {
+              _tachesDurees[tache.id!] = duration;
+              _tachesEnCours[tache.id!] = false;
+            }
+          });
+
+          // Sauvegarder la durée dans le backend
+          _sauvegarderDureeTache(tache.id, duration);
+        },
+      ),
+    );
+  }
+
+  // Méthode pour formater la durée
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+
+    if (duration.inHours > 0) {
+      return '${duration.inHours}h ${twoDigits(duration.inMinutes.remainder(60))}min';
+    } else if (duration.inMinutes > 0) {
+      return '${duration.inMinutes}min';
+    } else {
+      return '${duration.inSeconds}s';
+    }
+  }
+
+  // Méthode pour convertir une durée HH:MM:SS en Duration
+  Duration? _parseDuree(String? dureeString) {
+    if (dureeString == null || dureeString.isEmpty) return null;
+
+    try {
+      final parts = dureeString.split(':');
+      if (parts.length != 3) return null;
+
+      final hours = int.parse(parts[0]);
+      final minutes = int.parse(parts[1]);
+      final seconds = int.parse(parts[2]);
+
+      return Duration(hours: hours, minutes: minutes, seconds: seconds);
+    } catch (e) {
+      print('❌ Erreur parsing durée: $e');
+      return null;
+    }
+  }
+
+  // Méthode pour sauvegarder la durée dans le backend
+  Future<void> _sauvegarderDureeTache(int? tacheId, Duration duration) async {
+    if (tacheId == null) return;
+
+    try {
+      // Convertir la durée en format HH:MM:SS
+      final heures = duration.inHours;
+      final minutes = duration.inMinutes.remainder(60);
+      final secondes = duration.inSeconds.remainder(60);
+      final dureeFormatee =
+          '${heures.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secondes.toString().padLeft(2, '0')}';
+
+      print('💾 Sauvegarde de la durée pour la tâche $tacheId: $dureeFormatee');
+
+      // Appeler l'API pour sauvegarder la durée
+      final response = await http.post(
+        Uri.parse('${BASE_URL}taches/$tacheId/duree'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: json.encode({'duree': dureeFormatee}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print('✅ Durée sauvegardée avec succès: ${data['message']}');
+
+        // Recharger les planifications pour mettre à jour l'affichage
+        await _chargerPlanifications();
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Durée sauvegardée: ${_formatDuration(duration)}'),
+              backgroundColor: const Color(0xFF4CAF50),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      } else {
+        print('❌ Erreur serveur: ${response.statusCode}');
+        throw Exception('Erreur lors de la sauvegarde');
+      }
+    } catch (e) {
+      print('❌ Erreur lors de la sauvegarde: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erreur lors de la sauvegarde'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  // Méthode pour mettre à jour le statut d'une tâche dans le backend
+  Future<void> _mettreAJourStatutTache(int tacheId, String statut) async {
+    try {
+      print('📤 Mise à jour statut tâche $tacheId: $statut');
+
+      final response = await http.post(
+        Uri.parse('${BASE_URL}taches/$tacheId/statut'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: json.encode({'statut': statut}),
+      );
+
+      if (response.statusCode == 200) {
+        print('✅ Statut tâche mis à jour avec succès');
+
+        // Recharger les planifications pour mettre à jour l'UI
+        await _chargerPlanifications();
+      } else {
+        print('❌ Erreur serveur statut tâche: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('❌ Erreur mise à jour statut tâche: $e');
+    }
+  }
+
+  // Méthode pour mettre à jour le statut d'une fonctionnalité dans le backend
+  Future<void> _mettreAJourStatutFonctionnalite(
+      int fonctionnaliteId, String statut) async {
+    try {
+      print('📤 Mise à jour statut fonctionnalité $fonctionnaliteId: $statut');
+
+      final response = await http.post(
+        Uri.parse('${BASE_URL}fonctionnalites/$fonctionnaliteId/statut'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: json.encode({'statut': statut}),
+      );
+
+      if (response.statusCode == 200) {
+        print('✅ Statut fonctionnalité mis à jour avec succès');
+
+        // Recharger les planifications pour mettre à jour l'UI
+        await _chargerPlanifications();
+      } else {
+        print('❌ Erreur serveur statut fonctionnalité: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('❌ Erreur mise à jour statut fonctionnalité: $e');
+    }
   }
 }

@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:yogivida_mobile/services/api/actions/delData.dart';
-import 'package:yogivida_mobile/services/api/actions/postData.dart';
+import 'package:pointage_mobile/services/api/actions/delData.dart';
+import 'package:pointage_mobile/services/api/actions/postData.dart';
 import 'dart:convert';
 
 part 'post_api_event.dart';

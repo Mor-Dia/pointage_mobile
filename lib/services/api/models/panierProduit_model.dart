@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:yogivida_mobile/services/api/models/produit_model.dart';
+import 'package:pointage_mobile/services/api/models/produit_model.dart';
 
 part 'panierProduit_model.freezed.dart';
 part 'panierProduit_model.g.dart';

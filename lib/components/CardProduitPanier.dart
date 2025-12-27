@@ -4,14 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yogivida_mobile/components/ButtonField.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/core/models/user_model.dart';
-import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
+import 'package:pointage_mobile/components/ButtonField.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/core/models/user_model.dart';
+import 'package:pointage_mobile/services/api/models/panierProduit_model.dart';
 
-import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
-import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
-import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
+import 'package:pointage_mobile/services/api/models/pratique_model.dart';
+import 'package:pointage_mobile/services/authentication_bloc/authentication_bloc.dart';
+import 'package:pointage_mobile/services/panierBloc/panier_bloc_bloc.dart';
 
 import '../core/utils/helpers.dart';
 

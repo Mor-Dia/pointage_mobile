@@ -4,20 +4,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/screens/Boutique/Panier.dart';
-import 'package:yogivida_mobile/screens/Home/MainHome.dart';
-import 'package:yogivida_mobile/screens/Home/home_page.dart';
-import 'package:yogivida_mobile/screens/maintenance/maintenance_page_screen.dart';
-import 'package:yogivida_mobile/screens/update/update_page_screen.dart';
-import 'package:yogivida_mobile/services/api/models/panier_model.dart';
-import 'package:yogivida_mobile/services/authBloc/auth_bloc_bloc.dart';
-import 'package:yogivida_mobile/core/models/user_model.dart';
-import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
-
+import 'package:pointage_mobile/screens/Boutique/Panier.dart';
+import 'package:pointage_mobile/screens/Home/MainHome.dart';
+import 'package:pointage_mobile/screens/Home/home_page.dart';
+import 'package:pointage_mobile/screens/maintenance/maintenance_page_screen.dart';
+import 'package:pointage_mobile/screens/update/update_page_screen.dart';
+import 'package:pointage_mobile/services/api/models/panier_model.dart';
+import 'package:pointage_mobile/services/authBloc/auth_bloc_bloc.dart';
+import 'package:pointage_mobile/core/models/user_model.dart';
+import 'package:pointage_mobile/services/authentication_bloc/authentication_bloc.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -28,7 +25,6 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   @override
-
   isMyAppUpdated() async {
     bool isUpdated = true;
     bool forceUpdate = false;
@@ -97,7 +93,6 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     }
     return;
-
   }
 
   getMaintenance() async {
@@ -126,10 +121,9 @@ class _SplashScreenState extends State<SplashScreen> {
   bool _hasNavigated = false;
 
   void _navigateToHome(BuildContext context) async {
-
     if (_hasNavigated) return; // <-- empêche un second appel
     _hasNavigated = true;
-    
+
     Map<String, dynamic>? isMaintenance = await getMaintenance();
     bool is_maintenance = false;
     late String image;
@@ -140,7 +134,8 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (_) => MaintenancePageScreen(image: image), // tu passes l’argument ici
+            builder: (_) =>
+                MaintenancePageScreen(image: image), // tu passes l’argument ici
           ),
           (route) => false,
         );
@@ -160,27 +155,22 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Widget build(BuildContext context) {
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _navigateToHome(context);
     });
 
-    return  Scaffold(
-        body: Container(
-          color: primaryColor,
-          child: Center(
-            child: SvgPicture.asset('assets/images/logos/logo-splash.svg', width: 150),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/logos/fond.png'),
+            fit: BoxFit.cover,
           ),
         ),
+        child: Center(
+          child: Image.asset('assets/images/logos/icon.png', width: 150),
+        ),
+      ),
     );
-
-    // return Scaffold(
-    //       body: Container(
-    //         color: primaryColor,
-    //         child: Center(
-    //           child: SvgPicture.asset('assets/images/logos/logo-splash.svg'),
-    //         ),
-    //       ),
-    //     );
   }
 }

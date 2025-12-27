@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/services/api/models/produit_model.dart';
-import 'package:yogivida_mobile/services/api/models/taille_model.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/services/api/models/produit_model.dart';
+import 'package:pointage_mobile/services/api/models/taille_model.dart';
 
 part 'favoris_model.freezed.dart';
 part 'favoris_model.g.dart';

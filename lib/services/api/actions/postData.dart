@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/core/global.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/core/global.dart';
 
 import '../../../core/utils/helpers.dart';
 

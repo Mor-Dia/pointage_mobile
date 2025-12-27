@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:yogivida_mobile/screens/auth/login_screen.dart';
-import 'package:yogivida_mobile/screens/auth/register_screen.dart';
+import 'package:pointage_mobile/screens/auth/login_screen.dart';
+import 'package:pointage_mobile/screens/auth/register_screen.dart';
 
 class PleaseLoginWidget extends StatelessWidget {
   final String? message;

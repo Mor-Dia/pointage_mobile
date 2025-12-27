@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:yogivida_mobile/services/api/models/programme_model.dart';
-import 'package:yogivida_mobile/services/api/models/souscription_model.dart';
-import 'package:yogivida_mobile/services/api/models/type_lignecredit_model.dart';
-import 'package:yogivida_mobile/services/api/models/type_paiement_model.dart';
+import 'package:pointage_mobile/services/api/models/programme_model.dart';
+import 'package:pointage_mobile/services/api/models/souscription_model.dart';
+import 'package:pointage_mobile/services/api/models/type_lignecredit_model.dart';
+import 'package:pointage_mobile/services/api/models/type_paiement_model.dart';
 
 part 'ligne_credit_model.freezed.dart';
 part 'ligne_credit_model.g.dart';

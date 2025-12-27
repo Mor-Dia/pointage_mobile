@@ -1,11 +1,11 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yogivida_mobile/screens/Home/planning_detail.dart';
-import 'package:yogivida_mobile/screens/Home/pratique_detail.dart';
-import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
-import 'package:yogivida_mobile/screens/Planning/Planning.dart';
-import 'package:yogivida_mobile/services/api/models/notificationpush_model.dart';
+import 'package:pointage_mobile/screens/Home/planning_detail.dart';
+import 'package:pointage_mobile/screens/Home/pratique_detail.dart';
+import 'package:pointage_mobile/screens/Home/pratique_page.dart';
+import 'package:pointage_mobile/screens/Planning/Planning.dart';
+import 'package:pointage_mobile/services/api/models/notificationpush_model.dart';
 
 import '../constant.dart';
 import '../core/models/user_model.dart';

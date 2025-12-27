@@ -4,15 +4,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-const REGISTRATION_ENDPOINT = "inscription";
 const LOGIN_ENDPOINT = "connexion";
 const LOGOUT_ENDPOINT = "deconnexion";
-// const REQUEST_PWD_ENDPOINT = "password-reset";
-const REQUEST_PWD_ENDPOINT = "password-create";
-const BASE_URL = 'https://yogi-vida.com/yogivida_back/';
+const REQUEST_PWD_ENDPOINT = "password-reset";
+// const REQUEST_PWD_ENDPOINT = "password-create";
+// const BASE_URL = 'https://guindytechnology-solutions.com/guindy_manager_test/';
+// const BASE_URL = 'http://192.168.1.43/guindy_manager/public/';
+const BASE_URL = 'https://andree-gastric-sparklingly.ngrok-free.dev/guindy_manager/public/';
+
+// const BASE_URL = 'http://192.168.1.43:8000/';
+// const BASE_URL = 'https://yogi-vida.com/yogivida_back/';
 // const BASE_URL = 'https://yogi-vida.com/yogivida_back_test/';
 const BASE_URL_QGL = '${BASE_URL}graphql?query=';
-
 const Color primaryColor = Color(0xff15274D);
 const Color greyColor = Color(0xffD9D9D9);
 const Color greyColorL = Color(0xffF1F1F1);

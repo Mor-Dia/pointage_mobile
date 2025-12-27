@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yogivida_mobile/components/TopDialogNotification.dart';
-import 'package:yogivida_mobile/services/api/actions/postData.dart';
+import 'package:pointage_mobile/components/TopDialogNotification.dart';
+import 'package:pointage_mobile/services/api/actions/postData.dart';
 
 import '../../constant.dart';
 import '../global.dart';
@@ -152,31 +151,33 @@ class Helpers {
   }
 
   static Future<String> getBaseUrl() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // print(
-    // "from firebase mode debug " + prefs.getString("modeDebug").toString());
-    if (!prefs.containsKey("modeDebug")) {
-      prefs.setString("selectedBase", "prod");
-    }
-    String selectedBase = prefs.getString("selectedBase").toString();
-    CollectionReference linkRef =
-        FirebaseFirestore.instance.collection(selectedBase);
+    //  DÉSACTIVATION de Firebase Remote Config
+    // On utilise maintenant directement BASE_URL depuis constant.dart
+    // pour pointer vers la nouvelle API Guindy Technology
 
-    String? baseUrl;
-    try {
-      dynamic linkDoc = await linkRef.doc("liens").get();
-      baseUrl = linkDoc.data()["baseUrl"];
-      print("link from firebase " +
-          selectedBase.toString() +
-          " " +
-          baseUrl.toString());
-    } catch (exception, stackTrace) {
-      print("NETWORK ERROR WITH CONSOLE B " + exception.toString());
-    }
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // if (!prefs.containsKey("modeDebug")) {
+    //   prefs.setString("selectedBase", "prod");
+    // }
+    // String selectedBase = prefs.getString("selectedBase").toString();
+    // CollectionReference linkRef =
+    //     FirebaseFirestore.instance.collection(selectedBase);
 
-    baseUrl ??= BASE_URL;
+    // String? baseUrl;
+    // try {
+    //   dynamic linkDoc = await linkRef.doc("liens").get();
+    //   baseUrl = linkDoc.data()["baseUrl"];
+    //   print("link from firebase " +
+    //       selectedBase.toString() +
+    //       " " +
+    //       baseUrl.toString());
+    // } catch (exception, stackTrace) {
+    //   print("NETWORK ERROR WITH CONSOLE B " + exception.toString());
+    // }
 
-    return baseUrl;
+    // baseUrl ??= BASE_URL;
+
+    print("🔗 URL API utilisée: $BASE_URL");
     return BASE_URL;
   }
 

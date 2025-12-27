@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 // import 'package:latlong2/latlong.dart' as latLng;
 import 'package:latlong2/latlong.dart';
-import 'package:yogivida_mobile/components/ButtonField.dart';
-import 'package:yogivida_mobile/constant.dart';
+import 'package:pointage_mobile/components/ButtonField.dart';
+import 'package:pointage_mobile/constant.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:yogivida_mobile/services/api/models/preference_model.dart';
+import 'package:pointage_mobile/services/api/models/preference_model.dart';
 
 import '../../services/data_bloc/bloc/data_bloc.dart';
 import '../../services/data_bloc/presentation/bloc_based_widget.dart';

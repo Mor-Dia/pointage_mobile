@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yogivida_mobile/components/custom_cached_network_image.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/core/utils/Capitalized.dart';
-import 'package:yogivida_mobile/screens/Home/pratique_page.dart';
-import 'package:yogivida_mobile/services/api/models/type_pratique_model.dart';
-import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
+import 'package:pointage_mobile/components/custom_cached_network_image.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/core/utils/Capitalized.dart';
+import 'package:pointage_mobile/screens/Home/pratique_page.dart';
+import 'package:pointage_mobile/services/api/models/type_pratique_model.dart';
+import 'package:pointage_mobile/services/data_bloc/bloc/data_bloc.dart';
 
 import '../services/post_api_bloc.dart';
 

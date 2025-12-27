@@ -6,15 +6,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yogivida_mobile/components/CardRowPlanning.dart';
-import 'package:yogivida_mobile/components/CardRowPlanning2.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/services/api/models/reservation_model.dart';
-import 'package:yogivida_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
-import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
-import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
-import 'package:yogivida_mobile/core/models/user_model.dart';
-import 'package:yogivida_mobile/components/please_login_widget.dart';
+import 'package:pointage_mobile/components/CardRowPlanning.dart';
+import 'package:pointage_mobile/components/CardRowPlanning2.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/services/api/models/reservation_model.dart';
+import 'package:pointage_mobile/services/data_bloc/presentation/bloc_based_widget.dart';
+import 'package:pointage_mobile/services/data_bloc/bloc/data_bloc.dart';
+import 'package:pointage_mobile/services/authentication_bloc/authentication_bloc.dart';
+import 'package:pointage_mobile/core/models/user_model.dart';
+import 'package:pointage_mobile/components/please_login_widget.dart';
 
 class ReservationsPage extends StatefulWidget {
   const ReservationsPage({super.key});

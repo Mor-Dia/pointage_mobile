@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:yogivida_mobile/components/ButtonField.dart';
-import 'package:yogivida_mobile/components/TopDialogNotification.dart';
-import 'package:yogivida_mobile/constant.dart';
+import 'package:pointage_mobile/components/ButtonField.dart';
+import 'package:pointage_mobile/components/TopDialogNotification.dart';
+import 'package:pointage_mobile/constant.dart';
 import '../../core/utils/helpers.dart';
 
 import '../../components/InputFiled.dart';

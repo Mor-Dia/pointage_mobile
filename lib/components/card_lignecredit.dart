@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
-import 'package:yogivida_mobile/services/post_api_bloc.dart';
+import 'package:pointage_mobile/services/data_bloc/bloc/data_bloc.dart';
+import 'package:pointage_mobile/services/post_api_bloc.dart';
 
 import '../constant.dart';
 import '../core/utils/helpers.dart';

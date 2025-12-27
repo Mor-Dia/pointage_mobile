@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:yogivida_mobile/components/ButtonField.dart';
-import 'package:yogivida_mobile/components/InputFiled.dart';
-import 'package:yogivida_mobile/components/TopDialogNotification.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/core/utils/helpers.dart';
-import 'package:yogivida_mobile/screens/auth/register_screen.dart';
+import 'package:pointage_mobile/components/ButtonField.dart';
+import 'package:pointage_mobile/components/InputFiled.dart';
+import 'package:pointage_mobile/components/TopDialogNotification.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/core/utils/helpers.dart';
+import 'package:pointage_mobile/screens/auth/register_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yogivida_mobile/components/notifier_dialog.dart';
+import 'package:pointage_mobile/components/notifier_dialog.dart';
 import 'login_screen.dart';
 
 class RequestPasswordScreen extends StatefulWidget {

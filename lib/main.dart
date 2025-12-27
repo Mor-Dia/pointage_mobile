@@ -11,18 +11,18 @@ import 'package:user_repository/user_repository.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'firebase_options.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/core/global.dart';
-import 'package:yogivida_mobile/core/models/user_model.dart';
-import 'package:yogivida_mobile/core/utils/helpers.dart';
-import 'package:yogivida_mobile/screens/splash/splash_screen.dart';
-import 'package:yogivida_mobile/screens/auth/login_screen.dart';
-import 'package:yogivida_mobile/screens/Home/home_page.dart';
-import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
-import 'package:yogivida_mobile/services/panierBloc/panier_bloc_bloc.dart';
-import 'package:yogivida_mobile/simple_bloc_observer.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/core/global.dart';
+import 'package:pointage_mobile/core/models/user_model.dart';
+import 'package:pointage_mobile/core/utils/helpers.dart';
+import 'package:pointage_mobile/screens/splash/splash_screen.dart';
+import 'package:pointage_mobile/screens/auth/login_screen.dart';
+import 'package:pointage_mobile/screens/main_screen.dart';
+import 'package:pointage_mobile/services/authentication_bloc/authentication_bloc.dart';
+import 'package:pointage_mobile/services/panierBloc/panier_bloc_bloc.dart';
+import 'package:pointage_mobile/simple_bloc_observer.dart';
 
-import 'package:yogivida_mobile/services/notification_api.dart';
+import 'package:pointage_mobile/services/notification_api.dart';
 
 import 'package:app_links/app_links.dart';
 
@@ -184,7 +184,7 @@ class _MyAppState extends State<MyApp> {
               case '/login':
                 return MaterialPageRoute(builder: (_) => const LoginScreen());
               case '/home':
-                return MaterialPageRoute(builder: (_) => const HomePage());
+                return MaterialPageRoute(builder: (_) => const MainScreen());
               default:
                 return MaterialPageRoute(builder: (_) => const SplashScreen());
             }

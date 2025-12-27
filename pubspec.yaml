@@ -1,4 +1,4 @@
-name: yogivida_mobile
+name: pointage_mobile
 description: A new Flutter project..
 
 publish_to: 'none'
@@ -43,6 +43,7 @@ dependencies:
   cached_network_image: ^3.3.1
   flutter_map: ^7.0.2
   latlong2: ^0.9.1
+  geolocator: ^12.0.0
   icons_launcher: ^3.0.0
   cloud_firestore: ^5.6.0
   firebase_app_check: ^0.3.1+7
@@ -63,7 +64,7 @@ dev_dependencies:
   json_serializable: ^6.8.0
 
 icons_launcher:
-  image_path: "assets/images/logos/newlogo-bg.png"
+  image_path: "assets/images/logos/icon.png"
   platforms:
     android:
       enable: true
@@ -86,11 +87,13 @@ flutter:
     - assets/images/logos/
     - assets/animations/
     - assets/images/logos/logo.png
-    - assets/images/logos/newlogo.svg
+    - assets/images/logos/fond.png
+    - assets/images/logos/icon.png
 
 flutter_native_splash:
-  color: "#ffffff"  # Couleur de fond du splash screen
-  image: assets/images/splash.png  # Chemin vers l'image du splash screen
+  color: "#FFFFFF"  # Couleur de fond blanc
+  background_image: assets/images/logos/fond.png  #image de fond personnalisée
+  image: assets/images/logos/icon.png  # icône de chronomètre
   android: true  # Activer le splash screen pour Android
   ios: true  # Activer le splash screen pour iOS
-  fill: true  # Ajuster l'image pour qu'elle remplisse l'écran
+  fullscreen: true  # Mode plein écran

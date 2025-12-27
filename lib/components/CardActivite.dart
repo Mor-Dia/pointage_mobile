@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/core/utils/Capitalized.dart';
-import 'package:yogivida_mobile/services/api/models/programme_model.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/core/utils/Capitalized.dart';
+import 'package:pointage_mobile/services/api/models/programme_model.dart';
 
 class Cardactivite extends StatelessWidget {
   final String? color;

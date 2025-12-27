@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'constant.dart';
 
 class CustomBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -12,22 +14,73 @@ class CustomBottomNav extends StatelessWidget {
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onItemTapped,
-      items: const <BottomNavigationBarItem>[
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: primaryColor,
+      unselectedItemColor: Colors.grey,
+      selectedFontSize: 12,
+      unselectedFontSize: 11,
+      items: <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
+          icon: SvgPicture.asset(
+            'assets/icons/home.svg',
+            width: 24,
+            height: 24,
+            colorFilter: ColorFilter.mode(
+              currentIndex == 0 ? primaryColor : Colors.grey,
+              BlendMode.srcIn,
+            ),
+          ),
           label: 'Accueil',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: 'Recherche',
+          icon: SvgPicture.asset(
+            'assets/icons/planning.svg',
+            width: 24,
+            height: 24,
+            colorFilter: ColorFilter.mode(
+              currentIndex == 1 ? primaryColor : Colors.grey,
+              BlendMode.srcIn,
+            ),
+          ),
+          label: 'Planifications',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profil',
+          icon: SvgPicture.asset(
+            'assets/icons/taches_icon.svg',
+            width: 24,
+            height: 24,
+            colorFilter: ColorFilter.mode(
+              currentIndex == 2 ? primaryColor : Colors.grey,
+              BlendMode.srcIn,
+            ),
+          ),
+          label: 'Tâches',
+        ),
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            'assets/icons/stat.svg',
+            width: 24,
+            height: 24,
+            colorFilter: ColorFilter.mode(
+              currentIndex == 3 ? primaryColor : Colors.grey,
+              BlendMode.srcIn,
+            ),
+          ),
+          label: 'Statistiques',
+        ),
+        BottomNavigationBarItem(
+          icon: SvgPicture.asset(
+            'assets/icons/compte.svg',
+            width: 24,
+            height: 24,
+            colorFilter: ColorFilter.mode(
+              currentIndex == 4 ? primaryColor : Colors.grey,
+              BlendMode.srcIn,
+            ),
+          ),
+          label: 'Compte',
         ),
       ],
-      selectedItemColor: Colors.blue,
-      unselectedItemColor: Colors.grey,
     );
   }
 }

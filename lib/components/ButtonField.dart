@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yogivida_mobile/constant.dart';
+import 'package:pointage_mobile/constant.dart';
 
 class ButtonFiled extends StatelessWidget {
   final String text;

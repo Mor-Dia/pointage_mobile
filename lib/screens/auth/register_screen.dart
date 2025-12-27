@@ -4,14 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:yogivida_mobile/components/ButtonField.dart';
-import 'package:yogivida_mobile/components/InputFiled.dart';
-import 'package:yogivida_mobile/components/TopDialogNotification.dart';
-import 'package:yogivida_mobile/components/notifier_dialog.dart';
-import 'package:yogivida_mobile/constant.dart';
+import 'package:pointage_mobile/components/ButtonField.dart';
+import 'package:pointage_mobile/components/InputFiled.dart';
+import 'package:pointage_mobile/components/TopDialogNotification.dart';
+import 'package:pointage_mobile/components/notifier_dialog.dart';
+import 'package:pointage_mobile/constant.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:yogivida_mobile/core/utils/helpers.dart';
-import 'package:yogivida_mobile/screens/auth/login_screen.dart';
+import 'package:pointage_mobile/core/utils/helpers.dart';
+import 'package:pointage_mobile/screens/auth/login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   RegisterScreen({super.key});
@@ -174,7 +174,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     if (canSubmit) {
-      var registrationLink = Uri.parse("$link$REGISTRATION_ENDPOINT");
+      // TODO: Implémenter l'inscription si nécessaire
+      var registrationLink = Uri.parse("${link}register");
       // var registrationLink = Uri.parse("$BASE_URL$REGISTRATION_ENDPOINT");
       await http
           .post(registrationLink, body: postData)
@@ -274,7 +275,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               items: field['items'],
                               handleAction: (value) => selectGenre(value!),
                               error:
-                                  field['error'], // L'erreur est vide au départ
+                                  field['error'], // L'erreur est vide au départ 
                             ),
                             const SizedBox(height: 30),
                           ],

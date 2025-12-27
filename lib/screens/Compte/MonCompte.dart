@@ -6,25 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yogivida_mobile/components/TopDialogNotification.dart';
-import 'package:yogivida_mobile/components/please_login_widget.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/screens/Compte/commandes_page.dart';
-import 'package:yogivida_mobile/screens/Compte/favoris_page.dart';
-import 'package:yogivida_mobile/screens/Compte/ligne_credit_page.dart';
-import 'package:yogivida_mobile/screens/Compte/LocalisationContact.dart';
-import 'package:yogivida_mobile/screens/Compte/reservations_page.dart';
-import 'package:yogivida_mobile/screens/Compte/Update.dart';
-import 'package:yogivida_mobile/core/models/user_model.dart';
-import 'package:yogivida_mobile/screens/Compte/type_notificationpush_page.dart';
-import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
+import 'package:pointage_mobile/components/TopDialogNotification.dart';
+import 'package:pointage_mobile/components/please_login_widget.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/core/models/user_model.dart';
+import 'package:pointage_mobile/services/authentication_bloc/authentication_bloc.dart';
 
-import 'package:yogivida_mobile/screens/auth/login_screen.dart';
+import 'package:pointage_mobile/screens/auth/login_screen.dart';
 
 import '../../components/animated_gesture_detector.dart';
-import '../../core/utils/helpers.dart';
 import '../../services/data_bloc/bloc/data_bloc.dart';
-import '../../services/data_bloc/presentation/bloc_based_widget.dart';
 import '../../services/post_api_bloc.dart';
 
 class MonCompte extends StatefulWidget {
@@ -66,9 +57,18 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
   }
 
   Future<void> _loadUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    int currentUserId = prefs.getInt("id")!;
-    utilisateurBloc.add(RefreshDataEvent(filter: {'id': currentUserId}));
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int? currentUserId = prefs.getInt("id");
+
+      if (currentUserId != null) {
+        utilisateurBloc.add(RefreshDataEvent(filter: {'id': currentUserId}));
+      } else {
+        print('Aucun ID utilisateur enregistré');
+      }
+    } catch (e) {
+      print('Erreur lors du chargement de l\'utilisateur: $e');
+    }
   }
 
   @override
@@ -159,7 +159,6 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
       // builder: (context, state) {
       builder: (context, state) {
         AuthenticationStatus currentStatus = state.status;
-        Utilisateur? currentUser = state.user;
         switch (currentStatus) {
           case AuthenticationStatus.authenticated:
             return Scaffold(
@@ -169,296 +168,68 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
                 automaticallyImplyLeading:
                     false, // Empêche l'affichage du bouton back
                 toolbarHeight: 60,
-                title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Mon compte',
-                      style: GoogleFonts.arimo(
-                        color: const Color(0xff15274d),
-                        fontSize: titreConstant,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: <Widget>[
-                        GestureDetector(
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Update())),
-                          child: Container(
-                            height: 50,
-                            width: 45,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15),
-                              color: const Color(0xff15274d),
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                'assets/icons/pen.svg',
-                                width: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                title: Text(
+                  'Mon compte',
+                  style: GoogleFonts.arimo(
+                    color: const Color(0xff15274d),
+                    fontSize: titreConstant,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               body: Container(
                 color: Colors.white,
-                child: ListView(children: [
-                  const SizedBox(height: spacingConstant),
-                  Center(
-                    child: Column(children: [
-                      SvgPicture.asset(
-                        "assets/icons/user2.svg",
-                        width: 70,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        state.user?.nom_complet ?? "",
-                        style: TextStyle(color: primaryColor, fontSize: 16),
-                      )
-                    ]),
-                  ),
-                  const SizedBox(height: spacingConstant),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: spacingConstant),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const LigneCreditPage()),
-                              ),
-                            },
-                            child: Container(
-                              height: 80,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      width: 1, color: const Color(0xff5EAB43)),
-                                  borderRadius: BorderRadius.circular(8)),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text(
-                                        "SOLDE LC : ",
-                                        style: TextStyle(
-                                            color: primaryColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-
-                                      BlocBasedWidget<List<Utilisateur>>(
-                                        customDataBloc: utilisateurBloc,
-                                        filter: {"id": currentUser?.id},
-                                        customWidget: (state) {
-                                          List<Utilisateur> users = state.data;
-                                          Utilisateur currentClient = users[0];
-                                          return Text(
-                                            hide
-                                                ? "*******"
-                                                : "${Helpers.formatNumber(currentClient.solde)} FCFA TTC",
-                                            style: const TextStyle(
-                                                fontSize: 16,
-                                                color: primaryColor,
-                                                fontWeight: FontWeight.bold),
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(width: 1/2),
-                                      IconButton(
-                                        onPressed: hideAndShowBalance,
-                                        icon: Icon(
-                                          hide
-                                              ? Icons.visibility_off
-                                              : Icons.remove_red_eye,
-                                          size: spacingConstant,
-                                          color: const Color(0xff15274d),
-                                        ),
-                                      ),
-
-                                      // Text(
-                                      //   " ${Helpers.formatNumber(currentUser?.solde ?? 0)} FCFA TTC",
-                                      //   style: const TextStyle(
-                                      //       fontSize: 16,
-                                      //       color: primaryColor,
-                                      //       fontWeight: FontWeight.bold),
-                                      // ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: spacingConstant / 2),
-                                  const Text(
-                                    "Approvisionner mon compte",
-                                    style: TextStyle(
-                                        color: Color(0xff5EAB43),
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: spacingConstant * 2),
+                    Center(
+                      child: Column(children: [
+                        SvgPicture.asset(
+                          "assets/icons/user2.svg",
+                          width: 100,
                         ),
-                      ],
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          state.user?.nom_complet ?? "Utilisateur",
+                          style: TextStyle(
+                            color: primaryColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      ]),
                     ),
-                  ),
-                  const SizedBox(height: spacingConstant),
-                  Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ReservationsPage()),
-                        ),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  top: BorderSide(width: 1, color: greyColor))),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant,
-                                vertical: spacingConstant),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset("assets/icons/historique.svg"),
-                                const SizedBox(width: 10),
-                                const Text(
-                                  "Historique des réservations",
-                                  style: TextStyle(fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const CommandesPage()),
-                        ),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  top: BorderSide(width: 1, color: greyColor))),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant,
-                                vertical: spacingConstant),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/boutique.svg",
-                                  color: primaryColor,
-                                ),
-                                const SizedBox(width: 10),
-                                const Text(
-                                  "Mes commandes",
-                                  style: TextStyle(fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const FavorisPage()),
-                        ),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  top: BorderSide(width: 1, color: greyColor))),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant,
-                                vertical: spacingConstant),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/like.svg",
-                                  color: primaryColor,
-                                ),
-                                const SizedBox(width: 10),
-                                const Text(
-                                  "Favoris",
-                                  style: TextStyle(fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const LocalisationContact()),
-                        ),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  top: BorderSide(width: 1, color: greyColor))),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant,
-                                vertical: spacingConstant),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/carte.svg",
-                                  color: primaryColor,
-                                ),
-                                const SizedBox(width: 10),
-                                const Text(
-                                  "Localisation et contact",
-                                  style: TextStyle(fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
+                    const Spacer(), // Pousse le bouton vers le bas
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: spacingConstant * 2),
+                      child: GestureDetector(
                         onTap: () => logout(),
                         child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  top: BorderSide(width: 1, color: greyColor))),
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: greyColor),
+                              borderRadius: BorderRadius.circular(12)),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: spacingConstant,
-                                vertical: spacingConstant),
+                                vertical: spacingConstant * 1.5),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 SvgPicture.asset(
                                   "assets/icons/off.svg",
                                   color: Colors.red,
+                                  width: 24,
                                 ),
-                                const SizedBox(width: 10),
+                                const SizedBox(width: 15),
                                 const Text(
                                   "Déconnexion",
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 18,
                                     color: Colors.red,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 )
                               ],
@@ -466,38 +237,10 @@ class _MonCompteState extends State<MonCompte> with RouteAware {
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          showAccountDeletionDialog(context);
-                        },
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              border: Border(
-                                  top: BorderSide(width: 1, color: greyColor))),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: spacingConstant,
-                                vertical: spacingConstant),
-                            child: Row(
-                              children: [
-                                SvgPicture.asset(
-                                  "assets/icons/trash.svg",
-                                  color: Colors.red,
-                                ),
-                                const SizedBox(width: 10),
-                                const Text(
-                                  "Supprimer le compte",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.red),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  )
-                ]),
+                    ),
+                    const SizedBox(height: spacingConstant),
+                  ],
+                ),
               ),
             );
           case AuthenticationStatus.unknown:

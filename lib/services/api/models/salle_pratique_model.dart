@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
-import 'package:yogivida_mobile/services/api/models/salle_model.dart';
+import 'package:pointage_mobile/services/api/models/pratique_model.dart';
+import 'package:pointage_mobile/services/api/models/salle_model.dart';
 
 part 'salle_pratique_model.freezed.dart';
 part 'salle_pratique_model.g.dart';

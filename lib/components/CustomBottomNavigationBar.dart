@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:yogivida_mobile/constant.dart';
+import 'package:pointage_mobile/constant.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final List<String> urls; // Liste des URLs à passer pour la navigation

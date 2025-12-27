@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yogivida_mobile/services/api/models/pratique_model.dart';
-import 'package:yogivida_mobile/services/data_bloc/presentation/custom_error.dart';
-import 'package:yogivida_mobile/services/data_bloc/presentation/no_data_widget.dart';
+import 'package:pointage_mobile/services/api/models/pratique_model.dart';
+import 'package:pointage_mobile/services/data_bloc/presentation/custom_error.dart';
+import 'package:pointage_mobile/services/data_bloc/presentation/no_data_widget.dart';
 
 import '../../components/custom_cached_network_image.dart';
 import '../../constant.dart';

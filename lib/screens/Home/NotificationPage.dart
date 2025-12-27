@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yogivida_mobile/constant.dart';
+import 'package:pointage_mobile/constant.dart';
 
 import '../../components/animated_gesture_detector.dart';
 import '../../components/notification_container.dart';

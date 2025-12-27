@@ -4,16 +4,16 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yogivida_mobile/components/ButtonField.dart';
-import 'package:yogivida_mobile/components/InputFiled.dart';
-import 'package:yogivida_mobile/components/TopDialogNotification.dart';
-import 'package:yogivida_mobile/constant.dart';
+import 'package:pointage_mobile/components/ButtonField.dart';
+import 'package:pointage_mobile/components/InputFiled.dart';
+import 'package:pointage_mobile/components/TopDialogNotification.dart';
+import 'package:pointage_mobile/constant.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:yogivida_mobile/core/models/user_model.dart';
-import 'package:yogivida_mobile/core/utils/helpers.dart';
-import 'package:yogivida_mobile/services/authentication_bloc/authentication_bloc.dart';
+import 'package:pointage_mobile/core/models/user_model.dart';
+import 'package:pointage_mobile/core/utils/helpers.dart';
+import 'package:pointage_mobile/services/authentication_bloc/authentication_bloc.dart';
 
 import '../../components/animated_gesture_detector.dart';
 import '../../components/please_login_widget.dart';

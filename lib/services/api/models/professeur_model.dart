@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:yogivida_mobile/services/api/models/type_pratique_model.dart';
-import 'package:yogivida_mobile/services/api/models/user_from_api_model.dart';
+import 'package:pointage_mobile/services/api/models/type_pratique_model.dart';
+import 'package:pointage_mobile/services/api/models/user_from_api_model.dart';
 
 part 'professeur_model.freezed.dart';
 part 'professeur_model.g.dart';

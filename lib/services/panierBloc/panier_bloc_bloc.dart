@@ -4,13 +4,13 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yogivida_mobile/constant.dart';
-import 'package:yogivida_mobile/services/api/actions/getData.dart';
-import 'package:yogivida_mobile/services/api/actions/postData.dart';
-import 'package:yogivida_mobile/services/api/models/panierProduit_model.dart';
-import 'package:yogivida_mobile/services/api/models/panier_model.dart';
-import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc.dart';
-import 'package:yogivida_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
+import 'package:pointage_mobile/constant.dart';
+import 'package:pointage_mobile/services/api/actions/getData.dart';
+import 'package:pointage_mobile/services/api/actions/postData.dart';
+import 'package:pointage_mobile/services/api/models/panierProduit_model.dart';
+import 'package:pointage_mobile/services/api/models/panier_model.dart';
+import 'package:pointage_mobile/services/data_bloc/bloc/data_bloc.dart';
+import 'package:pointage_mobile/services/data_bloc/bloc/data_bloc_helpers.dart';
 import 'package:http/http.dart' as http;
 
 part 'panier_bloc_event.dart';
@@ -77,21 +77,27 @@ class PanierBlocBloc extends Bloc<PanierBlocEvent, PanierBlocState> {
           filter: {'token': event.token}, useMetadata: true)
     };
 
-    try {
-      final response = await getApiData(endPoint, parameters: parameters, isGraphQl: true);
-      if (response.statusCode == 200) {
-        Map<String, dynamic> responseJsonDecoded = jsonDecode(response.body);
-        Map<String, dynamic> jsonData = {};
-        if(responseJsonDecoded['data']['panierspaginated']['data'] != null && responseJsonDecoded['data']['panierspaginated']['data'].length > 0){
-          jsonData = responseJsonDecoded['data']['panierspaginated']['data'][0];
-        }
-        Panier data = Panier.fromJson(jsonData);
-        emit(PanierBlocState.loaded(panier: data));
-      } else {
-        emit(const PanierBlocState.error( message: "Erreur lors de la récupération du panier "));
-      }
-    } catch (e) {
-      emit(const PanierBlocState.error(message: "Erreur lors de la récupération du panier"));
-    }
+    //  TEMPORAIREMENT DÉSACTIVÉ - En attente de la nouvelle API Guindy Technology
+    // L'endpoint GraphQL "panierspaginated" n'existe pas dans la nouvelle API
+    // Émettre un état vide au lieu d'une erreur
+    emit(PanierBlocState.loaded(panier: Panier.fromJson({})));
+
+    // Code original commenté :
+    // try {
+    //   final response = await getApiData(endPoint, parameters: parameters, isGraphQl: true);
+    //   if (response.statusCode == 200) {
+    //     Map<String, dynamic> responseJsonDecoded = jsonDecode(response.body);
+    //     Map<String, dynamic> jsonData = {};
+    //     if(responseJsonDecoded['data']['panierspaginated']['data'] != null && responseJsonDecoded['data']['panierspaginated']['data'].length > 0){
+    //       jsonData = responseJsonDecoded['data']['panierspaginated']['data'][0];
+    //     }
+    //     Panier data = Panier.fromJson(jsonData);
+    //     emit(PanierBlocState.loaded(panier: data));
+    //   } else {
+    //     emit(const PanierBlocState.error( message: "Erreur lors de la récupération du panier "));
+    //   }
+    // } catch (e) {
+    //   emit(const PanierBlocState.error(message: "Erreur lors de la récupération du panier"));
+    // }
   }
 }

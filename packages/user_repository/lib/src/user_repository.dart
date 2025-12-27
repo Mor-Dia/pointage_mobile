@@ -4,8 +4,10 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum UserChangeStatus { none, userchanged,}
-
+enum UserChangeStatus {
+  none,
+  userchanged,
+}
 
 class UserRepository<T> {
   final Function(dynamic value) factoryFunction;
@@ -14,7 +16,7 @@ class UserRepository<T> {
   T? _user;
   final _controller = StreamController<UserChangeStatus>();
 
-  call(){
+  void call() {
     if (kDebugMode) {
       print("USER CALL");
     }
@@ -30,7 +32,7 @@ class UserRepository<T> {
     if (kDebugMode) {
       // print("TRYING TO GET USER");
     }
-    try{
+    try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String? username = prefs.getString('nom_complet');
       String? token = prefs.getString('token');
@@ -38,28 +40,45 @@ class UserRepository<T> {
       if (kDebugMode) {
         // print('PREFERENCES TOKEN FROM GET USER: ${prefs.getString("userinfos")}');
         // print('PREFERENCES TOKEN FROM GET USER: ${prefs.getString("token")}');
-        print('PREFERENCES USERNAME FROM GET USER: ${prefs.getString("nom_complet")}');
+        print(
+            'PREFERENCES USERNAME FROM GET USER: ${prefs.getString("nom_complet")}');
       }
-      if(userInfo != null){
+      if (userInfo != null) {
         Map<String, dynamic> decoded = jsonDecode(userInfo);
-        _user = factoryFunction(decoded);
+
+        // Extraire les données utilisateur depuis la clé "data" si elle existe
+        Map<String, dynamic> userData =
+            decoded.containsKey('data') ? decoded['data'] : decoded;
+
+        // Ajouter le token au niveau des données utilisateur pour faciliter l'accès
+        if (decoded.containsKey('token') && !userData.containsKey('token')) {
+          userData['token'] = decoded['token'];
+        }
+
+        // Créer nom_complet depuis name si non présent
+        if (!userData.containsKey('nom_complet') &&
+            userData.containsKey('name')) {
+          userData['nom_complet'] = userData['name'];
+        }
+
+        _user = factoryFunction(userData);
         if (kDebugMode) {
           print('CURRENT USERNAME FROM GET USER: $_user');
         }
       } else {
         _user = null;
       }
-    } catch(e) {}
+    } catch (e) {}
     return _user;
   }
 
   Future<bool> saveUser(Map<String, dynamic> data) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    for (dynamic key in data.keys){
+    for (dynamic key in data.keys) {
       dynamic value = data[key];
       dynamic keyType = value.runtimeType;
       print("KEY RUNTIMETYPE $keyType");
-      switch(keyType){
+      switch (keyType) {
         case String:
           await prefs.setString(key, value);
           break;
@@ -85,5 +104,4 @@ class UserRepository<T> {
   }
 
   void dispose() => _controller.close();
-
 }

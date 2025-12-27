@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yogivida_mobile/constant.dart';
+import 'package:pointage_mobile/constant.dart';
 import '../bloc/data_bloc.dart';
 import 'custom_error.dart';
 import 'no_data_widget.dart';
