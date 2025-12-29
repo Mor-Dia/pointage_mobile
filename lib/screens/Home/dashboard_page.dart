@@ -102,28 +102,35 @@ class _DashboardPageState extends State<DashboardPage> {
   List<Map<String, dynamic>> _calculateEfficienceData() {
     final now = DateTime.now();
     final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    
+
     List<Map<String, dynamic>> weekData = [];
-    final daysOfWeek = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-    
+    final daysOfWeek = [
+      'Lundi',
+      'Mardi',
+      'Mercredi',
+      'Jeudi',
+      'Vendredi',
+      'Samedi'
+    ];
+
     // Données de démonstration (similaires à la maquette)
     final demoData = [
-      {'raites': 56, 'rouvertes': 39},  // Lundi
-      {'raites': 64, 'rouvertes': 80},  // Mardi
-      {'raites': 76, 'rouvertes': 15},  // Mercredi
-      {'raites': 78, 'rouvertes': 17},  // Jeudi
-      {'raites': 70, 'rouvertes': 65},  // Vendredi
-      {'raites': 37, 'rouvertes': 15},  // Samedi
+      {'raites': 56, 'rouvertes': 39}, // Lundi
+      {'raites': 64, 'rouvertes': 80}, // Mardi
+      {'raites': 76, 'rouvertes': 15}, // Mercredi
+      {'raites': 78, 'rouvertes': 17}, // Jeudi
+      {'raites': 70, 'rouvertes': 65}, // Vendredi
+      {'raites': 37, 'rouvertes': 15}, // Samedi
     ];
-    
+
     for (int i = 0; i < 6; i++) {
       final date = startOfWeek.add(Duration(days: i));
       final pointagesOfDay = _pointages.where((p) {
         if (p.date == null) return false;
         final pDate = DateTime.parse(p.date!);
-        return pDate.year == date.year && 
-               pDate.month == date.month && 
-               pDate.day == date.day;
+        return pDate.year == date.year &&
+            pDate.month == date.month &&
+            pDate.day == date.day;
       }).toList();
 
       // Compter les pointages à l'heure (sans retard ni absence)
@@ -135,7 +142,7 @@ class _DashboardPageState extends State<DashboardPage> {
           }
         }
       }
-      
+
       // Compter les retards
       int rouvertesCount = 0;
       for (var p in pointagesOfDay) {
@@ -150,7 +157,7 @@ class _DashboardPageState extends State<DashboardPage> {
       // Sinon utiliser les données réelles
       int raitesValue;
       int rouvertesValue;
-      
+
       if (raitesCount == 0 && rouvertesCount == 0) {
         // Pas de données réelles, utiliser les données de démo
         raitesValue = demoData[i]['raites']!;
@@ -167,7 +174,7 @@ class _DashboardPageState extends State<DashboardPage> {
         'rouvertes': rouvertesValue,
       });
     }
-    
+
     return weekData;
   }
 
@@ -213,7 +220,7 @@ class _DashboardPageState extends State<DashboardPage> {
         // Récupérer le nom de l'utilisateur connecté
         String userName = 'Utilisateur';
         String subtitle = 'Bienvenu mr le lead front';
-        
+
         if (state.status == AuthenticationStatus.authenticated &&
             state.user != null) {
           if (state.user!.nom_complet != null &&
@@ -224,7 +231,7 @@ class _DashboardPageState extends State<DashboardPage> {
           } else {
             userName = state.user!.email ?? 'Utilisateur';
           }
-          
+
           // Extraire le prénom pour le salut
           final prenom = state.user!.prenom ?? userName.split(' ').first;
           userName = prenom;
@@ -299,20 +306,20 @@ class _DashboardPageState extends State<DashboardPage> {
     final now = DateTime.now();
     String dateRange;
     String monthRange;
-    
+
     if (isWeek) {
       final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
       dateRange = 'Du ${startOfWeek.day} - Aujourd\'hui';
     } else {
       dateRange = 'Du 01 Décembre - Aujourd\'hui';
     }
-    
+
     monthRange = 'Du 01 Décembre - Aujourd\'hui';
 
     // Calculer les pourcentages (sur une base de 30 jours de travail)
     final totalDaysWeek = 5; // 5 jours de travail par semaine
     final totalDaysMonth = 22; // ~22 jours de travail par mois
-    final retardPercentage = isWeek 
+    final retardPercentage = isWeek
         ? (retards / totalDaysWeek * 100).round()
         : (retards / totalDaysMonth * 100).round();
     final absencePercentage = isWeek
@@ -378,7 +385,8 @@ class _DashboardPageState extends State<DashboardPage> {
           // Date range
           Row(
             children: [
-              const Icon(Icons.calendar_today, size: 14, color: Color(0xFF14B8A6)),
+              const Icon(Icons.calendar_today,
+                  size: 14, color: Color(0xFF14B8A6)),
               const SizedBox(width: 6),
               Text(
                 dateRange,
@@ -417,7 +425,8 @@ class _DashboardPageState extends State<DashboardPage> {
           // Section "Ce mois"
           const Row(
             children: [
-              Icon(Icons.access_time_filled, size: 16, color: Color(0xFF14B8A6)),
+              Icon(Icons.access_time_filled,
+                  size: 16, color: Color(0xFF14B8A6)),
               SizedBox(width: 6),
               Text(
                 'Ce mois',
@@ -432,7 +441,8 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.calendar_today, size: 14, color: Color(0xFF14B8A6)),
+              const Icon(Icons.calendar_today,
+                  size: 14, color: Color(0xFF14B8A6)),
               const SizedBox(width: 6),
               Text(
                 monthRange,
@@ -618,7 +628,8 @@ class _DashboardPageState extends State<DashboardPage> {
           // Date range
           Row(
             children: [
-              const Icon(Icons.calendar_today, size: 14, color: Color(0xFF14B8A6)),
+              const Icon(Icons.calendar_today,
+                  size: 14, color: Color(0xFF14B8A6)),
               const SizedBox(width: 6),
               Text(
                 dateRange,
@@ -640,7 +651,8 @@ class _DashboardPageState extends State<DashboardPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildLegendItem('Raites dans les délais', const Color(0xFF10B981)),
+              _buildLegendItem(
+                  'Raites dans les délais', const Color(0xFF10B981)),
               const SizedBox(width: 20),
               _buildLegendItem('Rouvertes', const Color(0xFFFBBF24)),
             ],
@@ -660,89 +672,124 @@ class _DashboardPageState extends State<DashboardPage> {
     // Si maxValue est 0, utiliser 100 comme valeur par défaut pour éviter division par zéro
     final safeMaxValue = maxValue > 0 ? maxValue : 100;
 
-    // Calculer les intervalles pour l'axe Y (0, 20, 40, 60, 80, 100)
+    // Calculer les intervalles pour l'axe Y (de haut en bas : 100, 80, 60, 40, 20, 0)
     final yAxisLabels = [100, 80, 60, 40, 20, 0];
 
     return SizedBox(
-      height: 220, // Réduit pour éviter l'overflow
+      height: 250, // Augmenté pour éviter l'overflow
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Axe Y (labels verticaux à gauche avec ligne verticale)
           SizedBox(
             width: 35,
-            child: Stack(
+            child: Column(
               children: [
-                // Ligne verticale
-                Positioned(
-                  right: 0,
-                  top: 10,
-                  bottom: 22,
-                  child: Container(
-                    width: 1,
-                    color: const Color(0xFFE5E7EB),
-                  ),
-                ),
-                // Labels
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const SizedBox(height: 10), // Espace pour les valeurs au-dessus des barres
-                    ...yAxisLabels.map((label) => Expanded(
-                      child: Align(
-                        alignment: Alignment.topRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 6),
-                          child: Text(
-                            '$label',
-                            style: const TextStyle(
-                              fontSize: 9,
-                              color: Color(0xFF9CA3AF),
-                            ),
-                          ),
+                // Zone du graphique (même hauteur que les barres)
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Ligne verticale - s'arrête au niveau de l'axe X (ne dépasse pas)
+                      Positioned(
+                        right: 0,
+                        top: 10,
+                        bottom:
+                            1.5, // S'arrête juste avant la ligne horizontale (épaisseur 1.5)
+                        child: Container(
+                          width: 1,
+                          color: const Color(0xFFE5E7EB),
                         ),
                       ),
-                    )).toList(),
-                    const SizedBox(height: 22), // Espace pour les labels des jours
-                  ],
+                      // Labels
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const SizedBox(
+                              height:
+                                  10), // Espace pour les valeurs au-dessus des barres
+                          ...yAxisLabels
+                              .map((label) => Padding(
+                                    padding: const EdgeInsets.only(right: 6),
+                                    child: Text(
+                                      '$label',
+                                      style: const TextStyle(
+                                        fontSize: 9,
+                                        color: Color(0xFF9CA3AF),
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
+                // Espace pour les labels des jours (synchronisé avec la zone des barres)
+                const SizedBox(height: 8),
+                const SizedBox(
+                    height:
+                        9 + 4), // Hauteur du texte du label (9) + padding (4)
               ],
             ),
           ),
           // Zone des barres avec ligne de base
           Expanded(
-            child: Stack(
+            child: Column(
               children: [
-                // Ligne horizontale en bas (axe X)
-                Positioned(
-                  bottom: 22, // Position juste au-dessus des labels des jours
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: 1,
-                    color: const Color(0xFFE5E7EB),
+                // Zone du graphique avec les barres
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Barres - doivent être positionnées en premier pour être sous la ligne
+                      Positioned.fill(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: data.map((dayData) {
+                            return _buildBarGroup(
+                              day: dayData['day'],
+                              raites: dayData['raites'],
+                              rouvertes: dayData['rouvertes'],
+                              maxValue: safeMaxValue,
+                              showLabel: false, // Ne pas afficher le label ici
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      // Ligne horizontale en bas (axe X au niveau du 0) - par-dessus les barres
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          height: 1.5,
+                          color: const Color(0xFFE5E7EB),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                // Barres avec labels
-                Column(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: data.map((dayData) {
-                          return _buildBarGroup(
-                            day: dayData['day'],
-                            raites: dayData['raites'],
-                            rouvertes: dayData['rouvertes'],
-                            maxValue: safeMaxValue,
-                          );
-                        }).toList(),
+                const SizedBox(height: 8),
+                // Labels des jours en dehors du graphique
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: data.map((dayData) {
+                    return Flexible(
+                      child: Text(
+                        dayData['day'],
+                        style: const TextStyle(
+                          fontSize: 9,
+                          color: Color(0xFF6B7280),
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
+                const SizedBox(height: 4),
               ],
             ),
           ),
@@ -756,92 +803,85 @@ class _DashboardPageState extends State<DashboardPage> {
     required int raites,
     required int rouvertes,
     required int maxValue,
+    bool showLabel = true,
   }) {
     // Éviter division par zéro et valeurs NaN
-    // Hauteur maximale réduite à 100px pour s'adapter au nouveau conteneur
-    final raitesHeight = raites > 0 
-        ? (maxValue > 0 ? (raites / maxValue * 100).toDouble().clamp(4.0, 100.0) : 4.0)
+    // Hauteur maximale augmentée à 150px pour mieux utiliser l'espace
+    final raitesHeight = raites > 0
+        ? (maxValue > 0
+            ? (raites / maxValue * 150).toDouble().clamp(4.0, 150.0)
+            : 4.0)
         : 0.0;
-    final rouvertesHeight = rouvertes > 0 
-        ? (maxValue > 0 ? (rouvertes / maxValue * 100).toDouble().clamp(4.0, 100.0) : 4.0)
+    final rouvertesHeight = rouvertes > 0
+        ? (maxValue > 0
+            ? (rouvertes / maxValue * 150).toDouble().clamp(4.0, 150.0)
+            : 4.0)
         : 0.0;
 
-    return SizedBox(
-      width: 50, // Largeur fixe pour chaque groupe de barres
+    return Flexible(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.center, // Centrage horizontal
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Barres côte à côte (comme dans le maquette)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min, // Empêche la Row de prendre toute la largeur
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Barre verte (raites)
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   if (raites > 0)
                     Text(
                       '$raites',
                       style: const TextStyle(
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFF10B981),
                       ),
                     ),
-                  if (raites > 0) const SizedBox(height: 4),
+                  if (raites > 0) const SizedBox(height: 2),
                   Container(
-                    width: 12,
+                    width: 10,
                     height: raites > 0 ? raitesHeight : 0,
                     decoration: BoxDecoration(
                       color: const Color(0xFF10B981),
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 3),
               // Barre orange (rouvertes)
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   if (rouvertes > 0)
                     Text(
                       '$rouvertes',
                       style: const TextStyle(
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w600,
                         color: Color(0xFFFBBF24),
                       ),
                     ),
-                  if (rouvertes > 0) const SizedBox(height: 4),
+                  if (rouvertes > 0) const SizedBox(height: 2),
                   Container(
-                    width: 12,
+                    width: 10,
                     height: rouvertes > 0 ? rouvertesHeight : 0,
                     decoration: BoxDecoration(
                       color: const Color(0xFFFBBF24),
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                   ),
                 ],
               ),
             ],
-          ),
-          const SizedBox(height: 8),
-          
-          // Label du jour - centré
-          SizedBox(
-            width: 50, // Même largeur que le conteneur parent
-            child: Text(
-              day,
-              style: const TextStyle(
-                fontSize: 10,
-                color: Color(0xFF6B7280),
-              ),
-              textAlign: TextAlign.center,
-            ),
           ),
         ],
       ),
