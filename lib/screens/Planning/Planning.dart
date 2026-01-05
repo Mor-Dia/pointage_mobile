@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import '../../services/planification_service.dart';
 import '../../services/api/models/planification_model.dart';
 import '../../constant.dart';
@@ -34,10 +35,26 @@ class _PlanningState extends State<Planning> {
   final Set<int> _fonctionnalitesTerminees =
       {}; // IDs des fonctionnalités terminées
 
+  // Timer pour le refresh automatique (optionnel)
+  Timer? _refreshTimer;
+
   @override
   void initState() {
     super.initState();
     _chargerPlanifications();
+
+    // Auto-refresh toutes les 30 secondes (optionnel - décommenter si besoin)
+    // _refreshTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+    //   if (mounted && !_isLoading) {
+    //     _chargerPlanifications();
+    //   }
+    // });
+  }
+
+  @override
+  void dispose() {
+    _refreshTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _chargerPlanifications() async {
@@ -533,14 +550,14 @@ class _PlanningState extends State<Planning> {
                       // Utiliser la première tâche de la fonctionnalité
                       if (detail.taches != null && detail.taches!.isNotEmpty) {
                         final premiereTache = detail.taches!.first;
-                        _ouvrirChronometro(premiereTache);
+                        _ouvrirChronometro(premiereTache, detail);
                       } else {
                         // Si pas de tâches, créer une tâche globale
                         final tacheFonctionnalite = PlanificationTache(
                           id: detail.fonctionnalite?.id,
                           nom: detail.fonctionnalite?.nom ?? 'Fonctionnalité',
                         );
-                        _ouvrirChronometro(tacheFonctionnalite);
+                        _ouvrirChronometro(tacheFonctionnalite, detail);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -841,7 +858,8 @@ class _PlanningState extends State<Planning> {
   }
 
   // Méthode pour ouvrir le chronomètre d'une tâche
-  void _ouvrirChronometro(PlanificationTache tache) {
+  void _ouvrirChronometro(
+      PlanificationTache tache, PlanificationDetail detail) {
     // Récupérer la durée sauvegardée ou la durée en cours
     final dureeSauvegardee = _parseDuree(tache.duree);
     final dureeInitiale = _tachesDurees[tache.id] ?? dureeSauvegardee;
@@ -862,8 +880,8 @@ class _PlanningState extends State<Planning> {
             }
           });
 
-          // Sauvegarder la durée dans le backend
-          _sauvegarderDureeTache(tache.id, duration);
+          // Sauvegarder la durée dans le backend en utilisant l'ID du détail
+          _sauvegarderDureeTache(detail.id, tache.id, duration);
         },
       ),
     );
@@ -902,8 +920,12 @@ class _PlanningState extends State<Planning> {
   }
 
   // Méthode pour sauvegarder la durée dans le backend
-  Future<void> _sauvegarderDureeTache(int? tacheId, Duration duration) async {
-    if (tacheId == null) return;
+  Future<void> _sauvegarderDureeTache(
+      int? detailId, int? tacheId, Duration duration) async {
+    if (detailId == null) {
+      print('❌ ID du détail de planification manquant');
+      return;
+    }
 
     try {
       // Convertir la durée en format HH:MM:SS
@@ -913,16 +935,17 @@ class _PlanningState extends State<Planning> {
       final dureeFormatee =
           '${heures.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secondes.toString().padLeft(2, '0')}';
 
-      print('💾 Sauvegarde de la durée pour la tâche $tacheId: $dureeFormatee');
+      print(
+          '💾 Sauvegarde de la durée pour la tâche $tacheId (détail $detailId): $dureeFormatee');
 
-      // Appeler l'API pour sauvegarder la durée
+      // Appeler la nouvelle API pour sauvegarder la durée effectuée
       final response = await http.post(
-        Uri.parse('${BASE_URL}taches/$tacheId/duree'),
+        Uri.parse('${BASE_URL}planification-detail/$detailId/duree-effectue'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: json.encode({'duree': dureeFormatee}),
+        body: json.encode({'duree_effectue': dureeFormatee}),
       );
 
       if (response.statusCode == 200) {

@@ -8,5 +8,9 @@
   },
   "lldb.library": "/Applications/Xcode.app/Contents/SharedFrameworks/LLDB.framework/Versions/A/LLDB",
   "lldb.launch.expressions": "native",
-  "java.configuration.updateBuildConfiguration": "interactive"
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "dart.flutterHotReloadOnSave": "always",
+  "dart.flutterHotRestartOnSave": "never",
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000
 }
