@@ -167,6 +167,7 @@ class Planification {
   final String? status; // 'en_cours' ou 'cloturee'
   final int? nombreTache;
   final int? nombreProjet;
+  final int? nombreFonctionnalite;
   final List<PlanificationDetail> details;
 
   Planification({
@@ -180,6 +181,7 @@ class Planification {
     this.status,
     this.nombreTache,
     this.nombreProjet,
+    this.nombreFonctionnalite,
     this.details = const [],
   });
 
@@ -205,6 +207,7 @@ class Planification {
       status: json['status'] as String?, // 'en_cours' ou 'cloturee'
       nombreTache: json['nombre_tache'] as int?,
       nombreProjet: json['nombre_projet'] as int?,
+      nombreFonctionnalite: json['nombre_fonctionnalite'] as int?,
       details: detailsList,
     );
   }
