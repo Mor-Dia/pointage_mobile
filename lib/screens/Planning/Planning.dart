@@ -673,6 +673,90 @@ class _PlanningState extends State<Planning> {
                   ],
                 ),
               ),
+              // Badge de réouverture si la fonctionnalité a été renvoyée
+              if (detail.fonctionnalite?.nombreReouvertures != null &&
+                  detail.fonctionnalite!.nombreReouvertures! > 0)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFEF3C7), // Jaune clair
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFFFBBF24), // Jaune
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.warning_rounded,
+                            color: Color(0xFFD97706), // Orange foncé
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              detail.fonctionnalite!.nombreReouvertures! > 1
+                                  ? '🔄 Renvoyée ${detail.fonctionnalite!.nombreReouvertures} fois en cours'
+                                  : '🔄 Renvoyée en cours',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF92400E), // Brun foncé
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (detail.fonctionnalite?.commentaireReouverture !=
+                              null &&
+                          detail.fonctionnalite!.commentaireReouverture!
+                              .isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        const Divider(
+                          color: Color(0xFFFBBF24),
+                          height: 1,
+                          thickness: 1,
+                        ),
+                        const SizedBox(height: 12),
+                        const Row(
+                          children: [
+                            Icon(
+                              Icons.message_rounded,
+                              color: Color(0xFFD97706),
+                              size: 16,
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              'Corrections demandées :',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF92400E),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          detail.fonctionnalite!.commentaireReouverture!,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF78350F),
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              if (detail.fonctionnalite?.nombreReouvertures != null &&
+                  detail.fonctionnalite!.nombreReouvertures! > 0)
+                const SizedBox(height: 16),
               // Label "Tâches"
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),

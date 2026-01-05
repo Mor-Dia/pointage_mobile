@@ -64,11 +64,17 @@ class PlanificationFonctionnalite {
   final int? id;
   final String? nom;
   final String? statut; // 'en_cours' ou 'cloturee'
+  final int?
+      nombreReouvertures; // Nombre de fois que la fonctionnalité a été renvoyée en cours
+  final String?
+      commentaireReouverture; // Commentaire expliquant pourquoi la fonctionnalité a été renvoyée
 
   PlanificationFonctionnalite({
     this.id,
     this.nom,
     this.statut,
+    this.nombreReouvertures,
+    this.commentaireReouverture,
   });
 
   factory PlanificationFonctionnalite.fromJson(Map<String, dynamic> json) {
@@ -76,6 +82,8 @@ class PlanificationFonctionnalite {
       id: json['id'] as int?,
       nom: json['nom'] as String?,
       statut: json['statut'] as String?,
+      nombreReouvertures: json['nombre_reouvertures'] as int?,
+      commentaireReouverture: json['commentaire_reouverture'] as String?,
     );
   }
 }
