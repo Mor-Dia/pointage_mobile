@@ -53,114 +53,133 @@ class _PointagesPageNewState extends State<PointagesPageNew> {
 
             // Liste des pointages avec FutureBuilder
             Expanded(
-              child: FutureBuilder<List<Pointage>>(
-                future: _pointagesFuture,
-                builder: (context, snapshot) {
-                  // État de chargement
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xff4DB8AC),
-                      ),
-                    );
-                  }
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  setState(() {
+                    _pointagesFuture = _loadPointages();
+                  });
+                  await _pointagesFuture;
+                },
+                color: const Color(0xff4DB8AC),
+                child: FutureBuilder<List<Pointage>>(
+                  future: _pointagesFuture,
+                  builder: (context, snapshot) {
+                    // État de chargement
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xff4DB8AC),
+                        ),
+                      );
+                    }
 
-                  // État d'erreur
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                    // État d'erreur
+                    if (snapshot.hasError) {
+                      return ListView(
                         children: [
-                          const Icon(
-                            Icons.error_outline,
-                            size: 64,
-                            color: Colors.red,
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.error_outline,
+                                  size: 64,
+                                  color: Colors.red,
+                                ),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'Erreur de chargement',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 32),
+                                  child: Text(
+                                    '${snapshot.error}',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _pointagesFuture = _loadPointages();
+                                    });
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xff4DB8AC),
+                                  ),
+                                  child: const Text('Réessayer'),
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Erreur de chargement',
-                            style: TextStyle(
-                              fontSize: 18,
+                        ],
+                      );
+                    }
+
+                    // Données chargées
+                    final pointages = snapshot.data ?? [];
+
+                    if (pointages.isEmpty) {
+                      return ListView(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.inbox_outlined,
+                                  size: 64,
+                                  color: Colors.grey[400],
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Aucun pointage',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        // Titre du mois
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Text(
+                            _formatMonthYear(DateTime.now()),
+                            style: const TextStyle(
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
+                              color: Colors.black87,
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 32),
-                            child: Text(
-                              '${snapshot.error}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _pointagesFuture =
-                                    _pointageService.getPointages();
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xff4DB8AC),
-                            ),
-                            child: const Text('Réessayer'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  // Données chargées
-                  final pointages = snapshot.data ?? [];
-
-                  if (pointages.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.inbox_outlined,
-                            size: 64,
-                            color: Colors.grey[400],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Aucun pointage',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return ListView(
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      // Titre du mois
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Text(
-                          _formatMonthYear(DateTime.now()),
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
                           ),
                         ),
-                      ),
 
-                      // Cartes de pointages
-                      ...pointages
-                          .map((pointage) => _buildPointageCard(pointage)),
-                    ],
-                  );
-                },
+                        // Cartes de pointages
+                        ...pointages
+                            .map((pointage) => _buildPointageCard(pointage)),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -303,7 +322,7 @@ class _PointagesPageNewState extends State<PointagesPageNew> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Ligne 1 : Date à gauche + Heures à droite 
+                      // Ligne 1 : Date à gauche + Heures à droite
                       Row(
                         children: [
                           // Date à gauche

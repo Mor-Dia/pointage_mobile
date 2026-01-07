@@ -4,9 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:pointage_mobile/core/models/user_model.dart';
 import 'package:pointage_mobile/services/authentication_bloc/authentication_bloc.dart';
-import 'package:pointage_mobile/services/pointage_service.dart';
-import 'package:pointage_mobile/services/api/models/pointage_model.dart';
-import 'package:intl/intl.dart';
+import '../../services/kpi_service.dart';
+import '../../services/api/models/kpi_model.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -16,199 +15,110 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  final PointageService _pointageService = PointageService();
-  List<Pointage> _pointages = [];
+  final KpiService _kpiService = KpiService();
+
+  KpiData? _kpiSemaine;
+  KpiData? _kpiMois;
+  KpiData? _kpiAnnee;
+
   bool _isLoading = true;
-  String _selectedPeriod = 'semaine'; // 'semaine' ou 'mois'
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _loadPointages();
+    _loadKpis();
   }
 
-  Future<void> _loadPointages() async {
+  /// Charge tous les KPI (semaine, mois, année)
+  Future<void> _loadKpis() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
     try {
-      setState(() => _isLoading = true);
-      final pointages = await _pointageService.getPointages();
+      final kpis = await _kpiService.getAllKpis();
+
       setState(() {
-        _pointages = pointages;
+        _kpiSemaine = kpis['semaine'];
+        _kpiMois = kpis['mois'];
+        _kpiAnnee = kpis['annee'];
         _isLoading = false;
       });
     } catch (e) {
-      print('❌ Erreur chargement pointages: $e');
-      setState(() => _isLoading = false);
-    }
-  }
-
-  // Calculer les statistiques
-  Map<String, dynamic> _calculateStats() {
-    final now = DateTime.now();
-    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final startOfMonth = DateTime(now.year, now.month, 1);
-
-    int retardsSemaine = 0;
-    int absencesSemaine = 0;
-    int retardsMois = 0;
-    int absencesMois = 0;
-
-    for (var pointage in _pointages) {
-      if (pointage.date == null) continue;
-      final date = DateTime.parse(pointage.date!);
-
-      for (var detail in pointage.details) {
-        if (detail.retard == true) {
-          if (date.isAfter(startOfWeek)) retardsSemaine++;
-          if (date.isAfter(startOfMonth)) retardsMois++;
-        }
-        if (detail.absence == true) {
-          if (date.isAfter(startOfWeek)) absencesSemaine++;
-          if (date.isAfter(startOfMonth)) absencesMois++;
-        }
-      }
-    }
-
-    // TEMPORAIRE : Utiliser toujours les données de démo pour la présentation
-    // Quand vous aurez de vrais pointages avec retards, commentez ce bloc
-    return {
-      'retardsSemaine': 3,
-      'absencesSemaine': 2,
-      'retardsMois': 3,
-      'absencesMois': 2,
-    };
-
-    /* VERSION AVEC DONNÉES RÉELLES (à décommenter plus tard)
-    // Si pas de données réelles, utiliser des données de démo (comme dans la maquette)
-    if (retardsSemaine == 0 && absencesSemaine == 0 && 
-        retardsMois == 0 && absencesMois == 0) {
-      return {
-        'retardsSemaine': 3,
-        'absencesSemaine': 2,
-        'retardsMois': 3,
-        'absencesMois': 2,
-      };
-    }
-
-    return {
-      'retardsSemaine': retardsSemaine,
-      'absencesSemaine': absencesSemaine,
-      'retardsMois': retardsMois,
-      'absencesMois': absencesMois,
-    };
-    */
-  }
-
-  // Calculer les données d'efficience par jour
-  List<Map<String, dynamic>> _calculateEfficienceData() {
-    final now = DateTime.now();
-    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-
-    List<Map<String, dynamic>> weekData = [];
-    final daysOfWeek = [
-      'Lundi',
-      'Mardi',
-      'Mercredi',
-      'Jeudi',
-      'Vendredi',
-      'Samedi'
-    ];
-
-    // Données de démonstration (similaires à la maquette)
-    final demoData = [
-      {'raites': 56, 'rouvertes': 39}, // Lundi
-      {'raites': 64, 'rouvertes': 80}, // Mardi
-      {'raites': 76, 'rouvertes': 15}, // Mercredi
-      {'raites': 78, 'rouvertes': 17}, // Jeudi
-      {'raites': 70, 'rouvertes': 65}, // Vendredi
-      {'raites': 37, 'rouvertes': 15}, // Samedi
-    ];
-
-    for (int i = 0; i < 6; i++) {
-      final date = startOfWeek.add(Duration(days: i));
-      final pointagesOfDay = _pointages.where((p) {
-        if (p.date == null) return false;
-        final pDate = DateTime.parse(p.date!);
-        return pDate.year == date.year &&
-            pDate.month == date.month &&
-            pDate.day == date.day;
-      }).toList();
-
-      // Compter les pointages à l'heure (sans retard ni absence)
-      int raitesCount = 0;
-      for (var p in pointagesOfDay) {
-        for (var d in p.details) {
-          if (d.retard == false && d.absence == false) {
-            raitesCount++;
-          }
-        }
-      }
-
-      // Compter les retards
-      int rouvertesCount = 0;
-      for (var p in pointagesOfDay) {
-        for (var d in p.details) {
-          if (d.retard == true) {
-            rouvertesCount++;
-          }
-        }
-      }
-
-      // Si pas de données réelles, utiliser les données de démo
-      // Sinon utiliser les données réelles
-      int raitesValue;
-      int rouvertesValue;
-
-      if (raitesCount == 0 && rouvertesCount == 0) {
-        // Pas de données réelles, utiliser les données de démo
-        raitesValue = demoData[i]['raites']!;
-        rouvertesValue = demoData[i]['rouvertes']!;
-      } else {
-        // Utiliser les données réelles
-        raitesValue = raitesCount;
-        rouvertesValue = rouvertesCount;
-      }
-
-      weekData.add({
-        'day': daysOfWeek[i],
-        'raites': raitesValue,
-        'rouvertes': rouvertesValue,
+      setState(() {
+        _errorMessage = 'Erreur lors du chargement des statistiques: $e';
+        _isLoading = false;
       });
     }
-
-    return weekData;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: _loadPointages,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Header avec avatar, nom et notification
-                        _buildHeader(),
-                        const SizedBox(height: 24),
+            : _errorMessage != null
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.error_outline,
+                              size: 48, color: Colors.red),
+                          const SizedBox(height: 16),
+                          Text(
+                            _errorMessage!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadKpis,
+                            child: const Text('Réessayer'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _loadKpis,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Header avec avatar, nom et notification
+                            _buildHeader(),
+                            const SizedBox(height: 24),
 
-                        // Section Retards - Absences
-                        _buildRetardsAbsencesSection(),
-                        const SizedBox(height: 24),
+                            // KPI Semaine
+                            if (_kpiSemaine != null)
+                              _buildKpiCard(_kpiSemaine!, 'Cette Semaine',
+                                  Icons.calendar_today, Colors.blue),
+                            const SizedBox(height: 16),
 
-                        // Section Efficience
-                        _buildEfficienceSection(),
-                      ],
+                            // KPI Mois
+                            if (_kpiMois != null)
+                              _buildKpiCard(_kpiMois!, 'Ce Mois',
+                                  Icons.calendar_month, Colors.green),
+                            const SizedBox(height: 16),
+
+                            // KPI Année
+                            if (_kpiAnnee != null)
+                              _buildKpiCard(_kpiAnnee!, 'Cette Année',
+                                  Icons.date_range, Colors.orange),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
       ),
     );
   }
@@ -219,7 +129,6 @@ class _DashboardPageState extends State<DashboardPage> {
       builder: (context, state) {
         // Récupérer le nom de l'utilisateur connecté
         String userName = 'Utilisateur';
-        String subtitle = 'Bienvenu mr le lead front';
 
         if (state.status == AuthenticationStatus.authenticated &&
             state.user != null) {
@@ -246,27 +155,15 @@ class _DashboardPageState extends State<DashboardPage> {
               child: Icon(Icons.person, size: 32, color: Colors.grey[600]),
             ),
             const SizedBox(width: 12),
-            // Nom et sous-titre
+            // Nom
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Salut, $userName',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2D3748),
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
+              child: Text(
+                'Salut, $userName',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF2D3748),
+                ),
               ),
             ),
             // Icône notification
@@ -287,7 +184,10 @@ class _DashboardPageState extends State<DashboardPage> {
                 'assets/icons/notification1.svg',
                 width: 24,
                 height: 24,
-                color: const Color(0xFF2D3748),
+                colorFilter: const ColorFilter.mode(
+                  Color(0xFF2D3748),
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ],
@@ -296,616 +196,124 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildRetardsAbsencesSection() {
-    final stats = _calculateStats();
-    final isWeek = _selectedPeriod == 'semaine';
-    final retards = isWeek ? stats['retardsSemaine'] : stats['retardsMois'];
-    final absences = isWeek ? stats['absencesSemaine'] : stats['absencesMois'];
-
-    // Calcul des dates pour l'affichage
-    final now = DateTime.now();
-    String dateRange;
-    String monthRange;
-
-    if (isWeek) {
-      final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-      dateRange = 'Du ${startOfWeek.day} - Aujourd\'hui';
-    } else {
-      dateRange = 'Du 01 Décembre - Aujourd\'hui';
-    }
-
-    monthRange = 'Du 01 Décembre - Aujourd\'hui';
-
-    // Calculer les pourcentages (sur une base de 30 jours de travail)
-    final totalDaysWeek = 5; // 5 jours de travail par semaine
-    final totalDaysMonth = 22; // ~22 jours de travail par mois
-    final retardPercentage = isWeek
-        ? (retards / totalDaysWeek * 100).round()
-        : (retards / totalDaysMonth * 100).round();
-    final absencePercentage = isWeek
-        ? (absences / totalDaysWeek * 100).round()
-        : (absences / totalDaysMonth * 100).round();
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Titre avec icône filtre
-          Row(
-            children: [
-              SvgPicture.asset(
-                'assets/icons/notification1.svg',
-                width: 20,
-                height: 20,
-                color: const Color(0xFF2D3748),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Retards - Absences',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF2D3748),
+  /// Construit une carte KPI avec toutes les statistiques
+  Widget _buildKpiCard(KpiData kpi, String title, IconData icon, Color color) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // En-tête de la carte
+            Row(
+              children: [
+                Icon(icon, color: color, size: 28),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
                 ),
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.filter_list, size: 20),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+              ],
+            ),
+            const Divider(height: 24),
 
-          // Sélecteur de période
-          Row(
-            children: [
-              _buildPeriodChip('Cette semaine', 'semaine'),
-              const SizedBox(width: 12),
-              _buildPeriodChip('Ce mois', 'mois'),
-            ],
-          ),
-          const SizedBox(height: 16),
+            // Nombre total de fonctionnalités
+            _buildKpiRow(
+              icon: Icons.functions,
+              label: 'Total fonctionnalités',
+              value: kpi.nombreTotalFonctionnalites.toString(),
+              color: Colors.blue,
+            ),
+            const SizedBox(height: 12),
 
-          // Date range
-          Row(
-            children: [
-              const Icon(Icons.calendar_today,
-                  size: 14, color: Color(0xFF14B8A6)),
-              const SizedBox(width: 6),
-              Text(
-                dateRange,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF14B8A6),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
+            // Taux de réouverture
+            _buildKpiRow(
+              icon: Icons.refresh,
+              label: 'Taux de réouverture',
+              value: kpi.tauxReouvertureFormatted,
+              color: kpi.tauxReouverture > 50 ? Colors.red : Colors.orange,
+            ),
+            const SizedBox(height: 12),
 
-          // Statistiques
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  label: '$retards retards',
-                  color: const Color(0xFFFBBF24),
-                  borderColor: const Color(0xFFFBBF24),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard(
-                  label: '$absences absences',
-                  color: const Color(0xFFEF4444),
-                  borderColor: const Color(0xFFEF4444),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+            // Taux de respect des délais
+            _buildKpiRow(
+              icon: Icons.check_circle,
+              label: 'Respect des délais',
+              value: kpi.tauxRespectDelaisFormatted,
+              color: kpi.tauxRespectDelais > 70 ? Colors.green : Colors.orange,
+            ),
+            const SizedBox(height: 12),
 
-          // Section "Ce mois"
-          const Row(
-            children: [
-              Icon(Icons.access_time_filled,
-                  size: 16, color: Color(0xFF14B8A6)),
-              SizedBox(width: 6),
-              Text(
-                'Ce mois',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF14B8A6),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              const Icon(Icons.calendar_today,
-                  size: 14, color: Color(0xFF14B8A6)),
-              const SizedBox(width: 6),
-              Text(
-                monthRange,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF14B8A6),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+            // Total heures perdues
+            _buildKpiRow(
+              icon: Icons.access_time,
+              label: 'Heures perdues',
+              value: kpi.totalHeuresPerduesFormatted,
+              color: kpi.totalHeuresPerdues > 0 ? Colors.red : Colors.grey,
+            ),
+            const SizedBox(height: 12),
 
-          // Pourcentages mensuels
-          Row(
-            children: [
-              Expanded(
-                child: _buildPercentageCard(
-                  percentage: '$retardPercentage%',
-                  backgroundColor: const Color(0xFFFEF3C7),
-                  textColor: const Color(0xFFD97706),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildPercentageCard(
-                  percentage: '$absencePercentage%',
-                  backgroundColor: const Color(0xFFFEE2E2),
-                  textColor: const Color(0xFFDC2626),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+            // Nombre d'absences
+            _buildKpiRow(
+              icon: Icons.event_busy,
+              label: 'Absences',
+              value: kpi.nombreAbsences.toString(),
+              color: kpi.nombreAbsences > 0 ? Colors.orange : Colors.grey,
+            ),
+            const SizedBox(height: 12),
 
-  Widget _buildPeriodChip(String label, String value) {
-    final isSelected = _selectedPeriod == value;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedPeriod = value),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF14B8A6) : Colors.transparent,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(
-            color: const Color(0xFF14B8A6),
-            width: 1,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: isSelected ? Colors.white : const Color(0xFF14B8A6),
-          ),
+            // Nombre de retards
+            _buildKpiRow(
+              icon: Icons.schedule,
+              label: 'Retards',
+              value: kpi.nombreRetards.toString(),
+              color: kpi.nombreRetards > 0 ? Colors.red : Colors.grey,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildStatCard({
+  /// Ligne de statistique avec icône, label et valeur
+  Widget _buildKpiRow({
+    required IconData icon,
     required String label,
+    required String value,
     required Color color,
-    required Color borderColor,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: borderColor, width: 1.5),
-      ),
-      child: Text(
-        label,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPercentageCard({
-    required String percentage,
-    required Color backgroundColor,
-    required Color textColor,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        percentage,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: textColor,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEfficienceSection() {
-    final efficienceData = _calculateEfficienceData();
-    final now = DateTime.now();
-    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final dateRange = 'Du ${startOfWeek.day} - Aujourd\'hui';
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Titre avec icône filtre
-          Row(
-            children: [
-              SvgPicture.asset(
-                'assets/icons/bar_chart.svg',
-                width: 20,
-                height: 20,
-                color: const Color(0xFF2D3748),
-              ),
-              const SizedBox(width: 8),
-              const Text(
-                'Efficience',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF2D3748),
-                ),
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.filter_list, size: 20),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Sélecteur de période
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color(0xFF14B8A6), width: 1),
-            ),
-            child: const Text(
-              'Cette semaine',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF14B8A6),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Date range
-          Row(
-            children: [
-              const Icon(Icons.calendar_today,
-                  size: 14, color: Color(0xFF14B8A6)),
-              const SizedBox(width: 6),
-              Text(
-                dateRange,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF14B8A6),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // Graphique en barres
-          _buildBarChart(efficienceData),
-          const SizedBox(height: 16),
-
-          // Légende
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildLegendItem(
-                  'Raites dans les délais', const Color(0xFF10B981)),
-              const SizedBox(width: 20),
-              _buildLegendItem('Rouvertes', const Color(0xFFFBBF24)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBarChart(List<Map<String, dynamic>> data) {
-    final maxValue = data.fold<int>(
-      0,
-      (prev, item) => [prev, item['raites'] as int, item['rouvertes'] as int]
-          .reduce((a, b) => a > b ? a : b),
-    );
-
-    // Si maxValue est 0, utiliser 100 comme valeur par défaut pour éviter division par zéro
-    final safeMaxValue = maxValue > 0 ? maxValue : 100;
-
-    // Calculer les intervalles pour l'axe Y (de haut en bas : 100, 80, 60, 40, 20, 0)
-    final yAxisLabels = [100, 80, 60, 40, 20, 0];
-
-    return SizedBox(
-      height: 250, // Augmenté pour éviter l'overflow
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Axe Y (labels verticaux à gauche avec ligne verticale)
-          SizedBox(
-            width: 35,
-            child: Column(
-              children: [
-                // Zone du graphique (même hauteur que les barres)
-                Expanded(
-                  child: Stack(
-                    children: [
-                      // Ligne verticale - s'arrête au niveau de l'axe X (ne dépasse pas)
-                      Positioned(
-                        right: 0,
-                        top: 10,
-                        bottom:
-                            1.5, // S'arrête juste avant la ligne horizontale (épaisseur 1.5)
-                        child: Container(
-                          width: 1,
-                          color: const Color(0xFFE5E7EB),
-                        ),
-                      ),
-                      // Labels
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const SizedBox(
-                              height:
-                                  10), // Espace pour les valeurs au-dessus des barres
-                          ...yAxisLabels
-                              .map((label) => Padding(
-                                    padding: const EdgeInsets.only(right: 6),
-                                    child: Text(
-                                      '$label',
-                                      style: const TextStyle(
-                                        fontSize: 9,
-                                        color: Color(0xFF9CA3AF),
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                // Espace pour les labels des jours (synchronisé avec la zone des barres)
-                const SizedBox(height: 8),
-                const SizedBox(
-                    height:
-                        9 + 4), // Hauteur du texte du label (9) + padding (4)
-              ],
-            ),
-          ),
-          // Zone des barres avec ligne de base
-          Expanded(
-            child: Column(
-              children: [
-                // Zone du graphique avec les barres
-                Expanded(
-                  child: Stack(
-                    children: [
-                      // Barres - doivent être positionnées en premier pour être sous la ligne
-                      Positioned.fill(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: data.map((dayData) {
-                            return _buildBarGroup(
-                              day: dayData['day'],
-                              raites: dayData['raites'],
-                              rouvertes: dayData['rouvertes'],
-                              maxValue: safeMaxValue,
-                              showLabel: false, // Ne pas afficher le label ici
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      // Ligne horizontale en bas (axe X au niveau du 0) - par-dessus les barres
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          height: 1.5,
-                          color: const Color(0xFFE5E7EB),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // Labels des jours en dehors du graphique
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: data.map((dayData) {
-                    return Flexible(
-                      child: Text(
-                        dayData['day'],
-                        style: const TextStyle(
-                          fontSize: 9,
-                          color: Color(0xFF6B7280),
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 4),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBarGroup({
-    required String day,
-    required int raites,
-    required int rouvertes,
-    required int maxValue,
-    bool showLabel = true,
-  }) {
-    // Éviter division par zéro et valeurs NaN
-    // Hauteur maximale augmentée à 150px pour mieux utiliser l'espace
-    final raitesHeight = raites > 0
-        ? (maxValue > 0
-            ? (raites / maxValue * 150).toDouble().clamp(4.0, 150.0)
-            : 4.0)
-        : 0.0;
-    final rouvertesHeight = rouvertes > 0
-        ? (maxValue > 0
-            ? (rouvertes / maxValue * 150).toDouble().clamp(4.0, 150.0)
-            : 4.0)
-        : 0.0;
-
-    return Flexible(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Barres côte à côte (comme dans le maquette)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Barre verte (raites)
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (raites > 0)
-                    Text(
-                      '$raites',
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF10B981),
-                      ),
-                    ),
-                  if (raites > 0) const SizedBox(height: 2),
-                  Container(
-                    width: 10,
-                    height: raites > 0 ? raitesHeight : 0,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF10B981),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(width: 3),
-              // Barre orange (rouvertes)
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (rouvertes > 0)
-                    Text(
-                      '$rouvertes',
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFFBBF24),
-                      ),
-                    ),
-                  if (rouvertes > 0) const SizedBox(height: 2),
-                  Container(
-                    width: 10,
-                    height: rouvertes > 0 ? rouvertesHeight : 0,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFBBF24),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLegendItem(String label, Color color) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(2),
+        Icon(icon, size: 20, color: color),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+            ),
           ),
         ),
-        const SizedBox(width: 6),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 11,
-            color: Color(0xFF6B7280),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
         ),
       ],
