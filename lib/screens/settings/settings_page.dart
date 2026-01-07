@@ -194,6 +194,24 @@ class _SettingsPageState extends State<SettingsPage> {
               value: kpi.totalHeuresPerduesFormatted,
               color: kpi.totalHeuresPerdues > 0 ? Colors.red : Colors.grey,
             ),
+            const SizedBox(height: 12),
+
+            // Nombre d'absences
+            _buildKpiRow(
+              icon: Icons.event_busy,
+              label: 'Absences',
+              value: kpi.nombreAbsences.toString(),
+              color: kpi.nombreAbsences > 0 ? Colors.orange : Colors.grey,
+            ),
+            const SizedBox(height: 12),
+
+            // Nombre de retards
+            _buildKpiRow(
+              icon: Icons.schedule,
+              label: 'Retards',
+              value: kpi.nombreRetards.toString(),
+              color: kpi.nombreRetards > 0 ? Colors.red : Colors.grey,
+            ),
           ],
         ),
       ),

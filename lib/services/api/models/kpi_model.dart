@@ -30,6 +30,8 @@ class KpiData {
   final double tauxReouverture;
   final double tauxRespectDelais;
   final double totalHeuresPerdues;
+  final int nombreAbsences;
+  final int nombreRetards;
   final KpiPersonnel? personnel;
   final String periode; // 'semaine', 'mois', 'annee'
 
@@ -38,6 +40,8 @@ class KpiData {
     required this.tauxReouverture,
     required this.tauxRespectDelais,
     required this.totalHeuresPerdues,
+    required this.nombreAbsences,
+    required this.nombreRetards,
     this.personnel,
     required this.periode,
   });
@@ -49,6 +53,8 @@ class KpiData {
       tauxReouverture: _parseDouble(json['taux_reouverture']),
       tauxRespectDelais: _parseDouble(json['taux_respect_delais']),
       totalHeuresPerdues: _parseDouble(json['total_heures_perdues']),
+      nombreAbsences: json['nombre_absences'] ?? 0,
+      nombreRetards: json['nombre_retards'] ?? 0,
       personnel: json['personnel'] != null
           ? KpiPersonnel.fromJson(json['personnel'])
           : null,
