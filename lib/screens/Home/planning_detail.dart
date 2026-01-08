@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pointage_mobile/components/CardRowPlanning.dart';
 import 'package:pointage_mobile/components/TopDialogNotification.dart';
 import 'package:pointage_mobile/services/api/models/pratique_model.dart';
 import 'package:pointage_mobile/services/api/models/programme_model.dart';
@@ -87,9 +86,9 @@ class _PlanningDetailState extends State<PlanningDetail> {
             return const Center(child: Text('Aucune planning trouvée'));
           }
           Programme currentPlanning = data[0];
-          return CardRowPlanning(
-            data: currentPlanning,
-          );
+          // return CardRowPlanning(
+          //   data: currentPlanning,
+          // );
         },
         customErrorWidget: customWidget(context, "error"),
         customPendingWidget: customWidget(context, "pending"),

@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pointage_mobile/components/CardTypeNotificationPush.dart';
-import 'package:pointage_mobile/components/CardProduit.dart';
 import 'package:pointage_mobile/components/TopDialogNotification.dart';
 import 'package:pointage_mobile/constant.dart';
 

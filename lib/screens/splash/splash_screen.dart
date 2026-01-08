@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pointage_mobile/screens/Boutique/Panier.dart';
+// import 'package:pointage_mobile/screens/Boutique/Panier.dart';
 import 'package:pointage_mobile/screens/Home/MainHome.dart';
 import 'package:pointage_mobile/screens/Home/home_page.dart';
 import 'package:pointage_mobile/screens/maintenance/maintenance_page_screen.dart';
