@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../constant.dart';
 import '../../services/api/models/pointage_model.dart';
 import '../../services/pointage_service.dart';
+import '../../services/socket_service.dart';
 
 class PointagesPageNew extends StatefulWidget {
   const PointagesPageNew({Key? key}) : super(key: key);
@@ -15,10 +16,12 @@ class PointagesPageNew extends StatefulWidget {
 class _PointagesPageNewState extends State<PointagesPageNew> {
   final TextEditingController _searchController = TextEditingController();
   final PointageService _pointageService = PointageService();
+  final SocketService _socketService = SocketService();
 
   // Future pour charger les données
   late Future<List<Pointage>> _pointagesFuture;
   int _pointagesCount = 0;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -27,15 +30,63 @@ class _PointagesPageNewState extends State<PointagesPageNew> {
   }
 
   Future<List<Pointage>> _loadPointages() async {
-    final pointages = await _pointageService.getPointages();
-    setState(() {
-      // Compter le nombre total de détails dans tous les pointages
-      _pointagesCount = pointages.fold<int>(
-        0,
-        (sum, pointage) => sum + pointage.details.length,
-      );
-    });
-    return pointages;
+    if (_isLoading) return [];
+
+    setState(() => _isLoading = true);
+
+    try {
+      final pointages = await _pointageService.getPointages();
+
+      if (mounted) {
+        setState(() {
+          // Compter le nombre total de détails dans tous les pointages
+          _pointagesCount = pointages.fold<int>(
+            0,
+            (sum, pointage) => sum + pointage.details.length,
+          );
+          _isLoading = false;
+        });
+
+        // 🔥 NOUVEAU : Initialiser Socket.IO après avoir les données
+        if (pointages.isNotEmpty) {
+          // Récupérer le personnel_id depuis les données
+          final personnelId = pointages.first.personnelId;
+
+          // 🔥 IMPORTANT : Enregistrer le listener AVANT de connecter
+          if (!_socketService.isConnected) {
+            // Enregistrer le callback dans le map AVANT la connexion
+            _socketService.registerCallback('pointage.updated', (data) {
+              debugPrint('🔄 Rechargement automatique des pointages');
+
+              // Recharger les données seulement si le widget est monté et pas déjà en chargement
+              if (mounted && !_isLoading) {
+                setState(() {
+                  _pointagesFuture = _loadPointages();
+                });
+              }
+            });
+
+            // Connecter au socket (qui va setup tous les listeners)
+            _socketService.connect(personnelId: personnelId);
+          }
+        }
+      }
+
+      return pointages;
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    // 🔥 NOUVEAU : Nettoyer le listener (mais garder la connexion pour les autres pages)
+    _socketService.off('pointage.updated');
+    super.dispose();
   }
 
   @override
@@ -497,11 +548,5 @@ class _PointagesPageNewState extends State<PointagesPageNew> {
   String _formatMonthYear(DateTime date) {
     final formatted = DateFormat('MMMM yyyy', 'fr_FR').format(date);
     return formatted[0].toUpperCase() + formatted.substring(1);
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 }

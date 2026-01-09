@@ -53,35 +53,50 @@ class SocketService {
         _isConnected = true;
         debugPrint('✅ Socket.IO connecté avec succès');
 
-        // S'abonner au canal global avec Laravel Echo format
+        // S'abonner au canal global planifications
         _socket!
             .emit('subscribe', {'channel': 'planification.all', 'auth': {}});
         debugPrint('📡 Abonné au canal: planification.all');
+
+        // S'abonner au canal global pointages
+        _socket!.emit('subscribe', {'channel': 'pointage.all', 'auth': {}});
+        debugPrint('📡 Abonné au canal: pointage.all');
 
         // S'abonner au canal personnel si personnelId fourni
         if (personnelId != null) {
           _socket!.emit('subscribe',
               {'channel': 'planification.$personnelId', 'auth': {}});
           debugPrint('📡 Abonné au canal: planification.$personnelId');
+
+          _socket!.emit(
+              'subscribe', {'channel': 'pointage.$personnelId', 'auth': {}});
+          debugPrint('📡 Abonné au canal: pointage.$personnelId');
         }
 
-        // Écouter les événements sur le canal planification.all
-        _socket!.on('planification.all:App\\Events\\PlanificationUpdated',
-            (data) {
-          debugPrint('📨 [Canal global] Événement PlanificationUpdated reçu');
+        // Écouter les événements planifications (format avec canal)
+        _socket!.on('planification.all:planification.updated', (data) {
+          debugPrint('📨 Événement reçu: planification.updated (avec canal)');
           debugPrint('📦 Données: $data');
-          // Propager aux listeners
           if (_eventCallbacks.containsKey('planification.updated')) {
             _eventCallbacks['planification.updated']!(data);
           }
         });
 
-        // Format avec broadcastAs
-        _socket!.on('planification.all:planification.updated', (data) {
-          debugPrint('📨 [Canal global] Événement planification.updated reçu');
+        // Écouter les événements planifications (format simple)
+        _socket!.on('planification.updated', (data) {
+          debugPrint('📨 Événement reçu: planification.updated (simple)');
           debugPrint('📦 Données: $data');
           if (_eventCallbacks.containsKey('planification.updated')) {
             _eventCallbacks['planification.updated']!(data);
+          }
+        });
+
+        // 🔥 Écouter les événements pointages (format simple qui fonctionne)
+        _socket!.on('pointage.updated', (data) {
+          debugPrint('📨 Événement reçu: pointage.updated');
+          debugPrint('📦 Données: $data');
+          if (_eventCallbacks.containsKey('pointage.updated')) {
+            _eventCallbacks['pointage.updated']!(data);
           }
         });
 
@@ -94,6 +109,15 @@ class SocketService {
             debugPrint('📦 Données: $data');
             if (_eventCallbacks.containsKey('planification.updated')) {
               _eventCallbacks['planification.updated']!(data);
+            }
+          });
+
+          // 🔥 NOUVEAU : Canal personnel pointages
+          _socket!.on('pointage.$personnelId:pointage.updated', (data) {
+            debugPrint('📨 [Canal personnel] Événement pointage.updated reçu');
+            debugPrint('📦 Données: $data');
+            if (_eventCallbacks.containsKey('pointage.updated')) {
+              _eventCallbacks['pointage.updated']!(data);
             }
           });
         }
@@ -121,6 +145,18 @@ class SocketService {
     } catch (e) {
       debugPrint('❌ Exception lors de la connexion Socket.IO: $e');
     }
+  }
+
+  /// Enregistrer un callback pour un événement AVANT la connexion
+  ///
+  /// Cette méthode doit être appelée AVANT connect() pour que le callback
+  /// soit disponible quand le socket se connecte et configure les listeners
+  ///
+  /// [eventName] : Nom de l'événement (ex: 'planification.updated', 'pointage.updated')
+  /// [callback] : Fonction appelée quand l'événement est reçu
+  void registerCallback(String eventName, Function(dynamic) callback) {
+    _eventCallbacks[eventName] = callback;
+    debugPrint('📝 Callback enregistré pour: $eventName');
   }
 
   /// Écouter un événement spécifique
