@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:async';
 import '../../services/planification_service.dart';
 import '../../services/api/models/planification_model.dart';
+import '../../services/socket_service.dart';
 import '../../constant.dart';
 import 'tache_timer_modal.dart';
 
@@ -19,6 +20,7 @@ class Planning extends StatefulWidget {
 
 class _PlanningState extends State<Planning> {
   final PlanificationService _planificationService = PlanificationService();
+  final SocketService _socketService = SocketService();
   List<Planification> _planifications = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -43,6 +45,9 @@ class _PlanningState extends State<Planning> {
     super.initState();
     _chargerPlanifications();
 
+    // Note: La connexion Socket.IO sera faite après avoir récupéré les planifications
+    // pour obtenir le bon personnel_id
+
     // Auto-refresh toutes les 30 secondes (optionnel - décommenter si besoin)
     // _refreshTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
     //   if (mounted && !_isLoading) {
@@ -54,6 +59,7 @@ class _PlanningState extends State<Planning> {
   @override
   void dispose() {
     _refreshTimer?.cancel();
+    _socketService.disconnect();
     super.dispose();
   }
 
@@ -98,6 +104,24 @@ class _PlanningState extends State<Planning> {
         print(
             '✅ Chargé ${_tachesTerminees.length} tâches terminées et ${_fonctionnalitesTerminees.length} fonctionnalités clôturées depuis l\'API');
         _isLoading = false;
+
+        // Initialiser Socket.IO après avoir récupéré les planifications
+        if (planifications.isNotEmpty && !_socketService.isConnected) {
+          final personnelId = planifications.first.personnelId;
+          debugPrint(
+              '🔌 Initialisation Socket.IO avec personnel_id: $personnelId');
+
+          _socketService.connect(personnelId: personnelId);
+
+          // Écouter les mises à jour de planification
+          // Le SocketService gère déjà l'écoute sur les canaux corrects
+          _socketService.on('planification.updated', (data) {
+            debugPrint('� Rechargement automatique des planifications');
+            if (mounted && !_isLoading) {
+              _chargerPlanifications();
+            }
+          });
+        }
       });
     } catch (e) {
       if (!mounted) return;
