@@ -52,22 +52,24 @@ class _PointagesPageNewState extends State<PointagesPageNew> {
           // Récupérer le personnel_id depuis les données
           final personnelId = pointages.first.personnelId;
 
-          // 🔥 IMPORTANT : Enregistrer le listener AVANT de connecter
+          // Toujours enregistrer le callback, même si déjà connecté
+          _socketService.registerCallback('pointage.updated', (data) {
+            debugPrint('🔄 Rechargement automatique des pointages');
+
+            // Recharger les données seulement si le widget est monté et pas déjà en chargement
+            if (mounted && !_isLoading) {
+              setState(() {
+                _pointagesFuture = _loadPointages();
+              });
+            }
+          });
+
+          // Connecter seulement si pas encore connecté
           if (!_socketService.isConnected) {
-            // Enregistrer le callback dans le map AVANT la connexion
-            _socketService.registerCallback('pointage.updated', (data) {
-              debugPrint('🔄 Rechargement automatique des pointages');
-
-              // Recharger les données seulement si le widget est monté et pas déjà en chargement
-              if (mounted && !_isLoading) {
-                setState(() {
-                  _pointagesFuture = _loadPointages();
-                });
-              }
-            });
-
-            // Connecter au socket (qui va setup tous les listeners)
             _socketService.connect(personnelId: personnelId);
+          } else {
+            debugPrint(
+                '✅ Pointages: Socket déjà connecté, callback enregistré');
           }
         }
       }

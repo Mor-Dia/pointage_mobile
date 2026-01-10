@@ -6,6 +6,7 @@ import 'package:pointage_mobile/core/models/user_model.dart';
 import 'package:pointage_mobile/services/authentication_bloc/authentication_bloc.dart';
 import '../../services/kpi_service.dart';
 import '../../services/api/models/kpi_model.dart';
+import '../../services/socket_service.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -16,6 +17,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   final KpiService _kpiService = KpiService();
+  final SocketService _socketService = SocketService();
 
   KpiData? _kpiSemaine;
   KpiData? _kpiMois;
@@ -23,11 +25,19 @@ class _DashboardPageState extends State<DashboardPage> {
 
   bool _isLoading = true;
   String? _errorMessage;
+  bool _socketListenersSetup = false;
 
   @override
   void initState() {
     super.initState();
     _loadKpis();
+  }
+
+  @override
+  void dispose() {
+    _socketService.off('planification.updated');
+    _socketService.off('pointage.updated');
+    super.dispose();
   }
 
   /// Charge tous les KPI (semaine, mois, année)
@@ -40,18 +50,54 @@ class _DashboardPageState extends State<DashboardPage> {
     try {
       final kpis = await _kpiService.getAllKpis();
 
-      setState(() {
-        _kpiSemaine = kpis['semaine'];
-        _kpiMois = kpis['mois'];
-        _kpiAnnee = kpis['annee'];
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _kpiSemaine = kpis['semaine'];
+          _kpiMois = kpis['mois'];
+          _kpiAnnee = kpis['annee'];
+          _isLoading = false;
+        });
+
+        // Configurer les listeners Socket.IO une seule fois
+        if (!_socketListenersSetup) {
+          _setupSocketListeners();
+          _socketListenersSetup = true;
+        }
+      }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Erreur lors du chargement des statistiques: $e';
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Erreur lors du chargement des statistiques: $e';
+          _isLoading = false;
+        });
+      }
     }
+  }
+
+  /// Configure les listeners Socket.IO (sans se connecter)
+  void _setupSocketListeners() {
+    debugPrint('🔌 Dashboard: Enregistrement des listeners Socket.IO');
+
+    // Écouter les mises à jour de planifications
+    _socketService.registerCallback('planification.updated', (data) {
+      debugPrint('📨 Dashboard: planification.updated reçu');
+      if (mounted && !_isLoading) {
+        debugPrint('🔄 Dashboard: Rechargement KPI (planification)');
+        _loadKpis();
+      }
+    });
+
+    // Écouter les mises à jour de pointages
+    _socketService.registerCallback('pointage.updated', (data) {
+      debugPrint('📨 Dashboard: pointage.updated reçu');
+      if (mounted && !_isLoading) {
+        debugPrint('🔄 Dashboard: Rechargement KPI (pointage)');
+        _loadKpis();
+      }
+    });
+
+    debugPrint(
+        '✅ Dashboard: Listeners enregistrés (utilise connexion Planning/Pointages)');
   }
 
   @override

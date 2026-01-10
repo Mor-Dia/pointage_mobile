@@ -106,21 +106,25 @@ class _PlanningState extends State<Planning> {
         _isLoading = false;
 
         // Initialiser Socket.IO après avoir récupéré les planifications
-        if (planifications.isNotEmpty && !_socketService.isConnected) {
+        if (planifications.isNotEmpty) {
           final personnelId = planifications.first.personnelId;
-          debugPrint(
-              '🔌 Initialisation Socket.IO avec personnel_id: $personnelId');
 
-          _socketService.connect(personnelId: personnelId);
-
-          // Écouter les mises à jour de planification
-          // Le SocketService gère déjà l'écoute sur les canaux corrects
-          _socketService.on('planification.updated', (data) {
-            debugPrint('� Rechargement automatique des planifications');
+          // Toujours enregistrer le callback, même si déjà connecté
+          _socketService.registerCallback('planification.updated', (data) {
+            debugPrint('🔄 Rechargement automatique des planifications');
             if (mounted && !_isLoading) {
               _chargerPlanifications();
             }
           });
+
+          // Connecter seulement si pas encore connecté
+          if (!_socketService.isConnected) {
+            debugPrint(
+                '🔌 Initialisation Socket.IO avec personnel_id: $personnelId');
+            _socketService.connect(personnelId: personnelId);
+          } else {
+            debugPrint('✅ Planning: Socket déjà connecté, callback enregistré');
+          }
         }
       });
     } catch (e) {

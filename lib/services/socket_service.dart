@@ -12,8 +12,8 @@ class SocketService {
   // URL du serveur Socket.IO (laravel-echo-server)
   static const String _serverUrl = 'http://localhost:6001';
 
-  // Callbacks pour les événements
-  final Map<String, Function(dynamic)> _eventCallbacks = {};
+  // Callbacks pour les événements - maintenant une liste de callbacks par événement
+  final Map<String, List<Function(dynamic)>> _eventCallbacks = {};
 
   /// Singleton instance
   static final SocketService _instance = SocketService._internal();
@@ -78,7 +78,9 @@ class SocketService {
           debugPrint('📨 Événement reçu: planification.updated (avec canal)');
           debugPrint('📦 Données: $data');
           if (_eventCallbacks.containsKey('planification.updated')) {
-            _eventCallbacks['planification.updated']!(data);
+            for (var callback in _eventCallbacks['planification.updated']!) {
+              callback(data);
+            }
           }
         });
 
@@ -87,7 +89,9 @@ class SocketService {
           debugPrint('📨 Événement reçu: planification.updated (simple)');
           debugPrint('📦 Données: $data');
           if (_eventCallbacks.containsKey('planification.updated')) {
-            _eventCallbacks['planification.updated']!(data);
+            for (var callback in _eventCallbacks['planification.updated']!) {
+              callback(data);
+            }
           }
         });
 
@@ -96,7 +100,9 @@ class SocketService {
           debugPrint('📨 Événement reçu: pointage.updated');
           debugPrint('📦 Données: $data');
           if (_eventCallbacks.containsKey('pointage.updated')) {
-            _eventCallbacks['pointage.updated']!(data);
+            for (var callback in _eventCallbacks['pointage.updated']!) {
+              callback(data);
+            }
           }
         });
 
@@ -108,7 +114,9 @@ class SocketService {
                 '📨 [Canal personnel] Événement planification.updated reçu');
             debugPrint('📦 Données: $data');
             if (_eventCallbacks.containsKey('planification.updated')) {
-              _eventCallbacks['planification.updated']!(data);
+              for (var callback in _eventCallbacks['planification.updated']!) {
+                callback(data);
+              }
             }
           });
 
@@ -117,7 +125,9 @@ class SocketService {
             debugPrint('📨 [Canal personnel] Événement pointage.updated reçu');
             debugPrint('📦 Données: $data');
             if (_eventCallbacks.containsKey('pointage.updated')) {
-              _eventCallbacks['pointage.updated']!(data);
+              for (var callback in _eventCallbacks['pointage.updated']!) {
+                callback(data);
+              }
             }
           });
         }
@@ -155,8 +165,12 @@ class SocketService {
   /// [eventName] : Nom de l'événement (ex: 'planification.updated', 'pointage.updated')
   /// [callback] : Fonction appelée quand l'événement est reçu
   void registerCallback(String eventName, Function(dynamic) callback) {
-    _eventCallbacks[eventName] = callback;
-    debugPrint('📝 Callback enregistré pour: $eventName');
+    if (!_eventCallbacks.containsKey(eventName)) {
+      _eventCallbacks[eventName] = [];
+    }
+    _eventCallbacks[eventName]!.add(callback);
+    debugPrint(
+        '📝 Callback enregistré pour: $eventName (total: ${_eventCallbacks[eventName]!.length})');
   }
 
   /// Écouter un événement spécifique
@@ -169,7 +183,11 @@ class SocketService {
       return;
     }
 
-    _eventCallbacks[eventName] = callback;
+    if (!_eventCallbacks.containsKey(eventName)) {
+      _eventCallbacks[eventName] = [];
+    }
+    _eventCallbacks[eventName]!.add(callback);
+
     _socket!.on(eventName, (data) {
       debugPrint('📨 Événement reçu: $eventName');
       debugPrint('📦 Données: $data');
